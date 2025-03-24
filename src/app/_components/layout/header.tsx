@@ -4,10 +4,12 @@ import { ControlMobileMenuButton } from "./store/mobileMenuOpenAtom";
 import { SignInButton } from "@/app/_shared/SignInButton";
 import { cn } from "@/app/_utils/cn";
 import { LogoWithLinkToLanding } from "./components/logo";
+import { auth } from "@/server/auth";
+import { UserDropdown } from "./components/user-dropdown";
 
 type HeaderProps = { title?: ReactNode; className?: string };
-export function Header({ title, className }: HeaderProps) {
-  // const { data: user } = useUser();
+export async function Header({ title, className }: HeaderProps) {
+  const session = await auth();
 
   return (
     <header className={cn("z-40 flex bg-black-100 sm:pb-2 sm:pt-3", className)}>
@@ -21,136 +23,13 @@ export function Header({ title, className }: HeaderProps) {
         <LogoWithLinkToLanding className="mr-auto hidden lg:block" />
         <h1 className="title-h3 lg:hidden sm:hidden">{title}</h1>
         <span className="flex items-center justify-end">
-          {/* {user ? ( */}
-          {/*   <UserDropdown user={user} className="md:-mr-2 sm:mr-0" /> */}
-          {/* ) : ( */}
-          <SignInButton variant="ghost" />
-          {/* )} */}
+          {session ? (
+            <UserDropdown user={session.user} className="md:-mr-2 sm:mr-0" />
+          ) : (
+            <SignInButton variant="ghost" />
+          )}
         </span>
       </div>
     </header>
   );
 }
-
-// function UserDropdown({
-//   user,
-//   className,
-// }: {
-//   user: AccountsCurrentUserOutput;
-//   className?: string;
-// }) {
-//   const [isOpen, setIsOpen] = useState(false);
-//
-//   return (
-//     <DropdownMenu.Root open={isOpen} onOpenChange={setIsOpen}>
-//       <DropdownMenu.Trigger
-//         className={cn(
-//           "group flex items-center gap-3 whitespace-nowrap rounded-xl px-2 py-3 data-[state=open]:bg-grey-100 md:gap-1",
-//           className,
-//         )}
-//       >
-//         <AvatarIcon />
-//         <span className="text-large vertical-alignment-fix sm:hidden">
-//           {user.username}
-//         </span>
-//         <ChevronDownIcon className="group-data-[state=open]:rotate-180" />
-//       </DropdownMenu.Trigger>
-//
-//       <DropdownMenu.Content
-//         align="end"
-//         className="z-10 mt-1 min-w-[15.7rem] rounded-xl border border-black-80 bg-black-100 p-6 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-top-2"
-//       >
-//         <DropdownMenu.Label className="title-h3 text-white mb-1">
-//           {user.username}
-//         </DropdownMenu.Label>
-//         <DropdownMenu.Label className="mb-6 border-b border-b-grey-100 pb-2 text-grey-20">
-//           {user.email}
-//         </DropdownMenu.Label>
-//         <DropdownMenu.Group className="-ml-2 flex flex-col gap-2">
-//           <DropdownButton className="w-full cursor-pointer" asChild>
-//             <DropdownMenu.Item asChild>
-//               {/* DropdownMenu.Item must be a direct parent of Link for it to work */}
-//               <Link to="/settings">
-//                 <SettingIcon />
-//                 Settings
-//               </Link>
-//             </DropdownMenu.Item>
-//           </DropdownButton>
-//           <DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
-//             {/* the dropdown is closed after dialog is closed because triggering dialogs from dropdowns in radix works weirdly */}
-//             <LogoutButton
-//               className="w-full"
-//               onDialogClose={() => setIsOpen(false)}
-//             />
-//           </DropdownMenu.Item>
-//         </DropdownMenu.Group>
-//       </DropdownMenu.Content>
-//     </DropdownMenu.Root>
-//   );
-// }
-
-// function LogoutButton({
-//   className,
-//   onDialogClose,
-// }: {
-//   className?: string;
-//   onDialogClose: () => void;
-// }) {
-//   const { data: user } = useUser();
-//   const setMobileMenuOpen = useSetAtom(mobileMenuOpenAtom);
-//
-//   if (!user) {
-//     return null;
-//   }
-//
-//   return (
-//     <Dialog
-//       onOpenChange={(open) => {
-//         if (!open) onDialogClose();
-//       }}
-//     >
-//       <DropdownButton className={className} asChild>
-//         <DialogTrigger>
-//           <LogoutIcon />
-//           Log out
-//         </DialogTrigger>
-//       </DropdownButton>
-//       <DialogPortal>
-//         <DialogOverlay />
-//         <DialogContent aria-describedby={undefined}>
-//           <DialogTitle>Are you sure you want to log out?</DialogTitle>
-//           <DialogFooter className="sm:grid sm:grid-cols-2">
-//             <DialogClose version="secondary">Stay</DialogClose>
-//             <DialogClose
-//               version="primary"
-//               onClick={() => {
-//                 setMobileMenuOpen(false);
-//                 void logout();
-//               }}
-//             >
-//               Log out
-//             </DialogClose>
-//           </DialogFooter>
-//         </DialogContent>
-//       </DialogPortal>
-//     </Dialog>
-//   );
-// }
-
-// const DropdownButton = forwardRef<
-//   HTMLButtonElement,
-//   { children: ReactNode; className?: string; asChild?: boolean }
-// >(({ children, className, asChild = false }, ref) => {
-//   const Comp = asChild ? Slot : "button";
-//   return (
-//     <Comp
-//       className={cn(
-//         "transition-base outline-ring btn-sm inline-flex h-9 items-center gap-2 rounded-xl px-2 text-white-100 hover:bg-grey-100 active:bg-grey-80 disabled:text-grey-60",
-//         className,
-//       )}
-//       ref={ref}
-//     >
-//       {children}
-//     </Comp>
-//   );
-// });
