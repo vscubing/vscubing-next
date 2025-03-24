@@ -50,6 +50,13 @@
       "when": 1742831665583,
       "tag": "0006_fast_jetstream",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1742859044682,
+      "tag": "0007_nifty_karen_page",
+      "breakpoints": true
     }
   ]
 }

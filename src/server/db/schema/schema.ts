@@ -46,6 +46,7 @@ export const users = pgTable("user", (d) => ({
       withTimezone: true,
       mode: "string",
     })
+    .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 }));
 
