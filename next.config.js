@@ -37,16 +37,17 @@ const config = {
     return config;
   },
 
-  experimental: {
-    turbo: {
-      rules: {
-        "*.svg": {
-          loaders: ["@svgr/webpack"],
-          as: "*.js",
-        },
-      },
-    },
-  },
+  // TODO: turbopack doesn't work :(
+  // experimental: {
+  //   turbo: {
+  //     rules: {
+  //       "*.svg": {
+  //         loaders: ["@svgr/webpack"],
+  //         as: "*.js",
+  //       },
+  //     },
+  //   },
+  // },
 };
 
 export default config;
