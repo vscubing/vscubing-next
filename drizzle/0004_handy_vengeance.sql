@@ -1,0 +1,22 @@
+DROP TABLE "legacy_account_emailaddress" CASCADE;--> statement-breakpoint
+DROP TABLE "legacy_account_emailconfirmation" CASCADE;--> statement-breakpoint
+DROP TABLE "legacy_accounts_user_groups" CASCADE;--> statement-breakpoint
+DROP TABLE "legacy_accounts_user_user_permissions" CASCADE;--> statement-breakpoint
+DROP TABLE "legacy_auth_group" CASCADE;--> statement-breakpoint
+DROP TABLE "legacy_auth_group_permissions" CASCADE;--> statement-breakpoint
+DROP TABLE "legacy_auth_permission" CASCADE;--> statement-breakpoint
+DROP TABLE "legacy_authtoken_token" CASCADE;--> statement-breakpoint
+DROP TABLE "legacy_django_admin_log" CASCADE;--> statement-breakpoint
+DROP TABLE "legacy_django_content_type" CASCADE;--> statement-breakpoint
+DROP TABLE "legacy_django_migrations" CASCADE;--> statement-breakpoint
+DROP TABLE "legacy_django_session" CASCADE;--> statement-breakpoint
+DROP TABLE "legacy_django_site" CASCADE;--> statement-breakpoint
+DROP TABLE "legacy_socialaccount_socialaccount" CASCADE;--> statement-breakpoint
+DROP TABLE "legacy_socialaccount_socialapp" CASCADE;--> statement-breakpoint
+DROP TABLE "legacy_socialaccount_socialapp_sites" CASCADE;--> statement-breakpoint
+DROP TABLE "legacy_socialaccount_socialtoken" CASCADE;--> statement-breakpoint
+DROP TABLE "account" CASCADE;--> statement-breakpoint
+DROP TABLE "post" CASCADE;--> statement-breakpoint
+DROP TABLE "session" CASCADE;--> statement-breakpoint
+DROP TABLE "user" CASCADE;--> statement-breakpoint
+DROP TABLE "verification_token" CASCADE;

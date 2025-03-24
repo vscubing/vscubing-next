@@ -29,6 +29,27 @@
       "when": 1742822638188,
       "tag": "0003_sad_darkhawk",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1742825251296,
+      "tag": "0004_handy_vengeance",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1742826544000,
+      "tag": "0005_young_radioactive_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1742826579301,
+      "tag": "0006_glorious_rick_jones",
+      "breakpoints": true
     }
   ]
 }

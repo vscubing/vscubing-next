@@ -9,12 +9,7 @@ import {
   varchar,
   text,
   unique,
-  uniqueIndex,
-  check,
-  smallint,
-  jsonb,
 } from "drizzle-orm/pg-core";
-import { sql } from "drizzle-orm";
 
 export const contestsSolvemodel = pgTable(
   "legacy_contests_solvemodel",
@@ -150,6 +145,22 @@ export const contestsTnoodlescramblesmodel = pgTable(
   ],
 );
 
+// export const users = pgTable("user", (d) => ({
+//   id: d
+//     .varchar({ length: 255 })
+//     .notNull()
+//     .primaryKey()
+//     .$defaultFn(() => crypto.randomUUID()),
+//   name: d.varchar({ length: 255 }),
+//   email: d.varchar({ length: 255 }).notNull(),
+//   emailVerified: d
+//     .timestamp({
+//       mode: "date",
+//       withTimezone: true,
+//     })
+//     .default(sql`CURRENT_TIMESTAMP`),
+//   image: d.varchar({ length: 255 }),
+// }));
 export const accountsUser = pgTable(
   "legacy_accounts_user",
   {
@@ -162,18 +173,10 @@ export const accountsUser = pgTable(
       cache: 1,
     }),
     password: varchar({ length: 128 }).notNull(),
-    lastLogin: timestamp("last_login", { withTimezone: true, mode: "string" }),
-    isSuperuser: boolean("is_superuser").notNull(),
-    username: varchar({ length: 20 }).notNull(),
+    name: varchar({ length: 20 }).notNull(),
     email: varchar({ length: 255 }).notNull(),
     isVerified: boolean("is_verified").notNull(),
-    isActive: boolean("is_active").notNull(),
-    isStaff: boolean("is_staff").notNull(),
     createdAt: timestamp("created_at", {
-      withTimezone: true,
-      mode: "string",
-    }).notNull(),
-    updatedAt: timestamp("updated_at", {
       withTimezone: true,
       mode: "string",
     }).notNull(),
@@ -183,85 +186,12 @@ export const accountsUser = pgTable(
       "btree",
       table.email.asc().nullsLast().op("varchar_pattern_ops"),
     ),
-    index("accounts_user_username_6088629e_like").using(
-      "btree",
-      table.username.asc().nullsLast().op("varchar_pattern_ops"),
-    ),
-    unique("accounts_user_username_key").on(table.username),
+    // index("accounts_user_username_6088629e_like").using(
+    //   "btree",
+    //   table.username.asc().nullsLast().op("varchar_pattern_ops"),
+    // ),
+    unique("accounts_user_name_key").on(table.name),
     unique("accounts_user_email_key").on(table.email),
-  ],
-);
-
-export const accountEmailaddress = pgTable(
-  "legacy_account_emailaddress",
-  {
-    id: integer().primaryKey().generatedByDefaultAsIdentity({
-      name: "account_emailaddress_id_seq",
-      startWith: 1,
-      increment: 1,
-      minValue: 1,
-      cache: 1,
-    }),
-    email: varchar({ length: 254 }).notNull(),
-    verified: boolean().notNull(),
-    primary: boolean().notNull(),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    userId: bigint("user_id", { mode: "number" }).notNull(),
-  },
-  (table) => [
-    index("account_emailaddress_upper").using(
-      "btree",
-      sql`upper((email)::text)`,
-    ),
-    index("account_emailaddress_user_id_2c513194").using(
-      "btree",
-      table.userId.asc().nullsLast().op("int8_ops"),
-    ),
-    uniqueIndex("unique_verified_email")
-      .using("btree", table.email.asc().nullsLast().op("text_ops"))
-      .where(sql`verified`),
-    foreignKey({
-      columns: [table.userId],
-      foreignColumns: [accountsUser.id],
-      name: "account_emailaddress_user_id_2c513194_fk_accounts_user_id",
-    }),
-    unique("account_emailaddress_user_id_email_987c8728_uniq").on(
-      table.email,
-      table.userId,
-    ),
-  ],
-);
-
-export const accountEmailconfirmation = pgTable(
-  "legacy_account_emailconfirmation",
-  {
-    id: integer().primaryKey().generatedByDefaultAsIdentity({
-      name: "account_emailconfirmation_id_seq",
-      startWith: 1,
-      increment: 1,
-      minValue: 1,
-      cache: 1,
-    }),
-    created: timestamp({ withTimezone: true, mode: "string" }).notNull(),
-    sent: timestamp({ withTimezone: true, mode: "string" }),
-    key: varchar({ length: 64 }).notNull(),
-    emailAddressId: integer("email_address_id").notNull(),
-  },
-  (table) => [
-    index("account_emailconfirmation_email_address_id_5b7f8c58").using(
-      "btree",
-      table.emailAddressId.asc().nullsLast().op("int4_ops"),
-    ),
-    index("account_emailconfirmation_key_f43612bd_like").using(
-      "btree",
-      table.key.asc().nullsLast().op("varchar_pattern_ops"),
-    ),
-    foreignKey({
-      columns: [table.emailAddressId],
-      foreignColumns: [accountEmailaddress.id],
-      name: "account_emailconfirm_email_address_id_5b7f8c58_fk_account_e",
-    }),
-    unique("account_emailconfirmation_key_key").on(table.key),
   ],
 );
 
@@ -302,202 +232,6 @@ export const accountsSettingsmodel = pgTable(
       name: "accounts_settingsmodel_user_id_b5b21c0f_fk_accounts_user_id",
     }),
     unique("accounts_settingsmodel_user_id_key").on(table.userId),
-  ],
-);
-
-export const authGroup = pgTable(
-  "legacy_auth_group",
-  {
-    id: integer().primaryKey().generatedByDefaultAsIdentity({
-      name: "auth_group_id_seq",
-      startWith: 1,
-      increment: 1,
-      minValue: 1,
-      cache: 1,
-    }),
-    name: varchar({ length: 150 }).notNull(),
-  },
-  (table) => [
-    index("auth_group_name_a6ea08ec_like").using(
-      "btree",
-      table.name.asc().nullsLast().op("varchar_pattern_ops"),
-    ),
-    unique("auth_group_name_key").on(table.name),
-  ],
-);
-
-export const accountsUserGroups = pgTable(
-  "legacy_accounts_user_groups",
-  {
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
-      name: "accounts_user_groups_id_seq",
-      startWith: 1,
-      increment: 1,
-      minValue: 1,
-      cache: 1,
-    }),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    userId: bigint("user_id", { mode: "number" }).notNull(),
-    groupId: integer("group_id").notNull(),
-  },
-  (table) => [
-    index("accounts_user_groups_group_id_bd11a704").using(
-      "btree",
-      table.groupId.asc().nullsLast().op("int4_ops"),
-    ),
-    index("accounts_user_groups_user_id_52b62117").using(
-      "btree",
-      table.userId.asc().nullsLast().op("int8_ops"),
-    ),
-    foreignKey({
-      columns: [table.groupId],
-      foreignColumns: [authGroup.id],
-      name: "accounts_user_groups_group_id_bd11a704_fk_auth_group_id",
-    }),
-    foreignKey({
-      columns: [table.userId],
-      foreignColumns: [accountsUser.id],
-      name: "accounts_user_groups_user_id_52b62117_fk_accounts_user_id",
-    }),
-    unique("accounts_user_groups_user_id_group_id_59c0b32f_uniq").on(
-      table.userId,
-      table.groupId,
-    ),
-  ],
-);
-
-export const authPermission = pgTable(
-  "legacy_auth_permission",
-  {
-    id: integer().primaryKey().generatedByDefaultAsIdentity({
-      name: "auth_permission_id_seq",
-      startWith: 1,
-      increment: 1,
-      minValue: 1,
-      cache: 1,
-    }),
-    name: varchar({ length: 255 }).notNull(),
-    contentTypeId: integer("content_type_id").notNull(),
-    codename: varchar({ length: 100 }).notNull(),
-  },
-  (table) => [
-    index("auth_permission_content_type_id_2f476e4b").using(
-      "btree",
-      table.contentTypeId.asc().nullsLast().op("int4_ops"),
-    ),
-    foreignKey({
-      columns: [table.contentTypeId],
-      foreignColumns: [djangoContentType.id],
-      name: "auth_permission_content_type_id_2f476e4b_fk_django_co",
-    }),
-    unique("auth_permission_content_type_id_codename_01ab375a_uniq").on(
-      table.contentTypeId,
-      table.codename,
-    ),
-  ],
-);
-
-export const accountsUserUserPermissions = pgTable(
-  "legacy_accounts_user_user_permissions",
-  {
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
-      name: "accounts_user_user_permissions_id_seq",
-      startWith: 1,
-      increment: 1,
-      minValue: 1,
-      cache: 1,
-    }),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    userId: bigint("user_id", { mode: "number" }).notNull(),
-    permissionId: integer("permission_id").notNull(),
-  },
-  (table) => [
-    index("accounts_user_user_permissions_permission_id_113bb443").using(
-      "btree",
-      table.permissionId.asc().nullsLast().op("int4_ops"),
-    ),
-    index("accounts_user_user_permissions_user_id_e4f0a161").using(
-      "btree",
-      table.userId.asc().nullsLast().op("int8_ops"),
-    ),
-    foreignKey({
-      columns: [table.permissionId],
-      foreignColumns: [authPermission.id],
-      name: "accounts_user_user_p_permission_id_113bb443_fk_auth_perm",
-    }),
-    foreignKey({
-      columns: [table.userId],
-      foreignColumns: [accountsUser.id],
-      name: "accounts_user_user_p_user_id_e4f0a161_fk_accounts_",
-    }),
-    unique("accounts_user_user_permi_user_id_permission_id_2ab516c2_uniq").on(
-      table.userId,
-      table.permissionId,
-    ),
-  ],
-);
-
-export const authGroupPermissions = pgTable(
-  "legacy_auth_group_permissions",
-  {
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
-      name: "auth_group_permissions_id_seq",
-      startWith: 1,
-      increment: 1,
-      minValue: 1,
-      cache: 1,
-    }),
-    groupId: integer("group_id").notNull(),
-    permissionId: integer("permission_id").notNull(),
-  },
-  (table) => [
-    index("auth_group_permissions_group_id_b120cbf9").using(
-      "btree",
-      table.groupId.asc().nullsLast().op("int4_ops"),
-    ),
-    index("auth_group_permissions_permission_id_84c5c92e").using(
-      "btree",
-      table.permissionId.asc().nullsLast().op("int4_ops"),
-    ),
-    foreignKey({
-      columns: [table.permissionId],
-      foreignColumns: [authPermission.id],
-      name: "auth_group_permissio_permission_id_84c5c92e_fk_auth_perm",
-    }),
-    foreignKey({
-      columns: [table.groupId],
-      foreignColumns: [authGroup.id],
-      name: "auth_group_permissions_group_id_b120cbf9_fk_auth_group_id",
-    }),
-    unique("auth_group_permissions_group_id_permission_id_0cd325b0_uniq").on(
-      table.groupId,
-      table.permissionId,
-    ),
-  ],
-);
-
-export const authtokenToken = pgTable(
-  "legacy_authtoken_token",
-  {
-    key: varchar({ length: 40 }).primaryKey().notNull(),
-    created: timestamp({ withTimezone: true, mode: "string" }).notNull(),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    userId: bigint("user_id", { mode: "number" }).notNull(),
-  },
-  (table) => [
-    index("authtoken_token_key_10f0b77e_like").using(
-      "btree",
-      table.key.asc().nullsLast().op("varchar_pattern_ops"),
-    ),
-    foreignKey({
-      columns: [table.userId],
-      foreignColumns: [accountsUser.id],
-      name: "authtoken_token_user_id_35299eff_fk_accounts_user_id",
-    }),
-    unique("authtoken_token_user_id_key").on(table.userId),
   ],
 );
 
@@ -776,267 +510,3 @@ export const contestsSingleresultleaderboardmodel = pgTable(
     ),
   ],
 );
-
-export const djangoMigrations = pgTable("legacy_django_migrations", {
-  // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-  id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
-    name: "django_migrations_id_seq",
-    startWith: 1,
-    increment: 1,
-    minValue: 1,
-    cache: 1,
-  }),
-  app: varchar({ length: 255 }).notNull(),
-  name: varchar({ length: 255 }).notNull(),
-  applied: timestamp({ withTimezone: true, mode: "string" }).notNull(),
-});
-
-export const djangoSession = pgTable(
-  "legacy_django_session",
-  {
-    sessionKey: varchar("session_key", { length: 40 }).primaryKey().notNull(),
-    sessionData: text("session_data").notNull(),
-    expireDate: timestamp("expire_date", {
-      withTimezone: true,
-      mode: "string",
-    }).notNull(),
-  },
-  (table) => [
-    index("django_session_expire_date_a5c62663").using(
-      "btree",
-      table.expireDate.asc().nullsLast().op("timestamptz_ops"),
-    ),
-    index("django_session_session_key_c0390e0f_like").using(
-      "btree",
-      table.sessionKey.asc().nullsLast().op("varchar_pattern_ops"),
-    ),
-  ],
-);
-
-export const djangoSite = pgTable(
-  "legacy_django_site",
-  {
-    id: integer().primaryKey().generatedByDefaultAsIdentity({
-      name: "django_site_id_seq",
-      startWith: 1,
-      increment: 1,
-      minValue: 1,
-      cache: 1,
-    }),
-    domain: varchar({ length: 100 }).notNull(),
-    name: varchar({ length: 50 }).notNull(),
-  },
-  (table) => [
-    index("django_site_domain_a2e37b91_like").using(
-      "btree",
-      table.domain.asc().nullsLast().op("varchar_pattern_ops"),
-    ),
-    unique("django_site_domain_a2e37b91_uniq").on(table.domain),
-  ],
-);
-
-export const djangoAdminLog = pgTable(
-  "legacy_django_admin_log",
-  {
-    id: integer().primaryKey().generatedByDefaultAsIdentity({
-      name: "django_admin_log_id_seq",
-      startWith: 1,
-      increment: 1,
-      minValue: 1,
-      cache: 1,
-    }),
-    actionTime: timestamp("action_time", {
-      withTimezone: true,
-      mode: "string",
-    }).notNull(),
-    objectId: text("object_id"),
-    objectRepr: varchar("object_repr", { length: 200 }).notNull(),
-    actionFlag: smallint("action_flag").notNull(),
-    changeMessage: text("change_message").notNull(),
-    contentTypeId: integer("content_type_id"),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    userId: bigint("user_id", { mode: "number" }).notNull(),
-  },
-  (table) => [
-    index("django_admin_log_content_type_id_c4bce8eb").using(
-      "btree",
-      table.contentTypeId.asc().nullsLast().op("int4_ops"),
-    ),
-    index("django_admin_log_user_id_c564eba6").using(
-      "btree",
-      table.userId.asc().nullsLast().op("int8_ops"),
-    ),
-    foreignKey({
-      columns: [table.contentTypeId],
-      foreignColumns: [djangoContentType.id],
-      name: "django_admin_log_content_type_id_c4bce8eb_fk_django_co",
-    }),
-    foreignKey({
-      columns: [table.userId],
-      foreignColumns: [accountsUser.id],
-      name: "django_admin_log_user_id_c564eba6_fk_accounts_user_id",
-    }),
-    check("django_admin_log_action_flag_check", sql`action_flag >= 0`),
-  ],
-);
-
-export const socialaccountSocialaccount = pgTable(
-  "legacy_socialaccount_socialaccount",
-  {
-    id: integer().primaryKey().generatedByDefaultAsIdentity({
-      name: "socialaccount_socialaccount_id_seq",
-      startWith: 1,
-      increment: 1,
-      minValue: 1,
-      cache: 1,
-    }),
-    provider: varchar({ length: 200 }).notNull(),
-    uid: varchar({ length: 191 }).notNull(),
-    lastLogin: timestamp("last_login", {
-      withTimezone: true,
-      mode: "string",
-    }).notNull(),
-    dateJoined: timestamp("date_joined", {
-      withTimezone: true,
-      mode: "string",
-    }).notNull(),
-    extraData: text("extra_data").notNull(),
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    userId: bigint("user_id", { mode: "number" }).notNull(),
-  },
-  (table) => [
-    index("socialaccount_socialaccount_user_id_8146e70c").using(
-      "btree",
-      table.userId.asc().nullsLast().op("int8_ops"),
-    ),
-    foreignKey({
-      columns: [table.userId],
-      foreignColumns: [accountsUser.id],
-      name: "socialaccount_social_user_id_8146e70c_fk_accounts_",
-    }),
-    unique("socialaccount_socialaccount_provider_uid_fc810c6e_uniq").on(
-      table.provider,
-      table.uid,
-    ),
-  ],
-);
-
-export const socialaccountSocialappSites = pgTable(
-  "legacy_socialaccount_socialapp_sites",
-  {
-    // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
-      name: "socialaccount_socialapp_sites_id_seq",
-      startWith: 1,
-      increment: 1,
-      minValue: 1,
-      cache: 1,
-    }),
-    socialappId: integer("socialapp_id").notNull(),
-    siteId: integer("site_id").notNull(),
-  },
-  (table) => [
-    index("socialaccount_socialapp_sites_site_id_2579dee5").using(
-      "btree",
-      table.siteId.asc().nullsLast().op("int4_ops"),
-    ),
-    index("socialaccount_socialapp_sites_socialapp_id_97fb6e7d").using(
-      "btree",
-      table.socialappId.asc().nullsLast().op("int4_ops"),
-    ),
-    foreignKey({
-      columns: [table.siteId],
-      foreignColumns: [djangoSite.id],
-      name: "socialaccount_social_site_id_2579dee5_fk_django_si",
-    }),
-    foreignKey({
-      columns: [table.socialappId],
-      foreignColumns: [socialaccountSocialapp.id],
-      name: "socialaccount_social_socialapp_id_97fb6e7d_fk_socialacc",
-    }),
-    unique("socialaccount_socialapp__socialapp_id_site_id_71a9a768_uniq").on(
-      table.socialappId,
-      table.siteId,
-    ),
-  ],
-);
-
-export const djangoContentType = pgTable(
-  "legacy_django_content_type",
-  {
-    id: integer().primaryKey().generatedByDefaultAsIdentity({
-      name: "django_content_type_id_seq",
-      startWith: 1,
-      increment: 1,
-      minValue: 1,
-      cache: 1,
-    }),
-    appLabel: varchar("app_label", { length: 100 }).notNull(),
-    model: varchar({ length: 100 }).notNull(),
-  },
-  (table) => [
-    unique("django_content_type_app_label_model_76bd3d3b_uniq").on(
-      table.appLabel,
-      table.model,
-    ),
-  ],
-);
-
-export const socialaccountSocialtoken = pgTable(
-  "legacy_socialaccount_socialtoken",
-  {
-    id: integer().primaryKey().generatedByDefaultAsIdentity({
-      name: "socialaccount_socialtoken_id_seq",
-      startWith: 1,
-      increment: 1,
-      minValue: 1,
-      cache: 1,
-    }),
-    token: text().notNull(),
-    tokenSecret: text("token_secret").notNull(),
-    expiresAt: timestamp("expires_at", { withTimezone: true, mode: "string" }),
-    accountId: integer("account_id").notNull(),
-    appId: integer("app_id"),
-  },
-  (table) => [
-    index("socialaccount_socialtoken_account_id_951f210e").using(
-      "btree",
-      table.accountId.asc().nullsLast().op("int4_ops"),
-    ),
-    index("socialaccount_socialtoken_app_id_636a42d7").using(
-      "btree",
-      table.appId.asc().nullsLast().op("int4_ops"),
-    ),
-    foreignKey({
-      columns: [table.accountId],
-      foreignColumns: [socialaccountSocialaccount.id],
-      name: "socialaccount_social_account_id_951f210e_fk_socialacc",
-    }),
-    foreignKey({
-      columns: [table.appId],
-      foreignColumns: [socialaccountSocialapp.id],
-      name: "socialaccount_social_app_id_636a42d7_fk_socialacc",
-    }),
-    unique("socialaccount_socialtoken_app_id_account_id_fca4e0ac_uniq").on(
-      table.accountId,
-      table.appId,
-    ),
-  ],
-);
-
-export const socialaccountSocialapp = pgTable("legacy_socialaccount_socialapp", {
-  id: integer().primaryKey().generatedByDefaultAsIdentity({
-    name: "socialaccount_socialapp_id_seq",
-    startWith: 1,
-    increment: 1,
-    minValue: 1,
-    cache: 1,
-  }),
-  provider: varchar({ length: 30 }).notNull(),
-  name: varchar({ length: 40 }).notNull(),
-  clientId: varchar("client_id", { length: 191 }).notNull(),
-  secret: varchar({ length: 191 }).notNull(),
-  key: varchar({ length: 191 }).notNull(),
-  providerId: varchar("provider_id", { length: 200 }).notNull(),
-  settings: jsonb().notNull(),
-});
