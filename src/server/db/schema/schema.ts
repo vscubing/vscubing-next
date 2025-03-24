@@ -35,16 +35,16 @@ export const users = pgTable("user", (d) => ({
     .varchar({ length: 255 })
     .notNull()
     .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
+    .$defaultFn(() => crypto.randomUUID()), // NOTE: legacy userId's are just integers
   name: d.varchar({ length: 255 }),
   email: d.varchar({ length: 255 }).notNull(),
-  emailVerified: d
+  isVerified: d.boolean().notNull(),
+  createdAt: d
     .timestamp({
-      mode: "date",
       withTimezone: true,
+      mode: "string",
     })
-    .default(sql`CURRENT_TIMESTAMP`),
-  image: d.varchar({ length: 255 }),
+    .notNull(),
 }));
 
 export const usersRelations = relations(users, ({ many }) => ({
