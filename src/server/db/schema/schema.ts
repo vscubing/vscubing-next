@@ -38,6 +38,8 @@ export const users = pgTable("user", (d) => ({
     .$defaultFn(() => crypto.randomUUID()), // NOTE: legacy userId's are just integers
   name: d.varchar({ length: 255 }),
   email: d.varchar({ length: 255 }).notNull(),
+  emailVerified: d.timestamp({ mode: "date" }),
+  image: d.text("image"),
   isVerified: d.boolean().notNull(),
   createdAt: d
     .timestamp({

@@ -43,7 +43,13 @@
       "when": 1742830156503,
       "tag": "0005_legacy-import-users",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1742831665583,
+      "tag": "0006_fast_jetstream",
+      "breakpoints": true
     }
   ]
 }
-
