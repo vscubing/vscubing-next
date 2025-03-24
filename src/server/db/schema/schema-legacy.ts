@@ -93,7 +93,7 @@ export const contestsSolvemodel = pgTable(
     }),
     foreignKey({
       columns: [table.userId],
-      foreignColumns: [accountsUser.id],
+      foreignColumns: [users.id],
       name: "contests_solvemodel_user_id_28200dba_fk_accounts_user_id",
     }),
   ],
@@ -145,34 +145,17 @@ export const contestsTnoodlescramblesmodel = pgTable(
   ],
 );
 
-// export const users = pgTable("user", (d) => ({
-//   id: d
-//     .varchar({ length: 255 })
-//     .notNull()
-//     .primaryKey()
-//     .$defaultFn(() => crypto.randomUUID()),
-//   name: d.varchar({ length: 255 }),
-//   email: d.varchar({ length: 255 }).notNull(),
-//   emailVerified: d
-//     .timestamp({
-//       mode: "date",
-//       withTimezone: true,
-//     })
-//     .default(sql`CURRENT_TIMESTAMP`),
-//   image: d.varchar({ length: 255 }),
-// }));
-export const accountsUser = pgTable(
-  "legacy_accounts_user",
+export const users = pgTable(
+  "user",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-    id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+    id: integer().primaryKey().generatedByDefaultAsIdentity({
       name: "accounts_user_id_seq",
       startWith: 1,
       increment: 1,
       minValue: 1,
       cache: 1,
     }),
-    password: varchar({ length: 128 }).notNull(),
     name: varchar({ length: 20 }).notNull(),
     email: varchar({ length: 255 }).notNull(),
     isVerified: boolean("is_verified").notNull(),
@@ -228,7 +211,7 @@ export const accountsSettingsmodel = pgTable(
     ),
     foreignKey({
       columns: [table.userId],
-      foreignColumns: [accountsUser.id],
+      foreignColumns: [users.id],
       name: "accounts_settingsmodel_user_id_b5b21c0f_fk_accounts_user_id",
     }),
     unique("accounts_settingsmodel_user_id_key").on(table.userId),
@@ -421,7 +404,7 @@ export const contestsRoundsessionmodel = pgTable(
     }),
     foreignKey({
       columns: [table.userId],
-      foreignColumns: [accountsUser.id],
+      foreignColumns: [users.id],
       name: "contests_roundsessionmodel_user_id_3b33a5a3_fk_accounts_user_id",
     }),
   ],

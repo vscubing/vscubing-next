@@ -50,6 +50,34 @@
       "when": 1742826579301,
       "tag": "0006_glorious_rick_jones",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1742827005718,
+      "tag": "0007_low_champions",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1742827036949,
+      "tag": "0008_brave_butterfly",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1742827099717,
+      "tag": "0009_gray_mentallo",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1742827485390,
+      "tag": "0010_white_ares",
+      "breakpoints": true
     }
   ]
 }

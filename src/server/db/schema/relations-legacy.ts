@@ -5,7 +5,7 @@ import {
   contestsDisciplinemodel,
   contestsRoundsessionmodel,
   contestsScramblemodel,
-  accountsUser,
+  users,
   contestsTnoodlescramblesmodel,
   accountsSettingsmodel,
   contestsContestmodelDisciplineSet,
@@ -31,9 +31,9 @@ export const contestsSolvemodelRelations = relations(
       fields: [contestsSolvemodel.scrambleId],
       references: [contestsScramblemodel.id],
     }),
-    accountsUser: one(accountsUser, {
+    accountsUser: one(users, {
       fields: [contestsSolvemodel.userId],
-      references: [accountsUser.id],
+      references: [users.id],
     }),
     contestsSingleresultleaderboardmodels: many(
       contestsSingleresultleaderboardmodel,
@@ -74,9 +74,9 @@ export const contestsRoundsessionmodelRelations = relations(
       fields: [contestsRoundsessionmodel.disciplineId],
       references: [contestsDisciplinemodel.id],
     }),
-    accountsUser: one(accountsUser, {
+    accountsUser: one(users, {
       fields: [contestsRoundsessionmodel.userId],
-      references: [accountsUser.id],
+      references: [users.id],
     }),
   }),
 );
@@ -96,7 +96,7 @@ export const contestsScramblemodelRelations = relations(
   }),
 );
 
-export const accountsUserRelations = relations(accountsUser, ({ many }) => ({
+export const accountsUserRelations = relations(users, ({ many }) => ({
   contestsSolvemodels: many(contestsSolvemodel),
   accountsSettingsmodels: many(accountsSettingsmodel),
   contestsRoundsessionmodels: many(contestsRoundsessionmodel),
@@ -115,9 +115,9 @@ export const contestsTnoodlescramblesmodelRelations = relations(
 export const accountsSettingsmodelRelations = relations(
   accountsSettingsmodel,
   ({ one }) => ({
-    accountsUser: one(accountsUser, {
+    accountsUser: one(users, {
       fields: [accountsSettingsmodel.userId],
-      references: [accountsUser.id],
+      references: [users.id],
     }),
   }),
 );
