@@ -25,7 +25,7 @@ import {
   socialaccountSocialappSites,
   socialaccountSocialapp,
   socialaccountSocialtoken,
-} from "./schema";
+} from "./schema-legacy";
 
 export const contestsSolvemodelRelations = relations(
   contestsSolvemodel,
