@@ -18,7 +18,12 @@ source .env
 DB_PASSWORD=$(echo "$DATABASE_URL" | awk -F':' '{print $3}' | awk -F'@' '{print $1}')
 DB_PORT=$(echo "$DATABASE_URL" | awk -F':' '{print $4}' | awk -F'\/' '{print $1}')
 DB_NAME=$(echo "$DATABASE_URL" | awk -F'/' '{print $4}')
-DB_CONTAINER_NAME="$DB_NAME-postgres"
+DB_CONTAINER_NAME="$DB_NAME"
+
+echo $DB_PASSWORD
+echo $DB_PORT
+echo $DB_NAME
+echo $DB_CONTAINER_NAME
 
 if ! [ -x "$(command -v docker)" ] && ! [ -x "$(command -v podman)" ]; then
   echo -e "Docker or Podman is not installed. Please install docker or podman and try again.\nDocker install guide: https://docs.docker.com/engine/install/\nPodman install guide: https://podman.io/getting-started/installation"
@@ -76,7 +81,7 @@ fi
 
 $DOCKER_CMD run -d \
   --name $DB_CONTAINER_NAME \
-  -e POSTGRES_USER="postgres" \
+  -e POSTGRES_USER="homa" \
   -e POSTGRES_PASSWORD="$DB_PASSWORD" \
   -e POSTGRES_DB="$DB_NAME" \
   -p "$DB_PORT":5432 \

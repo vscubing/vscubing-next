@@ -6,7 +6,8 @@ import { api, HydrateClient } from "@/trpc/server";
 
 export default async function Home() {
   const hello = await api.post.hello({ text: "from tRPC" });
-  const session = await auth();
+  // const session = await auth();
+  const session = null;
 
   if (session?.user) {
     void api.post.getLatest.prefetch();
