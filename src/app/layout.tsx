@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "vscubing",
   description:
     "A contest platform for competing in virtual speedcubing: the art of solving twisty puzzles (like the Rubik's Cube) via a computer emulator controlled from the keyboard as fast as possible.",
-  icons: [{ rel: "icon", url: "/favicon.svg" }],
+  icons: [{ rel: "icon", url: "/favicon.svg?url" }],
 };
 
 // const geist = Geist({
