@@ -19,6 +19,9 @@ jobs:
         shell: bash
         run: find . -type f -name ".env.example" -exec sh -c 'cp "$1" "${1%.*}"' _ {} \;
 
+      - name: Create next-env.d.ts
+        run: echo -e '/// <reference types="next" />\n/// <reference types="next/image-types/global" />' > src/next-env.d.ts
+
       - name: Typecheck
         run: bun typecheck
 
