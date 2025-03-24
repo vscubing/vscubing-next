@@ -1024,19 +1024,22 @@ export const socialaccountSocialtoken = pgTable(
   ],
 );
 
-export const socialaccountSocialapp = pgTable("legacy_socialaccount_socialapp", {
-  id: integer().primaryKey().generatedByDefaultAsIdentity({
-    name: "socialaccount_socialapp_id_seq",
-    startWith: 1,
-    increment: 1,
-    minValue: 1,
-    cache: 1,
-  }),
-  provider: varchar({ length: 30 }).notNull(),
-  name: varchar({ length: 40 }).notNull(),
-  clientId: varchar("client_id", { length: 191 }).notNull(),
-  secret: varchar({ length: 191 }).notNull(),
-  key: varchar({ length: 191 }).notNull(),
-  providerId: varchar("provider_id", { length: 200 }).notNull(),
-  settings: jsonb().notNull(),
-});
+export const socialaccountSocialapp = pgTable(
+  "legacy_socialaccount_socialapp",
+  {
+    id: integer().primaryKey().generatedByDefaultAsIdentity({
+      name: "socialaccount_socialapp_id_seq",
+      startWith: 1,
+      increment: 1,
+      minValue: 1,
+      cache: 1,
+    }),
+    provider: varchar({ length: 30 }).notNull(),
+    name: varchar({ length: 40 }).notNull(),
+    clientId: varchar("client_id", { length: 191 }).notNull(),
+    secret: varchar({ length: 191 }).notNull(),
+    key: varchar({ length: 191 }).notNull(),
+    providerId: varchar("provider_id", { length: 200 }).notNull(),
+    settings: jsonb().notNull(),
+  },
+);

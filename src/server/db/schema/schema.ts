@@ -40,7 +40,7 @@ export const users = pgTable("user", (d) => ({
   email: d.varchar({ length: 255 }).notNull(),
   emailVerified: d.timestamp({ mode: "date" }),
   image: d.text("image"),
-  isVerified: d.boolean().notNull(),
+  isVerified: d.boolean().default(false).notNull(),
   createdAt: d
     .timestamp({
       withTimezone: true,
