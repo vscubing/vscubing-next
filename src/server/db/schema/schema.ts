@@ -17,7 +17,7 @@ import {
 import { sql } from "drizzle-orm";
 
 export const contestsSolvemodel = pgTable(
-  "contests_solvemodel",
+  "legacy_contests_solvemodel",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
@@ -25,7 +25,6 @@ export const contestsSolvemodel = pgTable(
       startWith: 1,
       increment: 1,
       minValue: 1,
-      maxValue: 9223372036854775807,
       cache: 1,
     }),
     createdAt: timestamp("created_at", {
@@ -106,7 +105,7 @@ export const contestsSolvemodel = pgTable(
 );
 
 export const contestsTnoodlescramblesmodel = pgTable(
-  "contests_tnoodlescramblesmodel",
+  "legacy_contests_tnoodlescramblesmodel",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
@@ -114,7 +113,6 @@ export const contestsTnoodlescramblesmodel = pgTable(
       startWith: 1,
       increment: 1,
       minValue: 1,
-      maxValue: 9223372036854775807,
       cache: 1,
     }),
     createdAt: timestamp("created_at", {
@@ -153,7 +151,7 @@ export const contestsTnoodlescramblesmodel = pgTable(
 );
 
 export const accountsUser = pgTable(
-  "accounts_user",
+  "legacy_accounts_user",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
@@ -161,7 +159,6 @@ export const accountsUser = pgTable(
       startWith: 1,
       increment: 1,
       minValue: 1,
-      maxValue: 9223372036854775807,
       cache: 1,
     }),
     password: varchar({ length: 128 }).notNull(),
@@ -196,14 +193,13 @@ export const accountsUser = pgTable(
 );
 
 export const accountEmailaddress = pgTable(
-  "account_emailaddress",
+  "legacy_account_emailaddress",
   {
     id: integer().primaryKey().generatedByDefaultAsIdentity({
       name: "account_emailaddress_id_seq",
       startWith: 1,
       increment: 1,
       minValue: 1,
-      maxValue: 2147483647,
       cache: 1,
     }),
     email: varchar({ length: 254 }).notNull(),
@@ -237,14 +233,13 @@ export const accountEmailaddress = pgTable(
 );
 
 export const accountEmailconfirmation = pgTable(
-  "account_emailconfirmation",
+  "legacy_account_emailconfirmation",
   {
     id: integer().primaryKey().generatedByDefaultAsIdentity({
       name: "account_emailconfirmation_id_seq",
       startWith: 1,
       increment: 1,
       minValue: 1,
-      maxValue: 2147483647,
       cache: 1,
     }),
     created: timestamp({ withTimezone: true, mode: "string" }).notNull(),
@@ -271,7 +266,7 @@ export const accountEmailconfirmation = pgTable(
 );
 
 export const accountsSettingsmodel = pgTable(
-  "accounts_settingsmodel",
+  "legacy_accounts_settingsmodel",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
@@ -279,7 +274,6 @@ export const accountsSettingsmodel = pgTable(
       startWith: 1,
       increment: 1,
       minValue: 1,
-      maxValue: 9223372036854775807,
       cache: 1,
     }),
     createdAt: timestamp("created_at", {
@@ -312,14 +306,13 @@ export const accountsSettingsmodel = pgTable(
 );
 
 export const authGroup = pgTable(
-  "auth_group",
+  "legacy_auth_group",
   {
     id: integer().primaryKey().generatedByDefaultAsIdentity({
       name: "auth_group_id_seq",
       startWith: 1,
       increment: 1,
       minValue: 1,
-      maxValue: 2147483647,
       cache: 1,
     }),
     name: varchar({ length: 150 }).notNull(),
@@ -334,7 +327,7 @@ export const authGroup = pgTable(
 );
 
 export const accountsUserGroups = pgTable(
-  "accounts_user_groups",
+  "legacy_accounts_user_groups",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
@@ -342,7 +335,6 @@ export const accountsUserGroups = pgTable(
       startWith: 1,
       increment: 1,
       minValue: 1,
-      maxValue: 9223372036854775807,
       cache: 1,
     }),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
@@ -376,14 +368,13 @@ export const accountsUserGroups = pgTable(
 );
 
 export const authPermission = pgTable(
-  "auth_permission",
+  "legacy_auth_permission",
   {
     id: integer().primaryKey().generatedByDefaultAsIdentity({
       name: "auth_permission_id_seq",
       startWith: 1,
       increment: 1,
       minValue: 1,
-      maxValue: 2147483647,
       cache: 1,
     }),
     name: varchar({ length: 255 }).notNull(),
@@ -408,7 +399,7 @@ export const authPermission = pgTable(
 );
 
 export const accountsUserUserPermissions = pgTable(
-  "accounts_user_user_permissions",
+  "legacy_accounts_user_user_permissions",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
@@ -416,7 +407,6 @@ export const accountsUserUserPermissions = pgTable(
       startWith: 1,
       increment: 1,
       minValue: 1,
-      maxValue: 9223372036854775807,
       cache: 1,
     }),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
@@ -450,7 +440,7 @@ export const accountsUserUserPermissions = pgTable(
 );
 
 export const authGroupPermissions = pgTable(
-  "auth_group_permissions",
+  "legacy_auth_group_permissions",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
@@ -458,7 +448,6 @@ export const authGroupPermissions = pgTable(
       startWith: 1,
       increment: 1,
       minValue: 1,
-      maxValue: 9223372036854775807,
       cache: 1,
     }),
     groupId: integer("group_id").notNull(),
@@ -491,7 +480,7 @@ export const authGroupPermissions = pgTable(
 );
 
 export const authtokenToken = pgTable(
-  "authtoken_token",
+  "legacy_authtoken_token",
   {
     key: varchar({ length: 40 }).primaryKey().notNull(),
     created: timestamp({ withTimezone: true, mode: "string" }).notNull(),
@@ -513,7 +502,7 @@ export const authtokenToken = pgTable(
 );
 
 export const contestsContestmodel = pgTable(
-  "contests_contestmodel",
+  "legacy_contests_contestmodel",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
@@ -521,7 +510,6 @@ export const contestsContestmodel = pgTable(
       startWith: 1,
       increment: 1,
       minValue: 1,
-      maxValue: 9223372036854775807,
       cache: 1,
     }),
     createdAt: timestamp("created_at", {
@@ -560,7 +548,7 @@ export const contestsContestmodel = pgTable(
 );
 
 export const contestsContestmodelDisciplineSet = pgTable(
-  "contests_contestmodel_discipline_set",
+  "legacy_contests_contestmodel_discipline_set",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
@@ -568,7 +556,6 @@ export const contestsContestmodelDisciplineSet = pgTable(
       startWith: 1,
       increment: 1,
       minValue: 1,
-      maxValue: 9223372036854775807,
       cache: 1,
     }),
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
@@ -603,7 +590,7 @@ export const contestsContestmodelDisciplineSet = pgTable(
 );
 
 export const contestsDisciplinemodel = pgTable(
-  "contests_disciplinemodel",
+  "legacy_contests_disciplinemodel",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
@@ -611,7 +598,6 @@ export const contestsDisciplinemodel = pgTable(
       startWith: 1,
       increment: 1,
       minValue: 1,
-      maxValue: 9223372036854775807,
       cache: 1,
     }),
     createdAt: timestamp("created_at", {
@@ -644,7 +630,7 @@ export const contestsDisciplinemodel = pgTable(
 );
 
 export const contestsRoundsessionmodel = pgTable(
-  "contests_roundsessionmodel",
+  "legacy_contests_roundsessionmodel",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
@@ -652,7 +638,6 @@ export const contestsRoundsessionmodel = pgTable(
       startWith: 1,
       increment: 1,
       minValue: 1,
-      maxValue: 9223372036854775807,
       cache: 1,
     }),
     createdAt: timestamp("created_at", {
@@ -709,7 +694,7 @@ export const contestsRoundsessionmodel = pgTable(
 );
 
 export const contestsScramblemodel = pgTable(
-  "contests_scramblemodel",
+  "legacy_contests_scramblemodel",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
@@ -717,7 +702,6 @@ export const contestsScramblemodel = pgTable(
       startWith: 1,
       increment: 1,
       minValue: 1,
-      maxValue: 9223372036854775807,
       cache: 1,
     }),
     createdAt: timestamp("created_at", {
@@ -763,7 +747,7 @@ export const contestsScramblemodel = pgTable(
 );
 
 export const contestsSingleresultleaderboardmodel = pgTable(
-  "contests_singleresultleaderboardmodel",
+  "legacy_contests_singleresultleaderboardmodel",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
@@ -771,7 +755,6 @@ export const contestsSingleresultleaderboardmodel = pgTable(
       startWith: 1,
       increment: 1,
       minValue: 1,
-      maxValue: 9223372036854775807,
       cache: 1,
     }),
     timeMs: integer("time_ms").notNull(),
@@ -794,14 +777,13 @@ export const contestsSingleresultleaderboardmodel = pgTable(
   ],
 );
 
-export const djangoMigrations = pgTable("django_migrations", {
+export const djangoMigrations = pgTable("legacy_django_migrations", {
   // You can use { mode: "bigint" } if numbers are exceeding js number limitations
   id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
     name: "django_migrations_id_seq",
     startWith: 1,
     increment: 1,
     minValue: 1,
-    maxValue: 9223372036854775807,
     cache: 1,
   }),
   app: varchar({ length: 255 }).notNull(),
@@ -810,7 +792,7 @@ export const djangoMigrations = pgTable("django_migrations", {
 });
 
 export const djangoSession = pgTable(
-  "django_session",
+  "legacy_django_session",
   {
     sessionKey: varchar("session_key", { length: 40 }).primaryKey().notNull(),
     sessionData: text("session_data").notNull(),
@@ -832,14 +814,13 @@ export const djangoSession = pgTable(
 );
 
 export const djangoSite = pgTable(
-  "django_site",
+  "legacy_django_site",
   {
     id: integer().primaryKey().generatedByDefaultAsIdentity({
       name: "django_site_id_seq",
       startWith: 1,
       increment: 1,
       minValue: 1,
-      maxValue: 2147483647,
       cache: 1,
     }),
     domain: varchar({ length: 100 }).notNull(),
@@ -855,14 +836,13 @@ export const djangoSite = pgTable(
 );
 
 export const djangoAdminLog = pgTable(
-  "django_admin_log",
+  "legacy_django_admin_log",
   {
     id: integer().primaryKey().generatedByDefaultAsIdentity({
       name: "django_admin_log_id_seq",
       startWith: 1,
       increment: 1,
       minValue: 1,
-      maxValue: 2147483647,
       cache: 1,
     }),
     actionTime: timestamp("action_time", {
@@ -901,14 +881,13 @@ export const djangoAdminLog = pgTable(
 );
 
 export const socialaccountSocialaccount = pgTable(
-  "socialaccount_socialaccount",
+  "legacy_socialaccount_socialaccount",
   {
     id: integer().primaryKey().generatedByDefaultAsIdentity({
       name: "socialaccount_socialaccount_id_seq",
       startWith: 1,
       increment: 1,
       minValue: 1,
-      maxValue: 2147483647,
       cache: 1,
     }),
     provider: varchar({ length: 200 }).notNull(),
@@ -943,7 +922,7 @@ export const socialaccountSocialaccount = pgTable(
 );
 
 export const socialaccountSocialappSites = pgTable(
-  "socialaccount_socialapp_sites",
+  "legacy_socialaccount_socialapp_sites",
   {
     // You can use { mode: "bigint" } if numbers are exceeding js number limitations
     id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
@@ -951,7 +930,6 @@ export const socialaccountSocialappSites = pgTable(
       startWith: 1,
       increment: 1,
       minValue: 1,
-      maxValue: 9223372036854775807,
       cache: 1,
     }),
     socialappId: integer("socialapp_id").notNull(),
@@ -984,14 +962,13 @@ export const socialaccountSocialappSites = pgTable(
 );
 
 export const djangoContentType = pgTable(
-  "django_content_type",
+  "legacy_django_content_type",
   {
     id: integer().primaryKey().generatedByDefaultAsIdentity({
       name: "django_content_type_id_seq",
       startWith: 1,
       increment: 1,
       minValue: 1,
-      maxValue: 2147483647,
       cache: 1,
     }),
     appLabel: varchar("app_label", { length: 100 }).notNull(),
@@ -1006,14 +983,13 @@ export const djangoContentType = pgTable(
 );
 
 export const socialaccountSocialtoken = pgTable(
-  "socialaccount_socialtoken",
+  "legacy_socialaccount_socialtoken",
   {
     id: integer().primaryKey().generatedByDefaultAsIdentity({
       name: "socialaccount_socialtoken_id_seq",
       startWith: 1,
       increment: 1,
       minValue: 1,
-      maxValue: 2147483647,
       cache: 1,
     }),
     token: text().notNull(),
@@ -1048,13 +1024,12 @@ export const socialaccountSocialtoken = pgTable(
   ],
 );
 
-export const socialaccountSocialapp = pgTable("socialaccount_socialapp", {
+export const socialaccountSocialapp = pgTable("legacy_socialaccount_socialapp", {
   id: integer().primaryKey().generatedByDefaultAsIdentity({
     name: "socialaccount_socialapp_id_seq",
     startWith: 1,
     increment: 1,
     minValue: 1,
-    maxValue: 2147483647,
     cache: 1,
   }),
   provider: varchar({ length: 30 }).notNull(),
