@@ -8,7 +8,7 @@ import {
   sessions,
   users,
   verificationTokens,
-} from "@/server/db/schema.bak";
+} from "@/server/db/schema/schema";
 import { env } from "@/env";
 
 /**
