@@ -6,10 +6,6 @@ type LogoProps = {
   variant?: "full" | "sm";
   className?: string;
 };
-// TODO: fix next
-// type LogoProps = ComponentProps<LinkComponent<"a">> & {
-//   variant?: "full" | "sm";
-// };
 export function LogoWithLinkToLanding({
   variant = "full",
   className,
