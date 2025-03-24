@@ -1,37 +1,51 @@
-import SeparateLimeCube from "@/app/_assets/images/not-found/separate-lime-cube.svg?url";
-import SeparatePurpleCube from "@/app/_assets/images/not-found/separate-purple-cube.svg?url";
-import BlackCube from "@/app/_assets/images/not-found/black-cube.svg?url";
-import BlueCube from "@/app/_assets/images/not-found/blue-cube.svg?url";
-import GreenCube from "@/app/_assets/images/not-found/green-cube.svg?url";
-import WhiteCube from "@/app/_assets/images/not-found/white-cube.svg?url";
-import WhiteSmCube from "@/app/_assets/images/not-found/white-sm-cube.svg?url";
-import Img404 from "@/app/_assets/images/not-found/404.svg?url";
+"use client";
+
+import separateLimeCube from "@/app/_assets/images/not-found/separate-lime-cube.svg?url";
+import separatePurpleCube from "@/app/_assets/images/not-found/separate-purple-cube.svg?url";
+import blackCube from "@/app/_assets/images/not-found/black-cube.svg?url";
+import blueCube from "@/app/_assets/images/not-found/blue-cube.svg?url";
+import greenCube from "@/app/_assets/images/not-found/green-cube.svg?url";
+import whiteCube from "@/app/_assets/images/not-found/white-cube.svg?url";
+import whiteSmCube from "@/app/_assets/images/not-found/white-sm-cube.svg?url";
+import img404 from "@/app/_assets/images/not-found/404.svg?url";
 import {
-    MouseParallaxChild,
-    MouseParallaxContainer,
+  MouseParallaxChild,
+  MouseParallaxContainer,
 } from "react-parallax-mouse";
 import { type ReactNode } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { PrimaryButton } from "./_components/ui";
+import { useMatchesScreen } from "./_utils/tailwind";
+import { useIsTouchDevice } from "./_utils/useMediaQuery";
+
+export function LinkToDashboard() {
+  const isSmScreen = useMatchesScreen("sm");
+  return (
+    <Link href="/">
+      <PrimaryButton className="sm:w-full" size={isSmScreen ? "sm" : "lg"}>
+        Go back to dashboard
+      </PrimaryButton>
+    </Link>
+  );
+}
 
 type ParallaxCubesProps = {
-  children: (renderParallaxCubes: () => ReactNode) => ReactNode;
+  children: ReactNode;
 };
-export default function ParallaxCubesWrapper({ children }: ParallaxCubesProps) {
+export function ParallaxCubesWrapper({ children }: ParallaxCubesProps) {
   return (
     <MouseParallaxContainer
       globalFactorX={0.022}
       globalFactorY={0.02}
       className="contents"
     >
-      <>
-        {children(() => (
-          <ParallaxCubes />
-        ))}
-      </>
+      {children}
     </MouseParallaxContainer>
   );
 }
 
-function ParallaxCubes() {
+export function ParallaxCubes() {
   return (
     <div className="absolute inset-0 overflow-clip">
       <MouseParallaxChild
@@ -39,14 +53,14 @@ function ParallaxCubes() {
         factorY={1.1}
         className="pointer-events-none absolute bottom-[15%] left-[10%]"
       >
-        <img src={SeparateLimeCube} alt="" />
+        <Image src={separateLimeCube} alt="" />
       </MouseParallaxChild>
       <MouseParallaxChild
         factorX={1.3}
         factorY={1.3}
         className="pointer-events-none absolute left-[10%] top-[max(40%,20rem)]"
       >
-        <img src={SeparatePurpleCube} alt="" />
+        <Image src={separatePurpleCube} alt="" />
       </MouseParallaxChild>
       <div className="pointer-events-none absolute left-1/2 top-[55%] aspect-square w-[min(80%,80vh)] -translate-x-1/2 -translate-y-1/2">
         <MouseParallaxChild
@@ -54,15 +68,15 @@ function ParallaxCubes() {
           factorY={1.5}
           className="absolute right-[2%] top-[55%] w-[18%]"
         >
-          <img
-            src={WhiteSmCube}
+          <Image
+            src={whiteSmCube}
             alt=""
             className="h-full w-full brightness-[60%]"
           />
         </MouseParallaxChild>
         <MouseParallaxChild className="absolute bottom-[5%] left-[30%] w-[21%]">
-          <img
-            src={BlackCube}
+          <Image
+            src={blackCube}
             alt=""
             className="h-full w-full brightness-[60%]"
           />
@@ -72,8 +86,8 @@ function ParallaxCubes() {
           factorY={0.8}
           className="absolute bottom-[3%] left-[40%] w-[37%]"
         >
-          <img
-            src={BlueCube}
+          <Image
+            src={blueCube}
             alt=""
             className="h-full w-full brightness-[60%]"
           />
@@ -83,8 +97,8 @@ function ParallaxCubes() {
           factorY={1.2}
           className="absolute left-[25%] top-[40%] w-[40%]"
         >
-          <img
-            src={WhiteCube}
+          <Image
+            src={whiteCube}
             alt=""
             className="h-full w-full brightness-[60%]"
           />
@@ -94,8 +108,8 @@ function ParallaxCubes() {
           factorY={0.5}
           className="absolute right-0 top-0 w-[67%]"
         >
-          <img
-            src={GreenCube}
+          <Image
+            src={greenCube}
             alt=""
             className="h-full w-full brightness-[60%]"
           />
@@ -105,7 +119,11 @@ function ParallaxCubes() {
           factorY={4}
           className="pointer-events-auto absolute left-1/2 top-[40%] w-[80%]"
         >
-          <img src={Img404} alt="" className="h-full w-full -translate-x-1/2" />
+          <Image
+            src={img404}
+            alt=""
+            className="h-full w-full -translate-x-1/2"
+          />
         </MouseParallaxChild>
       </div>
     </div>

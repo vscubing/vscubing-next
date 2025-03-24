@@ -1,12 +1,12 @@
-import { Header } from "./_sections/Header";
-import { HeroSection } from "./_sections/HeroSection";
-import { AboutSection } from "./_sections/AboutSection";
-import { FeaturesSection } from "./_sections/FeaturesSection";
+import { Header } from "./_sections/header";
+import { HeroSection } from "./_sections/hero-section";
+import { AboutSection } from "./_sections/about-section";
+import { FeaturesSection } from "./_sections/features-section";
 import featuresBackground from "./_assets/features-bg.svg?url";
-import { GuideSection } from "./_sections/GuideSection";
-import { ContactsSection } from "./_sections/ContactsSection";
-import { AcknowledgmentsSection } from "./_sections/AcknowledgmentsSection";
-import { Footer } from "./_sections/Footer";
+import { GuideSection } from "./_sections/huideSection";
+import { ContactsSection } from "./_sections/contacts-section";
+import { AcknowledgmentsSection } from "./_sections/acknowledgments-section";
+import { Footer } from "./_sections/footer";
 import Image from "next/image";
 
 const NAVIGATION_ANCHORS = {

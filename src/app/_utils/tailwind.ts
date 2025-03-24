@@ -2,6 +2,7 @@
 
 import resolveConfig from "tailwindcss/resolveConfig";
 import rawConfig from "../../../tailwind.config";
+import useMediaQuery from "./useMediaQuery";
 
 const rawTailwindConfig = rawConfig;
 export const tailwindConfig = resolveConfig(rawConfig);
@@ -11,12 +12,14 @@ export function tw(className: string) {
   return className;
 }
 
-export const isTouchDevice = matchMediaSsrWorkaround("(pointer:coarse)");
+export function useMatchesScreen(name: keyof typeof screens) {
+  return useMediaQuery(getQuery(name));
+}
 
-export function matchesQuery(name: keyof typeof screens) {
+export function getQuery(name: keyof typeof screens) {
   const data = screens[name];
   if ("raw" in data) {
-    return matchMediaSsrWorkaround(data.raw);
+    return data.raw;
   }
 
   const query: string[] = [];
@@ -26,14 +29,9 @@ export function matchesQuery(name: keyof typeof screens) {
   if ("max" in data) {
     query.push(`(max-width: ${data.max})`);
   }
-  const queryString = query.join(" and ");
-
-  return matchMediaSsrWorkaround(queryString);
+  return query.join(" and ");
 }
+
 type Screen = keyof typeof rawTailwindConfig.theme.screens;
 type Query = { min?: string; max?: string } | { raw: string };
 const screens: Record<Screen, Query> = rawTailwindConfig.theme.screens;
-
-function matchMediaSsrWorkaround(query: string) {
-  return typeof window !== "undefined" && matchMedia(query).matches;
-}

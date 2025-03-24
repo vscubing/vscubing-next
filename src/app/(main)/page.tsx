@@ -3,7 +3,7 @@ import Link from "next/link";
 import { LatestPost } from "@/app/_components/post";
 import { auth, signOut, signIn } from "@/server/auth";
 import { api, HydrateClient } from "@/trpc/server";
-import { Header } from "./_components/layout";
+import { Header } from "../_components/layout";
 
 export default async function Home() {
   const hello = await api.post.hello({ text: "from tRPC" });
@@ -16,14 +16,14 @@ export default async function Home() {
   return (
     <HydrateClient>
       <Header />
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
+      <main className="text-white flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
           <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
             Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
           </h1>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
+          <div className="grid grid-cols-1 gap-4 md:gap-8 sm:grid-cols-2">
             <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
+              className="bg-white/10 hover:bg-white/20 flex max-w-xs flex-col gap-4 rounded-xl p-4"
               href="https://create.t3.gg/en/usage/first-steps"
               target="_blank"
             >
@@ -34,7 +34,7 @@ export default async function Home() {
               </div>
             </Link>
             <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
+              className="bg-white/10 hover:bg-white/20 flex max-w-xs flex-col gap-4 rounded-xl p-4"
               href="https://create.t3.gg/en/introduction"
               target="_blank"
             >
@@ -46,12 +46,12 @@ export default async function Home() {
             </Link>
           </div>
           <div className="flex flex-col items-center gap-2">
-            <p className="text-2xl text-white">
+            <p className="text-white text-2xl">
               {hello ? hello.greeting : "Loading tRPC query..."}
             </p>
 
             <div className="flex flex-col items-center justify-center gap-4">
-              <p className="text-center text-2xl text-white">
+              <p className="text-white text-center text-2xl">
                 {session && <span>Logged in as {session.user?.name}</span>}
               </p>
               {session && (
@@ -61,7 +61,7 @@ export default async function Home() {
                     await signOut();
                   }}
                 >
-                  <button className="cursor-pointer rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20">
+                  <button className="bg-white/10 hover:bg-white/20 cursor-pointer rounded-full px-10 py-3 font-semibold no-underline transition">
                     Sign out
                   </button>
                 </form>
@@ -73,7 +73,7 @@ export default async function Home() {
                     await signIn("google");
                   }}
                 >
-                  <button className="cursor-pointer rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20">
+                  <button className="bg-white/10 hover:bg-white/20 cursor-pointer rounded-full px-10 py-3 font-semibold no-underline transition">
                     Sign in
                   </button>
                 </form>

@@ -6,10 +6,10 @@ import {
   ShareIcon,
 } from "../../_shared/icons";
 import { AnimationsController, BlockIntersectionWrapper } from "./animations";
-import { ResultsAnimation } from "./ResultsAnimation";
-import { ScramblesAnimation } from "./ScramblesAnimation";
-import { LeaderboardsAnimation } from "./LeaderboardsAnimation";
-import { SharingAnimation } from "./SharingAnimation";
+import { ResultsAnimation } from "./results-animation";
+import { ScramblesAnimation } from "./scrambles-animation";
+import { LeaderboardsAnimation } from "./leaderboards-animation";
+import { SharingAnimation } from "./sharing-animation";
 import type { ReactNode } from "react";
 
 export type BlockType = "results" | "scrambles" | "leaderboards" | "sharing";

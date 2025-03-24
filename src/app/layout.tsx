@@ -1,9 +1,6 @@
 import "@/styles/globals.css";
-
 import { type Metadata } from "next";
-
-import { TRPCReactProvider } from "@/trpc/react";
-import { Layout } from "./_components/layout";
+import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
   title: "vscubing",
@@ -12,21 +9,10 @@ export const metadata: Metadata = {
   icons: [{ rel: "icon", url: "/favicon.svg" }],
 };
 
-// const geist = Geist({
-//   subsets: ["latin"],
-//   variable: "--font-geist-sans",
-// });
-
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body>
-        <TRPCReactProvider>
-          <Layout>{children}</Layout>
-        </TRPCReactProvider>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

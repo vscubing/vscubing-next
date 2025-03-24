@@ -6,7 +6,7 @@ import {
   type ComponentPropsWithoutRef,
 } from "react";
 import { PrimaryButton, SecondaryButton } from "../buttons";
-import { matchesQuery, tw } from "@/app/_utils/tailwind";
+import { tw, useMatchesScreen } from "@/app/_utils/tailwind";
 import { cn } from "@/app/_utils/cn";
 
 export const baseDialogOverlay = tw(
@@ -29,48 +29,40 @@ type BaseDialogButtonProps = ComponentPropsWithoutRef<"button"> & {
 export const BaseDialogButton = forwardRef<
   ElementRef<"button">,
   BaseDialogButtonProps
->(
-  (
-    {
-      className,
-      size = matchesQuery("sm") ? "sm" : "lg",
-      version,
-      children,
-      ...props
-    },
-    ref,
-  ) => {
-    if (version === "primary")
-      return (
-        <PrimaryButton
-          size={size}
-          className={cn(
-            "h-15 min-w-28 whitespace-nowrap sm:h-11 sm:min-w-20",
-            className,
-          )}
-          ref={ref}
-          {...props}
-        >
-          {children}
-        </PrimaryButton>
-      );
+>(({ className, size, version, children, ...props }, ref) => {
+  const isSmScreen = useMatchesScreen("sm");
+  if (!size) size = isSmScreen ? "sm" : "lg";
 
-    if (version === "secondary")
-      return (
-        <SecondaryButton
-          size={size}
-          className={cn(
-            "sm:btn-sm h-15 min-w-28 whitespace-nowrap text-xl leading-[inherit] sm:h-11 sm:min-w-20",
-            className,
-          )}
-          ref={ref}
-          {...props}
-        >
-          {children}
-        </SecondaryButton>
-      );
-  },
-);
+  if (version === "primary")
+    return (
+      <PrimaryButton
+        size={size}
+        className={cn(
+          "h-15 min-w-28 whitespace-nowrap sm:h-11 sm:min-w-20",
+          className,
+        )}
+        ref={ref}
+        {...props}
+      >
+        {children}
+      </PrimaryButton>
+    );
+
+  if (version === "secondary")
+    return (
+      <SecondaryButton
+        size={size}
+        className={cn(
+          "sm:btn-sm h-15 min-w-28 whitespace-nowrap text-xl leading-[inherit] sm:h-11 sm:min-w-20",
+          className,
+        )}
+        ref={ref}
+        {...props}
+      >
+        {children}
+      </SecondaryButton>
+    );
+});
 BaseDialogButton.displayName = "Dialog button";
 
 export const baseDialogFooter = tw("flex w-full justify-center gap-4");
