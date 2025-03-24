@@ -1,4 +1,3 @@
-
 type NavbarProps = {
   onItemSelect?: () => void;
   variant: "vertical" | "horizontal";
