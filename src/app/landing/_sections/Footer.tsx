@@ -6,18 +6,18 @@ import {
     Logo,
     SecondaryButton,
 } from "@/app/_components/ui";
-import { Container } from "../shared/Container";
+import { Container } from "../_shared/Container";
 import { cn } from "@/app/_utils/cn";
-import footerBgCubes from "../assets/footer/footer-bg-cubes.svg?url";
-import animatedCube1 from "../assets/footer/animated-cube-1.svg?url";
-import animatedCube2 from "../assets/footer/animated-cube-2.svg?url";
-import animatedCube3 from "../assets/footer/animated-cube-3.svg?url";
-import animatedCube4 from "../assets/footer/animated-cube-4.svg?url";
-import animatedCube5 from "../assets/footer/animated-cube-5.svg?url";
-import animatedCube6 from "../assets/footer/animated-cube-6.svg?url";
-import animatedCube7 from "../assets/footer/animated-cube-7.svg?url";
-import animatedCube8 from "../assets/footer/animated-cube-8.svg?url";
-import animatedCube9 from "../assets/footer/animated-cube-9.svg?url";
+import footerBgCubes from "../_assets/footer/footer-bg-cubes.svg?url";
+import animatedCube1 from "../_assets//footer/animated-cube-1.svg?url";
+import animatedCube2 from "../_assets//footer/animated-cube-2.svg?url";
+import animatedCube3 from "../_assets//footer/animated-cube-3.svg?url";
+import animatedCube4 from "../_assets//footer/animated-cube-4.svg?url";
+import animatedCube5 from "../_assets//footer/animated-cube-5.svg?url";
+import animatedCube6 from "../_assets//footer/animated-cube-6.svg?url";
+import animatedCube7 from "../_assets//footer/animated-cube-7.svg?url";
+import animatedCube8 from "../_assets//footer/animated-cube-8.svg?url";
+import animatedCube9 from "../_assets//footer/animated-cube-9.svg?url";
 import standWithUkraineImg from "@/app/_assets/images/stand-with-ukraine.svg?url";
 import { type CSSProperties } from "react";
 

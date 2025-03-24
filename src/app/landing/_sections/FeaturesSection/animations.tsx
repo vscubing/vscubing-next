@@ -1,13 +1,15 @@
+"use client";
+
 import { cn } from "@/app/_utils/cn";
 import {
-    createContext,
-    type ReactNode,
-    useRef,
-    useState,
-    useEffect,
-    useContext,
-    type ComponentPropsWithoutRef,
-    useCallback,
+  createContext,
+  type ReactNode,
+  useRef,
+  useState,
+  useEffect,
+  type ComponentPropsWithoutRef,
+  useCallback,
+  use,
 } from "react";
 import { type BlockType } from ".";
 
@@ -81,7 +83,7 @@ export function AnimationsController({ children }: { children: ReactNode }) {
 }
 
 function useAnimationContext() {
-  const context = useContext(AnimationContext);
+  const context = use(AnimationContext);
   if (!context) {
     throw new Error("animation context is missing");
   }
@@ -95,7 +97,7 @@ export function BlockIntersectionWrapper({
   children: ReactNode;
   block: BlockType;
 }) {
-  const { blocksRef } = useContext(AnimationContext)!;
+  const { blocksRef } = use(AnimationContext)!;
 
   function handleBlockRef(node: Element | null) {
     if (node) {

@@ -1,12 +1,12 @@
 import { LoadingSpinner } from "@/app/_components/ui";
-import { StopwatchIcon } from "../../shared/icons";
+import { StopwatchIcon } from "../../_shared/icons";
 import { KEY_MAP, KeyMapTile } from "@/app/_shared/KeyMapDialog";
-import { Container } from "../../shared/Container";
-import { AnimatedBlob } from "../../shared/AnimatedBlob";
-import { StaticLinkToApp } from "../../shared/LinkToApp";
+import { Container } from "../../_shared/Container";
+import { AnimatedBlob } from "../../_shared/AnimatedBlob";
+import { StaticLinkToApp } from "../../_shared/LinkToApp";
 import { Suspense, lazy } from "react";
 import { matchesQuery } from "@/app/_utils/tailwind";
-const TwistySection = lazy(() => import("./TwistySection.lazy"));
+const TwistySection = lazy(() => import("./twisty-section"));
 
 export function HeroSection() {
   return (
@@ -15,13 +15,14 @@ export function HeroSection() {
         <div className="grid min-h-[40rem] flex-1 grid-cols-[1fr,auto] grid-rows-[auto,1fr] gap-3 lg:max-h-none lg:grid-cols-[1fr,30rem] lg:grid-rows-[40rem,auto] md:grid-cols-[1fr,22.4rem] md:grid-rows-[34rem,auto] sm:block sm:space-y-3">
           <div
             style={{
-              clipPath: matchesQuery("sm")
+              clipPath:
+                /* matchesQuery("sm")
                 ? "none"
                 : matchesQuery("md")
                   ? CLIP_PATH_POLYGON.MD
                   : matchesQuery("lg")
                     ? CLIP_PATH_POLYGON.LG
-                    : CLIP_PATH_POLYGON.XL,
+                    : */ CLIP_PATH_POLYGON.XL,
             }}
             className="row-span-2 flex h-full flex-col items-start justify-center rounded-3xl p-10 [background:linear-gradient(159deg,rgba(73,76,116,1)_0%,rgba(27,30,37,1)_71%)] lg:col-span-2 lg:row-span-1 md:px-6 md:pt-32 sm:px-4 sm:pb-4 sm:pt-20"
           >

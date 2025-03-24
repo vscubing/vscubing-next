@@ -1,6 +1,6 @@
 import { SecondaryButton, ShareIcon } from "@/app/_components/ui";
-import smileyArrowImg from "../../assets/features-sharing-img.svg?url";
-import cursorIcon from "../../assets/features-sharing-cursor.svg?url";
+import smileyArrowImg from "../../_assets/features-sharing-img.svg?url";
+import cursorIcon from "../../_assets//features-sharing-cursor.svg?url";
 import { AnimationItem } from "./animations";
 
 export function SharingAnimation() {

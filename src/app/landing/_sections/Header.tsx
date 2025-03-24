@@ -1,8 +1,9 @@
+"use client";
 import { cn } from "@/app/_utils/cn";
 import { useState, useEffect } from "react";
-import { Container } from "../shared/Container";
+import { Container } from "../_shared/Container";
 import { CloseIcon, Logo, MenuIcon } from "@/app/_components/ui";
-import { DynamicLinkToApp } from "../shared/LinkToApp";
+import { DynamicLinkToApp } from "../_shared/LinkToApp";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 
 export function Header({

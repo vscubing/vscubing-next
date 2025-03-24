@@ -1,6 +1,7 @@
+"use client";
+
 import { PlayIcon } from "@/app/_components/ui";
 import { cn } from "@/app/_utils/cn";
-import type { StaticImageData } from "next/image";
 import { type ComponentPropsWithoutRef, useRef, useState } from "react";
 import { useIntersectionObserver } from "usehooks-ts";
 
@@ -12,7 +13,7 @@ export function LazyAutoplayVideo({
   className,
   ...props
 }: {
-  thumbnail: StaticImageData;
+  thumbnail: string;
   webm: string;
   mp4: string;
   replayable?: boolean;
@@ -48,7 +49,7 @@ export function LazyAutoplayVideo({
       )}
       <video
         preload="none"
-        poster={thumbnail.src}
+        poster={thumbnail}
         playsInline
         muted
         {...props}

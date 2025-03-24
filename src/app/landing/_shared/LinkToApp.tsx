@@ -1,3 +1,5 @@
+"use client";
+
 import { PrimaryButton } from "@/app/_components/ui";
 import { cn } from "@/app/_utils/cn";
 import Link from "next/link";

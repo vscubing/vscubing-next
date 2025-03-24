@@ -1,7 +1,7 @@
 import { DiscordIcon, PrimaryButton } from "@/app/_components/ui";
-import { Container } from "../shared/Container";
-import contactsPeopleImg from "../assets/contacts-people.svg?url";
-import { AnimatedBlob } from "../shared/AnimatedBlob";
+import { Container } from "../_shared/Container";
+import contactsPeopleImg from "../_assets/contacts-people.svg?url";
+import { AnimatedBlob } from "../_shared/AnimatedBlob";
 import { matchesQuery } from "@/app/_utils/tailwind";
 import Image from "next/image";
 
@@ -14,7 +14,7 @@ export function ContactsSection({ id }: { id: string }) {
             <div
               className="flex h-full flex-col justify-center px-10 pb-28 pt-14 [background:linear-gradient(119deg,_rgba(54,60,64,1)_16%,rgba(27,30,37,1)_80%)] sm:h-auto sm:bg-none sm:p-0"
               style={{
-                clipPath: matchesQuery("sm") ? "none" : CLIP_PATH_POLYGON,
+                clipPath: /* matchesQuery("sm") ? "none" : */ CLIP_PATH_POLYGON,
               }}
             >
               <h2 className="landing-h2 mb-6">

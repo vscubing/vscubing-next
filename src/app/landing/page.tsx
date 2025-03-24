@@ -1,12 +1,13 @@
-import { Header } from "./sections/Header";
-import { HeroSection } from "./sections/HeroSection";
-import { AboutSection } from "./sections/AboutSection";
-import { FeaturesSection } from "./sections/FeaturesSection";
-import featuresBackground from "./assets/features-bg.svg?url";
-import { GuideSection } from "./sections/GuideSection";
-import { ContactsSection } from "./sections/ContactsSection";
-import { AcknowledgmentsSection } from "./sections/AcknowledgmentsSection";
-import { Footer } from "./sections/Footer";
+import { Header } from "./_sections/Header";
+import { HeroSection } from "./_sections/HeroSection";
+import { AboutSection } from "./_sections/AboutSection";
+import { FeaturesSection } from "./_sections/FeaturesSection";
+import featuresBackground from "./_assets/features-bg.svg?url";
+import { GuideSection } from "./_sections/GuideSection";
+import { ContactsSection } from "./_sections/ContactsSection";
+import { AcknowledgmentsSection } from "./_sections/AcknowledgmentsSection";
+import { Footer } from "./_sections/Footer";
+import Image from "next/image";
 
 const NAVIGATION_ANCHORS = {
   about: { id: "about", name: "About" },
@@ -15,7 +16,7 @@ const NAVIGATION_ANCHORS = {
   contacts: { id: "contacts", name: "Contacts" },
 };
 
-export function LandingPage() {
+export default function LandingPage() {
   return (
     <div className="bg-black-120 text-[1rem] leading-[1.4] text-grey-40">
       <Header navigationAnchors={Object.values(NAVIGATION_ANCHORS)} />
@@ -26,8 +27,9 @@ export function LandingPage() {
           id={NAVIGATION_ANCHORS.about.id}
         />
         <div className="relative overflow-x-clip">
-          <img
+          <Image
             src={featuresBackground}
+            alt=""
             loading="lazy"
             className="absolute bottom-[calc(100%-20rem)] left-1/2 w-screen max-w-max -translate-x-1/2 md:w-[200%] sm:hidden"
           />

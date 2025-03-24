@@ -1,8 +1,9 @@
-import { Container } from "../shared/Container";
-import cstimerLogo from "../assets/cstimer-logo.png";
-import cubingjsLogo from "../assets/cubingjs-logo.png";
-import sportcubingLogo from "../assets/sportcubing-logo.png";
+import { Container } from "../_shared/Container";
+import cstimerLogo from "../_assets/cstimer-logo.png";
+import cubingjsLogo from "../_assets/cubingjs-logo.png";
+import sportcubingLogo from "../_assets/sportcubing-logo.png";
 import Image from "next/image";
+import type { ReactNode } from "react";
 
 export function AcknowledgmentsSection() {
   return (
@@ -17,19 +18,40 @@ export function AcknowledgmentsSection() {
           <Acknowledgment
             name="csTimer"
             link="https://csTimer.net"
-            logoImg={cstimerLogo.src}
+            img={
+              <Image
+                src={cstimerLogo.src}
+                alt="csTimer"
+                width={35}
+                height={35}
+              />
+            }
             description="The heartbeat of our solving simulator"
           />
           <Acknowledgment
             name="cubing.js"
             link="https://js.cubing.net/cubing"
-            logoImg={cubingjsLogo.src}
+            img={
+              <Image
+                src={cubingjsLogo.src}
+                alt="cubing.js"
+                width={40}
+                height={40}
+              />
+            }
             description="Bringing our puzzle replays to life"
           />
           <Acknowledgment
             name="sportcubing.in.ua"
             link="https://sportcubing.in.ua"
-            logoImg={sportcubingLogo.src}
+            img={
+              <Image
+                src={sportcubingLogo.src}
+                alt="sportcubing.in.ua"
+                width={45}
+                height={45}
+              />
+            }
             description="Our guiding light in the cubing world"
           />
         </div>
@@ -41,19 +63,19 @@ export function AcknowledgmentsSection() {
 function Acknowledgment({
   name,
   link,
-  logoImg,
+  img,
   description,
 }: {
   name: string;
   link: string;
-  logoImg: string;
+  img: ReactNode;
   description: string;
 }) {
   return (
     <div className="rounded-3xl bg-black-100 p-10 sm:p-6">
       <a href={link} className="group mb-4 inline-flex items-end gap-2">
         <span className="flex h-[3.375rem] w-[3.375rem] items-center justify-center rounded-2xl bg-white-100">
-          <Image src={logoImg} alt={name} />
+          {img}
         </span>
         <span className="text-primary-60 group-hover:underline">{name}</span>
       </a>

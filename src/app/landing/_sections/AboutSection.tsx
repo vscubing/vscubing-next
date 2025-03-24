@@ -1,11 +1,6 @@
-import { CubeIcon, KeyboardIcon } from "../shared/icons";
-// import virtualCubeLaptopMp4 from "../assets/virtual-cube-laptop.mp4";
-// import virtualCubeLaptopWebM from "../assets/virtual-cube-laptop.webm";
-const virtualCubeLaptopMp4 = "";
-const virtualCubeLaptopWebM = "";
-import virtualCubeLaptopThumbnail from "../assets/virtual-cube-laptop-thumbnail.jpg";
-import { Container } from "../shared/Container";
-import { LazyAutoplayVideo } from "../shared/LazyAutoplayVideo";
+import { CubeIcon, KeyboardIcon } from "../_shared/icons";
+import { Container } from "../_shared/Container";
+import { LazyAutoplayVideo } from "../_shared/LazyAutoplayVideo";
 
 export function AboutSection({
   className,
@@ -41,9 +36,9 @@ export function AboutSection({
           width="100%"
           className="min-h-[19rem] rounded-3xl object-cover"
           replayable
-          thumbnail={virtualCubeLaptopThumbnail}
-          webm={virtualCubeLaptopWebM}
-          mp4={virtualCubeLaptopMp4}
+          thumbnail="/landing/videos/virtual-cube-laptop-thumbnail.jpg"
+          webm="/landing/videos/virtual-cube-laptop.webm"
+          mp4="/landing/videos/virtual-cube-laptop.mp4"
         />
       </section>
     </Container>

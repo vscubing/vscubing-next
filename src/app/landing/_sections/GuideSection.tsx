@@ -1,5 +1,5 @@
 import { type ReactNode } from "react";
-import { Container } from "../shared/Container";
+import { Container } from "../_shared/Container";
 import {
   Dialog,
   DialogOverlay,
@@ -7,13 +7,13 @@ import {
   DialogTrigger,
 } from "@/app/_components/ui";
 import { KeyMapDialogContent } from "@/app/_shared/KeyMapDialog";
-// import virtualCubeMp4 from "../assets/virtual-cube-screen.mp4";
-// import virtualCubeMp4 from "../assets/virtual-cube-screen.mp4";
-const virtualCubeMp4 = "";
-const virtualCubeWebM = "";
-import virtualCubeThumbnail from "../assets/virtual-cube-screen-thumbnail.jpg";
-import { StaticLinkToApp } from "../shared/LinkToApp";
-import { LazyAutoplayVideo } from "../shared/LazyAutoplayVideo";
+import virtualCubeThumbnail from "../_assets//virtual-cube-screen-thumbnail.jpg";
+import { StaticLinkToApp } from "../_shared/LinkToApp";
+import { LazyAutoplayVideo } from "../_shared/LazyAutoplayVideo";
+// import virtualCubeMp4 from "../_assets/virtual-cube-screen.mp4";
+// import virtualCubeMp4 from "../_assets/virtual-cube-screen.mp4";
+// const virtualCubeMp4 = "";
+// const virtualCubeWebM = "";
 
 export function GuideSection({ id }: { id: string }) {
   return (
@@ -80,9 +80,9 @@ export function GuideSection({ id }: { id: string }) {
           </ul>
           <div className="row-span-3 flex flex-col items-center justify-end gap-14 lg:row-span-1 lg:pt-12">
             <LazyAutoplayVideo
-              thumbnail={virtualCubeThumbnail}
-              mp4={virtualCubeMp4}
-              webm={virtualCubeWebM}
+              thumbnail="/landing/videos/virtual-cube-screen-thumbnail.jpg"
+              webm="/landing/videos/virtual-cube-screen.webm"
+              mp4="/landing/videos/virtual-cube-screen.mp4"
               width={380}
             />
             <StaticLinkToApp className="h-[4.5rem] px-[4.625rem] sm:h-[4.5rem]" />

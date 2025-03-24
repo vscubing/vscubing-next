@@ -1,10 +1,10 @@
-import { Container } from "../../shared/Container";
+import { Container } from "../../_shared/Container";
 import {
   LeaderboardIcon,
   ResultIcon,
   ScrambleIcon,
   ShareIcon,
-} from "../../shared/icons";
+} from "../../_shared/icons";
 import { AnimationsController, BlockIntersectionWrapper } from "./animations";
 import { ResultsAnimation } from "./ResultsAnimation";
 import { ScramblesAnimation } from "./ScramblesAnimation";
