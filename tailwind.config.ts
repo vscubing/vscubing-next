@@ -166,10 +166,12 @@ export default {
         default: '300ms',
       },
       backgroundImage: {
-        // 'dashboard-banner-cubes': "url('./assets/images/dashboard-banner-cubes.svg')",
-        // 'dashboard-banner-cubes-wide': "url('./assets/images/dashboard-banner-cubes-wide.svg')",
-        // cubes: "url('./assets/images/bg-cubes.svg')",
-        // 'solve-contest-progress-divider': "url('./assets/images/solve-contest-progress-divider.svg')",
+        'dashboard-banner-cubes': "url('/images/dashboard-banner-cubes.svg')",
+        'dashboard-banner-cubes-wide':
+          "url('/images/dashboard-banner-cubes-wide.svg')",
+        cubes: "url('/images/bg-cubes.svg')",
+        'solve-contest-progress-divider':
+          "url('/images/solve-contest-progress-divider.svg')",
       },
       containers: {
         '8xl': '88rem',

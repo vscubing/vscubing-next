@@ -2,7 +2,7 @@
 
 import { DiscordIcon, PrimaryButton } from '@/app/_components/ui'
 import { Container } from '../_shared/Container'
-import contactsPeopleImg from '../_assets/contacts-people.svg?url'
+import contactsPeopleImg from '@/../public/landing/contacts-people.svg'
 import { AnimatedBlob } from '../_shared/AnimatedBlob'
 import Image from 'next/image'
 import { useMatchesScreen } from '@/app/_utils/tailwind'

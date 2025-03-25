@@ -8,19 +8,19 @@ import {
 } from '@/app/_components/ui'
 import { Container } from '../_shared/Container'
 import { cn } from '@/app/_utils/cn'
-import footerBgCubes from '../_assets/footer/footer-bg-cubes.svg?url'
-import animatedCube1 from '../_assets//footer/animated-cube-1.svg?url'
-import animatedCube2 from '../_assets//footer/animated-cube-2.svg?url'
-import animatedCube3 from '../_assets//footer/animated-cube-3.svg?url'
-import animatedCube4 from '../_assets//footer/animated-cube-4.svg?url'
-import animatedCube5 from '../_assets//footer/animated-cube-5.svg?url'
-import animatedCube6 from '../_assets//footer/animated-cube-6.svg?url'
-import animatedCube7 from '../_assets//footer/animated-cube-7.svg?url'
-import animatedCube8 from '../_assets//footer/animated-cube-8.svg?url'
-import animatedCube9 from '../_assets//footer/animated-cube-9.svg?url'
-import standWithUkraineImg from '@/app/_assets/images/stand-with-ukraine.svg?url'
+import footerBgCubes from '@/../public/landing/footer/footer-bg-cubes.svg'
+import animatedCube1 from '@/../public/landing/footer/animated-cube-1.svg'
+import animatedCube2 from '@/../public/landing/footer/animated-cube-2.svg'
+import animatedCube3 from '@/../public/landing/footer/animated-cube-3.svg'
+import animatedCube4 from '@/../public/landing/footer/animated-cube-4.svg'
+import animatedCube5 from '@/../public/landing/footer/animated-cube-5.svg'
+import animatedCube6 from '@/../public/landing/footer/animated-cube-6.svg'
+import animatedCube7 from '@/../public/landing/footer/animated-cube-7.svg'
+import animatedCube8 from '@/../public/landing/footer/animated-cube-8.svg'
+import animatedCube9 from '@/../public/landing/footer/animated-cube-9.svg'
+import standWithUkraineImg from '@/../public/images/stand-with-ukraine.svg'
 import { type CSSProperties } from 'react'
-import Image from 'next/image'
+import Image, { type StaticImageData } from 'next/image'
 
 export function Footer({
   className,
@@ -199,7 +199,7 @@ function AnimatedCube({
   className,
   toTranslateY,
 }: {
-  src: string
+  src: StaticImageData
   className: string
   toTranslateY: string
 }) {

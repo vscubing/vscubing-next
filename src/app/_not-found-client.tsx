@@ -1,13 +1,13 @@
 'use client'
 
-import separateLimeCube from '@/app/_assets/images/not-found/separate-lime-cube.svg?url'
-import separatePurpleCube from '@/app/_assets/images/not-found/separate-purple-cube.svg?url'
-import blackCube from '@/app/_assets/images/not-found/black-cube.svg?url'
-import blueCube from '@/app/_assets/images/not-found/blue-cube.svg?url'
-import greenCube from '@/app/_assets/images/not-found/green-cube.svg?url'
-import whiteCube from '@/app/_assets/images/not-found/white-cube.svg?url'
-import whiteSmCube from '@/app/_assets/images/not-found/white-sm-cube.svg?url'
-import img404 from '@/app/_assets/images/not-found/404.svg?url'
+import separateLimeCube from '@/../public/images/not-found/separate-lime-cube.svg'
+import separatePurpleCube from '@/../public/images/not-found/separate-purple-cube.svg'
+import blackCube from '@/../public/images/not-found/black-cube.svg'
+import blueCube from '@/../public/images/not-found/blue-cube.svg'
+import greenCube from '@/../public/images/not-found/green-cube.svg'
+import whiteCube from '@/../public/images/not-found/white-cube.svg'
+import whiteSmCube from '@/../public/images/not-found/white-sm-cube.svg'
+import img404 from '@/../public/images/not-found/404.svg'
 import {
   MouseParallaxChild,
   MouseParallaxContainer,
