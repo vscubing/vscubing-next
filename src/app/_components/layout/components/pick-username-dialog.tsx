@@ -34,7 +34,7 @@ const formSchema = z.object({
 });
 type UsernameForm = z.infer<typeof formSchema>;
 
-// TODO: fix next
+// TODO: [next]
 export function PickUsernameDialog() {
   const [isPending, setIsPending] = useState(false);
   // const { data: user } = useUser();

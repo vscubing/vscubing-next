@@ -4,7 +4,7 @@
  */
 import "./src/env.js";
 
-// TODO: figure out why turbo doesn't work
+// TODO: [next] figure out why turbo doesn't work
 
 /** @type {import("next").NextConfig} */
 const config = {
@@ -37,17 +37,17 @@ const config = {
     return config;
   },
 
-  // TODO: turbopack doesn't work :(
-  // experimental: {
-  //   turbo: {
-  //     rules: {
-  //       "*.svg": {
-  //         loaders: ["@svgr/webpack"],
-  //         as: "*.js",
-  //       },
-  //     },
-  //   },
-  // },
+  experimental: {
+    allowDevelopmentBuild: true,
+    // turbo: {
+    //   rules: {
+    //     "*.svg": {
+    //       loaders: ["@svgr/webpack"],
+    //       as: "*.js",
+    //     },
+    //   },
+    // },
+  },
 
   eslint: {
     ignoreDuringBuilds: true,

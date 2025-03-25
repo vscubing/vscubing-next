@@ -1,0 +1,2 @@
+- [ ] prettier (single quote, no semicolons etc)
+- [ ] pick username

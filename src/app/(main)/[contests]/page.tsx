@@ -1,6 +1,6 @@
 import { HydrateClient } from "@/trpc/server";
 import { Header, SectionHeader } from "@/app/_components/layout";
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import {
   DEFAULT_DISCIPLINE,
   isDiscipline,
@@ -15,32 +15,40 @@ import { redirect } from "next/navigation";
 import { api } from "@/trpc/server";
 import { HintSection } from "@/app/_shared/HintSection";
 import { AutofillHeight } from "@/app/_shared/autofillHeight";
-
-import {
-  ContestRowSkeleton as ContestSkeletonDesktop,
-  ContestRow as ContestDesktop,
-} from "./_Contest";
-import {
-  Contest as ContestMobile,
-  ContestSkeleton as ContestSkeletonMobile,
-} from "@/app/_shared/contests/Contest";
 import { ContestsListHeader } from "./_ContestsListHeader";
-import { useMatchesScreen } from "@/app/_utils/tailwind";
+import {
+  ContestRowDesktop,
+  ContestRowMobile,
+  ContestRowSkeletonDesktop,
+  ContestRowSkeletonMobile,
+} from "./_Contest";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 export default async function ContestsIndexPage(props: {
   searchParams: SearchParams;
 }) {
-  const searchParams = await props.searchParams;
-
-  if (!isDiscipline(searchParams.discipline))
-    redirect(`/contests?discipline=${DEFAULT_DISCIPLINE}`);
-
   return (
     <HydrateClient>
-      <View discipline={searchParams.discipline}>
-        <ContestsList discipline={searchParams.discipline} />
-      </View>
+      <PageShell discipline="3by3">
+        <Suspense
+          fallback={
+            <div className="flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 sm:p-3">
+              <ContestsListHeader className="sm:hidden" />
+              <AutofillHeight.ListSkeleton
+                className="flex flex-1 flex-col gap-2"
+                skeletonItem={
+                  <>
+                    <ContestRowSkeletonDesktop className="sm:hidden" />
+                    <ContestRowSkeletonMobile className="hidden sm:flex" />
+                  </>
+                }
+              />
+            </div>
+          }
+        >
+          <PageContent searchParams={props.searchParams} />
+        </Suspense>
+      </PageShell>
     </HydrateClient>
   );
 }
@@ -69,13 +77,15 @@ export default async function ContestsIndexPage(props: {
 //   );
 // }
 
-type ViewProps = {
+type PageShellProps = {
   discipline: Discipline;
   children: ReactNode;
 };
-function View({ discipline: currentDiscipline, children }: ViewProps) {
+function PageShell({
+  discipline: currentDiscipline,
+  children,
+}: PageShellProps) {
   const title = "Explore contests";
-  // const { data: availableDisciplines } = useAvailableDisciplines();
   return (
     <section className="flex flex-1 flex-col gap-3 sm:gap-2">
       <Header title={title} />
@@ -102,22 +112,15 @@ function View({ discipline: currentDiscipline, children }: ViewProps) {
   );
 }
 
-async function ContestsList({
-  discipline,
-  // contests,
-  // lastElementRef,
-}: {
-  discipline: Discipline;
-  // contests?: (typeof contestsTable)[];
-  // lastElementRef?: (node?: Element | null) => void;
-}) {
-  // const isSmScreen = useMatchesScreen("sm");
-  const isSmScreen = false;
-  const Contest = isSmScreen ? ContestMobile : ContestDesktop;
-  const ContestSkeleton = isSmScreen
-    ? ContestSkeletonMobile
-    : ContestSkeletonDesktop;
+// TODO: [next] add infinite scroll
+async function PageContent(props: { searchParams: SearchParams }) {
+  const searchParams = await props.searchParams;
+  const discipline = searchParams.discipline;
 
+  if (!isDiscipline(discipline))
+    redirect(`/contests?discipline=${DEFAULT_DISCIPLINE}`);
+
+  // lastElementRef?: (node?: Element | null) => void;
   const contests = await api.contest.getPastContestsByDiscipline({
     discipline,
   });
@@ -137,23 +140,25 @@ async function ContestsList({
     <div className="flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 sm:p-3">
       <ContestsListHeader className="sm:hidden" />
 
-      {contests ? (
-        <ul className="flex flex-1 flex-col gap-2">
-          {contests.map((contest, index) => (
-            <li
-              key={contest.contest?.id}
-              // ref={index === contests.length - 1 ? lastElementRef : undefined}
-            >
-              <Contest discipline={discipline} contest={contest.contest!} />
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <AutofillHeight.ListSkeleton
-          className="flex flex-1 flex-col gap-2"
-          renderSkeletonItem={() => <ContestSkeleton />}
-        />
-      )}
+      <ul className="flex flex-1 flex-col gap-2">
+        {contests.map((contest, index) => (
+          <li
+            key={contest.contest?.id}
+            // ref={index === contests.length - 1 ? lastElementRef : undefined}
+            // TODO: [next]
+          >
+            <ContestRowDesktop
+              discipline={discipline}
+              contest={contest.contest}
+              className="sm:hidden"
+            />
+            <ContestRowMobile
+              contest={contest.contest}
+              className="hidden sm:flex"
+            />
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

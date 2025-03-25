@@ -23,7 +23,7 @@ export function Sidebar({ className }: { className?: string }) {
       <div className="flex flex-1 flex-col rounded-2xl bg-black-80 py-6 lg:py-3">
         <Navbar
           variant="vertical"
-          // onItemSelect={() => setOpenOnMobile(false)} // TODO: fix next
+          // onItemSelect={() => setOpenOnMobile(false)} / TODO: [next]
         />
         <SocialLinks className="mb-4 mt-auto" />
         <div className="flex justify-center border-t border-grey-80 pt-2">

@@ -16,7 +16,7 @@ export function PlaceLabel({ children: place, className }: PlaceLabelProps) {
           "transition-base outline-ring hover:border-primary-80 active:border-primary-80 active:text-primary-80":
             true,
           // !!linkToPage,
-          // TODO: fix next
+          // TODO: [next] fix
         },
         className,
       )}

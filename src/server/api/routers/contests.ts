@@ -12,25 +12,27 @@ import {
   postsTable,
 } from "@/server/db/schema";
 import { DISCIPLINES } from "@/shared";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 
 export const contestRouter = createTRPCRouter({
   getPastContestsByDiscipline: publicProcedure
     .input(z.object({ discipline: z.enum(DISCIPLINES) }))
-    .query(({ ctx, input }) =>
-      ctx.db
+    .query(async ({ ctx, input }) => {
+      const res = await ctx.db
         .select()
-        .from(contestsToDisciplinesTable)
+        .from(contestsTable)
         .leftJoin(
-          contestsTable,
+          contestsToDisciplinesTable,
           eq(contestsToDisciplinesTable.contestId, contestsTable.id),
         )
         .leftJoin(
           disciplinesTable,
           eq(contestsToDisciplinesTable.disciplineSlug, disciplinesTable.slug),
         )
-        .where(eq(disciplinesTable.slug, input.discipline)),
-    ),
+        .where(eq(disciplinesTable.slug, input.discipline))
+        .orderBy(desc(contestsTable.startDate));
+      return res;
+    }),
 
   hello: publicProcedure
     .input(z.object({ text: z.string() }))
