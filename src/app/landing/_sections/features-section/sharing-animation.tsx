@@ -2,6 +2,7 @@ import { SecondaryButton, ShareIcon } from '@/app/_components/ui'
 import smileyArrowImg from '../../_assets/features-sharing-img.svg?url'
 import cursorIcon from '../../_assets//features-sharing-cursor.svg?url'
 import { AnimationItem } from './animations'
+import Image from 'next/image'
 
 export function SharingAnimation() {
   return (
@@ -21,14 +22,14 @@ export function SharingAnimation() {
           shouldRegisterAnimationEnd={false}
           className='absolute left-[70%] top-[80%] animate-landing-features-sharing-cursor'
         >
-          <img src={cursorIcon} alt='' />
+          <Image src={cursorIcon} alt='' />
         </AnimationItem>
       </div>
       <AnimationItem
         block='sharing'
         className='animate-landing-features-sharing-img [clip-path:inset(0_100%_0_0)]'
       >
-        <img src={smileyArrowImg} alt='' />
+        <Image src={smileyArrowImg} alt='' />
       </AnimationItem>
     </div>
   )

@@ -5,3 +5,4 @@
 - [ ] pick username
 - [ ] use nextjs google font package
 - [ ] correct .env.example
+- [ ] update next js

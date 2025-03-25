@@ -17,7 +17,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { PrimaryButton } from './_components/ui'
 import { useMatchesScreen } from './_utils/tailwind'
-import { useIsTouchDevice } from './_utils/useMediaQuery'
 
 export function LinkToDashboard() {
   const isSmScreen = useMatchesScreen('sm')

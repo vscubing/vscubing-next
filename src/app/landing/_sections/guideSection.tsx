@@ -7,13 +7,8 @@ import {
   DialogTrigger,
 } from '@/app/_components/ui'
 import { KeyMapDialogContent } from '@/app/_shared/KeyMapDialog'
-import virtualCubeThumbnail from '../_assets//virtual-cube-screen-thumbnail.jpg'
 import { StaticLinkToApp } from '../_shared/LinkToApp'
 import { LazyAutoplayVideo } from '../_shared/LazyAutoplayVideo'
-// import virtualCubeMp4 from "../_assets/virtual-cube-screen.mp4";
-// import virtualCubeMp4 from "../_assets/virtual-cube-screen.mp4";
-// const virtualCubeMp4 = "";
-// const virtualCubeWebM = "";
 
 export function GuideSection({ id }: { id: string }) {
   return (

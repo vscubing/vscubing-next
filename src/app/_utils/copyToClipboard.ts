@@ -37,6 +37,7 @@ export function copyToClipboard(text: string) {
         resolve()
       } catch (e) {
         document.body.removeChild(textarea)
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         reject(e)
       }
     } else {
