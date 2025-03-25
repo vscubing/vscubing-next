@@ -8,9 +8,6 @@ import {
 } from "@/app/_types";
 import { PageTitleMobile } from "@/app/_shared/PageTitleMobile";
 import { NavigateBackButton } from "@/app/_shared/NavigateBackButton";
-import Link from "next/link";
-import { DISCIPLINES } from "@/shared";
-import { DisciplineSwitcherItem } from "@/app/_components/ui";
 import { redirect } from "next/navigation";
 import { api } from "@/trpc/server";
 import { HintSection } from "@/app/_shared/HintSection";
@@ -22,7 +19,7 @@ import {
   ContestRowSkeletonMobile,
 } from "./_components/_contest";
 import { AutofillHeightListSkeleton } from "@/app/_shared/autofillHeight/ListSkeleton";
-import Disciplines from "./_components/_test";
+import { DisciplineSwitcher } from "./_components/_discipline-switcher";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 export default async function ContestsIndexPage(props: {
@@ -89,10 +86,7 @@ type PageShellProps = {
   discipline: Discipline;
   children: ReactNode;
 };
-function PageShell({
-  discipline: currentDiscipline,
-  children,
-}: PageShellProps) {
+function PageShell({ children, discipline }: PageShellProps) {
   const title = "Explore contests";
   return (
     <section className="flex flex-1 flex-col gap-3 sm:gap-2">
@@ -100,7 +94,7 @@ function PageShell({
       <PageTitleMobile>{title}</PageTitleMobile>
       <NavigateBackButton className="self-start" />
       <SectionHeader>
-        <Disciplines />
+        <DisciplineSwitcher initialDiscipline={discipline} />
       </SectionHeader>
       {children}
     </section>
@@ -109,7 +103,6 @@ function PageShell({
 
 // TODO: [next] add infinite scroll
 async function PageContent({ discipline }: { discipline: Discipline }) {
-  // await new Promise((res) => setTimeout(res, 200000));
   // lastElementRef?: (node?: Element | null) => void;
   const contests = await api.contest.getPastContestsByDiscipline({
     discipline,

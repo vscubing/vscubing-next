@@ -7,9 +7,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
-export default function Disciplines() {
+export function DisciplineSwitcher({
+  initialDiscipline,
+}: {
+  initialDiscipline: Discipline;
+}) {
   const [currentDiscipline, setCurrentDiscipline] =
-    useState<Discipline>("3by3");
+    useState<Discipline>(initialDiscipline);
   const router = useRouter();
 
   return (
