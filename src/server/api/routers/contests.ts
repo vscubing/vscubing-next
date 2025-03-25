@@ -17,22 +17,25 @@ import { eq, desc } from "drizzle-orm";
 export const contestRouter = createTRPCRouter({
   getPastContestsByDiscipline: publicProcedure
     .input(z.object({ discipline: z.enum(DISCIPLINES) }))
-    .query(async ({ ctx, input }) => {
-      const res = await ctx.db
-        .select()
-        .from(contestsTable)
-        .leftJoin(
-          contestsToDisciplinesTable,
-          eq(contestsToDisciplinesTable.contestId, contestsTable.id),
-        )
-        .leftJoin(
-          disciplinesTable,
-          eq(contestsToDisciplinesTable.disciplineSlug, disciplinesTable.slug),
-        )
-        .where(eq(disciplinesTable.slug, input.discipline))
-        .orderBy(desc(contestsTable.startDate));
-      return res;
-    }),
+    .query(
+      async ({ ctx, input }) =>
+        await ctx.db
+          .select()
+          .from(contestsTable)
+          .leftJoin(
+            contestsToDisciplinesTable,
+            eq(contestsToDisciplinesTable.contestId, contestsTable.id),
+          )
+          .leftJoin(
+            disciplinesTable,
+            eq(
+              contestsToDisciplinesTable.disciplineSlug,
+              disciplinesTable.slug,
+            ),
+          )
+          .where(eq(disciplinesTable.slug, input.discipline))
+          .orderBy(desc(contestsTable.startDate)),
+    ),
 
   hello: publicProcedure
     .input(z.object({ text: z.string() }))

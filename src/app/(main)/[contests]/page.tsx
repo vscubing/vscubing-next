@@ -14,7 +14,6 @@ import { CubeSwitcher } from "@/app/_components/ui";
 import { redirect } from "next/navigation";
 import { api } from "@/trpc/server";
 import { HintSection } from "@/app/_shared/HintSection";
-import { AutofillHeight } from "@/app/_shared/autofillHeight";
 import { ContestsListHeader } from "./_ContestsListHeader";
 import {
   ContestRowDesktop,
@@ -22,19 +21,27 @@ import {
   ContestRowSkeletonDesktop,
   ContestRowSkeletonMobile,
 } from "./_Contest";
+import { AutofillHeightListSkeleton } from "@/app/_shared/autofillHeight/ListSkeleton";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 export default async function ContestsIndexPage(props: {
   searchParams: SearchParams;
 }) {
+  const searchParams = await props.searchParams;
+  const discipline = searchParams.discipline;
+
+  if (!isDiscipline(discipline))
+    redirect(`/contests?discipline=${DEFAULT_DISCIPLINE}`);
+
   return (
     <HydrateClient>
-      <PageShell discipline="3by3">
+      <PageShell discipline={discipline}>
         <Suspense
+          key={JSON.stringify(searchParams)}
           fallback={
             <div className="flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 sm:p-3">
               <ContestsListHeader className="sm:hidden" />
-              <AutofillHeight.ListSkeleton
+              <AutofillHeightListSkeleton
                 className="flex flex-1 flex-col gap-2"
                 skeletonItem={
                   <>
@@ -46,7 +53,7 @@ export default async function ContestsIndexPage(props: {
             </div>
           }
         >
-          <PageContent searchParams={props.searchParams} />
+          <PageContent discipline={discipline} />
         </Suspense>
       </PageShell>
     </HydrateClient>
@@ -113,13 +120,7 @@ function PageShell({
 }
 
 // TODO: [next] add infinite scroll
-async function PageContent(props: { searchParams: SearchParams }) {
-  const searchParams = await props.searchParams;
-  const discipline = searchParams.discipline;
-
-  if (!isDiscipline(discipline))
-    redirect(`/contests?discipline=${DEFAULT_DISCIPLINE}`);
-
+async function PageContent({ discipline }: { discipline: Discipline }) {
   // lastElementRef?: (node?: Element | null) => void;
   const contests = await api.contest.getPastContestsByDiscipline({
     discipline,

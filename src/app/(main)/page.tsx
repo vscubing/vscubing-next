@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { LatestPost } from "@/app/_components/post";
 import { auth, signOut, signIn } from "@/server/auth";
-import { api, HydrateClient } from "@/trpc/server";
+import { api } from "@/trpc/server";
 import { Header } from "../_components/layout";
 
 export default async function Home() {

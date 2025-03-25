@@ -1,7 +1,9 @@
+"use client";
+
 import { type ReactNode } from "react";
 import { useFittingCount } from "./useAutofillHeight";
 
-export function ListSkeleton({
+export function AutofillHeightListSkeleton({
   skeletonItem,
   className,
 }: {

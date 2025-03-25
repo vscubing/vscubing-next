@@ -1,7 +1,8 @@
 import { cn } from "@/app/_utils/cn";
 import { type ReactNode, type ReactElement } from "react";
-import { type Behavior } from ".";
 import { useIntersectionObserver } from "usehooks-ts";
+
+type Behavior = "infinite-scroll" | "pagination";
 
 type ListWrapperProps = {
   children: ReactNode;
