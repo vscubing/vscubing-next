@@ -2,9 +2,10 @@
 - [x] fix landing stopwatch icon
 - [x] eslint fixes
 - [x] use nextjs google font package
-- [ ] fix auth in dev
-- [ ] correct .env.example
-- [ ] update next js
+- [x] fix auth in dev
+- [x] correct .env.example
+- [x] update next js
 - [ ] infinite scrolling contests list
 - [ ] pick username
 - [ ] lazy loading with spinners (twisty)
+- [ ] dependency versions conflict
