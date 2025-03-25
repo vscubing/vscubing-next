@@ -26,7 +26,7 @@ export default function Disciplines() {
         >
           <DisciplineSwitcherItem
             asButton={false}
-            cube={discipline}
+            discipline={discipline}
             isActive={discipline === currentDiscipline}
           />
         </Link>

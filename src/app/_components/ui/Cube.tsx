@@ -3,10 +3,10 @@ import { forwardRef, type HTMLAttributes } from "react";
 import { DisciplineIcon } from "./icons";
 
 type DisciplineBadgeProps = HTMLAttributes<HTMLDivElement> & {
-  cube: string;
+  discipline: string;
 };
 export const DisciplineBadge = forwardRef<HTMLDivElement, DisciplineBadgeProps>(
-  ({ cube, className, ...props }, ref) => {
+  ({ discipline, className, ...props }, ref) => {
     return (
       <span
         className={cn(
@@ -16,7 +16,7 @@ export const DisciplineBadge = forwardRef<HTMLDivElement, DisciplineBadgeProps>(
         ref={ref}
         {...props}
       >
-        <DisciplineIcon discipline={cube} />
+        <DisciplineIcon discipline={discipline} />
       </span>
     );
   },
@@ -27,12 +27,12 @@ type DisciplineSwitcherProps = {
   className?: string;
   asButton?: boolean;
   isActive?: boolean;
-  cube: string;
+  discipline: string;
 };
 export const DisciplineSwitcherItem = forwardRef<
   HTMLButtonElement,
   DisciplineSwitcherProps
->(({ className, isActive, cube, asButton = true, ...props }, ref) => {
+>(({ className, isActive, discipline, asButton = true, ...props }, ref) => {
   const Comp = asButton ? "button" : "span";
   return (
     <Comp ref={ref} {...props}>
@@ -42,7 +42,7 @@ export const DisciplineSwitcherItem = forwardRef<
           { "bg-secondary-20 text-black-100": isActive },
           className,
         )}
-        cube={cube}
+        discipline={discipline}
       />
     </Comp>
   );
