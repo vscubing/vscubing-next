@@ -1,10 +1,10 @@
-import CubeIcon from '../_assets/cube.icon.svg'
-import KeyboardIcon from '../_assets/keyboard.icon.svg'
-import LeaderboardIcon from '../_assets/leaderboard.icon.svg'
-import ResultIcon from '../_assets/result.icon.svg'
-import ScrambleIcon from '../_assets/scramble.icon.svg'
-import ShareIcon from '../_assets/share.icon.svg'
-import StopwatchIcon from '../_assets/stopwatch.icon.svg'
+import CubeIcon from '@/../public/landing/cube.icon.svg'
+import KeyboardIcon from '@/../public/landing/keyboard.icon.svg'
+import LeaderboardIcon from '@/../public/landing/leaderboard.icon.svg'
+import ResultIcon from '@/../public/landing/result.icon.svg'
+import ScrambleIcon from '@/../public/landing/scramble.icon.svg'
+import ShareIcon from '@/../public/landing/share.icon.svg'
+import StopwatchIcon from '@/../public/landing/stopwatch.icon.svg'
 
 export {
   CubeIcon,

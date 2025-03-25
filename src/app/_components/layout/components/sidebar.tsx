@@ -4,7 +4,7 @@ import { ControlMobileMenuButton } from '../store/mobileMenuOpenAtom'
 import { LogoWithLinkToLanding } from './logo'
 import { Navbar } from './navbar'
 import Image from 'next/image'
-import standWithUkraineImg from '@/app/_assets/images/stand-with-ukraine.svg'
+import standWithUkraineImg from '@/../public/images/stand-with-ukraine.svg'
 
 export function Sidebar({ className }: { className?: string }) {
   return (

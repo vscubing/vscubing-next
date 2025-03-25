@@ -1,7 +1,7 @@
 import { Container } from '../_shared/Container'
-import cstimerLogo from '../_assets/cstimer-logo.png'
-import cubingjsLogo from '../_assets/cubingjs-logo.png'
-import sportcubingLogo from '../_assets/sportcubing-logo.png'
+import cstimerLogo from '@/../public/landing/cstimer-logo.png'
+import cubingjsLogo from '@/../public/landing/cubingjs-logo.png'
+import sportcubingLogo from '@/../public/landing/sportcubing-logo.png'
 import Image from 'next/image'
 import type { ReactNode } from 'react'
 

@@ -5,8 +5,8 @@
 - [x] fix auth in dev
 - [x] correct .env.example
 - [x] update next js
+- [x] tailwind img imports
 - [ ] infinite scrolling contests list
 - [ ] pick username
 - [ ] lazy loading with spinners (twisty)
 - [ ] dependency versions conflict
-- [ ] tailwind img imports
