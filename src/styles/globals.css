@@ -1,6 +1,133 @@
-@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Hind:wght@400;500&display=swap&family=Kanit:wght@400;500&display=swap");
 
-@theme {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    overscroll-behavior: none;
+    scroll-behavior: smooth;
+  }
+
+  :root {
+    @apply text-base;
+
+    --header-height: 4.375rem;
+    @screen sm {
+      --header-height: 3.5rem;
+    }
+    --mobile-bottom-nav-height: 5rem;
+  }
+  body {
+    @apply font-hind text-[0.875rem] leading-[1.5] text-white-100;
+    @apply !pointer-events-auto; /* to make toasts accessible with opened Radix Dialog (and Vaul) */
+    @apply bg-black-120;
+  }
+  svg {
+    @apply text-[1rem];
+  }
+}
+
+@layer components {
+  .title-lg {
+    @apply font-kanit text-[3rem] leading-[1.2] tracking-[0.02em] sm:text-[1.625rem] sm:leading-[1.5] sm:tracking-normal;
+  }
+  .title-h1 {
+    @apply font-kanit text-[2rem] sm:text-[1.375rem];
+  }
+  .title-h2 {
+    @apply font-kanit text-[1.625rem] sm:text-[1.25rem];
+  }
+  .title-h3 {
+    @apply font-kanit text-[1.25rem] sm:text-[1.125rem];
+  }
+  .btn-lg {
+    @apply font-kanit text-[1.125rem] font-medium sm:text-[1rem];
+  }
+  .btn-sm {
+    @apply font-kanit text-[0.875rem] font-medium;
+  }
+  .text-large {
+    @apply text-[1rem] sm:text-[0.9375rem];
+  }
+  .caption {
+    @apply text-[0.75rem] tracking-[0.01em] sm:text-[0.75rem];
+  }
+  .caption-sm {
+    @apply text-[0.625rem] sm:tracking-[0.01em];
+  }
+
+  .bg-card-gradient {
+    @apply relative [&>*]:relative [&>*]:z-10;
+  }
+  .bg-card-gradient::after {
+    @apply pointer-events-none absolute inset-0 z-0 rounded-[inherit];
+
+    content: "";
+    background: linear-gradient(
+      165deg,
+      rgba(255, 255, 255, 0.3) 13.84%,
+      rgba(255, 255, 255, 0.1) 74.14%
+    );
+    box-shadow: 0px 4px 20px 1px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(5px);
+  }
+
+  .transition-base {
+    @apply transition duration-300 ease-in-out;
+  }
+  .outline-ring {
+    @apply ring-white-100 focus-visible:outline-none focus-visible:ring-2;
+  }
+  .vertical-alignment-fix {
+    @apply pt-[.2em];
+  }
+  .scrollbar::-webkit-scrollbar {
+    @apply w-1;
+  }
+  .scrollbar::-webkit-scrollbar-button {
+    @apply h-0 w-0;
+  }
+  .scrollbar::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-white-100;
+  }
+  .scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary-60;
+  }
+  .scrollbar::-webkit-scrollbar-thumb:active {
+    @apply bg-primary-80;
+  }
+  .scrollbar::-webkit-scrollbar-track {
+    @apply rounded-full bg-grey-60;
+    border: 0px none #ffffff;
+  }
+  .scrollbar::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  .after-border-bottom {
+    @apply relative after:absolute after:bottom-0 after:left-0;
+    @apply after:transition-transform;
+    @apply after:block after:h-[.5px] after:w-full after:scale-x-0 after:bg-current;
+  }
+
+  .landing-h1 {
+    @apply font-kanit text-[3.625rem] leading-[1.1] tracking-[0.01em] text-white-100 sm:text-[2.875rem];
+  }
+  .landing-h2 {
+    @apply font-kanit text-[2.75rem] leading-[1.1] tracking-[0.01em] text-white-100 sm:text-[2.375rem];
+  }
+  .landing-h3 {
+    @apply font-kanit text-[1.625rem] leading-[1.4] tracking-normal text-white-100;
+  }
+
+  .landing-offset-anchor::before {
+    /* offset the anchoring point to account for the fixed header */
+    content: "";
+    display: block;
+    height: 100px;
+    margin-top: -100px;
+    visibility: hidden;
+  }
 }
