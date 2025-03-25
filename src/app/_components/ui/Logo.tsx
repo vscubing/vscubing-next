@@ -1,6 +1,6 @@
 import { type ComponentPropsWithoutRef } from 'react'
-import logoFullImg from '@/app/_assets/images/logo-full.svg?url'
-import logoSmImg from '@/app/_assets/images/logo-sm.svg?url'
+import logoFullImg from '@/app/_assets/images/logo-full.svg'
+import logoSmImg from '@/app/_assets/images/logo-sm.svg'
 import { cn } from '@/app/_utils/cn'
 import Image from 'next/image'
 import { env } from '@/env'

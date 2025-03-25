@@ -9,3 +9,4 @@
 - [ ] pick username
 - [ ] lazy loading with spinners (twisty)
 - [ ] dependency versions conflict
+- [ ] tailwind img imports

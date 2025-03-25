@@ -38,15 +38,15 @@ const config = {
   },
 
   experimental: {
-    // allowDevelopmentBuild: true,
-    // turbo: {
-    //   rules: {
-    //     "*.svg": {
-    //       loaders: ["@svgr/webpack"],
-    //       as: "*.js",
-    //     },
-    //   },
-    // },
+    allowDevelopmentBuild: true,
+    turbo: {
+      rules: {
+        '*.icon.svg': {
+          loaders: ['@svgr/webpack'],
+          as: '*.js',
+        },
+      },
+    },
   },
 
   eslint: {
