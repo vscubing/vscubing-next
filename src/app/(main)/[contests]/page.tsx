@@ -10,18 +10,19 @@ import { PageTitleMobile } from "@/app/_shared/PageTitleMobile";
 import { NavigateBackButton } from "@/app/_shared/NavigateBackButton";
 import Link from "next/link";
 import { DISCIPLINES } from "@/shared";
-import { CubeSwitcher } from "@/app/_components/ui";
+import { DisciplineSwitcherItem } from "@/app/_components/ui";
 import { redirect } from "next/navigation";
 import { api } from "@/trpc/server";
 import { HintSection } from "@/app/_shared/HintSection";
-import { ContestsListHeader } from "./_ContestsListHeader";
+import { ContestsListHeader } from "./_components/_contests-list-header";
 import {
   ContestRowDesktop,
   ContestRowMobile,
   ContestRowSkeletonDesktop,
   ContestRowSkeletonMobile,
-} from "./_Contest";
+} from "./_components/_contest";
 import { AutofillHeightListSkeleton } from "@/app/_shared/autofillHeight/ListSkeleton";
+import Disciplines from "./_components/_test";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 export default async function ContestsIndexPage(props: {
@@ -99,20 +100,7 @@ function PageShell({
       <PageTitleMobile>{title}</PageTitleMobile>
       <NavigateBackButton className="self-start" />
       <SectionHeader>
-        <div className="flex gap-3">
-          {DISCIPLINES.map((discipline) => (
-            <Link
-              href={{ pathname: "/contests", query: { discipline } }}
-              key={discipline}
-            >
-              <CubeSwitcher
-                asButton={false}
-                cube={discipline}
-                isActive={discipline === currentDiscipline}
-              />
-            </Link>
-          ))}
-        </div>
+        <Disciplines />
       </SectionHeader>
       {children}
     </section>
@@ -121,6 +109,7 @@ function PageShell({
 
 // TODO: [next] add infinite scroll
 async function PageContent({ discipline }: { discipline: Discipline }) {
+  // await new Promise((res) => setTimeout(res, 200000));
   // lastElementRef?: (node?: Element | null) => void;
   const contests = await api.contest.getPastContestsByDiscipline({
     discipline,

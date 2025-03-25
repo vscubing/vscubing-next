@@ -1,4 +1,4 @@
-import { CubeIcon } from "@/app/_components/ui";
+import { DisciplineIcon } from "@/app/_components/ui";
 import { SolveTimeLabel } from "@/app/_shared/SolveTimeButton";
 import { AnimationItem } from "./animations";
 import { type CSSProperties } from "react";
@@ -50,7 +50,7 @@ function Row({
         <div className="vertical-alignment-fix mr-2 flex h-8 w-8 items-center justify-center rounded-full border border-primary-80 text-[.75rem]">
           {place}
         </div>
-        <CubeIcon cube="3by3" className="mr-2 h-5 w-5" />
+        <DisciplineIcon discipline="3by3" className="mr-2 h-5 w-5" />
         <span className="vertical-alignment-fix text-[.625rem]">
           {nickname}
         </span>

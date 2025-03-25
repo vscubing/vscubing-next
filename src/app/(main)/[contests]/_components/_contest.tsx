@@ -1,5 +1,5 @@
 import { DEFAULT_DISCIPLINE, type Discipline } from "@/app/_types";
-import { CubeIcon, SecondaryButton } from "@/app/_components/ui";
+import { DisciplineIcon, SecondaryButton } from "@/app/_components/ui";
 import type { contestsTable } from "@/server/db/schema";
 import { formatContestDuration } from "@/app/_utils/formatDate";
 import Link from "next/link";
@@ -33,7 +33,7 @@ export function ContestRowDesktop({
       )}
       style={{ height }}
     >
-      <CubeIcon cube={discipline} className="mr-4" />
+      <DisciplineIcon discipline={discipline} className="mr-4" />
       <span className="vertical-alignment-fix relative mr-4 flex-1 pr-4 after:absolute after:right-0 after:top-1/2 after:h-6 after:w-px after:-translate-y-1/2 after:bg-grey-60">
         Contest {contest.slug}
       </span>

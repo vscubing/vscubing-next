@@ -1,5 +1,5 @@
-import Cube3Icon from "@/app/_assets/icons/cube-3.svg";
-import Cube2Icon from "@/app/_assets/icons/cube-2.svg";
+import Discipline3by3Icon from "@/app/_assets/icons/discipline-3by3.svg";
+import Discipline2by2Icon from "@/app/_assets/icons/discipline-2by2.svg";
 import AllContestsIcon from "@/app/_assets/icons/all-contests.svg";
 import ArrowBackUpIcon from "@/app/_assets/icons/arrow-back-up.svg";
 import ArrowRightIcon from "@/app/_assets/icons/arrow-right.svg";
@@ -71,16 +71,16 @@ export {
   SettingIcon,
 };
 
-type CubeIconProps = HTMLAttributes<SVGSVGElement> & {
-  cube: string;
+type DisciplineIconProps = HTMLAttributes<SVGSVGElement> & {
+  discipline: string;
 };
 
 const ICONS = {
-  "3by3": Cube3Icon,
-  "2by2": Cube2Icon,
+  "3by3": Discipline3by3Icon,
+  "2by2": Discipline2by2Icon,
 } as const;
-export const CubeIcon = forwardRef<SVGSVGElement, CubeIconProps>(
-  ({ cube, className, ...props }, ref) => {
+export const DisciplineIcon = forwardRef<SVGSVGElement, DisciplineIconProps>(
+  ({ discipline: cube, className, ...props }, ref) => {
     const Comp = isDiscipline(cube) ? ICONS[cube] : PlaceholderIcon;
     return (
       <Comp
@@ -91,7 +91,7 @@ export const CubeIcon = forwardRef<SVGSVGElement, CubeIconProps>(
     );
   },
 );
-CubeIcon.displayName = "CubeIcon";
+DisciplineIcon.displayName = "DisciplineIcon";
 
 function PlaceholderIcon({ className }: { className?: string }) {
   return <svg className={cn("animate-pulse bg-grey-60", className)}></svg>;

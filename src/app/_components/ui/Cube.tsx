@@ -1,11 +1,11 @@
 import { cn } from "@/app/_utils/cn";
 import { forwardRef, type HTMLAttributes } from "react";
-import { CubeIcon } from "./icons";
+import { DisciplineIcon } from "./icons";
 
-type CubeBadgeProps = HTMLAttributes<HTMLDivElement> & {
+type DisciplineBadgeProps = HTMLAttributes<HTMLDivElement> & {
   cube: string;
 };
-const CubeBadge = forwardRef<HTMLDivElement, CubeBadgeProps>(
+export const DisciplineBadge = forwardRef<HTMLDivElement, DisciplineBadgeProps>(
   ({ cube, className, ...props }, ref) => {
     return (
       <span
@@ -16,36 +16,35 @@ const CubeBadge = forwardRef<HTMLDivElement, CubeBadgeProps>(
         ref={ref}
         {...props}
       >
-        <CubeIcon cube={cube} />
+        <DisciplineIcon discipline={cube} />
       </span>
     );
   },
 );
-CubeBadge.displayName = "CubeBadge";
+DisciplineBadge.displayName = "DisciplineBadge";
 
-type CubeSwitcherProps = {
+type DisciplineSwitcherProps = {
   className?: string;
   asButton?: boolean;
   isActive?: boolean;
   cube: string;
 };
-const CubeSwitcher = forwardRef<HTMLButtonElement, CubeSwitcherProps>(
-  ({ className, isActive, cube, asButton = true, ...props }, ref) => {
-    const Comp = asButton ? "button" : "span";
-    return (
-      <Comp ref={ref} {...props}>
-        <CubeBadge
-          className={cn(
-            "transition-base outline-ring cursor-pointer border border-transparent bg-grey-100 text-grey-60 hover:border-secondary-20 active:bg-secondary-20 active:text-black-100",
-            { "bg-secondary-20 text-black-100": isActive },
-            className,
-          )}
-          cube={cube}
-        />
-      </Comp>
-    );
-  },
-);
-CubeSwitcher.displayName = "CubeSwitcher";
-
-export { CubeBadge, CubeSwitcher };
+export const DisciplineSwitcherItem = forwardRef<
+  HTMLButtonElement,
+  DisciplineSwitcherProps
+>(({ className, isActive, cube, asButton = true, ...props }, ref) => {
+  const Comp = asButton ? "button" : "span";
+  return (
+    <Comp ref={ref} {...props}>
+      <DisciplineBadge
+        className={cn(
+          "transition-base outline-ring cursor-pointer border border-transparent bg-grey-100 text-grey-60 hover:border-secondary-20 active:bg-secondary-20 active:text-black-100",
+          { "bg-secondary-20 text-black-100": isActive },
+          className,
+        )}
+        cube={cube}
+      />
+    </Comp>
+  );
+});
+DisciplineSwitcherItem.displayName = "DisciplineSwitcher";
