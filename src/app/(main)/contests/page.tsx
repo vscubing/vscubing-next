@@ -7,15 +7,15 @@ import { NavigateBackButton } from '@/app/_shared/NavigateBackButton'
 import { redirect } from 'next/navigation'
 import { api } from '@/trpc/server'
 import { HintSection } from '@/app/_shared/HintSection'
-import { ContestsListHeader } from './_components/_contests-list-header'
+import { ContestsListHeader } from './_components/contests-list-header'
 import {
   ContestRowDesktop,
   ContestRowMobile,
   ContestRowSkeletonDesktop,
   ContestRowSkeletonMobile,
-} from './_components/_contest'
+} from './_components/contest'
 import { AutofillHeightListSkeleton } from '@/app/_shared/autofillHeight/ListSkeleton'
-import { DisciplineSwitcher } from './_components/_discipline-switcher'
+import { DisciplineSwitcher } from './_components/discipline-switcher'
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>
 export default async function ContestsIndexPage(props: {
