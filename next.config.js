@@ -38,7 +38,7 @@ const config = {
   },
 
   experimental: {
-    allowDevelopmentBuild: true,
+    // allowDevelopmentBuild: true,
     // turbo: {
     //   rules: {
     //     "*.svg": {

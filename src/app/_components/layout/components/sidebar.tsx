@@ -7,8 +7,6 @@ import Image from "next/image";
 import standWithUkraineImg from "@/app/_assets/images/stand-with-ukraine.svg?url";
 
 export function Sidebar({ className }: { className?: string }) {
-  // const setOpenOnMobile = useSetAtom(mobileMenuOpenAtom);
-
   return (
     <aside className={cn("flex flex-col gap-3", className)}>
       <div className="flex h-[7rem] xl-short:h-[var(--header-height)] lg:h-[var(--header-height)] lg:gap-3">
@@ -21,10 +19,7 @@ export function Sidebar({ className }: { className?: string }) {
         <LogoWithLinkToLanding className="flex w-full rounded-2xl bg-black-80 px-4 lg:px-7 sm:px-4" />
       </div>
       <div className="flex flex-1 flex-col rounded-2xl bg-black-80 py-6 lg:py-3">
-        <Navbar
-          variant="vertical"
-          // onItemSelect={() => setOpenOnMobile(false)} / TODO: [next]
-        />
+        <Navbar variant="vertical" />
         <SocialLinks className="mb-4 mt-auto" />
         <div className="flex justify-center border-t border-grey-80 pt-2">
           <a href="https://u24.gov.ua/about">
