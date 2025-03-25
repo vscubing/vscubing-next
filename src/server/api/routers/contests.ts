@@ -5,9 +5,33 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "@/server/api/trpc";
-import { postsTable } from "@/server/db/schema";
+import {
+  contestsTable,
+  contestsToDisciplinesTable,
+  disciplinesTable,
+  postsTable,
+} from "@/server/db/schema";
+import { DISCIPLINES } from "@/shared";
+import { eq } from "drizzle-orm";
 
-export const postRouter = createTRPCRouter({
+export const contestRouter = createTRPCRouter({
+  getPastContestsByDiscipline: publicProcedure
+    .input(z.object({ discipline: z.enum(DISCIPLINES) }))
+    .query(({ ctx, input }) =>
+      ctx.db
+        .select()
+        .from(contestsToDisciplinesTable)
+        .leftJoin(
+          contestsTable,
+          eq(contestsToDisciplinesTable.contestId, contestsTable.id),
+        )
+        .leftJoin(
+          disciplinesTable,
+          eq(contestsToDisciplinesTable.disciplineSlug, disciplinesTable.slug),
+        )
+        .where(eq(disciplinesTable.slug, input.discipline)),
+    ),
+
   hello: publicProcedure
     .input(z.object({ text: z.string() }))
     .query(({ input }) => {
