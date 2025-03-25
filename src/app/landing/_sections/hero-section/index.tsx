@@ -38,7 +38,7 @@ export function HeroSection() {
               </span>
               <span className='whitespace-nowrap sm:whitespace-normal'>
                 <span className='landing-h3 text-grey-40 sm:mr-1'>of</span>{' '}
-                <StopwatchIcon className='-mt-2 inline sm:w-11' /> virtual
+                <StopwatchIcon className='-mt-2 inline w-14 sm:w-11' /> virtual
                 speedcubing
               </span>
             </h1>

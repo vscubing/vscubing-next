@@ -127,7 +127,7 @@ export function Footer({
           </div>
           <div className='mt-5 flex justify-end sm:mt-20 sm:justify-start'>
             <a href='https://u24.gov.ua/about'>
-              <img src={standWithUkraineImg} alt='Stand with Ukraine' />
+              <Image src={standWithUkraineImg} alt='Stand with Ukraine' />
             </a>
           </div>
         </div>

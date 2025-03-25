@@ -1,4 +1,4 @@
-- [ ] prettier (single quote, no semicolons etc)
-- [ ] fix landing stopwatch icon
+- [x] prettier (single quote, no semicolons etc)
+- [x] fix landing stopwatch icon
 - [ ] infinite scrolling contests list
 - [ ] pick username
