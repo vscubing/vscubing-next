@@ -1,3 +1,4 @@
+"use client";
 import { GhostButton, ArrowBackUpIcon } from "@/app/_components/ui";
 
 export function NavigateBackButton({ className }: { className?: string }) {

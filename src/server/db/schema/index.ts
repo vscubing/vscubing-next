@@ -10,7 +10,7 @@ import { DISCIPLINES } from "@/shared";
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
 
-export const posts = pgTable(
+export const postsTable = pgTable(
   "post",
   (d) => ({
     id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
@@ -31,11 +31,11 @@ export const posts = pgTable(
   ],
 );
 
-export const disciplines = pgTable("discipline", (d) => ({
+export const disciplinesTable = pgTable("discipline", (d) => ({
   slug: d.text({ enum: DISCIPLINES }).primaryKey(),
 }));
 
-export const contests = pgTable("contest", (d) => ({
+export const contestsTable = pgTable("contest", (d) => ({
   id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
   slug: d.text().notNull().unique(),
   startDate: d
@@ -48,16 +48,19 @@ export const contests = pgTable("contest", (d) => ({
   isOngoing: d.boolean().notNull(),
 }));
 
-export const disciplinesToContests = pgTable("contest_discipline", (d) => ({
-  id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
-  contestId: d
-    .integer()
-    .notNull()
-    .references(() => contests.id, { onDelete: "cascade" }),
-  disciplineSlug: d
-    .text()
-    .notNull()
-    .references(() => disciplines.slug, { onDelete: "cascade" }),
-}));
+export const contestsToDisciplinesTable = pgTable(
+  "contest_discipline",
+  (d) => ({
+    id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
+    contestId: d
+      .integer()
+      .notNull()
+      .references(() => contestsTable.id, { onDelete: "cascade" }),
+    disciplineSlug: d
+      .text()
+      .notNull()
+      .references(() => disciplinesTable.slug, { onDelete: "cascade" }),
+  }),
+);
 
 export * from "./accounts";
