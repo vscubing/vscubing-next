@@ -9,6 +9,8 @@ import { AcknowledgmentsSection } from "./_sections/acknowledgments-section";
 import { Footer } from "./_sections/footer";
 import Image from "next/image";
 
+export const dynamic = "force-static";
+
 const NAVIGATION_ANCHORS = {
   about: { id: "about", name: "About" },
   features: { id: "features", name: "Features" },
