@@ -1,8 +1,10 @@
 - [x] prettier (single quote, no semicolons etc)
 - [x] fix landing stopwatch icon
-- [ ] eslint fixes
-- [ ] infinite scrolling contests list
-- [ ] pick username
-- [ ] use nextjs google font package
+- [x] eslint fixes
+- [x] use nextjs google font package
+- [ ] fix auth in dev
 - [ ] correct .env.example
 - [ ] update next js
+- [ ] infinite scrolling contests list
+- [ ] pick username
+- [ ] lazy loading with spinners (twisty)
