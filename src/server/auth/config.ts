@@ -8,7 +8,7 @@ import {
   sessions,
   users,
   verificationTokens,
-} from "@/server/db/schema/schema";
+} from "@/server/db/schema";
 import { env } from "@/env";
 
 /**
@@ -31,6 +31,34 @@ declare module "next-auth" {
   //   // role: UserRole;
   // }
 }
+
+// function customAdapter(): Adapter {
+//   const adapter = DrizzleAdapter(db, {
+//     usersTable: users,
+//     accountsTable: accounts,
+//     sessionsTable: sessions,
+//     verificationTokensTable: verificationTokens,
+//   });
+//
+//   // Overwrite createUser method on adapter
+//   adapter.createUser = async (data): Promise<AdapterUser> => {
+//     const dataEntered = await db
+//       .insert(users)
+//       .values({ ...data, isVerified: false })
+//       .returning()
+//       .then((res) => res[0] ?? null);
+//
+//     if (!dataEntered) {
+//       throw new Error("User Creation Failed");
+//     }
+//
+//     return dataEntered;
+//   };
+//
+//   return {
+//     ...adapter,
+//   };
+// }
 
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
@@ -68,5 +96,10 @@ export const authConfig = {
         id: user.id,
       },
     }),
+  },
+  events: {
+    async createUser(user) {
+      console.log("user registered", user);
+    },
   },
 } satisfies NextAuthConfig;
