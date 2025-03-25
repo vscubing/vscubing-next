@@ -1,34 +1,34 @@
-import * as DialogPrimitive from "@radix-ui/react-dialog";
+import * as DialogPrimitive from '@radix-ui/react-dialog'
 
-import { cn } from "@/app/_utils/cn";
+import { cn } from '@/app/_utils/cn'
 import {
-    forwardRef,
-    type ElementRef,
-    type ComponentPropsWithoutRef,
-} from "react";
+  forwardRef,
+  type ElementRef,
+  type ComponentPropsWithoutRef,
+} from 'react'
 import {
-    BaseDialogButton,
-    baseDialogContent,
-    baseDialogFooter,
-    baseDialogOverlay,
-    baseDialogOverlayInner,
-    baseDialogTitle,
-} from "./BaseDialog";
-import { SecondaryButton } from "../buttons";
-import { CloseIcon } from "../icons";
+  BaseDialogButton,
+  baseDialogContent,
+  baseDialogFooter,
+  baseDialogOverlay,
+  baseDialogOverlayInner,
+  baseDialogTitle,
+} from './BaseDialog'
+import { SecondaryButton } from '../buttons'
+import { CloseIcon } from '../icons'
 
-const Dialog = DialogPrimitive.Root;
+const Dialog = DialogPrimitive.Root
 
-const DialogTrigger = DialogPrimitive.Trigger;
+const DialogTrigger = DialogPrimitive.Trigger
 
-const DialogPortal = DialogPrimitive.Portal;
+const DialogPortal = DialogPrimitive.Portal
 
-const DialogDescription = DialogPrimitive.Description;
+const DialogDescription = DialogPrimitive.Description
 
 const DialogOverlay = forwardRef<
   ElementRef<typeof DialogPrimitive.Overlay>,
   ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay> & {
-    withCubes?: boolean;
+    withCubes?: boolean
   }
 >(({ className, withCubes = true, ...props }, ref) => (
   <DialogPrimitive.Overlay
@@ -38,8 +38,8 @@ const DialogOverlay = forwardRef<
   >
     {withCubes && <div className={cn(baseDialogOverlayInner)}></div>}
   </DialogPrimitive.Overlay>
-));
-DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
+))
+DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
 const DialogContent = forwardRef<
   ElementRef<typeof DialogPrimitive.Content>,
@@ -50,8 +50,8 @@ const DialogContent = forwardRef<
     className={cn(baseDialogContent, className)}
     {...props}
   />
-));
-DialogContent.displayName = DialogPrimitive.Content.displayName;
+))
+DialogContent.displayName = DialogPrimitive.Content.displayName
 
 const DialogTitle = forwardRef<
   ElementRef<typeof DialogPrimitive.Title>,
@@ -62,20 +62,20 @@ const DialogTitle = forwardRef<
     className={cn(baseDialogTitle, className)}
     {...props}
   />
-));
-DialogTitle.displayName = DialogPrimitive.Title.displayName;
+))
+DialogTitle.displayName = DialogPrimitive.Title.displayName
 
 const DialogCloseCross = forwardRef<
   ElementRef<typeof DialogPrimitive.Close>,
   ComponentPropsWithoutRef<typeof SecondaryButton>
 >((props, ref) => (
   <DialogPrimitive.Close asChild>
-    <SecondaryButton size="iconSm" ref={ref} {...props}>
+    <SecondaryButton size='iconSm' ref={ref} {...props}>
       <CloseIcon />
     </SecondaryButton>
   </DialogPrimitive.Close>
-));
-DialogCloseCross.displayName = DialogPrimitive.Close.displayName;
+))
+DialogCloseCross.displayName = DialogPrimitive.Close.displayName
 
 const DialogClose = forwardRef<
   ElementRef<typeof DialogPrimitive.Close>,
@@ -84,16 +84,16 @@ const DialogClose = forwardRef<
   <DialogPrimitive.Close asChild>
     <BaseDialogButton version={version} ref={ref} {...props} />
   </DialogPrimitive.Close>
-));
-DialogClose.displayName = DialogPrimitive.Close.displayName;
+))
+DialogClose.displayName = DialogPrimitive.Close.displayName
 
 const DialogFooter = ({
   className,
   ...props
-}: ComponentPropsWithoutRef<"div">) => (
+}: ComponentPropsWithoutRef<'div'>) => (
   <div className={cn(baseDialogFooter, className)} {...props} />
-);
-DialogFooter.displayName = "DialogFooter";
+)
+DialogFooter.displayName = 'DialogFooter'
 
 export {
   Dialog,
@@ -106,4 +106,4 @@ export {
   DialogFooter,
   DialogTitle,
   DialogDescription,
-};
+}

@@ -96,13 +96,9 @@
         "account_userId_user_id_fk": {
           "name": "account_userId_user_id_fk",
           "tableFrom": "account",
-          "columnsFrom": [
-            "userId"
-          ],
+          "columnsFrom": ["userId"],
           "tableTo": "user",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -110,10 +106,7 @@
       "compositePrimaryKeys": {
         "account_provider_providerAccountId_pk": {
           "name": "account_provider_providerAccountId_pk",
-          "columns": [
-            "provider",
-            "providerAccountId"
-          ]
+          "columns": ["provider", "providerAccountId"]
         }
       },
       "uniqueConstraints": {},
@@ -165,13 +158,9 @@
         "session_userId_user_id_fk": {
           "name": "session_userId_user_id_fk",
           "tableFrom": "session",
-          "columnsFrom": [
-            "userId"
-          ],
+          "columnsFrom": ["userId"],
           "tableTo": "user",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -267,10 +256,7 @@
       "compositePrimaryKeys": {
         "verification_token_identifier_token_pk": {
           "name": "verification_token_identifier_token_pk",
-          "columns": [
-            "identifier",
-            "token"
-          ]
+          "columns": ["identifier", "token"]
         }
       },
       "uniqueConstraints": {},
@@ -330,9 +316,7 @@
       "uniqueConstraints": {
         "contest_slug_unique": {
           "name": "contest_slug_unique",
-          "columns": [
-            "slug"
-          ],
+          "columns": ["slug"],
           "nullsNotDistinct": false
         }
       },
@@ -398,26 +382,18 @@
         "contest_discipline_contestId_contest_id_fk": {
           "name": "contest_discipline_contestId_contest_id_fk",
           "tableFrom": "contest_discipline",
-          "columnsFrom": [
-            "contestId"
-          ],
+          "columnsFrom": ["contestId"],
           "tableTo": "contest",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         },
         "contest_discipline_disciplineName_discipline_name_fk": {
           "name": "contest_discipline_disciplineName_discipline_name_fk",
           "tableFrom": "contest_discipline",
-          "columnsFrom": [
-            "disciplineName"
-          ],
+          "columnsFrom": ["disciplineName"],
           "tableTo": "discipline",
-          "columnsTo": [
-            "name"
-          ],
+          "columnsTo": ["name"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -511,13 +487,9 @@
         "post_createdById_user_id_fk": {
           "name": "post_createdById_user_id_fk",
           "tableFrom": "post",
-          "columnsFrom": [
-            "createdById"
-          ],
+          "columnsFrom": ["createdById"],
           "tableTo": "user",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -628,13 +600,9 @@
         "account_emailaddress_user_id_2c513194_fk_accounts_user_id": {
           "name": "account_emailaddress_user_id_2c513194_fk_accounts_user_id",
           "tableFrom": "legacy_account_emailaddress",
-          "columnsFrom": [
-            "user_id"
-          ],
+          "columnsFrom": ["user_id"],
           "tableTo": "legacy_accounts_user",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -643,10 +611,7 @@
       "uniqueConstraints": {
         "account_emailaddress_user_id_email_987c8728_uniq": {
           "name": "account_emailaddress_user_id_email_987c8728_uniq",
-          "columns": [
-            "email",
-            "user_id"
-          ],
+          "columns": ["email", "user_id"],
           "nullsNotDistinct": false
         }
       },
@@ -738,13 +703,9 @@
         "account_emailconfirm_email_address_id_5b7f8c58_fk_account_e": {
           "name": "account_emailconfirm_email_address_id_5b7f8c58_fk_account_e",
           "tableFrom": "legacy_account_emailconfirmation",
-          "columnsFrom": [
-            "email_address_id"
-          ],
+          "columnsFrom": ["email_address_id"],
           "tableTo": "legacy_account_emailaddress",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -753,9 +714,7 @@
       "uniqueConstraints": {
         "account_emailconfirmation_key_key": {
           "name": "account_emailconfirmation_key_key",
-          "columns": [
-            "key"
-          ],
+          "columns": ["key"],
           "nullsNotDistinct": false
         }
       },
@@ -837,13 +796,9 @@
         "accounts_settingsmodel_user_id_b5b21c0f_fk_accounts_user_id": {
           "name": "accounts_settingsmodel_user_id_b5b21c0f_fk_accounts_user_id",
           "tableFrom": "legacy_accounts_settingsmodel",
-          "columnsFrom": [
-            "user_id"
-          ],
+          "columnsFrom": ["user_id"],
           "tableTo": "legacy_accounts_user",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -852,9 +807,7 @@
       "uniqueConstraints": {
         "accounts_settingsmodel_user_id_key": {
           "name": "accounts_settingsmodel_user_id_key",
-          "columns": [
-            "user_id"
-          ],
+          "columns": ["user_id"],
           "nullsNotDistinct": false
         }
       },
@@ -983,16 +936,12 @@
       "uniqueConstraints": {
         "accounts_user_username_key": {
           "name": "accounts_user_username_key",
-          "columns": [
-            "username"
-          ],
+          "columns": ["username"],
           "nullsNotDistinct": false
         },
         "accounts_user_email_key": {
           "name": "accounts_user_email_key",
-          "columns": [
-            "email"
-          ],
+          "columns": ["email"],
           "nullsNotDistinct": false
         }
       },
@@ -1072,26 +1021,18 @@
         "accounts_user_groups_group_id_bd11a704_fk_auth_group_id": {
           "name": "accounts_user_groups_group_id_bd11a704_fk_auth_group_id",
           "tableFrom": "legacy_accounts_user_groups",
-          "columnsFrom": [
-            "group_id"
-          ],
+          "columnsFrom": ["group_id"],
           "tableTo": "legacy_auth_group",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         },
         "accounts_user_groups_user_id_52b62117_fk_accounts_user_id": {
           "name": "accounts_user_groups_user_id_52b62117_fk_accounts_user_id",
           "tableFrom": "legacy_accounts_user_groups",
-          "columnsFrom": [
-            "user_id"
-          ],
+          "columnsFrom": ["user_id"],
           "tableTo": "legacy_accounts_user",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -1100,10 +1041,7 @@
       "uniqueConstraints": {
         "accounts_user_groups_user_id_group_id_59c0b32f_uniq": {
           "name": "accounts_user_groups_user_id_group_id_59c0b32f_uniq",
-          "columns": [
-            "user_id",
-            "group_id"
-          ],
+          "columns": ["user_id", "group_id"],
           "nullsNotDistinct": false
         }
       },
@@ -1183,26 +1121,18 @@
         "accounts_user_user_p_permission_id_113bb443_fk_auth_perm": {
           "name": "accounts_user_user_p_permission_id_113bb443_fk_auth_perm",
           "tableFrom": "legacy_accounts_user_user_permissions",
-          "columnsFrom": [
-            "permission_id"
-          ],
+          "columnsFrom": ["permission_id"],
           "tableTo": "legacy_auth_permission",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         },
         "accounts_user_user_p_user_id_e4f0a161_fk_accounts_": {
           "name": "accounts_user_user_p_user_id_e4f0a161_fk_accounts_",
           "tableFrom": "legacy_accounts_user_user_permissions",
-          "columnsFrom": [
-            "user_id"
-          ],
+          "columnsFrom": ["user_id"],
           "tableTo": "legacy_accounts_user",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -1211,10 +1141,7 @@
       "uniqueConstraints": {
         "accounts_user_user_permi_user_id_permission_id_2ab516c2_uniq": {
           "name": "accounts_user_user_permi_user_id_permission_id_2ab516c2_uniq",
-          "columns": [
-            "user_id",
-            "permission_id"
-          ],
+          "columns": ["user_id", "permission_id"],
           "nullsNotDistinct": false
         }
       },
@@ -1273,9 +1200,7 @@
       "uniqueConstraints": {
         "auth_group_name_key": {
           "name": "auth_group_name_key",
-          "columns": [
-            "name"
-          ],
+          "columns": ["name"],
           "nullsNotDistinct": false
         }
       },
@@ -1355,26 +1280,18 @@
         "auth_group_permissio_permission_id_84c5c92e_fk_auth_perm": {
           "name": "auth_group_permissio_permission_id_84c5c92e_fk_auth_perm",
           "tableFrom": "legacy_auth_group_permissions",
-          "columnsFrom": [
-            "permission_id"
-          ],
+          "columnsFrom": ["permission_id"],
           "tableTo": "legacy_auth_permission",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         },
         "auth_group_permissions_group_id_b120cbf9_fk_auth_group_id": {
           "name": "auth_group_permissions_group_id_b120cbf9_fk_auth_group_id",
           "tableFrom": "legacy_auth_group_permissions",
-          "columnsFrom": [
-            "group_id"
-          ],
+          "columnsFrom": ["group_id"],
           "tableTo": "legacy_auth_group",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -1383,10 +1300,7 @@
       "uniqueConstraints": {
         "auth_group_permissions_group_id_permission_id_0cd325b0_uniq": {
           "name": "auth_group_permissions_group_id_permission_id_0cd325b0_uniq",
-          "columns": [
-            "group_id",
-            "permission_id"
-          ],
+          "columns": ["group_id", "permission_id"],
           "nullsNotDistinct": false
         }
       },
@@ -1456,13 +1370,9 @@
         "auth_permission_content_type_id_2f476e4b_fk_django_co": {
           "name": "auth_permission_content_type_id_2f476e4b_fk_django_co",
           "tableFrom": "legacy_auth_permission",
-          "columnsFrom": [
-            "content_type_id"
-          ],
+          "columnsFrom": ["content_type_id"],
           "tableTo": "legacy_django_content_type",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -1471,10 +1381,7 @@
       "uniqueConstraints": {
         "auth_permission_content_type_id_codename_01ab375a_uniq": {
           "name": "auth_permission_content_type_id_codename_01ab375a_uniq",
-          "columns": [
-            "content_type_id",
-            "codename"
-          ],
+          "columns": ["content_type_id", "codename"],
           "nullsNotDistinct": false
         }
       },
@@ -1527,13 +1434,9 @@
         "authtoken_token_user_id_35299eff_fk_accounts_user_id": {
           "name": "authtoken_token_user_id_35299eff_fk_accounts_user_id",
           "tableFrom": "legacy_authtoken_token",
-          "columnsFrom": [
-            "user_id"
-          ],
+          "columnsFrom": ["user_id"],
           "tableTo": "legacy_accounts_user",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -1542,9 +1445,7 @@
       "uniqueConstraints": {
         "authtoken_token_user_id_key": {
           "name": "authtoken_token_user_id_key",
-          "columns": [
-            "user_id"
-          ],
+          "columns": ["user_id"],
           "nullsNotDistinct": false
         }
       },
@@ -1671,16 +1572,12 @@
       "uniqueConstraints": {
         "contests_contestmodel_name_key": {
           "name": "contests_contestmodel_name_key",
-          "columns": [
-            "name"
-          ],
+          "columns": ["name"],
           "nullsNotDistinct": false
         },
         "contests_contestmodel_slug_key": {
           "name": "contests_contestmodel_slug_key",
-          "columns": [
-            "slug"
-          ],
+          "columns": ["slug"],
           "nullsNotDistinct": false
         }
       },
@@ -1760,26 +1657,18 @@
         "contests_contestmode_contestmodel_id_9830ff33_fk_contests_": {
           "name": "contests_contestmode_contestmodel_id_9830ff33_fk_contests_",
           "tableFrom": "legacy_contests_contestmodel_discipline_set",
-          "columnsFrom": [
-            "contestmodel_id"
-          ],
+          "columnsFrom": ["contestmodel_id"],
           "tableTo": "legacy_contests_contestmodel",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         },
         "contests_contestmode_disciplinemodel_id_bb9f5499_fk_contests_": {
           "name": "contests_contestmode_disciplinemodel_id_bb9f5499_fk_contests_",
           "tableFrom": "legacy_contests_contestmodel_discipline_set",
-          "columnsFrom": [
-            "disciplinemodel_id"
-          ],
+          "columnsFrom": ["disciplinemodel_id"],
           "tableTo": "legacy_contests_disciplinemodel",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -1788,10 +1677,7 @@
       "uniqueConstraints": {
         "contests_contestmodel_di_contestmodel_id_discipli_e92e6323_uniq": {
           "name": "contests_contestmodel_di_contestmodel_id_discipli_e92e6323_uniq",
-          "columns": [
-            "contestmodel_id",
-            "disciplinemodel_id"
-          ],
+          "columns": ["contestmodel_id", "disciplinemodel_id"],
           "nullsNotDistinct": false
         }
       },
@@ -1900,16 +1786,12 @@
       "uniqueConstraints": {
         "contests_disciplinemodel_name_key": {
           "name": "contests_disciplinemodel_name_key",
-          "columns": [
-            "name"
-          ],
+          "columns": ["name"],
           "nullsNotDistinct": false
         },
         "contests_disciplinemodel_slug_key": {
           "name": "contests_disciplinemodel_slug_key",
-          "columns": [
-            "slug"
-          ],
+          "columns": ["slug"],
           "nullsNotDistinct": false
         }
       },
@@ -2057,39 +1939,27 @@
         "contests_roundsessio_contest_id_e6fa066d_fk_contests_": {
           "name": "contests_roundsessio_contest_id_e6fa066d_fk_contests_",
           "tableFrom": "legacy_contests_roundsessionmodel",
-          "columnsFrom": [
-            "contest_id"
-          ],
+          "columnsFrom": ["contest_id"],
           "tableTo": "legacy_contests_contestmodel",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         },
         "contests_roundsessio_discipline_id_0f555c24_fk_contests_": {
           "name": "contests_roundsessio_discipline_id_0f555c24_fk_contests_",
           "tableFrom": "legacy_contests_roundsessionmodel",
-          "columnsFrom": [
-            "discipline_id"
-          ],
+          "columnsFrom": ["discipline_id"],
           "tableTo": "legacy_contests_disciplinemodel",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         },
         "contests_roundsessionmodel_user_id_3b33a5a3_fk_accounts_user_id": {
           "name": "contests_roundsessionmodel_user_id_3b33a5a3_fk_accounts_user_id",
           "tableFrom": "legacy_contests_roundsessionmodel",
-          "columnsFrom": [
-            "user_id"
-          ],
+          "columnsFrom": ["user_id"],
           "tableTo": "legacy_accounts_user",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -2218,26 +2088,18 @@
         "contests_scramblemod_contest_id_d67db4b5_fk_contests_": {
           "name": "contests_scramblemod_contest_id_d67db4b5_fk_contests_",
           "tableFrom": "legacy_contests_scramblemodel",
-          "columnsFrom": [
-            "contest_id"
-          ],
+          "columnsFrom": ["contest_id"],
           "tableTo": "legacy_contests_contestmodel",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         },
         "contests_scramblemod_discipline_id_7e00f2e1_fk_contests_": {
           "name": "contests_scramblemod_discipline_id_7e00f2e1_fk_contests_",
           "tableFrom": "legacy_contests_scramblemodel",
-          "columnsFrom": [
-            "discipline_id"
-          ],
+          "columnsFrom": ["discipline_id"],
           "tableTo": "legacy_contests_disciplinemodel",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -2304,13 +2166,9 @@
         "contests_singleresul_solve_id_e45376e5_fk_contests_": {
           "name": "contests_singleresul_solve_id_e45376e5_fk_contests_",
           "tableFrom": "legacy_contests_singleresultleaderboardmodel",
-          "columnsFrom": [
-            "solve_id"
-          ],
+          "columnsFrom": ["solve_id"],
           "tableTo": "legacy_contests_solvemodel",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -2319,9 +2177,7 @@
       "uniqueConstraints": {
         "contests_singleresultleaderboardmodel_solve_id_key": {
           "name": "contests_singleresultleaderboardmodel_solve_id_key",
-          "columns": [
-            "solve_id"
-          ],
+          "columns": ["solve_id"],
           "nullsNotDistinct": false
         }
       },
@@ -2525,65 +2381,45 @@
         "contests_solvemodel_contest_id_98f20926_fk_contests_": {
           "name": "contests_solvemodel_contest_id_98f20926_fk_contests_",
           "tableFrom": "legacy_contests_solvemodel",
-          "columnsFrom": [
-            "contest_id"
-          ],
+          "columnsFrom": ["contest_id"],
           "tableTo": "legacy_contests_contestmodel",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         },
         "contests_solvemodel_discipline_id_cb3f8e9b_fk_contests_": {
           "name": "contests_solvemodel_discipline_id_cb3f8e9b_fk_contests_",
           "tableFrom": "legacy_contests_solvemodel",
-          "columnsFrom": [
-            "discipline_id"
-          ],
+          "columnsFrom": ["discipline_id"],
           "tableTo": "legacy_contests_disciplinemodel",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         },
         "contests_solvemodel_round_session_id_abf6ee3b_fk_contests_": {
           "name": "contests_solvemodel_round_session_id_abf6ee3b_fk_contests_",
           "tableFrom": "legacy_contests_solvemodel",
-          "columnsFrom": [
-            "round_session_id"
-          ],
+          "columnsFrom": ["round_session_id"],
           "tableTo": "legacy_contests_roundsessionmodel",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         },
         "contests_solvemodel_scramble_id_b21e23aa_fk_contests_": {
           "name": "contests_solvemodel_scramble_id_b21e23aa_fk_contests_",
           "tableFrom": "legacy_contests_solvemodel",
-          "columnsFrom": [
-            "scramble_id"
-          ],
+          "columnsFrom": ["scramble_id"],
           "tableTo": "legacy_contests_scramblemodel",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         },
         "contests_solvemodel_user_id_28200dba_fk_accounts_user_id": {
           "name": "contests_solvemodel_user_id_28200dba_fk_accounts_user_id",
           "tableFrom": "legacy_contests_solvemodel",
-          "columnsFrom": [
-            "user_id"
-          ],
+          "columnsFrom": ["user_id"],
           "tableTo": "legacy_accounts_user",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -2700,13 +2536,9 @@
         "contests_tnoodlescra_discipline_id_200a6a3a_fk_contests_": {
           "name": "contests_tnoodlescra_discipline_id_200a6a3a_fk_contests_",
           "tableFrom": "legacy_contests_tnoodlescramblesmodel",
-          "columnsFrom": [
-            "discipline_id"
-          ],
+          "columnsFrom": ["discipline_id"],
           "tableTo": "legacy_contests_disciplinemodel",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -2715,9 +2547,7 @@
       "uniqueConstraints": {
         "contests_tnoodlescramblesmodel_moves_key": {
           "name": "contests_tnoodlescramblesmodel_moves_key",
-          "columns": [
-            "moves"
-          ],
+          "columns": ["moves"],
           "nullsNotDistinct": false
         }
       },
@@ -2827,26 +2657,18 @@
         "django_admin_log_content_type_id_c4bce8eb_fk_django_co": {
           "name": "django_admin_log_content_type_id_c4bce8eb_fk_django_co",
           "tableFrom": "legacy_django_admin_log",
-          "columnsFrom": [
-            "content_type_id"
-          ],
+          "columnsFrom": ["content_type_id"],
           "tableTo": "legacy_django_content_type",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         },
         "django_admin_log_user_id_c564eba6_fk_accounts_user_id": {
           "name": "django_admin_log_user_id_c564eba6_fk_accounts_user_id",
           "tableFrom": "legacy_django_admin_log",
-          "columnsFrom": [
-            "user_id"
-          ],
+          "columnsFrom": ["user_id"],
           "tableTo": "legacy_accounts_user",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -2902,10 +2724,7 @@
       "uniqueConstraints": {
         "django_content_type_app_label_model_76bd3d3b_uniq": {
           "name": "django_content_type_app_label_model_76bd3d3b_uniq",
-          "columns": [
-            "app_label",
-            "model"
-          ],
+          "columns": ["app_label", "model"],
           "nullsNotDistinct": false
         }
       },
@@ -3082,9 +2901,7 @@
       "uniqueConstraints": {
         "django_site_domain_a2e37b91_uniq": {
           "name": "django_site_domain_a2e37b91_uniq",
-          "columns": [
-            "domain"
-          ],
+          "columns": ["domain"],
           "nullsNotDistinct": false
         }
       },
@@ -3172,13 +2989,9 @@
         "socialaccount_social_user_id_8146e70c_fk_accounts_": {
           "name": "socialaccount_social_user_id_8146e70c_fk_accounts_",
           "tableFrom": "legacy_socialaccount_socialaccount",
-          "columnsFrom": [
-            "user_id"
-          ],
+          "columnsFrom": ["user_id"],
           "tableTo": "legacy_accounts_user",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -3187,10 +3000,7 @@
       "uniqueConstraints": {
         "socialaccount_socialaccount_provider_uid_fc810c6e_uniq": {
           "name": "socialaccount_socialaccount_provider_uid_fc810c6e_uniq",
-          "columns": [
-            "provider",
-            "uid"
-          ],
+          "columns": ["provider", "uid"],
           "nullsNotDistinct": false
         }
       },
@@ -3342,26 +3152,18 @@
         "socialaccount_social_site_id_2579dee5_fk_django_si": {
           "name": "socialaccount_social_site_id_2579dee5_fk_django_si",
           "tableFrom": "legacy_socialaccount_socialapp_sites",
-          "columnsFrom": [
-            "site_id"
-          ],
+          "columnsFrom": ["site_id"],
           "tableTo": "legacy_django_site",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         },
         "socialaccount_social_socialapp_id_97fb6e7d_fk_socialacc": {
           "name": "socialaccount_social_socialapp_id_97fb6e7d_fk_socialacc",
           "tableFrom": "legacy_socialaccount_socialapp_sites",
-          "columnsFrom": [
-            "socialapp_id"
-          ],
+          "columnsFrom": ["socialapp_id"],
           "tableTo": "legacy_socialaccount_socialapp",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -3370,10 +3172,7 @@
       "uniqueConstraints": {
         "socialaccount_socialapp__socialapp_id_site_id_71a9a768_uniq": {
           "name": "socialaccount_socialapp__socialapp_id_site_id_71a9a768_uniq",
-          "columns": [
-            "socialapp_id",
-            "site_id"
-          ],
+          "columns": ["socialapp_id", "site_id"],
           "nullsNotDistinct": false
         }
       },
@@ -3471,26 +3270,18 @@
         "socialaccount_social_account_id_951f210e_fk_socialacc": {
           "name": "socialaccount_social_account_id_951f210e_fk_socialacc",
           "tableFrom": "legacy_socialaccount_socialtoken",
-          "columnsFrom": [
-            "account_id"
-          ],
+          "columnsFrom": ["account_id"],
           "tableTo": "legacy_socialaccount_socialaccount",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         },
         "socialaccount_social_app_id_636a42d7_fk_socialacc": {
           "name": "socialaccount_social_app_id_636a42d7_fk_socialacc",
           "tableFrom": "legacy_socialaccount_socialtoken",
-          "columnsFrom": [
-            "app_id"
-          ],
+          "columnsFrom": ["app_id"],
           "tableTo": "legacy_socialaccount_socialapp",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -3499,10 +3290,7 @@
       "uniqueConstraints": {
         "socialaccount_socialtoken_app_id_account_id_fca4e0ac_uniq": {
           "name": "socialaccount_socialtoken_app_id_account_id_fca4e0ac_uniq",
-          "columns": [
-            "account_id",
-            "app_id"
-          ],
+          "columns": ["account_id", "app_id"],
           "nullsNotDistinct": false
         }
       },

@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Hind:wght@400;500&display=swap&family=Kanit:wght@400;500&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Hind:wght@400;500&display=swap&family=Kanit:wght@400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -64,7 +64,7 @@
   .bg-card-gradient::after {
     @apply pointer-events-none absolute inset-0 z-0 rounded-[inherit];
 
-    content: "";
+    content: '';
     background: linear-gradient(
       165deg,
       rgba(255, 255, 255, 0.3) 13.84%,
@@ -124,7 +124,7 @@
 
   .landing-offset-anchor::before {
     /* offset the anchoring point to account for the fixed header */
-    content: "";
+    content: '';
     display: block;
     height: 100px;
     margin-top: -100px;

@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm/relations";
+import { relations } from 'drizzle-orm/relations'
 import {
   contestsContestmodel,
   contestsSolvemodel,
@@ -25,7 +25,7 @@ import {
   socialaccountSocialappSites,
   socialaccountSocialapp,
   socialaccountSocialtoken,
-} from "./schema-legacy";
+} from './schema-legacy'
 
 export const contestsSolvemodelRelations = relations(
   contestsSolvemodel,
@@ -54,7 +54,7 @@ export const contestsSolvemodelRelations = relations(
       contestsSingleresultleaderboardmodel,
     ),
   }),
-);
+)
 
 export const contestsContestmodelRelations = relations(
   contestsContestmodel,
@@ -64,7 +64,7 @@ export const contestsContestmodelRelations = relations(
     contestsRoundsessionmodels: many(contestsRoundsessionmodel),
     contestsScramblemodels: many(contestsScramblemodel),
   }),
-);
+)
 
 export const contestsDisciplinemodelRelations = relations(
   contestsDisciplinemodel,
@@ -75,7 +75,7 @@ export const contestsDisciplinemodelRelations = relations(
     contestsRoundsessionmodels: many(contestsRoundsessionmodel),
     contestsScramblemodels: many(contestsScramblemodel),
   }),
-);
+)
 
 export const contestsRoundsessionmodelRelations = relations(
   contestsRoundsessionmodel,
@@ -94,7 +94,7 @@ export const contestsRoundsessionmodelRelations = relations(
       references: [accountsUser.id],
     }),
   }),
-);
+)
 
 export const contestsScramblemodelRelations = relations(
   contestsScramblemodel,
@@ -109,7 +109,7 @@ export const contestsScramblemodelRelations = relations(
       references: [contestsDisciplinemodel.id],
     }),
   }),
-);
+)
 
 export const accountsUserRelations = relations(accountsUser, ({ many }) => ({
   contestsSolvemodels: many(contestsSolvemodel),
@@ -121,7 +121,7 @@ export const accountsUserRelations = relations(accountsUser, ({ many }) => ({
   contestsRoundsessionmodels: many(contestsRoundsessionmodel),
   djangoAdminLogs: many(djangoAdminLog),
   socialaccountSocialaccounts: many(socialaccountSocialaccount),
-}));
+}))
 
 export const contestsTnoodlescramblesmodelRelations = relations(
   contestsTnoodlescramblesmodel,
@@ -131,7 +131,7 @@ export const contestsTnoodlescramblesmodelRelations = relations(
       references: [contestsDisciplinemodel.id],
     }),
   }),
-);
+)
 
 export const accountEmailaddressRelations = relations(
   accountEmailaddress,
@@ -142,7 +142,7 @@ export const accountEmailaddressRelations = relations(
     }),
     accountEmailconfirmations: many(accountEmailconfirmation),
   }),
-);
+)
 
 export const accountEmailconfirmationRelations = relations(
   accountEmailconfirmation,
@@ -152,7 +152,7 @@ export const accountEmailconfirmationRelations = relations(
       references: [accountEmailaddress.id],
     }),
   }),
-);
+)
 
 export const accountsSettingsmodelRelations = relations(
   accountsSettingsmodel,
@@ -162,7 +162,7 @@ export const accountsSettingsmodelRelations = relations(
       references: [accountsUser.id],
     }),
   }),
-);
+)
 
 export const accountsUserGroupsRelations = relations(
   accountsUserGroups,
@@ -176,12 +176,12 @@ export const accountsUserGroupsRelations = relations(
       references: [accountsUser.id],
     }),
   }),
-);
+)
 
 export const authGroupRelations = relations(authGroup, ({ many }) => ({
   accountsUserGroups: many(accountsUserGroups),
   authGroupPermissions: many(authGroupPermissions),
-}));
+}))
 
 export const authPermissionRelations = relations(
   authPermission,
@@ -193,7 +193,7 @@ export const authPermissionRelations = relations(
     accountsUserUserPermissions: many(accountsUserUserPermissions),
     authGroupPermissions: many(authGroupPermissions),
   }),
-);
+)
 
 export const djangoContentTypeRelations = relations(
   djangoContentType,
@@ -201,7 +201,7 @@ export const djangoContentTypeRelations = relations(
     authPermissions: many(authPermission),
     djangoAdminLogs: many(djangoAdminLog),
   }),
-);
+)
 
 export const accountsUserUserPermissionsRelations = relations(
   accountsUserUserPermissions,
@@ -215,7 +215,7 @@ export const accountsUserUserPermissionsRelations = relations(
       references: [accountsUser.id],
     }),
   }),
-);
+)
 
 export const authGroupPermissionsRelations = relations(
   authGroupPermissions,
@@ -229,14 +229,14 @@ export const authGroupPermissionsRelations = relations(
       references: [authGroup.id],
     }),
   }),
-);
+)
 
 export const authtokenTokenRelations = relations(authtokenToken, ({ one }) => ({
   accountsUser: one(accountsUser, {
     fields: [authtokenToken.userId],
     references: [accountsUser.id],
   }),
-}));
+}))
 
 export const contestsContestmodelDisciplineSetRelations = relations(
   contestsContestmodelDisciplineSet,
@@ -250,7 +250,7 @@ export const contestsContestmodelDisciplineSetRelations = relations(
       references: [contestsDisciplinemodel.id],
     }),
   }),
-);
+)
 
 export const contestsSingleresultleaderboardmodelRelations = relations(
   contestsSingleresultleaderboardmodel,
@@ -260,7 +260,7 @@ export const contestsSingleresultleaderboardmodelRelations = relations(
       references: [contestsSolvemodel.id],
     }),
   }),
-);
+)
 
 export const djangoAdminLogRelations = relations(djangoAdminLog, ({ one }) => ({
   djangoContentType: one(djangoContentType, {
@@ -271,7 +271,7 @@ export const djangoAdminLogRelations = relations(djangoAdminLog, ({ one }) => ({
     fields: [djangoAdminLog.userId],
     references: [accountsUser.id],
   }),
-}));
+}))
 
 export const socialaccountSocialaccountRelations = relations(
   socialaccountSocialaccount,
@@ -282,7 +282,7 @@ export const socialaccountSocialaccountRelations = relations(
     }),
     socialaccountSocialtokens: many(socialaccountSocialtoken),
   }),
-);
+)
 
 export const socialaccountSocialappSitesRelations = relations(
   socialaccountSocialappSites,
@@ -296,11 +296,11 @@ export const socialaccountSocialappSitesRelations = relations(
       references: [socialaccountSocialapp.id],
     }),
   }),
-);
+)
 
 export const djangoSiteRelations = relations(djangoSite, ({ many }) => ({
   socialaccountSocialappSites: many(socialaccountSocialappSites),
-}));
+}))
 
 export const socialaccountSocialappRelations = relations(
   socialaccountSocialapp,
@@ -308,7 +308,7 @@ export const socialaccountSocialappRelations = relations(
     socialaccountSocialappSites: many(socialaccountSocialappSites),
     socialaccountSocialtokens: many(socialaccountSocialtoken),
   }),
-);
+)
 
 export const socialaccountSocialtokenRelations = relations(
   socialaccountSocialtoken,
@@ -322,4 +322,4 @@ export const socialaccountSocialtokenRelations = relations(
       references: [socialaccountSocialapp.id],
     }),
   }),
-);
+)

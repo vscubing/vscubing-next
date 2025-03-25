@@ -1,27 +1,27 @@
-import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
+import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog'
 import {
-    forwardRef,
-    type ElementRef,
-    type ComponentPropsWithoutRef,
-} from "react";
+  forwardRef,
+  type ElementRef,
+  type ComponentPropsWithoutRef,
+} from 'react'
 import {
-    BaseDialogButton,
-    baseDialogContent,
-    baseDialogFooter,
-    baseDialogOverlay,
-    baseDialogOverlayInner,
-    baseDialogTitle,
-} from "./BaseDialog";
-import { cn } from "@/app/_utils/cn";
-import type { SetOptional } from "@/app/_utils/types";
+  BaseDialogButton,
+  baseDialogContent,
+  baseDialogFooter,
+  baseDialogOverlay,
+  baseDialogOverlayInner,
+  baseDialogTitle,
+} from './BaseDialog'
+import { cn } from '@/app/_utils/cn'
+import type { SetOptional } from '@/app/_utils/types'
 
-const AlertDialog = AlertDialogPrimitive.Root;
+const AlertDialog = AlertDialogPrimitive.Root
 
-const AlertDialogTrigger = AlertDialogPrimitive.Trigger;
+const AlertDialogTrigger = AlertDialogPrimitive.Trigger
 
-const AlertDialogPortal = AlertDialogPrimitive.Portal;
+const AlertDialogPortal = AlertDialogPrimitive.Portal
 
-const AlertDialogDescription = AlertDialogPrimitive.Description;
+const AlertDialogDescription = AlertDialogPrimitive.Description
 
 const AlertDialogOverlay = forwardRef<
   ElementRef<typeof AlertDialogPrimitive.Overlay>,
@@ -34,8 +34,8 @@ const AlertDialogOverlay = forwardRef<
   >
     <div className={baseDialogOverlayInner}></div>
   </AlertDialogPrimitive.Overlay>
-));
-AlertDialogOverlay.displayName = AlertDialogPrimitive.Overlay.displayName;
+))
+AlertDialogOverlay.displayName = AlertDialogPrimitive.Overlay.displayName
 
 const AlertDialogContent = forwardRef<
   ElementRef<typeof AlertDialogPrimitive.Content>,
@@ -46,8 +46,8 @@ const AlertDialogContent = forwardRef<
     className={cn(baseDialogContent, className)}
     {...props}
   />
-));
-AlertDialogContent.displayName = AlertDialogPrimitive.Content.displayName;
+))
+AlertDialogContent.displayName = AlertDialogPrimitive.Content.displayName
 
 const AlertDialogTitle = forwardRef<
   ElementRef<typeof AlertDialogPrimitive.Title>,
@@ -58,36 +58,36 @@ const AlertDialogTitle = forwardRef<
     className={cn(baseDialogTitle, className)}
     {...props}
   />
-));
-AlertDialogTitle.displayName = AlertDialogPrimitive.Title.displayName;
+))
+AlertDialogTitle.displayName = AlertDialogPrimitive.Title.displayName
 
 const AlertDialogAction = forwardRef<
   ElementRef<typeof AlertDialogPrimitive.Action>,
-  SetOptional<ComponentPropsWithoutRef<typeof BaseDialogButton>, "version">
->(({ version = "primary", ...props }, ref) => (
+  SetOptional<ComponentPropsWithoutRef<typeof BaseDialogButton>, 'version'>
+>(({ version = 'primary', ...props }, ref) => (
   <AlertDialogPrimitive.Action asChild>
     <BaseDialogButton version={version} ref={ref} {...props} />
   </AlertDialogPrimitive.Action>
-));
-AlertDialogAction.displayName = AlertDialogPrimitive.Action.displayName;
+))
+AlertDialogAction.displayName = AlertDialogPrimitive.Action.displayName
 
 const AlertDialogCancel = forwardRef<
   ElementRef<typeof AlertDialogPrimitive.Cancel>,
-  SetOptional<ComponentPropsWithoutRef<typeof BaseDialogButton>, "version">
->(({ version = "secondary", ...props }, ref) => (
+  SetOptional<ComponentPropsWithoutRef<typeof BaseDialogButton>, 'version'>
+>(({ version = 'secondary', ...props }, ref) => (
   <AlertDialogPrimitive.Cancel asChild>
     <BaseDialogButton version={version} ref={ref} {...props} />
   </AlertDialogPrimitive.Cancel>
-));
-AlertDialogCancel.displayName = AlertDialogPrimitive.Cancel.displayName;
+))
+AlertDialogCancel.displayName = AlertDialogPrimitive.Cancel.displayName
 
 const AlertDialogFooter = ({
   className,
   ...props
-}: ComponentPropsWithoutRef<"div">) => (
+}: ComponentPropsWithoutRef<'div'>) => (
   <div className={cn(baseDialogFooter, className)} {...props} />
-);
-AlertDialogFooter.displayName = "AlertDialogFooter";
+)
+AlertDialogFooter.displayName = 'AlertDialogFooter'
 
 export {
   AlertDialog,
@@ -100,4 +100,4 @@ export {
   AlertDialogCancel,
   AlertDialogFooter,
   AlertDialogDescription,
-};
+}

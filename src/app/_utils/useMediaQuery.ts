@@ -1,27 +1,27 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react'
 
 export default function useMediaQuery(mediaQuery: string) {
-  const [matches, setMatches] = useState<boolean>(false);
+  const [matches, setMatches] = useState<boolean>(false)
 
   useEffect(() => {
-    const mediaQueryList = window.matchMedia(mediaQuery);
-    setMatches(mediaQueryList.matches);
+    const mediaQueryList = window.matchMedia(mediaQuery)
+    setMatches(mediaQueryList.matches)
 
     const handleChange = (event: MediaQueryListEvent) => {
-      setMatches(event.matches);
-    };
+      setMatches(event.matches)
+    }
 
-    const abortSignal = new AbortController();
-    mediaQueryList.addEventListener("change", handleChange, abortSignal);
+    const abortSignal = new AbortController()
+    mediaQueryList.addEventListener('change', handleChange, abortSignal)
 
-    return () => abortSignal.abort();
-  }, [mediaQuery]);
+    return () => abortSignal.abort()
+  }, [mediaQuery])
 
-  return matches;
+  return matches
 }
 
 export function useIsTouchDevice() {
-  return useMediaQuery("(pointer:coarse)");
+  return useMediaQuery('(pointer:coarse)')
 }

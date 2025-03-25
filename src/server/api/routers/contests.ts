@@ -1,18 +1,18 @@
-import { z } from "zod";
+import { z } from 'zod'
 
 import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
-} from "@/server/api/trpc";
+} from '@/server/api/trpc'
 import {
   contestsTable,
   contestsToDisciplinesTable,
   disciplinesTable,
   postsTable,
-} from "@/server/db/schema";
-import { DISCIPLINES } from "@/shared";
-import { eq, desc } from "drizzle-orm";
+} from '@/server/db/schema'
+import { DISCIPLINES } from '@/shared'
+import { eq, desc } from 'drizzle-orm'
 
 export const contestRouter = createTRPCRouter({
   getPastContestsByDiscipline: publicProcedure
@@ -42,7 +42,7 @@ export const contestRouter = createTRPCRouter({
     .query(({ input }) => {
       return {
         greeting: `Hello ${input.text}`,
-      };
+      }
     }),
 
   create: protectedProcedure
@@ -51,18 +51,18 @@ export const contestRouter = createTRPCRouter({
       await ctx.db.insert(postsTable).values({
         name: input.name,
         createdById: ctx.session.user.id,
-      });
+      })
     }),
 
   getLatest: protectedProcedure.query(async ({ ctx }) => {
     const post = await ctx.db.query.postsTable.findFirst({
       orderBy: (posts, { desc }) => [desc(posts.createdAt)],
-    });
+    })
 
-    return post ?? null;
+    return post ?? null
   }),
 
   getSecretMessage: protectedProcedure.query(() => {
-    return "you can now see this secret message!";
+    return 'you can now see this secret message!'
   }),
-});
+})

@@ -14,7 +14,9 @@ export function copyToClipboard(text: string) {
             reject(new Error('Permission not granted!'))
           }
         })
-        .catch(() => navigator.clipboard.write(data).then(resolve, reject).catch(reject))
+        .catch(() =>
+          navigator.clipboard.write(data).then(resolve, reject).catch(reject),
+        )
     } else if (document.queryCommandSupported?.('copy')) {
       const textarea = document.createElement('textarea')
       textarea.textContent = text
@@ -38,7 +40,9 @@ export function copyToClipboard(text: string) {
         reject(e)
       }
     } else {
-      reject(new Error('None of copying methods are supported by this browser!'))
+      reject(
+        new Error('None of copying methods are supported by this browser!'),
+      )
     }
   })
 }

@@ -1,16 +1,16 @@
-import { cn } from "@/app/_utils/cn";
-import { forwardRef, type HTMLAttributes } from "react";
-import { DisciplineIcon } from "./icons";
+import { cn } from '@/app/_utils/cn'
+import { forwardRef, type HTMLAttributes } from 'react'
+import { DisciplineIcon } from './icons'
 
 type DisciplineBadgeProps = HTMLAttributes<HTMLDivElement> & {
-  discipline: string;
-};
+  discipline: string
+}
 export const DisciplineBadge = forwardRef<HTMLDivElement, DisciplineBadgeProps>(
   ({ discipline, className, ...props }, ref) => {
     return (
       <span
         className={cn(
-          "inline-flex h-15 w-15 items-center justify-center rounded-xl bg-secondary-20 text-black-100 sm:h-11 sm:w-11 sm:rounded-lg",
+          'inline-flex h-15 w-15 items-center justify-center rounded-xl bg-secondary-20 text-black-100 sm:h-11 sm:w-11 sm:rounded-lg',
           className,
         )}
         ref={ref}
@@ -18,33 +18,33 @@ export const DisciplineBadge = forwardRef<HTMLDivElement, DisciplineBadgeProps>(
       >
         <DisciplineIcon discipline={discipline} />
       </span>
-    );
+    )
   },
-);
-DisciplineBadge.displayName = "DisciplineBadge";
+)
+DisciplineBadge.displayName = 'DisciplineBadge'
 
 type DisciplineSwitcherProps = {
-  className?: string;
-  asButton?: boolean;
-  isActive?: boolean;
-  discipline: string;
-};
+  className?: string
+  asButton?: boolean
+  isActive?: boolean
+  discipline: string
+}
 export const DisciplineSwitcherItem = forwardRef<
   HTMLButtonElement,
   DisciplineSwitcherProps
 >(({ className, isActive, discipline, asButton = true, ...props }, ref) => {
-  const Comp = asButton ? "button" : "span";
+  const Comp = asButton ? 'button' : 'span'
   return (
     <Comp ref={ref} {...props}>
       <DisciplineBadge
         className={cn(
-          "transition-base outline-ring cursor-pointer border border-transparent bg-grey-100 text-grey-60 hover:border-secondary-20 active:bg-secondary-20 active:text-black-100",
-          { "bg-secondary-20 text-black-100": isActive },
+          'transition-base outline-ring cursor-pointer border border-transparent bg-grey-100 text-grey-60 hover:border-secondary-20 active:bg-secondary-20 active:text-black-100',
+          { 'bg-secondary-20 text-black-100': isActive },
           className,
         )}
         discipline={discipline}
       />
     </Comp>
-  );
-});
-DisciplineSwitcherItem.displayName = "DisciplineSwitcher";
+  )
+})
+DisciplineSwitcherItem.displayName = 'DisciplineSwitcher'

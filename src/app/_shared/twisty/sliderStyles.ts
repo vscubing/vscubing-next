@@ -1,16 +1,16 @@
-import { tailwindConfig } from "@/app/_utils/tailwind";
+import { tailwindConfig } from '@/app/_utils/tailwind'
 
 export function handleSliderStylesOnChange(
   elem: HTMLInputElement,
   value = elem.value,
 ) {
-  elem.style.setProperty("--min", elem.min == "" ? "0" : elem.min);
-  elem.style.setProperty("--max", elem.max == "" ? "100" : elem.max);
-  elem.style.setProperty("--value", value);
-  elem.classList.add("slider-styled", "slider-progress");
+  elem.style.setProperty('--min', elem.min == '' ? '0' : elem.min)
+  elem.style.setProperty('--max', elem.max == '' ? '100' : elem.max)
+  elem.style.setProperty('--value', value)
+  elem.classList.add('slider-styled', 'slider-progress')
 }
 
-const colors = tailwindConfig.theme.colors;
+const colors = tailwindConfig.theme.colors
 export const sliderStyles = `
 /*generated with Input range slider CSS style generator (version 20211225)
 https://toughengineer.github.io/demo/slider-styler*/
@@ -136,4 +136,4 @@ input[type=range].slider-styled.slider-progress::-ms-fill-lower {
   border: none;
   border-right-width: 0;
 }
-`;
+`

@@ -1,23 +1,23 @@
-import dayjs from "dayjs";
+import dayjs from 'dayjs'
 
 const FORMATS = {
-  short: "DD.MM.YYYY",
-  long: "DD MMM YYYY",
-};
+  short: 'DD.MM.YYYY',
+  long: 'DD MMM YYYY',
+}
 
 export function formatDate(
   date: string,
-  format: keyof typeof FORMATS = "short",
+  format: keyof typeof FORMATS = 'short',
 ) {
-  return dayjs(date).format(FORMATS[format]);
+  return dayjs(date).format(FORMATS[format])
 }
 
 export function formatContestDuration({
   startDate,
   endDate,
 }: {
-  startDate: string;
-  endDate: string | null;
+  startDate: string
+  endDate: string | null
 }) {
-  return `${formatDate(startDate, "long")} - ${formatDate(endDate ?? "", "long")}`;
+  return `${formatDate(startDate, 'long')} - ${formatDate(endDate ?? '', 'long')}`
 }

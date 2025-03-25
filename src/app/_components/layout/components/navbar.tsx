@@ -1,51 +1,51 @@
-"use client";
+'use client'
 
-import { cn } from "@/app/_utils/cn";
-import Link from "next/link";
+import { cn } from '@/app/_utils/cn'
+import Link from 'next/link'
 import {
   DashboardIcon,
   LeaderboardIcon,
   AllContestsIcon,
   OngoingContestIcon,
-} from "../../ui";
-import { usePathname, useRouter } from "next/navigation";
-import { type ReactNode, type MouseEvent, useEffect, useState } from "react";
-import { useSetAtom } from "jotai";
-import { mobileMenuOpenAtom } from "../store/mobileMenuOpenAtom";
+} from '../../ui'
+import { usePathname, useRouter } from 'next/navigation'
+import { type ReactNode, type MouseEvent, useEffect, useState } from 'react'
+import { useSetAtom } from 'jotai'
+import { mobileMenuOpenAtom } from '../store/mobileMenuOpenAtom'
 
 const ACTIVE_CLASSES_VERTICAL =
-  "text-primary-80 after:h-[1.5px] after:scale-x-100 hover:text-primary-80";
-const ACTIVE_CLASSES_HORIZONTAL = "text-primary-80 hover:text-primary-80";
+  'text-primary-80 after:h-[1.5px] after:scale-x-100 hover:text-primary-80'
+const ACTIVE_CLASSES_HORIZONTAL = 'text-primary-80 hover:text-primary-80'
 
 type NavbarProps = {
-  variant: "vertical" | "horizontal";
-};
+  variant: 'vertical' | 'horizontal'
+}
 export function Navbar({ variant }: NavbarProps) {
-  const setOpenOnMobile = useSetAtom(mobileMenuOpenAtom);
+  const setOpenOnMobile = useSetAtom(mobileMenuOpenAtom)
 
-  const realRoute = usePathname() as NavbarRoute; // TODO: proper handling
-  const [activeRoute, setActiveRoute] = useState<NavbarRoute>(realRoute);
-  useEffect(() => setActiveRoute(realRoute), [realRoute]);
+  const realRoute = usePathname() as NavbarRoute // TODO: proper handling
+  const [activeRoute, setActiveRoute] = useState<NavbarRoute>(realRoute)
+  useEffect(() => setActiveRoute(realRoute), [realRoute])
 
-  const router = useRouter();
+  const router = useRouter()
 
   function handleRouteChange(e: MouseEvent, href: NavbarRoute) {
-    e.preventDefault();
-    setActiveRoute(href);
-    router.push(href);
-    setOpenOnMobile(false);
+    e.preventDefault()
+    setActiveRoute(href)
+    router.push(href)
+    setOpenOnMobile(false)
   }
 
-  if (variant === "vertical") {
+  if (variant === 'vertical') {
     return (
-      <nav className="flex flex-col gap-4 sm:gap-0">
+      <nav className='flex flex-col gap-4 sm:gap-0'>
         {navbarLinks.map(({ children, href }) => (
           <Link
             href={href}
             key={href}
             onClick={(e) => handleRouteChange(e, href)}
             className={cn(
-              "title-h3 after-border-bottom transition-base outline-ring flex items-center gap-4 px-4 py-2 text-grey-20 after:origin-[0%_50%] after:bg-primary-80 hover:text-primary-60 active:text-primary-80 sm:gap-3 sm:p-3",
+              'title-h3 after-border-bottom transition-base outline-ring flex items-center gap-4 px-4 py-2 text-grey-20 after:origin-[0%_50%] after:bg-primary-80 hover:text-primary-60 active:text-primary-80 sm:gap-3 sm:p-3',
               { [ACTIVE_CLASSES_VERTICAL]: activeRoute === href },
             )}
           >
@@ -53,19 +53,19 @@ export function Navbar({ variant }: NavbarProps) {
           </Link>
         ))}
       </nav>
-    );
+    )
   }
 
-  if (variant === "horizontal") {
+  if (variant === 'horizontal') {
     return (
-      <nav className="flex justify-between gap-2 overflow-y-auto px-1 py-2">
+      <nav className='flex justify-between gap-2 overflow-y-auto px-1 py-2'>
         {navbarLinks.map(({ children, href }) => (
           <Link
             key={href}
             href={href}
             onClick={(e) => handleRouteChange(e, href)}
             className={cn(
-              "caption-sm transition-base flex min-w-[4.625rem] flex-col items-center gap-1 whitespace-nowrap px-1 text-grey-20 active:text-primary-80",
+              'caption-sm transition-base flex min-w-[4.625rem] flex-col items-center gap-1 whitespace-nowrap px-1 text-grey-20 active:text-primary-80',
               { [ACTIVE_CLASSES_HORIZONTAL]: activeRoute === href },
             )}
           >
@@ -73,11 +73,11 @@ export function Navbar({ variant }: NavbarProps) {
           </Link>
         ))}
       </nav>
-    );
+    )
   }
 }
 
-type NavbarRoute = "/" | "/leaderboard" | "/contests" | "/contests/ongoing";
+type NavbarRoute = '/' | '/leaderboard' | '/contests' | '/contests/ongoing'
 const navbarLinks = [
   {
     children: (
@@ -86,7 +86,7 @@ const navbarLinks = [
         <span>Dashboard</span>
       </>
     ),
-    href: "/",
+    href: '/',
   },
   {
     children: (
@@ -95,7 +95,7 @@ const navbarLinks = [
         <span>Leaderboard</span>
       </>
     ),
-    href: "/leaderboard",
+    href: '/leaderboard',
   },
   {
     children: (
@@ -104,7 +104,7 @@ const navbarLinks = [
         <span>Past contests</span>
       </>
     ),
-    href: "/contests",
+    href: '/contests',
   },
   {
     children: (
@@ -115,7 +115,7 @@ const navbarLinks = [
     ),
     href: `/contests/ongoing`,
   },
-] satisfies { children: ReactNode; href: NavbarRoute }[];
+] satisfies { children: ReactNode; href: NavbarRoute }[]
 
 // function useNavbar() {
 //   const { data: ongoing } = useOngoingContest();

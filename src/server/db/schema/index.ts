@@ -1,7 +1,7 @@
-import { sql } from "drizzle-orm";
-import { index, pgTable } from "drizzle-orm/pg-core";
-import { users } from "./accounts";
-import { DISCIPLINES } from "@/shared";
+import { sql } from 'drizzle-orm'
+import { index, pgTable } from 'drizzle-orm/pg-core'
+import { users } from './accounts'
+import { DISCIPLINES } from '@/shared'
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -11,7 +11,7 @@ import { DISCIPLINES } from "@/shared";
  */
 
 export const postsTable = pgTable(
-  "post",
+  'post',
   (d) => ({
     id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
     name: d.varchar({ length: 256 }),
@@ -26,41 +26,41 @@ export const postsTable = pgTable(
     updatedAt: d.timestamp({ withTimezone: true }).$onUpdate(() => new Date()),
   }),
   (t) => [
-    index("created_by_idx").on(t.createdById),
-    index("name_idx").on(t.name),
+    index('created_by_idx').on(t.createdById),
+    index('name_idx').on(t.name),
   ],
-);
+)
 
-export const disciplinesTable = pgTable("discipline", (d) => ({
+export const disciplinesTable = pgTable('discipline', (d) => ({
   slug: d.text({ enum: DISCIPLINES }).primaryKey(),
-}));
+}))
 
-export const contestsTable = pgTable("contest", (d) => ({
+export const contestsTable = pgTable('contest', (d) => ({
   id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
   slug: d.text().notNull().unique(),
   startDate: d
     .timestamp({
       withTimezone: true,
-      mode: "string",
+      mode: 'string',
     })
     .notNull(),
-  endDate: d.timestamp({ withTimezone: true, mode: "string" }),
+  endDate: d.timestamp({ withTimezone: true, mode: 'string' }),
   isOngoing: d.boolean().notNull(),
-}));
+}))
 
 export const contestsToDisciplinesTable = pgTable(
-  "contest_discipline",
+  'contest_discipline',
   (d) => ({
     id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
     contestId: d
       .integer()
       .notNull()
-      .references(() => contestsTable.id, { onDelete: "cascade" }),
+      .references(() => contestsTable.id, { onDelete: 'cascade' }),
     disciplineSlug: d
       .text()
       .notNull()
-      .references(() => disciplinesTable.slug, { onDelete: "cascade" }),
+      .references(() => disciplinesTable.slug, { onDelete: 'cascade' }),
   }),
-);
+)
 
-export * from "./accounts";
+export * from './accounts'

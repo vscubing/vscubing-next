@@ -1,7 +1,7 @@
-import { TRPCReactProvider } from "@/trpc/react";
-import { Layout } from "../_components/layout";
-import type { ReactNode } from "react";
-import { HydrateClient } from "@/trpc/server";
+import { TRPCReactProvider } from '@/trpc/react'
+import { Layout } from '../_components/layout'
+import type { ReactNode } from 'react'
+import { HydrateClient } from '@/trpc/server'
 
 // const geist = Geist({
 //   subsets: ["latin"],
@@ -17,5 +17,5 @@ export default function RootLayout({
         <Layout>{children}</Layout>
       </HydrateClient>
     </TRPCReactProvider>
-  );
+  )
 }

@@ -2,9 +2,9 @@ import {
   type UseInfiniteQueryOptions,
   type InfiniteData,
   useInfiniteQuery,
-} from "@tanstack/react-query";
-import { useEffect } from "react";
-import { useIntersectionObserver } from "usehooks-ts";
+} from '@tanstack/react-query'
+import { useEffect } from 'react'
+import { useIntersectionObserver } from 'usehooks-ts'
 
 // export function useInfiniteScroll<T extends { pages?: number }>(
 //   query: UseInfiniteQueryOptions<

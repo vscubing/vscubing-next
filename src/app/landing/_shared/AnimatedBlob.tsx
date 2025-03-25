@@ -1,5 +1,5 @@
-import { cn } from "@/app/_utils/cn";
-import { type CSSProperties } from "react";
+import { cn } from '@/app/_utils/cn'
+import { type CSSProperties } from 'react'
 
 export function AnimatedBlob({
   fromLeft,
@@ -8,26 +8,26 @@ export function AnimatedBlob({
   toTop,
   className,
 }: {
-  fromLeft: string;
-  fromTop: string;
-  toLeft: string;
-  toTop: string;
-  className: string;
+  fromLeft: string
+  fromTop: string
+  toLeft: string
+  toTop: string
+  className: string
 }) {
   return (
     <div
       style={
         {
-          "--from-left": fromLeft,
-          "--from-top": fromTop,
-          "--to-left": toLeft,
-          "--to-top": toTop,
+          '--from-left': fromLeft,
+          '--from-top': fromTop,
+          '--to-left': toLeft,
+          '--to-top': toTop,
         } as CSSProperties
       }
       className={cn(
-        "absolute aspect-square animate-landing-blobs rounded-full blur-xl",
+        'absolute aspect-square animate-landing-blobs rounded-full blur-xl',
         className,
       )}
     ></div>
-  );
+  )
 }

@@ -1,4 +1,7 @@
-import { TwistyScrubber as Scrubber, type TwistyPlayer } from '@vscubing/cubing/twisty'
+import {
+  TwistyScrubber as Scrubber,
+  type TwistyPlayer,
+} from '@vscubing/cubing/twisty'
 import { useEffect, useRef } from 'react'
 import { handleSliderStylesOnChange, sliderStyles } from './sliderStyles'
 
@@ -19,19 +22,25 @@ export const TwistyScrubber = ({ className, player }: TwistyScrubberProps) => {
     scrubber.addElement(style)
 
     const handleProgress = ({ timestamp }: { timestamp: number }) => {
-      const elem = scrubber.shadowRoot?.querySelector<HTMLInputElement>('input[type="range"]')
+      const elem = scrubber.shadowRoot?.querySelector<HTMLInputElement>(
+        'input[type="range"]',
+      )
       if (!elem) {
         throw Error('scrubber input in shadowRoot is null')
       }
       elem.addEventListener('dragstart', (e) => e.preventDefault())
       handleSliderStylesOnChange(elem, timestamp.toString())
     }
-    player.experimentalModel.detailedTimelineInfo.addFreshListener(handleProgress)
+    player.experimentalModel.detailedTimelineInfo.addFreshListener(
+      handleProgress,
+    )
 
     spanRef.current?.appendChild(scrubber)
     return () => {
       scrubber.remove()
-      player.experimentalModel.detailedTimelineInfo.removeFreshListener(handleProgress)
+      player.experimentalModel.detailedTimelineInfo.removeFreshListener(
+        handleProgress,
+      )
     }
   }, [className, player])
 

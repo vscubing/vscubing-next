@@ -1,35 +1,35 @@
-import { formatContestDuration } from "@/app/_utils/formatDate";
-import { SecondaryButton, ArrowRightIcon } from "@/app/_components/ui";
-import { DEFAULT_DISCIPLINE } from "@/app/_types";
-import type { contestsTable } from "@/server/db/schema";
-import Link from "next/link";
-import { cn } from "@/app/_utils/cn";
+import { formatContestDuration } from '@/app/_utils/formatDate'
+import { SecondaryButton, ArrowRightIcon } from '@/app/_components/ui'
+import { DEFAULT_DISCIPLINE } from '@/app/_types'
+import type { contestsTable } from '@/server/db/schema'
+import Link from 'next/link'
+import { cn } from '@/app/_utils/cn'
 
 type ContestProps = {
   contest: Pick<
     typeof contestsTable.$inferSelect,
-    "startDate" | "endDate" | "slug"
-  >;
-  className?: string;
-};
+    'startDate' | 'endDate' | 'slug'
+  >
+  className?: string
+}
 export function Contest({ contest, className }: ContestProps) {
   return (
     <div
       className={cn(
-        "flex min-h-16 items-center justify-between gap-8 rounded-xl bg-grey-100 pl-4",
+        'flex min-h-16 items-center justify-between gap-8 rounded-xl bg-grey-100 pl-4',
         className,
       )}
     >
-      <div className="sm:space-y-2">
-        <p className="title-h3">Contest {contest.slug}</p>
-        <p className="text-grey-40">
+      <div className='sm:space-y-2'>
+        <p className='title-h3'>Contest {contest.slug}</p>
+        <p className='text-grey-40'>
           {formatContestDuration({
             startDate: contest.startDate,
             endDate: contest.endDate!,
           })}
         </p>
       </div>
-      <SecondaryButton size="iconLg" asChild className="sm:h-16 sm:w-16">
+      <SecondaryButton size='iconLg' asChild className='sm:h-16 sm:w-16'>
         <Link
           href={{
             pathname: `/contests/${contest.slug}`,
@@ -40,20 +40,20 @@ export function Contest({ contest, className }: ContestProps) {
         </Link>
       </SecondaryButton>
     </div>
-  );
+  )
 }
 
 export function ContestSkeleton({
   height,
   className,
 }: {
-  height?: number;
-  className?: string;
+  height?: number
+  className?: string
 }) {
   return (
     <div
-      className={cn("min-h-16 animate-pulse rounded-xl bg-grey-100", className)}
+      className={cn('min-h-16 animate-pulse rounded-xl bg-grey-100', className)}
       style={{ height }}
     ></div>
-  );
+  )
 }

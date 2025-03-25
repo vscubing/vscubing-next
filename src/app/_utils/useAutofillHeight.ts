@@ -17,7 +17,9 @@ export function useAutofillHeight<
     const fakeElementHeight = fakeElementRef.current?.clientHeight
 
     const gap = parseInt(getComputedStyle(containerRef.current).gap)
-    let count = Math.floor((containerHeight + gap - 1) / (fakeElementHeight + gap))
+    let count = Math.floor(
+      (containerHeight + gap - 1) / (fakeElementHeight + gap),
+    )
     count = Math.max(count, min)
 
     setFittingCount(count)
