@@ -4,39 +4,10 @@
  */
 import './src/env.js'
 
-// TODO: [next] figure out why turbo doesn't work
+// NOTE: only turbopack works, there is no way to include/exclude resource queries in turbopack like .svg?svgr, so I used a suffix .icon.svg, which doesn't work with webpack
 
 /** @type {import("next").NextConfig} */
 const config = {
-  webpack(config) {
-    // Grab the existing rule that handles SVG imports
-    const fileLoaderRule = config.module.rules.find(
-      (/** @type {{ test: { test: (arg0: string) => any; }; }} */ rule) =>
-        rule.test?.test?.('.svg'),
-    )
-
-    config.module.rules.push(
-      // Reapply the existing rule, but only for svg imports ending in ?url
-      {
-        ...fileLoaderRule,
-        test: /\.svg$/i,
-        resourceQuery: /url/, // *.svg?url
-      },
-      // Convert all other *.svg imports to React components
-      {
-        test: /\.svg$/i,
-        issuer: fileLoaderRule.issuer,
-        resourceQuery: { not: [...fileLoaderRule.resourceQuery.not, /url/] }, // exclude if *.svg?url
-        use: ['@svgr/webpack'],
-      },
-    )
-
-    // Modify the file loader rule to ignore *.svg, since we have it handled now.
-    fileLoaderRule.exclude = /\.svg$/i
-
-    return config
-  },
-
   experimental: {
     allowDevelopmentBuild: true,
     turbo: {
