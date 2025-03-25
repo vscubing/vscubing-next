@@ -1,5 +1,7 @@
 import '@/styles/globals.css'
 import { type Metadata } from 'next'
+import { headers } from 'next/headers'
+import { env } from 'process'
 import type { ReactNode } from 'react'
 
 export const metadata: Metadata = {
@@ -9,7 +11,17 @@ export const metadata: Metadata = {
   icons: [{ rel: 'icon', url: '/favicon.svg' }],
 }
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({
+  children,
+}: {
+  children: ReactNode
+}) {
+  if (env.NODE_ENV === 'development') {
+    const headersList = await headers()
+    if (headersList.get('host') === '127.0.0.1:3000')
+      throw new Error("use localhost, auth won't work otherwise")
+  }
+
   return (
     <html lang='en'>
       <body>{children}</body>
