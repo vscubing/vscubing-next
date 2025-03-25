@@ -5,6 +5,8 @@ import {
   ParallaxCubesWrapper,
 } from './_not-found-client'
 
+export const dynamic = 'force-static'
+
 export default function NotFound() {
   return (
     <ParallaxCubesWrapper>

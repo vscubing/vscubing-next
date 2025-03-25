@@ -1,4 +1,7 @@
 - [x] prettier (single quote, no semicolons etc)
 - [x] fix landing stopwatch icon
+- [ ] eslint fixes
 - [ ] infinite scrolling contests list
 - [ ] pick username
+- [ ] use nextjs google font package
+- [ ] correct .env.example

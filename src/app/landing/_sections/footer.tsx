@@ -20,6 +20,7 @@ import animatedCube8 from '../_assets//footer/animated-cube-8.svg?url'
 import animatedCube9 from '../_assets//footer/animated-cube-9.svg?url'
 import standWithUkraineImg from '@/app/_assets/images/stand-with-ukraine.svg?url'
 import { type CSSProperties } from 'react'
+import Image from 'next/image'
 
 export function Footer({
   className,
@@ -139,7 +140,7 @@ export function Footer({
 function AnimatedBackground() {
   return (
     <div className='sm:hidden'>
-      <img
+      <Image
         src={footerBgCubes}
         alt=''
         className='pointer-events-none absolute bottom-0 right-[-3rem] max-w-max lg:right-[-4rem] md:bottom-[-1rem]'
@@ -203,7 +204,7 @@ function AnimatedCube({
   toTranslateY: string
 }) {
   return (
-    <img
+    <Image
       src={src}
       alt=''
       className={cn(
