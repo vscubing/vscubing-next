@@ -9,13 +9,11 @@ import { api } from '@/trpc/server'
 import { HintSection } from '@/app/_shared/HintSection'
 import { ContestsListHeader } from './_components/contests-list-header'
 import {
-  ContestRowDesktop,
-  ContestRowMobile,
   ContestRowSkeletonDesktop,
   ContestRowSkeletonMobile,
 } from './_components/contest'
-import { AutofillHeightListSkeleton } from '@/app/_shared/autofillHeight/ListSkeleton'
-import { DisciplineSwitcher } from './_components/discipline-switcher'
+import { DisciplineSwitcher } from './_components/discipline-switcher-client'
+import ContestList from './_components/contest-list-client'
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>
 export default async function ContestsIndexPage(props: {
@@ -27,84 +25,43 @@ export default async function ContestsIndexPage(props: {
   if (!isDiscipline(discipline))
     redirect(`/contests?discipline=${DEFAULT_DISCIPLINE}`)
 
+  const title = 'Explore contests'
   return (
     <HydrateClient>
-      <PageShell discipline={discipline}>
+      <section className='flex flex-1 flex-col gap-3 sm:gap-2'>
+        <Header title={title} />
+        <PageTitleMobile>{title}</PageTitleMobile>
+        <NavigateBackButton className='self-start' />
+        <SectionHeader>
+          <DisciplineSwitcher initialDiscipline={discipline} />
+        </SectionHeader>
         <Suspense
-          key={JSON.stringify(searchParams)}
+          key={discipline}
           fallback={
-            <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 sm:p-3'>
-              <ContestsListHeader className='sm:hidden' />
-              <AutofillHeightListSkeleton
-                className='flex flex-1 flex-col gap-2'
-                skeletonItem={
-                  <>
-                    <ContestRowSkeletonDesktop className='sm:hidden' />
-                    <ContestRowSkeletonMobile className='hidden sm:flex' />
-                  </>
-                }
-              />
-            </div>
+            <ContestListWrapper>
+              {Array.from({ length: 20 }).map((_, idx) => (
+                <li key={idx}>
+                  <ContestRowSkeletonDesktop className='sm:hidden' />
+                  <ContestRowSkeletonMobile className='hidden sm:flex' />
+                </li>
+              ))}
+            </ContestListWrapper>
           }
         >
           <PageContent discipline={discipline} />
         </Suspense>
-      </PageShell>
+      </section>
     </HydrateClient>
-  )
-}
-
-// function ContestsIndexPage() {
-//   const { discipline } = route.useSearch();
-//
-//   const query = getInfiniteContestsQuery({
-//     pageSize: 20,
-//     disciplineSlug: discipline,
-//   });
-//   const { data, isFetching, isLoading, error, lastElementRef } =
-//     AutofillHeight.useInfiniteScroll(query);
-//   const isFetchingNotFirstPage = isFetching && !isLoading;
-//
-//   return (
-//     <NotFoundHandler error={error}>
-//       <OverlaySpinner isVisible={isFetchingNotFirstPage} />
-//       <View discipline={discipline}>
-//         <ContestsList
-//           contests={data?.pages.flatMap((page) => page.results)}
-//           lastElementRef={lastElementRef}
-//         />
-//       </View>
-//     </NotFoundHandler>
-//   );
-// }
-
-type PageShellProps = {
-  discipline: Discipline
-  children: ReactNode
-}
-function PageShell({ children, discipline }: PageShellProps) {
-  const title = 'Explore contests'
-  return (
-    <section className='flex flex-1 flex-col gap-3 sm:gap-2'>
-      <Header title={title} />
-      <PageTitleMobile>{title}</PageTitleMobile>
-      <NavigateBackButton className='self-start' />
-      <SectionHeader>
-        <DisciplineSwitcher initialDiscipline={discipline} />
-      </SectionHeader>
-      {children}
-    </section>
   )
 }
 
 // TODO: [next] add infinite scroll
 async function PageContent({ discipline }: { discipline: Discipline }) {
-  // lastElementRef?: (node?: Element | null) => void;
-  const contests = await api.contest.getPastContestsByDiscipline({
+  const contests = await api.contest.infinitePastContests({
     discipline,
   })
 
-  if (contests?.length === 0) {
+  if (contests.items?.length === 0) {
     return (
       <HintSection>
         <p>
@@ -116,28 +73,18 @@ async function PageContent({ discipline }: { discipline: Discipline }) {
   }
 
   return (
+    <ContestListWrapper>
+      <ContestList discipline={discipline} />
+    </ContestListWrapper>
+  )
+}
+
+function ContestListWrapper({ children }: { children: ReactNode }) {
+  return (
     <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 sm:p-3'>
       <ContestsListHeader className='sm:hidden' />
 
-      <ul className='flex flex-1 flex-col gap-2'>
-        {contests.map((contest, index) => (
-          <li
-            key={contest.contest?.id}
-            // ref={index === contests.length - 1 ? lastElementRef : undefined}
-            // TODO: [next]
-          >
-            <ContestRowDesktop
-              discipline={discipline}
-              contest={contest.contest}
-              className='sm:hidden'
-            />
-            <ContestRowMobile
-              contest={contest.contest}
-              className='hidden sm:flex'
-            />
-          </li>
-        ))}
-      </ul>
+      <ul className='flex flex-1 flex-col gap-2'>{children}</ul>
     </div>
   )
 }
