@@ -1,10 +1,3 @@
-import { z } from 'zod'
-
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from '@/server/api/trpc'
 import {
   contestsTable,
   contestsToDisciplinesTable,
@@ -12,19 +5,21 @@ import {
   postsTable,
 } from '@/server/db/schema'
 import { DISCIPLINES } from '@/shared'
-import { eq, desc, and, lt } from 'drizzle-orm'
+import { eq, desc } from 'drizzle-orm'
+import { createTRPCRouter, publicProcedure, protectedProcedure } from '../trpc'
+import { z } from 'zod'
 
 export const contestRouter = createTRPCRouter({
   infinitePastContests: publicProcedure
     .input(
       z.object({
         discipline: z.enum(DISCIPLINES),
-        cursor: z.string().optional(),
-        limit: z.number().min(1).default(30),
+        offset: z.number().min(1).nullish(),
+        limit: z.number().nullish(),
       }),
     )
     .query(async ({ ctx, input }) => {
-      const items = await ctx.db
+      return ctx.db
         .select()
         .from(contestsTable)
         .leftJoin(
@@ -35,23 +30,10 @@ export const contestRouter = createTRPCRouter({
           disciplinesTable,
           eq(contestsToDisciplinesTable.disciplineSlug, disciplinesTable.slug),
         )
-        .where(
-          and(
-            eq(disciplinesTable.slug, input.discipline),
-            input.cursor
-              ? lt(contestsTable.startDate, input.cursor)
-              : undefined,
-          ),
-        )
+        .where(eq(disciplinesTable.slug, input.discipline))
         .orderBy(desc(contestsTable.startDate))
-        .limit(input.limit + 1)
-
-      let nextCursor: typeof input.cursor | undefined = undefined
-      if (items.length > input.limit) {
-        nextCursor = items.pop()?.contest.startDate
-      }
-
-      return { items, nextCursor }
+        .limit(input.limit)
+        .offset(input.offset)
     }),
 
   hello: publicProcedure
