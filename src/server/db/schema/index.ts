@@ -87,3 +87,15 @@ export const scrambleTable = pgTable('scramble', (d) => ({
     .notNull(),
   moves: d.text(),
 }))
+
+export const roundSessionTable = pgTable('roundSession', (d) => ({
+  ...createdUpdatedAtColumns,
+  id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
+  avgMs: d.integer(),
+  isDnf: d.boolean(),
+  isFinished: d.boolean().notNull(),
+  contestDisciplineId: d
+    .integer()
+    .notNull()
+    .references(() => contestsToDisciplinesTable.id, { onDelete: 'cascade' }),
+}))

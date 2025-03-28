@@ -15,7 +15,7 @@
     - [x] remove google username from db 
 - [x] ongoing
 - [ ] contest results
-    - [ ] import scrambles
+    - [x] import scrambles
     - [ ] import round sessions
     - [ ] import solves
     - [ ] ui
