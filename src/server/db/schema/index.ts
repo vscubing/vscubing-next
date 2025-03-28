@@ -34,8 +34,7 @@ export const disciplinesTable = pgTable('discipline', (d) => ({
 
 export const contestsTable = pgTable('contest', (d) => ({
   ...createdUpdatedAtColumns,
-  id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
-  slug: d.text().notNull().unique(),
+  slug: d.text().notNull().primaryKey().unique(), // index this?
   startDate: d
     .timestamp({
       withTimezone: true,
@@ -51,10 +50,10 @@ export const contestsToDisciplinesTable = pgTable(
   (d) => ({
     ...createdUpdatedAtColumns,
     id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
-    contestId: d
-      .integer()
+    contestSlug: d
+      .text()
       .notNull()
-      .references(() => contestsTable.id, { onDelete: 'cascade' }),
+      .references(() => contestsTable.slug, { onDelete: 'cascade' }),
     disciplineSlug: d
       .text()
       .notNull()

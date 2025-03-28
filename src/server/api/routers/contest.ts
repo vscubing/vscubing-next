@@ -25,7 +25,7 @@ export const contestRouter = createTRPCRouter({
         .from(contestsTable)
         .leftJoin(
           contestsToDisciplinesTable,
-          eq(contestsToDisciplinesTable.contestId, contestsTable.id),
+          eq(contestsToDisciplinesTable.contestSlug, contestsTable.slug),
         )
         .leftJoin(
           disciplinesTable,

@@ -1,0 +1,2 @@
+ALTER TABLE "contest_discipline" ADD COLUMN "contestSlug" text;--> statement-breakpoint
+ALTER TABLE "contest_discipline" ADD CONSTRAINT "contest_discipline_contestSlug_contest_slug_fk" FOREIGN KEY ("contestSlug") REFERENCES "public"."contest"("slug") ON DELETE no action ON UPDATE no action;

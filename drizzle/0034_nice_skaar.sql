@@ -1,0 +1,1 @@
+ALTER TABLE "contest_discipline" ALTER COLUMN "contestSlug" SET NOT NULL;

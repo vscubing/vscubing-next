@@ -204,6 +204,48 @@
       "when": 1743184748199,
       "tag": "0031_legacy-import-solves",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1743185934093,
+      "tag": "0032_worthless_doomsday",
+      "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1743185966065,
+      "tag": "0033_populate-contest-slug-in-contest-discipline",
+      "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1743186486921,
+      "tag": "0034_nice_skaar",
+      "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1743186527948,
+      "tag": "0035_perfect_angel",
+      "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1743187319891,
+      "tag": "0036_flashy_adam_destine",
+      "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1743187412694,
+      "tag": "0037_magenta_smasher",
+      "breakpoints": true
     }
   ]
 }

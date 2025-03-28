@@ -16,7 +16,7 @@
 - [x] ongoing
 - [ ] contest results
     - [x] import scrambles
-    - [ ] import round sessions
-    - [ ] import solves
+    - [x] import round sessions
+    - [x] import solves
     - [ ] ui
 - [ ] rename tables (contest_ prefix)
