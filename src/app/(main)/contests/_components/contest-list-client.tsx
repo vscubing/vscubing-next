@@ -20,13 +20,13 @@ export default function ContestList({
 
   const [lastElementRef, inView] = useInView()
   useEffect(() => {
-    if (inView) fetchNextPage()
+    if (inView) void fetchNextPage()
   }, [inView, fetchNextPage])
 
   const contests = data.pages.flatMap((page) => page.items)
   return contests.map((contest, index) => (
     <li
-      key={contest.contest?.id}
+      key={contest.contest?.slug}
       ref={index === contests.length - 1 ? lastElementRef : undefined}
     >
       <ContestRowDesktop
