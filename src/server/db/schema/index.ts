@@ -91,9 +91,6 @@ export const scrambleTable = pgTable('scramble', (d) => ({
 export const roundSessionTable = pgTable('roundSession', (d) => ({
   ...createdUpdatedAtColumns,
   id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
-  avgMs: d.integer(),
-  isDnf: d.boolean(),
-  isFinished: d.boolean().notNull(),
   contestantId: d
     .text()
     .notNull()
@@ -102,4 +99,29 @@ export const roundSessionTable = pgTable('roundSession', (d) => ({
     .integer()
     .notNull()
     .references(() => contestsToDisciplinesTable.id, { onDelete: 'cascade' }),
+  avgMs: d.integer(),
+  isDnf: d.boolean(),
+  isFinished: d.boolean().notNull(),
+}))
+
+export const solveStateEnum = pgEnum('solveState', [
+  'pending',
+  'submitted',
+  'changed_to_extra',
+])
+export const solveTable = pgTable('solve', (d) => ({
+  ...createdUpdatedAtColumns,
+  id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
+  scrambleId: d
+    .integer()
+    .notNull()
+    .references(() => scrambleTable.id, { onDelete: 'cascade' }),
+  roundSessionId: d
+    .integer()
+    .notNull()
+    .references(() => roundSessionTable.id, { onDelete: 'cascade' }),
+  state: solveStateEnum().notNull().default('pending'),
+  timeMs: d.integer(),
+  isDnf: d.boolean().notNull(),
+  reconstruction: d.varchar({ length: 10000 }),
 }))
