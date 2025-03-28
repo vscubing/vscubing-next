@@ -1,8 +1,10 @@
 import { sql } from 'drizzle-orm'
-import { index, pgTable } from 'drizzle-orm/pg-core'
+import { index, pgEnum, pgTable } from 'drizzle-orm/pg-core'
 import { usersTable } from './accounts'
 import { DISCIPLINES } from '@/shared'
 import { createdUpdatedAtColumns } from './core'
+
+export * from './accounts'
 
 export const postsTable = pgTable(
   'post',
@@ -60,4 +62,28 @@ export const contestsToDisciplinesTable = pgTable(
   }),
 )
 
-export * from './accounts'
+export const scramblePositionEnum = pgEnum('scramblePosition', [
+  '1',
+  '2',
+  '3',
+  '4',
+  '5',
+  'E1',
+  'E2',
+])
+export const scrambleTable = pgTable('scramble', (d) => ({
+  ...createdUpdatedAtColumns,
+  id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
+  contestDisciplineId: d
+    .integer()
+    .notNull()
+    .references(() => contestsToDisciplinesTable.id, { onDelete: 'cascade' }),
+  position: scramblePositionEnum().notNull(),
+  isExtra: d
+    .boolean()
+    .generatedAlwaysAs(
+      sql<boolean>`CASE WHEN position IN ('E1', 'E2') THEN TRUE ELSE FALSE END`,
+    )
+    .notNull(),
+  moves: d.text(),
+}))
