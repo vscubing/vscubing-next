@@ -1,4 +1,3 @@
-import { TRPCReactProvider } from '@/trpc/react'
 import { Layout } from '../_components/layout'
 import type { ReactNode } from 'react'
 
@@ -10,9 +9,5 @@ import type { ReactNode } from 'react'
 export default function RootLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
-  return (
-    <TRPCReactProvider>
-      <Layout>{children}</Layout>
-    </TRPCReactProvider>
-  )
+  return <Layout>{children}</Layout>
 }
