@@ -176,6 +176,13 @@
       "when": 1743181321228,
       "tag": "0027_smart_taskmaster",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1743181354320,
+      "tag": "0028_legacy-import-round-sessions",
+      "breakpoints": true
     }
   ]
 }
