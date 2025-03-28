@@ -47,6 +47,7 @@ export const contestsTable = pgTable('contest', (d) => ({
 export const contestsToDisciplinesTable = pgTable(
   'contest_discipline',
   (d) => ({
+    ...createdUpdatedAtColumns,
     id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
     contestId: d
       .integer()
