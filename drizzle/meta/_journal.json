@@ -38,13 +38,6 @@
       "breakpoints": true
     },
     {
-      "idx": 5,
-      "version": "7",
-      "when": 1742830156503,
-      "tag": "0005_legacy-import-users",
-      "breakpoints": true
-    },
-    {
       "idx": 6,
       "version": "7",
       "when": 1742831665583,
@@ -112,6 +105,20 @@
       "version": "7",
       "when": 1743163586094,
       "tag": "0015_panoramic_whistler",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1743175854932,
+      "tag": "0016_icy_banshee",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1743176120706,
+      "tag": "0017_legacy-import-users-v2",
       "breakpoints": true
     }
   ]

@@ -1,8 +1,10 @@
-import { relations, sql } from 'drizzle-orm'
+import { relations } from 'drizzle-orm'
 import { index, pgTable, primaryKey } from 'drizzle-orm/pg-core'
 import { type AdapterAccount } from 'next-auth/adapters'
+import { createdUpdatedAtColumns } from './core'
 
 export const usersTable = pgTable('user', (d) => ({
+  ...createdUpdatedAtColumns,
   id: d
     .varchar({ length: 255 })
     .notNull()
@@ -13,13 +15,6 @@ export const usersTable = pgTable('user', (d) => ({
   emailVerified: d.timestamp({ mode: 'date' }),
   image: d.text('image'),
   finishedRegistration: d.boolean().default(false).notNull(),
-  createdAt: d
-    .timestamp({
-      withTimezone: true,
-      mode: 'string',
-    })
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
 }))
 
 export const usersRelations = relations(usersTable, ({ many }) => ({
