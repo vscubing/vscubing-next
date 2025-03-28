@@ -2,6 +2,7 @@ import { sql } from 'drizzle-orm'
 import { index, pgTable } from 'drizzle-orm/pg-core'
 import { usersTable } from './accounts'
 import { DISCIPLINES } from '@/shared'
+import { createdUpdatedAtColumns } from './core'
 
 export const postsTable = pgTable(
   'post',
@@ -29,6 +30,7 @@ export const disciplinesTable = pgTable('discipline', (d) => ({
 }))
 
 export const contestsTable = pgTable('contest', (d) => ({
+  ...createdUpdatedAtColumns,
   id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
   slug: d.text().notNull().unique(),
   startDate: d

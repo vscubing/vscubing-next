@@ -59,13 +59,6 @@
       "breakpoints": true
     },
     {
-      "idx": 9,
-      "version": "7",
-      "when": 1742862228465,
-      "tag": "0009_legacy-import-contests",
-      "breakpoints": true
-    },
-    {
       "idx": 10,
       "version": "7",
       "when": 1742862665425,
@@ -94,13 +87,6 @@
       "breakpoints": true
     },
     {
-      "idx": 14,
-      "version": "7",
-      "when": 1742864346447,
-      "tag": "0014_legacy-import-contests-disciplines",
-      "breakpoints": true
-    },
-    {
       "idx": 15,
       "version": "7",
       "when": 1743163586094,
@@ -119,6 +105,20 @@
       "version": "7",
       "when": 1743176120706,
       "tag": "0017_legacy-import-users-v2",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1743176792434,
+      "tag": "0018_fuzzy_sandman",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1743176839678,
+      "tag": "0019_legacy-import-contests-v2",
       "breakpoints": true
     }
   ]

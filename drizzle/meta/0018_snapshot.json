@@ -1,6 +1,6 @@
 {
-  "id": "02a27c59-96c0-4c28-8489-a29ddb42c2fb",
-  "prevId": "f204d337-0cc4-440c-acee-48aa46320d9a",
+  "id": "91c2c01b-b598-49f1-86b2-917f14f4beec",
+  "prevId": "8830b1ea-2341-4945-831d-975b1bfbe184",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -87,26 +87,33 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "account_userId_user_id_fk": {
           "name": "account_userId_user_id_fk",
           "tableFrom": "account",
-          "columnsFrom": ["userId"],
           "tableTo": "user",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
         "account_provider_providerAccountId_pk": {
           "name": "account_provider_providerAccountId_pk",
-          "columns": ["provider", "providerAccountId"]
+          "columns": [
+            "provider",
+            "providerAccountId"
+          ]
         }
       },
       "uniqueConstraints": {},
@@ -149,20 +156,24 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "session_userId_user_id_fk": {
           "name": "session_userId_user_id_fk",
           "tableFrom": "session",
-          "columnsFrom": ["userId"],
           "tableTo": "user",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -175,6 +186,19 @@
       "name": "user",
       "schema": "",
       "columns": {
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
         "id": {
           "name": "id",
           "type": "varchar(255)",
@@ -185,7 +209,7 @@
           "name": "name",
           "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "email": {
           "name": "email",
@@ -205,19 +229,12 @@
           "primaryKey": false,
           "notNull": false
         },
-        "isVerified": {
-          "name": "isVerified",
+        "finishedRegistration": {
+          "name": "finishedRegistration",
           "type": "boolean",
           "primaryKey": false,
           "notNull": true,
           "default": false
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "CURRENT_TIMESTAMP"
         }
       },
       "indexes": {},
@@ -256,7 +273,10 @@
       "compositePrimaryKeys": {
         "verification_token_identifier_token_pk": {
           "name": "verification_token_identifier_token_pk",
-          "columns": ["identifier", "token"]
+          "columns": [
+            "identifier",
+            "token"
+          ]
         }
       },
       "uniqueConstraints": {},
@@ -268,21 +288,34 @@
       "name": "contest",
       "schema": "",
       "columns": {
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
         "id": {
           "name": "id",
           "type": "integer",
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "contest_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "2147483647",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "slug": {
@@ -316,10 +349,81 @@
       "uniqueConstraints": {
         "contest_slug_unique": {
           "name": "contest_slug_unique",
-          "columns": ["slug"],
-          "nullsNotDistinct": false
+          "nullsNotDistinct": false,
+          "columns": [
+            "slug"
+          ]
         }
       },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.contest_discipline": {
+      "name": "contest_discipline",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "byDefault",
+            "name": "contest_discipline_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "contestId": {
+          "name": "contestId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "disciplineSlug": {
+          "name": "disciplineSlug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "contest_discipline_contestId_contest_id_fk": {
+          "name": "contest_discipline_contestId_contest_id_fk",
+          "tableFrom": "contest_discipline",
+          "tableTo": "contest",
+          "columnsFrom": [
+            "contestId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "contest_discipline_disciplineSlug_discipline_slug_fk": {
+          "name": "contest_discipline_disciplineSlug_discipline_slug_fk",
+          "tableFrom": "contest_discipline",
+          "tableTo": "discipline",
+          "columnsFrom": [
+            "disciplineSlug"
+          ],
+          "columnsTo": [
+            "slug"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -343,67 +447,6 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.contest_discipline": {
-      "name": "contest_discipline",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
-          "primaryKey": true,
-          "notNull": true,
-          "identity": {
-            "name": "contest_discipline_id_seq",
-            "increment": "1",
-            "minValue": "1",
-            "maxValue": "2147483647",
-            "startWith": "1",
-            "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
-          }
-        },
-        "contestId": {
-          "name": "contestId",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "disciplineSlug": {
-          "name": "disciplineSlug",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "contest_discipline_contestId_contest_id_fk": {
-          "name": "contest_discipline_contestId_contest_id_fk",
-          "tableFrom": "contest_discipline",
-          "columnsFrom": ["contestId"],
-          "tableTo": "contest",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
-        },
-        "contest_discipline_disciplineSlug_discipline_slug_fk": {
-          "name": "contest_discipline_disciplineSlug_discipline_slug_fk",
-          "tableFrom": "contest_discipline",
-          "columnsFrom": ["disciplineSlug"],
-          "tableTo": "discipline",
-          "columnsTo": ["slug"],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
     "public.post": {
       "name": "post",
       "schema": "",
@@ -414,15 +457,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "post_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "2147483647",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "name": {
@@ -463,9 +506,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "name_idx": {
           "name": "name_idx",
@@ -478,20 +521,24 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "post_createdById_user_id_fk": {
           "name": "post_createdById_user_id_fk",
           "tableFrom": "post",
-          "columnsFrom": ["createdById"],
           "tableTo": "user",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "createdById"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -510,15 +557,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "account_emailaddress_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "2147483647",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "email": {
@@ -552,15 +599,15 @@
           "columns": [
             {
               "expression": "upper((email)::text)",
-              "isExpression": true,
               "asc": true,
+              "isExpression": true,
               "nulls": "last"
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "account_emailaddress_user_id_2c513194": {
           "name": "account_emailaddress_user_id_2c513194",
@@ -574,9 +621,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "unique_verified_email": {
           "name": "unique_verified_email",
@@ -590,29 +637,36 @@
             }
           ],
           "isUnique": true,
-          "with": {},
-          "method": "btree",
           "where": "verified",
-          "concurrently": false
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {
         "account_emailaddress_user_id_2c513194_fk_accounts_user_id": {
           "name": "account_emailaddress_user_id_2c513194_fk_accounts_user_id",
           "tableFrom": "legacy_account_emailaddress",
-          "columnsFrom": ["user_id"],
           "tableTo": "legacy_accounts_user",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "account_emailaddress_user_id_email_987c8728_uniq": {
           "name": "account_emailaddress_user_id_email_987c8728_uniq",
-          "columns": ["email", "user_id"],
-          "nullsNotDistinct": false
+          "nullsNotDistinct": false,
+          "columns": [
+            "email",
+            "user_id"
+          ]
         }
       },
       "policies": {},
@@ -629,15 +683,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "account_emailconfirmation_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "2147483647",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "created": {
@@ -678,9 +732,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "account_emailconfirmation_key_f43612bd_like": {
           "name": "account_emailconfirmation_key_f43612bd_like",
@@ -694,28 +748,34 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "account_emailconfirm_email_address_id_5b7f8c58_fk_account_e": {
           "name": "account_emailconfirm_email_address_id_5b7f8c58_fk_account_e",
           "tableFrom": "legacy_account_emailconfirmation",
-          "columnsFrom": ["email_address_id"],
           "tableTo": "legacy_account_emailaddress",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "email_address_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "account_emailconfirmation_key_key": {
           "name": "account_emailconfirmation_key_key",
-          "columns": ["key"],
-          "nullsNotDistinct": false
+          "nullsNotDistinct": false,
+          "columns": [
+            "key"
+          ]
         }
       },
       "policies": {},
@@ -732,15 +792,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "accounts_settingsmodel_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "9223372036854775807",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "created_at": {
@@ -787,28 +847,34 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "accounts_settingsmodel_user_id_b5b21c0f_fk_accounts_user_id": {
           "name": "accounts_settingsmodel_user_id_b5b21c0f_fk_accounts_user_id",
           "tableFrom": "legacy_accounts_settingsmodel",
-          "columnsFrom": ["user_id"],
           "tableTo": "legacy_accounts_user",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "accounts_settingsmodel_user_id_key": {
           "name": "accounts_settingsmodel_user_id_key",
-          "columns": ["user_id"],
-          "nullsNotDistinct": false
+          "nullsNotDistinct": false,
+          "columns": [
+            "user_id"
+          ]
         }
       },
       "policies": {},
@@ -825,15 +891,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "accounts_user_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "9223372036854775807",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "password": {
@@ -910,9 +976,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "accounts_user_username_6088629e_like": {
           "name": "accounts_user_username_6088629e_like",
@@ -926,9 +992,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {},
@@ -936,13 +1002,17 @@
       "uniqueConstraints": {
         "accounts_user_username_key": {
           "name": "accounts_user_username_key",
-          "columns": ["username"],
-          "nullsNotDistinct": false
+          "nullsNotDistinct": false,
+          "columns": [
+            "username"
+          ]
         },
         "accounts_user_email_key": {
           "name": "accounts_user_email_key",
-          "columns": ["email"],
-          "nullsNotDistinct": false
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
         }
       },
       "policies": {},
@@ -959,15 +1029,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "accounts_user_groups_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "9223372036854775807",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "user_id": {
@@ -996,9 +1066,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "accounts_user_groups_user_id_52b62117": {
           "name": "accounts_user_groups_user_id_52b62117",
@@ -1012,37 +1082,48 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "accounts_user_groups_group_id_bd11a704_fk_auth_group_id": {
           "name": "accounts_user_groups_group_id_bd11a704_fk_auth_group_id",
           "tableFrom": "legacy_accounts_user_groups",
-          "columnsFrom": ["group_id"],
           "tableTo": "legacy_auth_group",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "group_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "accounts_user_groups_user_id_52b62117_fk_accounts_user_id": {
           "name": "accounts_user_groups_user_id_52b62117_fk_accounts_user_id",
           "tableFrom": "legacy_accounts_user_groups",
-          "columnsFrom": ["user_id"],
           "tableTo": "legacy_accounts_user",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "accounts_user_groups_user_id_group_id_59c0b32f_uniq": {
           "name": "accounts_user_groups_user_id_group_id_59c0b32f_uniq",
-          "columns": ["user_id", "group_id"],
-          "nullsNotDistinct": false
+          "nullsNotDistinct": false,
+          "columns": [
+            "user_id",
+            "group_id"
+          ]
         }
       },
       "policies": {},
@@ -1059,15 +1140,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "accounts_user_user_permissions_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "9223372036854775807",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "user_id": {
@@ -1096,9 +1177,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "accounts_user_user_permissions_user_id_e4f0a161": {
           "name": "accounts_user_user_permissions_user_id_e4f0a161",
@@ -1112,37 +1193,48 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "accounts_user_user_p_permission_id_113bb443_fk_auth_perm": {
           "name": "accounts_user_user_p_permission_id_113bb443_fk_auth_perm",
           "tableFrom": "legacy_accounts_user_user_permissions",
-          "columnsFrom": ["permission_id"],
           "tableTo": "legacy_auth_permission",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "permission_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "accounts_user_user_p_user_id_e4f0a161_fk_accounts_": {
           "name": "accounts_user_user_p_user_id_e4f0a161_fk_accounts_",
           "tableFrom": "legacy_accounts_user_user_permissions",
-          "columnsFrom": ["user_id"],
           "tableTo": "legacy_accounts_user",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "accounts_user_user_permi_user_id_permission_id_2ab516c2_uniq": {
           "name": "accounts_user_user_permi_user_id_permission_id_2ab516c2_uniq",
-          "columns": ["user_id", "permission_id"],
-          "nullsNotDistinct": false
+          "nullsNotDistinct": false,
+          "columns": [
+            "user_id",
+            "permission_id"
+          ]
         }
       },
       "policies": {},
@@ -1159,15 +1251,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "auth_group_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "2147483647",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "name": {
@@ -1190,9 +1282,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {},
@@ -1200,8 +1292,10 @@
       "uniqueConstraints": {
         "auth_group_name_key": {
           "name": "auth_group_name_key",
-          "columns": ["name"],
-          "nullsNotDistinct": false
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
         }
       },
       "policies": {},
@@ -1218,15 +1312,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "auth_group_permissions_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "9223372036854775807",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "group_id": {
@@ -1255,9 +1349,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "auth_group_permissions_permission_id_84c5c92e": {
           "name": "auth_group_permissions_permission_id_84c5c92e",
@@ -1271,37 +1365,48 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "auth_group_permissio_permission_id_84c5c92e_fk_auth_perm": {
           "name": "auth_group_permissio_permission_id_84c5c92e_fk_auth_perm",
           "tableFrom": "legacy_auth_group_permissions",
-          "columnsFrom": ["permission_id"],
           "tableTo": "legacy_auth_permission",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "permission_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "auth_group_permissions_group_id_b120cbf9_fk_auth_group_id": {
           "name": "auth_group_permissions_group_id_b120cbf9_fk_auth_group_id",
           "tableFrom": "legacy_auth_group_permissions",
-          "columnsFrom": ["group_id"],
           "tableTo": "legacy_auth_group",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "group_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "auth_group_permissions_group_id_permission_id_0cd325b0_uniq": {
           "name": "auth_group_permissions_group_id_permission_id_0cd325b0_uniq",
-          "columns": ["group_id", "permission_id"],
-          "nullsNotDistinct": false
+          "nullsNotDistinct": false,
+          "columns": [
+            "group_id",
+            "permission_id"
+          ]
         }
       },
       "policies": {},
@@ -1318,15 +1423,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "auth_permission_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "2147483647",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "name": {
@@ -1361,28 +1466,35 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "auth_permission_content_type_id_2f476e4b_fk_django_co": {
           "name": "auth_permission_content_type_id_2f476e4b_fk_django_co",
           "tableFrom": "legacy_auth_permission",
-          "columnsFrom": ["content_type_id"],
           "tableTo": "legacy_django_content_type",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "content_type_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "auth_permission_content_type_id_codename_01ab375a_uniq": {
           "name": "auth_permission_content_type_id_codename_01ab375a_uniq",
-          "columns": ["content_type_id", "codename"],
-          "nullsNotDistinct": false
+          "nullsNotDistinct": false,
+          "columns": [
+            "content_type_id",
+            "codename"
+          ]
         }
       },
       "policies": {},
@@ -1425,28 +1537,34 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "authtoken_token_user_id_35299eff_fk_accounts_user_id": {
           "name": "authtoken_token_user_id_35299eff_fk_accounts_user_id",
           "tableFrom": "legacy_authtoken_token",
-          "columnsFrom": ["user_id"],
           "tableTo": "legacy_accounts_user",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "authtoken_token_user_id_key": {
           "name": "authtoken_token_user_id_key",
-          "columns": ["user_id"],
-          "nullsNotDistinct": false
+          "nullsNotDistinct": false,
+          "columns": [
+            "user_id"
+          ]
         }
       },
       "policies": {},
@@ -1463,15 +1581,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "contests_contestmodel_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "9223372036854775807",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "created_at": {
@@ -1530,9 +1648,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "contests_contestmodel_name_b8960dcf_like": {
           "name": "contests_contestmodel_name_b8960dcf_like",
@@ -1546,9 +1664,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "contests_contestmodel_slug_dc960f39_like": {
           "name": "contests_contestmodel_slug_dc960f39_like",
@@ -1562,9 +1680,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {},
@@ -1572,13 +1690,17 @@
       "uniqueConstraints": {
         "contests_contestmodel_name_key": {
           "name": "contests_contestmodel_name_key",
-          "columns": ["name"],
-          "nullsNotDistinct": false
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
         },
         "contests_contestmodel_slug_key": {
           "name": "contests_contestmodel_slug_key",
-          "columns": ["slug"],
-          "nullsNotDistinct": false
+          "nullsNotDistinct": false,
+          "columns": [
+            "slug"
+          ]
         }
       },
       "policies": {},
@@ -1595,15 +1717,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "contests_contestmodel_discipline_set_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "9223372036854775807",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "contestmodel_id": {
@@ -1632,9 +1754,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "contests_contestmodel_discipline_set_contestmodel_id_9830ff33": {
           "name": "contests_contestmodel_discipline_set_contestmodel_id_9830ff33",
@@ -1648,37 +1770,48 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "contests_contestmode_contestmodel_id_9830ff33_fk_contests_": {
           "name": "contests_contestmode_contestmodel_id_9830ff33_fk_contests_",
           "tableFrom": "legacy_contests_contestmodel_discipline_set",
-          "columnsFrom": ["contestmodel_id"],
           "tableTo": "legacy_contests_contestmodel",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "contestmodel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "contests_contestmode_disciplinemodel_id_bb9f5499_fk_contests_": {
           "name": "contests_contestmode_disciplinemodel_id_bb9f5499_fk_contests_",
           "tableFrom": "legacy_contests_contestmodel_discipline_set",
-          "columnsFrom": ["disciplinemodel_id"],
           "tableTo": "legacy_contests_disciplinemodel",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "disciplinemodel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "contests_contestmodel_di_contestmodel_id_discipli_e92e6323_uniq": {
           "name": "contests_contestmodel_di_contestmodel_id_discipli_e92e6323_uniq",
-          "columns": ["contestmodel_id", "disciplinemodel_id"],
-          "nullsNotDistinct": false
+          "nullsNotDistinct": false,
+          "columns": [
+            "contestmodel_id",
+            "disciplinemodel_id"
+          ]
         }
       },
       "policies": {},
@@ -1695,15 +1828,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "contests_disciplinemodel_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "9223372036854775807",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "created_at": {
@@ -1744,9 +1877,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "contests_disciplinemodel_name_dd3cb06b_like": {
           "name": "contests_disciplinemodel_name_dd3cb06b_like",
@@ -1760,9 +1893,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "contests_disciplinemodel_slug_4a7f3518_like": {
           "name": "contests_disciplinemodel_slug_4a7f3518_like",
@@ -1776,9 +1909,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {},
@@ -1786,13 +1919,17 @@
       "uniqueConstraints": {
         "contests_disciplinemodel_name_key": {
           "name": "contests_disciplinemodel_name_key",
-          "columns": ["name"],
-          "nullsNotDistinct": false
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
         },
         "contests_disciplinemodel_slug_key": {
           "name": "contests_disciplinemodel_slug_key",
-          "columns": ["slug"],
-          "nullsNotDistinct": false
+          "nullsNotDistinct": false,
+          "columns": [
+            "slug"
+          ]
         }
       },
       "policies": {},
@@ -1809,15 +1946,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "contests_roundsessionmodel_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "9223372036854775807",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "created_at": {
@@ -1882,9 +2019,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "contests_roundsessionmodel_created_at_07fea56f": {
           "name": "contests_roundsessionmodel_created_at_07fea56f",
@@ -1898,9 +2035,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "contests_roundsessionmodel_discipline_id_0f555c24": {
           "name": "contests_roundsessionmodel_discipline_id_0f555c24",
@@ -1914,9 +2051,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "contests_roundsessionmodel_user_id_3b33a5a3": {
           "name": "contests_roundsessionmodel_user_id_3b33a5a3",
@@ -1930,38 +2067,50 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "contests_roundsessio_contest_id_e6fa066d_fk_contests_": {
           "name": "contests_roundsessio_contest_id_e6fa066d_fk_contests_",
           "tableFrom": "legacy_contests_roundsessionmodel",
-          "columnsFrom": ["contest_id"],
           "tableTo": "legacy_contests_contestmodel",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "contest_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "contests_roundsessio_discipline_id_0f555c24_fk_contests_": {
           "name": "contests_roundsessio_discipline_id_0f555c24_fk_contests_",
           "tableFrom": "legacy_contests_roundsessionmodel",
-          "columnsFrom": ["discipline_id"],
           "tableTo": "legacy_contests_disciplinemodel",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "discipline_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "contests_roundsessionmodel_user_id_3b33a5a3_fk_accounts_user_id": {
           "name": "contests_roundsessionmodel_user_id_3b33a5a3_fk_accounts_user_id",
           "tableFrom": "legacy_contests_roundsessionmodel",
-          "columnsFrom": ["user_id"],
           "tableTo": "legacy_accounts_user",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1980,15 +2129,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "contests_scramblemodel_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "9223372036854775807",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "created_at": {
@@ -2047,9 +2196,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "contests_scramblemodel_created_at_4546f9f0": {
           "name": "contests_scramblemodel_created_at_4546f9f0",
@@ -2063,9 +2212,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "contests_scramblemodel_discipline_id_7e00f2e1": {
           "name": "contests_scramblemodel_discipline_id_7e00f2e1",
@@ -2079,29 +2228,37 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "contests_scramblemod_contest_id_d67db4b5_fk_contests_": {
           "name": "contests_scramblemod_contest_id_d67db4b5_fk_contests_",
           "tableFrom": "legacy_contests_scramblemodel",
-          "columnsFrom": ["contest_id"],
           "tableTo": "legacy_contests_contestmodel",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "contest_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "contests_scramblemod_discipline_id_7e00f2e1_fk_contests_": {
           "name": "contests_scramblemod_discipline_id_7e00f2e1_fk_contests_",
           "tableFrom": "legacy_contests_scramblemodel",
-          "columnsFrom": ["discipline_id"],
           "tableTo": "legacy_contests_disciplinemodel",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "discipline_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -2120,15 +2277,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "contests_singleresultleaderboardmodel_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "9223372036854775807",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "time_ms": {
@@ -2157,28 +2314,34 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "contests_singleresul_solve_id_e45376e5_fk_contests_": {
           "name": "contests_singleresul_solve_id_e45376e5_fk_contests_",
           "tableFrom": "legacy_contests_singleresultleaderboardmodel",
-          "columnsFrom": ["solve_id"],
           "tableTo": "legacy_contests_solvemodel",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "solve_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "contests_singleresultleaderboardmodel_solve_id_key": {
           "name": "contests_singleresultleaderboardmodel_solve_id_key",
-          "columns": ["solve_id"],
-          "nullsNotDistinct": false
+          "nullsNotDistinct": false,
+          "columns": [
+            "solve_id"
+          ]
         }
       },
       "policies": {},
@@ -2195,15 +2358,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "contests_solvemodel_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "9223372036854775807",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "created_at": {
@@ -2292,9 +2455,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "contests_solvemodel_created_at_57193ba0": {
           "name": "contests_solvemodel_created_at_57193ba0",
@@ -2308,9 +2471,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "contests_solvemodel_discipline_id_cb3f8e9b": {
           "name": "contests_solvemodel_discipline_id_cb3f8e9b",
@@ -2324,9 +2487,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "contests_solvemodel_round_session_id_abf6ee3b": {
           "name": "contests_solvemodel_round_session_id_abf6ee3b",
@@ -2340,9 +2503,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "contests_solvemodel_scramble_id_b21e23aa": {
           "name": "contests_solvemodel_scramble_id_b21e23aa",
@@ -2356,9 +2519,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "contests_solvemodel_user_id_28200dba": {
           "name": "contests_solvemodel_user_id_28200dba",
@@ -2372,56 +2535,76 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "contests_solvemodel_contest_id_98f20926_fk_contests_": {
           "name": "contests_solvemodel_contest_id_98f20926_fk_contests_",
           "tableFrom": "legacy_contests_solvemodel",
-          "columnsFrom": ["contest_id"],
           "tableTo": "legacy_contests_contestmodel",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "contest_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "contests_solvemodel_discipline_id_cb3f8e9b_fk_contests_": {
           "name": "contests_solvemodel_discipline_id_cb3f8e9b_fk_contests_",
           "tableFrom": "legacy_contests_solvemodel",
-          "columnsFrom": ["discipline_id"],
           "tableTo": "legacy_contests_disciplinemodel",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "discipline_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "contests_solvemodel_round_session_id_abf6ee3b_fk_contests_": {
           "name": "contests_solvemodel_round_session_id_abf6ee3b_fk_contests_",
           "tableFrom": "legacy_contests_solvemodel",
-          "columnsFrom": ["round_session_id"],
           "tableTo": "legacy_contests_roundsessionmodel",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "round_session_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "contests_solvemodel_scramble_id_b21e23aa_fk_contests_": {
           "name": "contests_solvemodel_scramble_id_b21e23aa_fk_contests_",
           "tableFrom": "legacy_contests_solvemodel",
-          "columnsFrom": ["scramble_id"],
           "tableTo": "legacy_contests_scramblemodel",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "scramble_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "contests_solvemodel_user_id_28200dba_fk_accounts_user_id": {
           "name": "contests_solvemodel_user_id_28200dba_fk_accounts_user_id",
           "tableFrom": "legacy_contests_solvemodel",
-          "columnsFrom": ["user_id"],
           "tableTo": "legacy_accounts_user",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -2440,15 +2623,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "contests_tnoodlescramblesmodel_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "9223372036854775807",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "created_at": {
@@ -2495,9 +2678,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "contests_tnoodlescramblesmodel_discipline_id_200a6a3a": {
           "name": "contests_tnoodlescramblesmodel_discipline_id_200a6a3a",
@@ -2511,9 +2694,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "contests_tnoodlescramblesmodel_moves_35d3f5a9_like": {
           "name": "contests_tnoodlescramblesmodel_moves_35d3f5a9_like",
@@ -2527,28 +2710,34 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "contests_tnoodlescra_discipline_id_200a6a3a_fk_contests_": {
           "name": "contests_tnoodlescra_discipline_id_200a6a3a_fk_contests_",
           "tableFrom": "legacy_contests_tnoodlescramblesmodel",
-          "columnsFrom": ["discipline_id"],
           "tableTo": "legacy_contests_disciplinemodel",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "discipline_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "contests_tnoodlescramblesmodel_moves_key": {
           "name": "contests_tnoodlescramblesmodel_moves_key",
-          "columns": ["moves"],
-          "nullsNotDistinct": false
+          "nullsNotDistinct": false,
+          "columns": [
+            "moves"
+          ]
         }
       },
       "policies": {},
@@ -2565,15 +2754,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "django_admin_log_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "2147483647",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "action_time": {
@@ -2632,9 +2821,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "django_admin_log_user_id_c564eba6": {
           "name": "django_admin_log_user_id_c564eba6",
@@ -2648,29 +2837,37 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "django_admin_log_content_type_id_c4bce8eb_fk_django_co": {
           "name": "django_admin_log_content_type_id_c4bce8eb_fk_django_co",
           "tableFrom": "legacy_django_admin_log",
-          "columnsFrom": ["content_type_id"],
           "tableTo": "legacy_django_content_type",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "content_type_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "django_admin_log_user_id_c564eba6_fk_accounts_user_id": {
           "name": "django_admin_log_user_id_c564eba6_fk_accounts_user_id",
           "tableFrom": "legacy_django_admin_log",
-          "columnsFrom": ["user_id"],
           "tableTo": "legacy_accounts_user",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -2694,15 +2891,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "django_content_type_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "2147483647",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "app_label": {
@@ -2724,8 +2921,11 @@
       "uniqueConstraints": {
         "django_content_type_app_label_model_76bd3d3b_uniq": {
           "name": "django_content_type_app_label_model_76bd3d3b_uniq",
-          "columns": ["app_label", "model"],
-          "nullsNotDistinct": false
+          "nullsNotDistinct": false,
+          "columns": [
+            "app_label",
+            "model"
+          ]
         }
       },
       "policies": {},
@@ -2742,15 +2942,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "django_migrations_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "9223372036854775807",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "app": {
@@ -2816,9 +3016,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "django_session_session_key_c0390e0f_like": {
           "name": "django_session_session_key_c0390e0f_like",
@@ -2832,9 +3032,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {},
@@ -2854,15 +3054,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "django_site_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "2147483647",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "domain": {
@@ -2891,9 +3091,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {},
@@ -2901,8 +3101,10 @@
       "uniqueConstraints": {
         "django_site_domain_a2e37b91_uniq": {
           "name": "django_site_domain_a2e37b91_uniq",
-          "columns": ["domain"],
-          "nullsNotDistinct": false
+          "nullsNotDistinct": false,
+          "columns": [
+            "domain"
+          ]
         }
       },
       "policies": {},
@@ -2919,15 +3121,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "socialaccount_socialaccount_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "2147483647",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "provider": {
@@ -2980,28 +3182,35 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "socialaccount_social_user_id_8146e70c_fk_accounts_": {
           "name": "socialaccount_social_user_id_8146e70c_fk_accounts_",
           "tableFrom": "legacy_socialaccount_socialaccount",
-          "columnsFrom": ["user_id"],
           "tableTo": "legacy_accounts_user",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "socialaccount_socialaccount_provider_uid_fc810c6e_uniq": {
           "name": "socialaccount_socialaccount_provider_uid_fc810c6e_uniq",
-          "columns": ["provider", "uid"],
-          "nullsNotDistinct": false
+          "nullsNotDistinct": false,
+          "columns": [
+            "provider",
+            "uid"
+          ]
         }
       },
       "policies": {},
@@ -3018,15 +3227,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "socialaccount_socialapp_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "2147483647",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "provider": {
@@ -3090,15 +3299,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "socialaccount_socialapp_sites_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "9223372036854775807",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "socialapp_id": {
@@ -3127,9 +3336,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "socialaccount_socialapp_sites_socialapp_id_97fb6e7d": {
           "name": "socialaccount_socialapp_sites_socialapp_id_97fb6e7d",
@@ -3143,37 +3352,48 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "socialaccount_social_site_id_2579dee5_fk_django_si": {
           "name": "socialaccount_social_site_id_2579dee5_fk_django_si",
           "tableFrom": "legacy_socialaccount_socialapp_sites",
-          "columnsFrom": ["site_id"],
           "tableTo": "legacy_django_site",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "site_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "socialaccount_social_socialapp_id_97fb6e7d_fk_socialacc": {
           "name": "socialaccount_social_socialapp_id_97fb6e7d_fk_socialacc",
           "tableFrom": "legacy_socialaccount_socialapp_sites",
-          "columnsFrom": ["socialapp_id"],
           "tableTo": "legacy_socialaccount_socialapp",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "socialapp_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "socialaccount_socialapp__socialapp_id_site_id_71a9a768_uniq": {
           "name": "socialaccount_socialapp__socialapp_id_site_id_71a9a768_uniq",
-          "columns": ["socialapp_id", "site_id"],
-          "nullsNotDistinct": false
+          "nullsNotDistinct": false,
+          "columns": [
+            "socialapp_id",
+            "site_id"
+          ]
         }
       },
       "policies": {},
@@ -3190,15 +3410,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "socialaccount_socialtoken_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "2147483647",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "token": {
@@ -3245,9 +3465,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "socialaccount_socialtoken_app_id_636a42d7": {
           "name": "socialaccount_socialtoken_app_id_636a42d7",
@@ -3261,37 +3481,48 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "socialaccount_social_account_id_951f210e_fk_socialacc": {
           "name": "socialaccount_social_account_id_951f210e_fk_socialacc",
           "tableFrom": "legacy_socialaccount_socialtoken",
-          "columnsFrom": ["account_id"],
           "tableTo": "legacy_socialaccount_socialaccount",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "account_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "socialaccount_social_app_id_636a42d7_fk_socialacc": {
           "name": "socialaccount_social_app_id_636a42d7_fk_socialacc",
           "tableFrom": "legacy_socialaccount_socialtoken",
-          "columnsFrom": ["app_id"],
           "tableTo": "legacy_socialaccount_socialapp",
-          "columnsTo": ["id"],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "columnsFrom": [
+            "app_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "socialaccount_socialtoken_app_id_account_id_fca4e0ac_uniq": {
           "name": "socialaccount_socialtoken_app_id_account_id_fca4e0ac_uniq",
-          "columns": ["account_id", "app_id"],
-          "nullsNotDistinct": false
+          "nullsNotDistinct": false,
+          "columns": [
+            "account_id",
+            "app_id"
+          ]
         }
       },
       "policies": {},
@@ -3301,10 +3532,10 @@
   },
   "enums": {},
   "schemas": {},
-  "views": {},
   "sequences": {},
   "roles": {},
   "policies": {},
+  "views": {},
   "_meta": {
     "columns": {},
     "schemas": {},
