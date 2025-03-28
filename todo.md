@@ -13,5 +13,3 @@
     - [x] isverified middleware to block all mutations
     - [x] rename isverified to finishedregistration
     - [x] remove google username from db 
-- [ ] lazy loading with spinners (twisty)
-- [ ] dependency versions conflict

@@ -7,27 +7,12 @@ import blueCube from '@/../public/images/not-found/blue-cube.svg'
 import greenCube from '@/../public/images/not-found/green-cube.svg'
 import whiteCube from '@/../public/images/not-found/white-cube.svg'
 import whiteSmCube from '@/../public/images/not-found/white-sm-cube.svg'
-import img404 from '@/../public/images/not-found/404.svg'
 import {
   MouseParallaxChild,
   MouseParallaxContainer,
 } from 'react-parallax-mouse'
 import { type ReactNode } from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
-import { PrimaryButton } from './_components/ui'
-import { useMatchesScreen } from './_utils/tailwind'
-
-export function LinkToDashboard() {
-  const isSmScreen = useMatchesScreen('sm')
-  return (
-    <Link href='/'>
-      <PrimaryButton className='sm:w-full' size={isSmScreen ? 'sm' : 'lg'}>
-        Go back to dashboard
-      </PrimaryButton>
-    </Link>
-  )
-}
+import Image, { type StaticImageData } from 'next/image'
 
 type ParallaxCubesProps = {
   children: ReactNode
@@ -44,7 +29,13 @@ export function ParallaxCubesWrapper({ children }: ParallaxCubesProps) {
   )
 }
 
-export function ParallaxCubes() {
+export function ParallaxCubes({
+  mainImgSrc,
+  mainImgAlt,
+}: {
+  mainImgSrc: StaticImageData
+  mainImgAlt: string
+}) {
   return (
     <div className='absolute inset-0 overflow-clip'>
       <MouseParallaxChild
@@ -119,8 +110,8 @@ export function ParallaxCubes() {
           className='pointer-events-auto absolute left-1/2 top-[40%] w-[80%]'
         >
           <Image
-            src={img404}
-            alt=''
+            src={mainImgSrc}
+            alt={mainImgAlt}
             className='h-full w-full -translate-x-1/2'
           />
         </MouseParallaxChild>
