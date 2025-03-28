@@ -162,6 +162,13 @@
       "when": 1743179657601,
       "tag": "0025_free_otto_octavius",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1743179745754,
+      "tag": "0026_legacy-import-scrambles",
+      "breakpoints": true
     }
   ]
 }
