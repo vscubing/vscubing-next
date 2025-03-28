@@ -94,6 +94,10 @@ export const roundSessionTable = pgTable('roundSession', (d) => ({
   avgMs: d.integer(),
   isDnf: d.boolean(),
   isFinished: d.boolean().notNull(),
+  contestantId: d
+    .text()
+    .notNull()
+    .references(() => usersTable.id, { onDelete: 'cascade' }),
   contestDisciplineId: d
     .integer()
     .notNull()

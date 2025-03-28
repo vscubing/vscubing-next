@@ -19,3 +19,4 @@
     - [ ] import round sessions
     - [ ] import solves
     - [ ] ui
+- [ ] rename tables (contest_ prefix)

@@ -1,0 +1,2 @@
+ALTER TABLE "roundSession" ADD COLUMN "contestantId" text NOT NULL;--> statement-breakpoint
+ALTER TABLE "roundSession" ADD CONSTRAINT "roundSession_contestantId_user_id_fk" FOREIGN KEY ("contestantId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
