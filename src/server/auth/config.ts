@@ -4,9 +4,9 @@ import GoogleProvider from 'next-auth/providers/google'
 
 import { db } from '@/server/db'
 import {
-  accounts,
-  sessions,
-  users,
+  accountsTable,
+  sessionsTable,
+  usersTable,
   verificationTokens,
 } from '@/server/db/schema'
 import { env } from '@/env'
@@ -21,6 +21,7 @@ declare module 'next-auth' {
   interface Session extends DefaultSession {
     user: {
       id: string
+      isVerified?: boolean
       // ...other properties
       // role: UserRole;
     } & DefaultSession['user']
@@ -83,9 +84,9 @@ export const authConfig = {
      */
   ],
   adapter: DrizzleAdapter(db, {
-    usersTable: users,
-    accountsTable: accounts,
-    sessionsTable: sessions,
+    usersTable: usersTable,
+    accountsTable: accountsTable,
+    sessionsTable: sessionsTable,
     verificationTokensTable: verificationTokens,
   }),
   callbacks: {
@@ -94,6 +95,7 @@ export const authConfig = {
       user: {
         ...session.user,
         id: user.id,
+        isVerified: (user as typeof usersTable.$inferSelect).isVerified,
       },
     }),
   },

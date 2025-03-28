@@ -6,7 +6,8 @@
 - [x] correct .env.example
 - [x] update next js
 - [x] tailwind img imports
-- [ ] infinite scrolling contests list
+- [x] infinite scrolling contests list
 - [ ] pick username
+    - [ ] user dropdown update
 - [ ] lazy loading with spinners (twisty)
 - [ ] dependency versions conflict

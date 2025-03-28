@@ -3,11 +3,12 @@ import { PopupSidebar } from './components/popup-sidebar'
 import { Sidebar } from './components/sidebar'
 import { Navbar } from './components/navbar'
 import { PickUsernameDialog } from './components/pick-username-dialog'
+import { SessionProvider } from 'next-auth/react'
 
 type LayoutProps = { children: React.ReactNode }
 export function Layout({ children }: LayoutProps) {
   return (
-    <>
+    <SessionProvider>
       <PickUsernameDialog />
       <PopupSidebar />
       <div className='bg-black-100'>
@@ -22,7 +23,7 @@ export function Layout({ children }: LayoutProps) {
           <BottomNavbar className='hidden sm:block' />
         </div>
       </div>
-    </>
+    </SessionProvider>
   )
 }
 

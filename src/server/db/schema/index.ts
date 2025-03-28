@@ -1,6 +1,6 @@
 import { sql } from 'drizzle-orm'
 import { index, pgTable } from 'drizzle-orm/pg-core'
-import { users } from './accounts'
+import { usersTable } from './accounts'
 import { DISCIPLINES } from '@/shared'
 
 /**
@@ -18,7 +18,7 @@ export const postsTable = pgTable(
     createdById: d
       .varchar({ length: 255 })
       .notNull()
-      .references(() => users.id),
+      .references(() => usersTable.id),
     createdAt: d
       .timestamp({ withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)

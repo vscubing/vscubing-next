@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,62 +12,50 @@ import {
   AlertDialogTitle,
 } from '@/app/_components/ui'
 import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { Input } from '@/app/_components/ui'
+import { signOut, useSession } from 'next-auth/react'
+import { api } from '@/trpc/react'
 
-const USERNAME_LENGTH = { MIN: 3, MAX: 24 }
-const formSchema = z.object({
-  username: z
-    .string()
-    .trim()
-    .min(1, 'It looks like you forgot to enter a nickname')
-    .regex(
-      /^[a-zA-Z0-9_.-]*$/,
-      'Oops! Nicknames can only contain letters, numbers, underscores and hyphens. Please remove any special characters or spaces',
-    )
-    .min(
-      USERNAME_LENGTH.MIN,
-      `Uh-oh! Your nickname should be between ${USERNAME_LENGTH.MIN} and ${USERNAME_LENGTH.MAX} characters. Let's tweak it to fit the rules`,
-    ),
-})
-type UsernameForm = z.infer<typeof formSchema>
-
-// TODO: [next]
 export function PickUsernameDialog() {
-  const [isPending, setIsPending] = useState(false)
-  // const { data: user } = useUser();
+  const {
+    data: session,
+    status: sessionStatus,
+    update: updateSession,
+  } = useSession()
 
-  // const isVisible = user?.isVerified === false;
-  const isVisible = false
+  const isVisible = session?.user?.isVerified === false
 
   const {
     register,
     handleSubmit,
     setError,
-    reset,
     formState: { errors },
-  } = useForm<UsernameForm>({ resolver: zodResolver(formSchema) })
+  } = useForm<{ username: string }>()
 
-  async function onSubmit({ username }: UsernameForm) {
-    // setIsPending(true);
-    // try {
-    //   await accountsChangeUsernameUpdate({ username });
-    // } catch (error) {
-    //   if (error instanceof AxiosError && error.response?.status === 409) {
-    //     setError("username", {
-    //       message:
-    //         "Sorry, that nickname is already taken! How about trying a unique variation or adding some numbers?",
-    //     });
-    //   }
-    //
-    //   setIsPending(false);
-    //   return;
-    // }
-    //
-    // await queryClient.invalidateQueries({ queryKey: [USER_QUERY_KEY] });
-    // reset();
-    // setIsPending(false);
+  const { isPending: isMutationPending, mutate } =
+    api.user.setUsername.useMutation()
+
+  const isPending = isMutationPending || sessionStatus === 'loading'
+
+  async function onSubmit({ username }: { username: string }) {
+    mutate(
+      { username },
+      {
+        onSuccess: () => {
+          void updateSession()
+        },
+        onError: (error) => {
+          if (error.data?.zodError) {
+            console.log(error.data.zodError)
+            setError('username', {
+              message: error.data?.zodError.fieldErrors?.username?.[0],
+            })
+          } else {
+            setError('username', { message: error.message })
+          }
+        },
+      },
+    )
   }
 
   return (
@@ -91,13 +78,13 @@ export function PickUsernameDialog() {
                 className='block w-[20rem] max-w-full sm:w-full'
                 error={!!errors.username}
                 type='text'
-                maxLength={USERNAME_LENGTH.MAX}
+                maxLength={24}
                 {...register('username')}
               />
               <span className='caption'>{errors.username?.message}</span>
             </label>
             <AlertDialogFooter className='sm:grid sm:grid-cols-2'>
-              <AlertDialogCancel /* onClick={logout}  */ type='button'>
+              <AlertDialogCancel onClick={() => signOut()} type='button'>
                 Log out
               </AlertDialogCancel>
               <AlertDialogAction
