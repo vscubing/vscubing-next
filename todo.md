@@ -7,7 +7,11 @@
 - [x] update next js
 - [x] tailwind img imports
 - [x] infinite scrolling contests list
-- [ ] pick username
-    - [ ] user dropdown update
+- [x] pick username
+    - [x] form
+    - [x] user dropdown update
+    - [x] isverified middleware to block all mutations
+    - [x] rename isverified to finishedregistration
+    - [x] remove google username from db 
 - [ ] lazy loading with spinners (twisty)
 - [ ] dependency versions conflict

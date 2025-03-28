@@ -22,15 +22,18 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { useSetAtom } from 'jotai'
 import { mobileMenuOpenAtom } from '../store/mobileMenuOpenAtom'
 import { Slot } from '@radix-ui/react-slot'
-import { signOut } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
+import { SignInButton } from '@/app/_shared/SignInButton'
 
-export function UserDropdown({
-  user,
-  className,
-}: {
-  user: User
-  className?: string
-}) {
+export function UserDropdownOrSignIn() {
+  const { data, status } = useSession()
+
+  if (status === 'loading') return <LoadingDots className='pr-4' />
+  if (data === null) return <SignInButton variant='ghost' />
+  return <UserDropdown user={data.user} className='md:-mr-2 sm:mr-0' />
+}
+
+function UserDropdown({ user, className }: { user: User; className?: string }) {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
@@ -142,3 +145,13 @@ const DropdownButton = forwardRef<
   )
 })
 DropdownButton.displayName = 'DropdownButton'
+
+function LoadingDots({ className }: { className?: string }) {
+  return (
+    <div className={cn('flex animate-pulse space-x-2', className)}>
+      <div className='h-3 w-3 rounded-full bg-grey-80'></div>
+      <div className='h-3 w-3 rounded-full bg-grey-80'></div>
+      <div className='h-3 w-3 rounded-full bg-grey-80'></div>
+    </div>
+  )
+}

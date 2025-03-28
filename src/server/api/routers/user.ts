@@ -26,7 +26,7 @@ export const userRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const user = ctx.session.user
-      if (user.isVerified)
+      if (user.finishedRegistration)
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message: 'Changing the username is not possible',
@@ -47,7 +47,7 @@ export const userRouter = createTRPCRouter({
 
       await ctx.db
         .update(usersTable)
-        .set({ name: input.username, isVerified: true })
+        .set({ name: input.username, finishedRegistration: true })
         .where(eq(usersTable.id, user.id))
     }),
 })

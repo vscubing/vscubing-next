@@ -7,9 +7,10 @@ import {
   accountsTable,
   sessionsTable,
   usersTable,
-  verificationTokens,
+  verificationTokensTable,
 } from '@/server/db/schema'
 import { env } from '@/env'
+import type { Adapter, AdapterUser } from 'next-auth/adapters'
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -21,7 +22,7 @@ declare module 'next-auth' {
   interface Session extends DefaultSession {
     user: {
       id: string
-      isVerified?: boolean
+      finishedRegistration?: boolean
       // ...other properties
       // role: UserRole;
     } & DefaultSession['user']
@@ -33,33 +34,26 @@ declare module 'next-auth' {
   // }
 }
 
-// function customAdapter(): Adapter {
-//   const adapter = DrizzleAdapter(db, {
-//     usersTable: users,
-//     accountsTable: accounts,
-//     sessionsTable: sessions,
-//     verificationTokensTable: verificationTokens,
-//   });
-//
-//   // Overwrite createUser method on adapter
-//   adapter.createUser = async (data): Promise<AdapterUser> => {
-//     const dataEntered = await db
-//       .insert(users)
-//       .values({ ...data, isVerified: false })
-//       .returning()
-//       .then((res) => res[0] ?? null);
-//
-//     if (!dataEntered) {
-//       throw new Error("User Creation Failed");
-//     }
-//
-//     return dataEntered;
-//   };
-//
-//   return {
-//     ...adapter,
-//   };
-// }
+function customCreateUser(adapter: ReturnType<typeof DrizzleAdapter>): Adapter {
+  // Overwrite createUser method on adapter
+  adapter.createUser = async (data): Promise<AdapterUser> => {
+    const dataEntered = await db
+      .insert(usersTable)
+      .values({ ...data, name: '' })
+      .returning()
+      .then((res) => res[0] ?? null)
+
+    if (!dataEntered) {
+      throw new Error('User Creation Failed')
+    }
+
+    return dataEntered
+  }
+
+  return {
+    ...adapter,
+  }
+}
 
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
@@ -83,19 +77,22 @@ export const authConfig = {
      * @see https://next-auth.js.org/providers/github
      */
   ],
-  adapter: DrizzleAdapter(db, {
-    usersTable: usersTable,
-    accountsTable: accountsTable,
-    sessionsTable: sessionsTable,
-    verificationTokensTable: verificationTokens,
-  }),
+  adapter: customCreateUser(
+    DrizzleAdapter(db, {
+      usersTable: usersTable,
+      accountsTable: accountsTable,
+      sessionsTable: sessionsTable,
+      verificationTokensTable: verificationTokensTable,
+    }),
+  ),
   callbacks: {
     session: ({ session, user }) => ({
       ...session,
       user: {
         ...session.user,
         id: user.id,
-        isVerified: (user as typeof usersTable.$inferSelect).isVerified,
+        finishedRegistration: (user as typeof usersTable.$inferSelect)
+          .finishedRegistration,
       },
     }),
   },

@@ -8,11 +8,11 @@ export const usersTable = pgTable('user', (d) => ({
     .notNull()
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()), // NOTE: legacy userId's are just integers
-  name: d.varchar({ length: 255 }),
+  name: d.varchar({ length: 255 }).notNull(),
   email: d.varchar({ length: 255 }).notNull(),
   emailVerified: d.timestamp({ mode: 'date' }),
   image: d.text('image'),
-  isVerified: d.boolean().default(false).notNull(),
+  finishedRegistration: d.boolean().default(false).notNull(),
   createdAt: d
     .timestamp({
       withTimezone: true,
@@ -77,7 +77,7 @@ export const sessionsRelations = relations(sessionsTable, ({ one }) => ({
   }),
 }))
 
-export const verificationTokens = pgTable(
+export const verificationTokensTable = pgTable(
   'verification_token',
   (d) => ({
     identifier: d.varchar({ length: 255 }).notNull(),

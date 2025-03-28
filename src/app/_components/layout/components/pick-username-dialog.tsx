@@ -23,7 +23,7 @@ export function PickUsernameDialog() {
     update: updateSession,
   } = useSession()
 
-  const isVisible = session?.user?.isVerified === false
+  const isVisible = session?.user?.finishedRegistration === false
 
   const {
     register,

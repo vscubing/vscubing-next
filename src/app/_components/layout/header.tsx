@@ -1,11 +1,9 @@
 import { MenuIcon } from '@/app/_components/ui'
-import { Suspense, type ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import { ControlMobileMenuButton } from './store/mobileMenuOpenAtom'
-import { SignInButton } from '@/app/_shared/SignInButton'
 import { cn } from '@/app/_utils/cn'
 import { LogoWithLinkToLanding } from './components/logo'
-import { auth } from '@/server/auth'
-import { UserDropdown } from './components/user-dropdown'
+import { UserDropdownOrSignIn } from './components/user-dropdown-or-sign-in'
 
 type HeaderProps = { title?: ReactNode; className?: string }
 export async function Header({ title, className }: HeaderProps) {
@@ -21,31 +19,9 @@ export async function Header({ title, className }: HeaderProps) {
         <LogoWithLinkToLanding className='mr-auto hidden lg:block' />
         <h1 className='title-h3 lg:hidden sm:hidden'>{title}</h1>
         <span className='flex items-center justify-end'>
-          <Suspense fallback={<LoadingDots className='pr-4' />}>
-            <UserOrSignIn />
-          </Suspense>
+          <UserDropdownOrSignIn />
         </span>
       </div>
     </header>
-  )
-}
-
-async function UserOrSignIn() {
-  const session = await auth()
-
-  return session ? (
-    <UserDropdown user={session.user} className='md:-mr-2 sm:mr-0' />
-  ) : (
-    <SignInButton variant='ghost' />
-  )
-}
-
-function LoadingDots({ className }: { className?: string }) {
-  return (
-    <div className={cn('flex animate-pulse space-x-2', className)}>
-      <div className='h-3 w-3 rounded-full bg-grey-80'></div>
-      <div className='h-3 w-3 rounded-full bg-grey-80'></div>
-      <div className='h-3 w-3 rounded-full bg-grey-80'></div>
-    </div>
   )
 }
