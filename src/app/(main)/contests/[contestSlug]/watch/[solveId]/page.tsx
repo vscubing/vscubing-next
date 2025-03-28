@@ -2,62 +2,28 @@ import { Header, SectionHeader } from '@/app/_components/layout'
 import { DisciplineBadge } from '@/app/_components/ui'
 import { NavigateBackButton } from '@/app/_shared/NavigateBackButton'
 import { formatSolveTime } from '@/app/_utils/formatSolveTime'
-import { db } from '@/server/db'
-import {
-  contestsToDisciplinesTable,
-  roundSessionTable,
-  scrambleTable,
-  solveTable,
-  usersTable,
-} from '@/server/db/schema'
-import { eq } from 'drizzle-orm'
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
 import { z } from 'zod'
 import { ShareSolveButton } from './share-button'
 import { TwistySection } from './twisty-section.client'
+import { api } from '@/trpc/server'
+import { tryCatchTRPC } from '@/app/_utils/try-catch'
+import { notFound } from 'next/navigation'
 
-export default async function Page({
+export default async function WatchSolvePage({
   params,
 }: {
   params: Promise<{ contestSlug: string; solveId: string }>
 }) {
   const { contestSlug, solveId } = await params
-  const solve = (
-    await db
-      .select({
-        scramble: scrambleTable.moves,
-        position: scrambleTable.position,
-        solution: solveTable.reconstruction,
-        username: usersTable.name,
-        timeMs: solveTable.timeMs,
-        discipline: contestsToDisciplinesTable.disciplineSlug,
-      })
-      .from(solveTable)
-      .where(eq(solveTable.id, Number(solveId)))
-      .innerJoin(scrambleTable, eq(scrambleTable.id, solveTable.scrambleId))
-      .innerJoin(
-        roundSessionTable,
-        eq(roundSessionTable.id, solveTable.roundSessionId),
-      )
-      .innerJoin(usersTable, eq(usersTable.id, roundSessionTable.contestantId))
-      .innerJoin(
-        contestsToDisciplinesTable,
-        eq(
-          contestsToDisciplinesTable.id,
-          roundSessionTable.contestDisciplineId,
-        ),
-      )
-  )[0]
+  const { data: solve, error } = await tryCatchTRPC(
+    api.contest.getSolve({ solveId: Number(solveId) }),
+  )
+  if (error) {
+    if (error.code === 'NOT_FOUND' || error.code === 'BAD_REQUEST') notFound()
+    throw error
+  }
 
-  // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
-  if (!solve) notFound()
-  if (!solve.solution || !solve.timeMs || !solve.scramble)
-    throw new Error(
-      `The solve exists, but is incomplete. \nSolution: ${solve.solution} \ntimeMs: ${solve.timeMs} \nscramble: ${solve.scramble}`,
-    )
-
-  // solve.
   return (
     <section className='flex flex-1 flex-col gap-3'>
       <Header title='Watch the solution' />

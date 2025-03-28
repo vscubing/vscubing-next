@@ -5,6 +5,10 @@ import {
   contestsTable,
   contestsToDisciplinesTable,
   disciplinesTable,
+  roundSessionTable,
+  scrambleTable,
+  solveTable,
+  usersTable,
 } from '@/server/db/schema'
 import { DISCIPLINES } from '@/shared'
 import { eq, desc, and, lt } from 'drizzle-orm'
@@ -70,4 +74,57 @@ export const contestRouter = createTRPCRouter({
 
     return ongoingList[0]!
   }),
+
+  getSolve: publicProcedure
+    .input(
+      z.object({
+        solveId: z.number(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const res = await ctx.db
+        .select({
+          scramble: scrambleTable.moves,
+          position: scrambleTable.position,
+          solution: solveTable.reconstruction,
+          username: usersTable.name,
+          timeMs: solveTable.timeMs,
+          discipline: contestsToDisciplinesTable.disciplineSlug,
+        })
+        .from(solveTable)
+        .where(eq(solveTable.id, input.solveId))
+        .innerJoin(scrambleTable, eq(scrambleTable.id, solveTable.scrambleId))
+        .innerJoin(
+          roundSessionTable,
+          eq(roundSessionTable.id, solveTable.roundSessionId),
+        )
+        .innerJoin(
+          usersTable,
+          eq(usersTable.id, roundSessionTable.contestantId),
+        )
+        .innerJoin(
+          contestsToDisciplinesTable,
+          eq(
+            contestsToDisciplinesTable.id,
+            roundSessionTable.contestDisciplineId,
+          ),
+        )
+      const solve = res[0]
+
+      if (!solve) throw new TRPCError({ code: 'NOT_FOUND' })
+
+      // const { scramble, solution, timeMs, ...rest } = solve
+      if (!solve.solution || !solve.timeMs || !solve.scramble)
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: `The solve exists, but is incomplete. \nSolution: ${solve.solution} \ntimeMs: ${solve.timeMs} \nscramble: ${solve.scramble}`,
+        })
+
+      return {
+        ...solve,
+        solution: solve.solution, // reassign to make typescript infer non-nullability
+        timeMs: solve.timeMs,
+        scramble: solve.scramble,
+      }
+    }),
 })
