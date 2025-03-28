@@ -1,4 +1,4 @@
-import { castDiscipline, DEFAULT_DISCIPLINE, isDiscipline } from '@/app/_types'
+import { DEFAULT_DISCIPLINE, isDiscipline } from '@/app/_types'
 import { db } from '@/server/db'
 import {
   usersTable,
@@ -17,7 +17,7 @@ export default async function ContestPage({
   searchParams,
 }: {
   params: Promise<{ contestSlug: string }>
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+  searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
   const { contestSlug } = await params
   const awaitedSearch = await searchParams
