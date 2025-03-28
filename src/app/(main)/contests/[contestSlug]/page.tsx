@@ -1,3 +1,4 @@
+import { castDiscipline, DEFAULT_DISCIPLINE, isDiscipline } from '@/app/_types'
 import { db } from '@/server/db'
 import {
   usersTable,
@@ -8,15 +9,21 @@ import {
 } from '@/server/db/schema'
 import { and, eq } from 'drizzle-orm'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import React from 'react'
 
 export default async function ContestPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ contestSlug: string }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-  const discipline = '3by3'
   const { contestSlug } = await params
+  const awaitedSearch = await searchParams
+  const discipline = awaitedSearch.discipline ?? DEFAULT_DISCIPLINE
+  if (!isDiscipline(discipline)) redirect(`/contests/${contestSlug}`)
+
   const results = await db
     .select({
       solveId: solveTable.id,
@@ -43,16 +50,22 @@ export default async function ContestPage({
     .orderBy(roundSessionTable.avgMs)
   return (
     <table>
-      {results.map(({ position, state, nickname, timeMs, avgMs, solveId }) => (
-        <tr key={solveId}>
-          <td>position: {position}</td> <td>state: {state}</td>
-          <td>nickname: {nickname}</td>
-          <Link href={`/contests/${contestSlug}/watch/${solveId}`}>
-            <td>timeMs: {timeMs}</td>
-          </Link>
-          <td>avgMs: {avgMs}</td> <td>solveId: {solveId}</td>
-        </tr>
-      ))}
+      <tbody>
+        {results.map(
+          ({ position, state, nickname, timeMs, avgMs, solveId }) => (
+            <tr key={solveId}>
+              <td>position: {position}</td> <td>state: {state}</td>
+              <td>nickname: {nickname}</td>
+              <td>
+                <Link href={`/contests/${contestSlug}/watch/${solveId}`}>
+                  timeMs: {timeMs}
+                </Link>
+              </td>
+              <td>avgMs: {avgMs}</td> <td>solveId: {solveId}</td>
+            </tr>
+          ),
+        )}
+      </tbody>
     </table>
   )
 }

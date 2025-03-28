@@ -34,7 +34,11 @@ export default function ContestList({
         contest={contest.contest}
         className='sm:hidden'
       />
-      <ContestRowMobile contest={contest.contest} className='hidden sm:flex' />
+      <ContestRowMobile
+        discipline={discipline}
+        contest={contest.contest}
+        className='hidden sm:flex'
+      />
     </li>
   ))
 }

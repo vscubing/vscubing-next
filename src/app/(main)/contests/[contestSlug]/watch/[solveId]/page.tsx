@@ -5,6 +5,7 @@ import { copyToClipboard } from '@/app/_utils/copyToClipboard'
 import { formatSolveTime } from '@/app/_utils/formatSolveTime'
 import { db } from '@/server/db'
 import {
+  contestsToDisciplinesTable,
   roundSessionTable,
   scrambleTable,
   solveTable,
@@ -12,9 +13,9 @@ import {
 } from '@/server/db/schema'
 import { eq } from 'drizzle-orm'
 import Link from 'next/link'
-import { Suspense } from 'react'
+import { lazy, Suspense } from 'react'
 import { z } from 'zod'
-import TwistySection from './twisty-section.lazy'
+const TwistySection = lazy(() => import('./twisty-section.lazy'))
 
 export default async function Page({
   params,
@@ -33,7 +34,17 @@ export default async function Page({
         eq(roundSessionTable.id, solveTable.roundSessionId),
       )
       .innerJoin(usersTable, eq(usersTable.id, roundSessionTable.contestantId))
+      .innerJoin(
+        contestsToDisciplinesTable,
+        eq(
+          contestsToDisciplinesTable.id,
+          roundSessionTable.contestDisciplineId,
+        ),
+      )
   )[0]!
+
+  if (solve.solve.reconstruction === null)
+    return 'no reconstruction, probably a dnf'
 
   // solve.
   return (
@@ -43,7 +54,9 @@ export default async function Page({
       <NavigateBackButton className='self-start' />
       <div className='grid flex-1 grid-cols-[1.22fr_1fr] grid-rows-[min-content,1fr] gap-3 lg:grid-cols-2 sm:grid-cols-1 sm:grid-rows-[min-content,min-content,1fr]'>
         <SectionHeader className='gap-4'>
-          <DisciplineBadge discipline='3by3' />
+          <DisciplineBadge
+            discipline={solve.contest_discipline.disciplineSlug}
+          />
           <div>
             <Link
               href='/'
@@ -79,9 +92,9 @@ export default async function Page({
           }
         >
           <TwistySection
-            solution={solve.solve.reconstruction!}
+            solution={solve.solve.reconstruction}
             scramble={solve.scramble.moves!}
-            discipline={'3by3'}
+            discipline={solve.contest_discipline.disciplineSlug}
           />
         </Suspense>
       </div>

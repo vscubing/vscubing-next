@@ -44,7 +44,7 @@ export function ContestRowDesktop({
         <Link
           href={{
             pathname: `/contests/${contest.slug}`,
-            query: { discipline: DEFAULT_DISCIPLINE },
+            query: { discipline },
           }}
         >
           view contest

@@ -3,6 +3,7 @@ import { index, pgEnum, pgTable } from 'drizzle-orm/pg-core'
 import { usersTable } from './accounts'
 import { DISCIPLINES } from '@/shared'
 import { createdUpdatedAtColumns } from './core'
+import type { Discipline } from '@/app/_types'
 
 export * from './accounts'
 
@@ -57,7 +58,8 @@ export const contestsToDisciplinesTable = pgTable(
     disciplineSlug: d
       .text()
       .notNull()
-      .references(() => disciplinesTable.slug, { onDelete: 'cascade' }),
+      .references(() => disciplinesTable.slug, { onDelete: 'cascade' })
+      .$type<Discipline>(),
   }),
 )
 

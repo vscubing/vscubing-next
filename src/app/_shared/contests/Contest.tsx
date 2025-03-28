@@ -1,6 +1,6 @@
 import { formatContestDuration } from '@/app/_utils/formatDate'
 import { SecondaryButton, ArrowRightIcon } from '@/app/_components/ui'
-import { DEFAULT_DISCIPLINE } from '@/app/_types'
+import { type Discipline } from '@/app/_types'
 import type { contestsTable } from '@/server/db/schema'
 import Link from 'next/link'
 import { cn } from '@/app/_utils/cn'
@@ -10,9 +10,10 @@ type ContestProps = {
     typeof contestsTable.$inferSelect,
     'startDate' | 'endDate' | 'slug'
   >
+  discipline: Discipline
   className?: string
 }
-export function Contest({ contest, className }: ContestProps) {
+export function Contest({ contest, discipline, className }: ContestProps) {
   return (
     <div
       className={cn(
@@ -33,7 +34,7 @@ export function Contest({ contest, className }: ContestProps) {
         <Link
           href={{
             pathname: `/contests/${contest.slug}`,
-            query: { discipline: DEFAULT_DISCIPLINE },
+            query: { discipline },
           }}
         >
           <ArrowRightIcon />
