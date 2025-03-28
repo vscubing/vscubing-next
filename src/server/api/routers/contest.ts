@@ -8,9 +8,10 @@ import {
 } from '@/server/db/schema'
 import { DISCIPLINES } from '@/shared'
 import { eq, desc, and, lt } from 'drizzle-orm'
+import { TRPCError } from '@trpc/server'
 
 export const contestRouter = createTRPCRouter({
-  infinitePastContests: publicProcedure
+  pastContests: publicProcedure
     .input(
       z.object({
         discipline: z.enum(DISCIPLINES),
@@ -32,6 +33,7 @@ export const contestRouter = createTRPCRouter({
         )
         .where(
           and(
+            eq(contestsTable.isOngoing, false),
             eq(disciplinesTable.slug, input.discipline),
             input.cursor
               ? lt(contestsTable.startDate, input.cursor)
@@ -48,4 +50,24 @@ export const contestRouter = createTRPCRouter({
 
       return { items, nextCursor }
     }),
+
+  ongoing: publicProcedure.query(async ({ ctx }) => {
+    const ongoingList = await ctx.db
+      .select()
+      .from(contestsTable)
+      .where(eq(contestsTable.isOngoing, true))
+
+    if (!ongoingList || ongoingList.length === 0)
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'No ongoing contest!',
+      })
+    if (ongoingList.length > 1)
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'More then one ongoing contest!',
+      })
+
+    return ongoingList[0]!
+  }),
 })

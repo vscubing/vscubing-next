@@ -8,24 +8,25 @@ import {
   AllContestsIcon,
   OngoingContestIcon,
 } from '../../ui'
-import { usePathname, useRouter } from 'next/navigation'
-import { type ReactNode, type MouseEvent, useEffect, useState } from 'react'
+import { usePathname } from 'next/navigation'
+import { type ReactNode, useEffect, useState } from 'react'
 import { useSetAtom } from 'jotai'
 import { mobileMenuOpenAtom } from '../store/mobileMenuOpenAtom'
 import type { Route } from 'next'
-
-const ACTIVE_CLASSES_VERTICAL =
-  'text-primary-80 after:h-[1.5px] after:scale-x-100 hover:text-primary-80'
-const ACTIVE_CLASSES_HORIZONTAL = 'text-primary-80 hover:text-primary-80'
+import { api } from '@/trpc/react'
 
 type NavbarProps = {
   variant: 'vertical' | 'horizontal'
 }
 export function Navbar({ variant }: NavbarProps) {
   const setOpenOnMobile = useSetAtom(mobileMenuOpenAtom)
+  const { data: ongoingContest } = api.contest.ongoing.useQuery()
 
-  const realRoute = usePathname() as NavbarRoute // TODO: proper handling
-  const [activeRoute, setActiveRoute] = useState<NavbarRoute>(realRoute)
+  const pathname = usePathname()
+  const realRoute = parsePathname(pathname, ongoingContest?.slug)
+  const [activeRoute, setActiveRoute] = useState<NavbarRoute | undefined>(
+    realRoute,
+  )
   useEffect(() => setActiveRoute(realRoute), [realRoute])
 
   function handleRouteChange(href: NavbarRoute) {
@@ -43,7 +44,10 @@ export function Navbar({ variant }: NavbarProps) {
             onClick={() => handleRouteChange(href)}
             className={cn(
               'title-h3 after-border-bottom transition-base outline-ring flex items-center gap-4 px-4 py-2 text-grey-20 after:origin-[0%_50%] after:bg-primary-80 hover:text-primary-60 active:text-primary-80 sm:gap-3 sm:p-3',
-              { [ACTIVE_CLASSES_VERTICAL]: activeRoute === href },
+              {
+                'text-primary-80 after:h-[1.5px] after:scale-x-100 hover:text-primary-80':
+                  activeRoute === href,
+              },
             )}
           >
             {children}
@@ -63,7 +67,7 @@ export function Navbar({ variant }: NavbarProps) {
             onClick={() => handleRouteChange(href)}
             className={cn(
               'caption-sm transition-base flex min-w-[4.625rem] flex-col items-center gap-1 whitespace-nowrap px-1 text-grey-20 active:text-primary-80',
-              { [ACTIVE_CLASSES_HORIZONTAL]: activeRoute === href },
+              { 'text-primary-80 hover:text-primary-80': activeRoute === href },
             )}
           >
             {children}
@@ -71,6 +75,23 @@ export function Navbar({ variant }: NavbarProps) {
         ))}
       </nav>
     )
+  }
+}
+
+function parsePathname(
+  pathname: string,
+  ongoingContestSlug?: string,
+): NavbarRoute | undefined {
+  if (pathname === '/') return '/'
+  if (pathname.startsWith('/leaderboard')) return '/leaderboard'
+  if (pathname.startsWith('/contests')) {
+    if (
+      ongoingContestSlug &&
+      removePrefix(pathname, '/contests/').startsWith(ongoingContestSlug)
+    ) {
+      return '/contests/ongoing'
+    }
+    return '/contests'
   }
 }
 
@@ -189,3 +210,7 @@ const navbarLinks = [
 //     },
 //   ];
 // }
+
+function removePrefix(value: string, prefix: string) {
+  return value.startsWith(prefix) ? value.slice(prefix.length) : value
+}

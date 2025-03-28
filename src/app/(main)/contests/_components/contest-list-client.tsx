@@ -11,7 +11,7 @@ export default function ContestList({
   discipline: Discipline
 }) {
   const [data, { fetchNextPage }] =
-    api.contest.infinitePastContests.useSuspenseInfiniteQuery(
+    api.contest.pastContests.useSuspenseInfiniteQuery(
       {
         discipline,
       },

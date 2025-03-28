@@ -55,9 +55,8 @@ export default async function ContestsIndexPage(props: {
   )
 }
 
-// TODO: [next] add infinite scroll
 async function PageContent({ discipline }: { discipline: Discipline }) {
-  const contests = await api.contest.infinitePastContests({
+  const contests = await api.contest.pastContests({
     discipline,
   })
 
