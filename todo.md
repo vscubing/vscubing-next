@@ -24,3 +24,4 @@
 - [ ] rename tables (contest_ prefix, snake case), rename table variables
 - [ ] put discipline on /contests/page in a query param
 - [ ] rename reconstruction to solution
+- [ ] fix toaster animation

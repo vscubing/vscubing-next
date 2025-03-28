@@ -1,4 +1,4 @@
-import { isDiscipline, type Discipline } from '@/app/_types'
+import { type Discipline } from '@/app/_types'
 import { TwistyPlayer, type PuzzleID } from '@vscubing/cubing/twisty'
 import { useState, useEffect } from 'react'
 import { doEverything } from './solution-transformer'
@@ -8,22 +8,14 @@ export function useTwistyPlayer({
   solution: rawSolution,
   discipline,
 }: {
-  scramble?: string
-  solution?: string
-  discipline?: string
+  scramble: string
+  solution: string
+  discipline: Discipline
 }) {
   const [player, setPlayer] = useState<TwistyPlayer | null>(null)
 
   useEffect(() => {
     void (async () => {
-      if (!scramble || !rawSolution || !discipline) {
-        return
-      }
-
-      if (!isDiscipline(discipline)) {
-        throw new Error(`invalid discipline: ${discipline}`)
-      }
-
       const { solution, animLeaves } = await doEverything(
         scramble,
         rawSolution,

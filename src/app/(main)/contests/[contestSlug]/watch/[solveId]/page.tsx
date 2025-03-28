@@ -1,7 +1,6 @@
 import { Header, SectionHeader } from '@/app/_components/layout'
-import { LoadingSpinner, DisciplineBadge, toast } from '@/app/_components/ui'
+import { DisciplineBadge } from '@/app/_components/ui'
 import { NavigateBackButton } from '@/app/_shared/NavigateBackButton'
-import { copyToClipboard } from '@/app/_utils/copyToClipboard'
 import { formatSolveTime } from '@/app/_utils/formatSolveTime'
 import { db } from '@/server/db'
 import {
@@ -13,9 +12,10 @@ import {
 } from '@/server/db/schema'
 import { eq } from 'drizzle-orm'
 import Link from 'next/link'
-import { lazy, Suspense } from 'react'
+import { notFound } from 'next/navigation'
 import { z } from 'zod'
-const TwistySection = lazy(() => import('./twisty-section.lazy'))
+import { ShareSolveButton } from './share-button'
+import { TwistySection } from './twisty-section.client'
 
 export default async function Page({
   params,
@@ -25,7 +25,14 @@ export default async function Page({
   const { contestSlug, solveId } = await params
   const solve = (
     await db
-      .select()
+      .select({
+        scramble: scrambleTable.moves,
+        position: scrambleTable.position,
+        solution: solveTable.reconstruction,
+        username: usersTable.name,
+        timeMs: solveTable.timeMs,
+        discipline: contestsToDisciplinesTable.disciplineSlug,
+      })
       .from(solveTable)
       .where(eq(solveTable.id, Number(solveId)))
       .innerJoin(scrambleTable, eq(scrambleTable.id, solveTable.scrambleId))
@@ -41,10 +48,14 @@ export default async function Page({
           roundSessionTable.contestDisciplineId,
         ),
       )
-  )[0]!
+  )[0]
 
-  if (solve.solve.reconstruction === null)
-    return 'no reconstruction, probably a dnf'
+  // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
+  if (!solve) notFound()
+  if (!solve.solution || !solve.timeMs || !solve.scramble)
+    throw new Error(
+      `The solve exists, but is incomplete. \nSolution: ${solve.solution} \ntimeMs: ${solve.timeMs} \nscramble: ${solve.scramble}`,
+    )
 
   // solve.
   return (
@@ -54,67 +65,36 @@ export default async function Page({
       <NavigateBackButton className='self-start' />
       <div className='grid flex-1 grid-cols-[1.22fr_1fr] grid-rows-[min-content,1fr] gap-3 lg:grid-cols-2 sm:grid-cols-1 sm:grid-rows-[min-content,min-content,1fr]'>
         <SectionHeader className='gap-4'>
-          <DisciplineBadge
-            discipline={solve.contest_discipline.disciplineSlug}
-          />
+          <DisciplineBadge discipline={solve.discipline} />
           <div>
             <Link
-              href='/'
-              // to='/contests/$contestSlug'
-              // search={{ discipline: search.discipline }}
-              // params={{ contestSlug: params.contestSlug }}
+              href={`/contests/${contestSlug}?discipline=${solve.discipline}`}
               className='title-h2 mb-1 text-secondary-20'
             >
               Contest {contestSlug}
             </Link>
             <p className='text-large'>
-              Scramble {expandScramblePosition(solve.scramble.position)}
+              Scramble {expandScramblePosition(solve.position)}
             </p>
           </div>
         </SectionHeader>
         <div className='flex items-center justify-between rounded-2xl bg-black-80 px-4 py-2'>
           <div className='sm:min-h-14'>
-            <p className='title-h3 mb-1'>{solve.user.name}</p>
+            <p className='title-h3 mb-1'>{solve.username}</p>
             <p className='text-large text-grey-20'>
-              {solve.solve.timeMs ? formatSolveTime(solve.solve.timeMs) : null}
+              {formatSolveTime(solve.timeMs)}
             </p>
           </div>
-          {/* <SecondaryButton size='iconSm' onClick={copyWatchSolveLink}> */}
-          {/*   <ShareIcon /> */}
-          {/* </SecondaryButton> */}
+          <ShareSolveButton />
         </div>
 
-        <Suspense
-          fallback={
-            <div className='col-span-full flex items-center justify-center rounded-2xl bg-black-80'>
-              <LoadingSpinner />
-            </div>
-          }
-        >
-          <TwistySection
-            solution={solve.solve.reconstruction}
-            scramble={solve.scramble.moves!}
-            discipline={solve.contest_discipline.disciplineSlug}
-          />
-        </Suspense>
+        <TwistySection
+          solution={solve.solution}
+          scramble={solve.scramble}
+          discipline={solve.discipline}
+        />
       </div>
     </section>
-  )
-}
-
-function copyWatchSolveLink() {
-  copyToClipboard(window.location.href).then(
-    () =>
-      toast({
-        title: 'Link copied',
-        description: 'You can now share the link with your friends.',
-        duration: 'short',
-      }),
-    () =>
-      toast({
-        title: 'Uh-oh! An error occured while copying the link',
-        description: 'Try changing permissions in your browser settings.',
-      }),
   )
 }
 

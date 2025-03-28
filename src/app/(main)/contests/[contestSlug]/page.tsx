@@ -51,8 +51,9 @@ export default async function ContestPage({
   return (
     <table>
       <tbody>
-        {results.map(
-          ({ position, state, nickname, timeMs, avgMs, solveId }) => (
+        {results
+          .filter((res) => res.timeMs)
+          .map(({ position, state, nickname, timeMs, avgMs, solveId }) => (
             <tr key={solveId}>
               <td>position: {position}</td> <td>state: {state}</td>
               <td>nickname: {nickname}</td>
@@ -63,8 +64,7 @@ export default async function ContestPage({
               </td>
               <td>avgMs: {avgMs}</td> <td>solveId: {solveId}</td>
             </tr>
-          ),
-        )}
+          ))}
       </tbody>
     </table>
   )

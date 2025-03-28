@@ -6,6 +6,7 @@ import type { ReactNode } from 'react'
 import { Hind, Kanit } from 'next/font/google'
 import { cn } from './_utils/cn'
 import { TRPCReactProvider } from '@/trpc/react'
+import { Toaster } from './_components/ui'
 
 export const metadata: Metadata = {
   title: 'vscubing',
@@ -39,7 +40,10 @@ export default async function RootLayout({
   return (
     <html lang='en' className={cn(hind.className, kanit.className)}>
       <body>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <TRPCReactProvider>
+          {children}
+          <Toaster />
+        </TRPCReactProvider>
       </body>
     </html>
   )
