@@ -20,7 +20,7 @@
         "@trpc/client": "^11.0.0",
         "@trpc/react-query": "^11.0.0",
         "@trpc/server": "^11.0.0",
-        "@vscubing/cubing": "0.54.4-vscubing.4",
+        "@vscubing/cubing": "0.55.0-vscubing.10",
         "class-variance-authority": "^0.7.0",
         "clsx": "^2.0.0",
         "dayjs": "^1.11.10",
@@ -812,7 +812,7 @@
 
     "@unrs/rspack-resolver-binding-win32-x64-msvc": ["@unrs/rspack-resolver-binding-win32-x64-msvc@1.2.2", "", { "os": "win32", "cpu": "x64" }, "sha512-hewo/UMGP1a7O6FG/ThcPzSJdm/WwrYDNkdGgWl6M18H6K6MSitklomWpT9MUtT5KGj++QJb06va/14QBC4pvw=="],
 
-    "@vscubing/cubing": ["@vscubing/cubing@0.54.4-vscubing.4", "", { "dependencies": { "@types/three": "^0.169.0", "@types/web-bluetooth": "^0.0.20", "cmd-ts-too": "^0.15.3", "comlink": "^4.4.1", "random-uint-below": "v3.3.0", "three": "^0.170.0" }, "bin": { "scramble": "dist/bin/scramble.js" } }, "sha512-mVg5+hoydZpwNd8hc0UMDtVwrpu1siJm4FqMTKb6b986fVStf0TXr5e5cp39NYuMdWZEiemUHzRsugsQVYoYqA=="],
+    "@vscubing/cubing": ["@vscubing/cubing@0.55.0-vscubing.10", "", { "dependencies": { "@types/three": "^0.169.0", "@types/web-bluetooth": "^0.0.20", "cmd-ts-too": "^0.15.3", "comlink": "^4.4.1", "random-uint-below": "v3.3.0", "three": "^0.170.0" }, "bin": { "scramble": "dist/bin/scramble.js" } }, "sha512-N9f9LY7kDojIBRbT9QS1xXbJG82Z2sv8YDYyP6TPUmXk/MwreCBsxaiV51NvqpIYpVEAtzcbJ2AzKSF3OBmF8w=="],
 
     "@webgpu/types": ["@webgpu/types@0.1.58", "", {}, "sha512-+8+NBE17zrc1wS4FvZmmuGTpog5C2H6QC46RY2TTWNpnt15Xvp7dZoUHZQXvb8l5ddKwO8l1pDJa6XTnR4Al1Q=="],
 

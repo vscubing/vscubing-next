@@ -18,6 +18,12 @@ export function TwistyTempo({
     if (input) {
       handleSliderStylesOnChange(input, tempo.toString())
       twistyPlayer.tempoScale = tempo
+      // @ts-expect-error I know what I'm doing
+      if (twistyPlayer.experimentalModel.__vscubingAnimationTimelineLeavesSet) {
+        twistyPlayer.tempoScale = tempo
+      } else {
+        twistyPlayer.tempoScale = tempo * 4
+      }
     }
   }, [tempo, twistyPlayer])
 
