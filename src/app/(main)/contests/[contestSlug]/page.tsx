@@ -13,10 +13,10 @@ import React from 'react'
 export default async function ContestPage({
   params,
 }: {
-  params: Promise<{ slug: string }>
+  params: Promise<{ contestSlug: string }>
 }) {
   const discipline = '3by3'
-  const { slug: contestSlug } = await params
+  const { contestSlug } = await params
   const results = await db
     .select({
       solveId: solveTable.id,
@@ -45,11 +45,11 @@ export default async function ContestPage({
     <table>
       {results.map(({ position, state, nickname, timeMs, avgMs, solveId }) => (
         <tr key={solveId}>
-          <td>position: {position}</td> <td>state: {state}</td>{' '}
-          <td>nickname: {nickname}</td>{' '}
-          <Link href='/landing'>
+          <td>position: {position}</td> <td>state: {state}</td>
+          <td>nickname: {nickname}</td>
+          <Link href={`/contests/${contestSlug}/watch/${solveId}`}>
             <td>timeMs: {timeMs}</td>
-          </Link>{' '}
+          </Link>
           <td>avgMs: {avgMs}</td> <td>solveId: {solveId}</td>
         </tr>
       ))}

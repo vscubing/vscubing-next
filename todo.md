@@ -14,9 +14,13 @@
     - [x] rename isverified to finishedregistration
     - [x] remove google username from db 
 - [x] ongoing
-- [ ] contest results
+- [x] contest results
     - [x] import scrambles
     - [x] import round sessions
     - [x] import solves
-    - [ ] ui
-- [ ] rename tables (contest_ prefix)
+    - [x] ui
+- [x] watch solve
+- [ ] real time replays
+- [ ] rename tables (contest_ prefix, snake case), rename table variables
+- [ ] put discipline on /contests/page in a query param
+- [ ] rename reconstruction to solution
