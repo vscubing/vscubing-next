@@ -14,3 +14,4 @@
     - [x] rename isverified to finishedregistration
     - [x] remove google username from db 
 - [x] ongoing
+- [ ] put id into core columns too

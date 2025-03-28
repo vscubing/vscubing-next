@@ -120,6 +120,27 @@
       "when": 1743176839678,
       "tag": "0019_legacy-import-contests-v2",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1743177398094,
+      "tag": "0020_tiny_zombie",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1743177431050,
+      "tag": "0021_legacy-import-disciplines-v2",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1743177677070,
+      "tag": "0022_square_mister_sinister",
+      "breakpoints": true
     }
   ]
 }

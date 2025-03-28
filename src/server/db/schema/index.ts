@@ -26,6 +26,7 @@ export const postsTable = pgTable(
 )
 
 export const disciplinesTable = pgTable('discipline', (d) => ({
+  ...createdUpdatedAtColumns,
   slug: d.text({ enum: DISCIPLINES }).primaryKey(),
 }))
 
