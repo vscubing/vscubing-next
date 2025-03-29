@@ -5,8 +5,8 @@ import { cn } from '@/app/_utils/cn'
 import { LogoWithLinkToLanding } from './components/logo'
 import { UserDropdownOrSignIn } from './components/user-dropdown-or-sign-in'
 
-type HeaderProps = { title?: ReactNode; className?: string }
-export async function Header({ title, className }: HeaderProps) {
+type LayoutHeaderProps = { title?: ReactNode; className?: string }
+export async function LayoutHeader({ title, className }: LayoutHeaderProps) {
   return (
     <header className={cn('z-40 flex bg-black-100 sm:pb-2 sm:pt-3', className)}>
       <ControlMobileMenuButton

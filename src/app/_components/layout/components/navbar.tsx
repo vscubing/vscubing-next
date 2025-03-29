@@ -20,7 +20,7 @@ type NavbarProps = {
 }
 export function Navbar({ variant }: NavbarProps) {
   const setOpenOnMobile = useSetAtom(mobileMenuOpenAtom)
-  const { data: ongoingContest } = api.contest.ongoing.useQuery()
+  const { data: ongoingContest } = api.contest.getOngoing.useQuery()
 
   const pathname = usePathname()
   const realRoute = parsePathname(pathname, ongoingContest?.slug)

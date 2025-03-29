@@ -12,7 +12,7 @@ import {
   ContestRowSkeletonDesktop,
   ContestRowSkeletonMobile,
 } from './_components/contest'
-import { DisciplineSwitcher } from './_components/discipline-switcher-client'
+import { DisciplineSwitcher } from '../../_shared/discipline-switcher-client'
 import ContestList from './_components/contest-list-client'
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>
@@ -27,36 +27,34 @@ export default async function ContestsIndexPage(props: {
 
   const title = 'Explore contests'
   return (
-    <HydrateClient>
-      <section className='flex flex-1 flex-col gap-3 sm:gap-2'>
-        <Header title={title} />
-        <PageTitleMobile>{title}</PageTitleMobile>
-        <NavigateBackButton className='self-start' />
-        <SectionHeader>
-          <DisciplineSwitcher initialDiscipline={discipline} />
-        </SectionHeader>
-        <Suspense
-          key={discipline}
-          fallback={
-            <ContestListWrapper>
-              {Array.from({ length: 20 }).map((_, idx) => (
-                <li key={idx}>
-                  <ContestRowSkeletonDesktop className='sm:hidden' />
-                  <ContestRowSkeletonMobile className='hidden sm:flex' />
-                </li>
-              ))}
-            </ContestListWrapper>
-          }
-        >
-          <PageContent discipline={discipline} />
-        </Suspense>
-      </section>
-    </HydrateClient>
+    <section className='flex flex-1 flex-col gap-3 sm:gap-2'>
+      <Header title={title} />
+      <PageTitleMobile>{title}</PageTitleMobile>
+      <NavigateBackButton className='self-start' />
+      <SectionHeader>
+        <DisciplineSwitcher initialDiscipline={discipline} />
+      </SectionHeader>
+      <Suspense
+        key={discipline}
+        fallback={
+          <ContestListWrapper>
+            {Array.from({ length: 20 }).map((_, idx) => (
+              <li key={idx}>
+                <ContestRowSkeletonDesktop className='sm:hidden' />
+                <ContestRowSkeletonMobile className='hidden sm:flex' />
+              </li>
+            ))}
+          </ContestListWrapper>
+        }
+      >
+        <PageContent discipline={discipline} />
+      </Suspense>
+    </section>
   )
 }
 
 async function PageContent({ discipline }: { discipline: Discipline }) {
-  const contests = await api.contest.pastContests({
+  const contests = await api.contest.getPastContests({
     discipline,
   })
 
@@ -73,7 +71,9 @@ async function PageContent({ discipline }: { discipline: Discipline }) {
 
   return (
     <ContestListWrapper>
-      <ContestList discipline={discipline} />
+      <HydrateClient>
+        <ContestList initialData={contests} discipline={discipline} />
+      </HydrateClient>
     </ContestListWrapper>
   )
 }

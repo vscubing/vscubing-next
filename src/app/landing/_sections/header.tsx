@@ -6,7 +6,7 @@ import { CloseIcon, Logo, MenuIcon } from '@/app/_components/ui'
 import { DynamicLinkToApp } from '../_shared/LinkToApp'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 
-export function Header({
+export function LandingHeader({
   navigationAnchors,
 }: {
   navigationAnchors: { id: string; name: string }[]

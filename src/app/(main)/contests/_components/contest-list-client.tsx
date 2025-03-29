@@ -1,21 +1,26 @@
 'use client'
 import type { Discipline } from '@/app/_types'
-import { api } from '@/trpc/react'
+import { api, type RouterOutputs } from '@/trpc/react'
 import React, { useEffect } from 'react'
 import { ContestRowDesktop, ContestRowMobile } from './contest'
 import { useInView } from 'react-intersection-observer'
 
 export default function ContestList({
   discipline,
+  initialData,
 }: {
   discipline: Discipline
+  initialData: RouterOutputs['contest']['getPastContests']
 }) {
   const [data, { fetchNextPage }] =
-    api.contest.pastContests.useSuspenseInfiniteQuery(
+    api.contest.getPastContests.useSuspenseInfiniteQuery(
       {
         discipline,
       },
-      { getNextPageParam: (prevPage) => prevPage.nextCursor },
+      {
+        getNextPageParam: (prevPage) => prevPage.nextCursor,
+        initialData: { pages: [initialData], pageParams: [] },
+      },
     )
 
   const [lastElementRef, inView] = useInView()

@@ -1,4 +1,4 @@
-import { Header } from './_sections/header'
+import { LandingHeader } from './_sections/header'
 import { HeroSection } from './_sections/hero-section'
 import { AboutSection } from './_sections/about-section'
 import { FeaturesSection } from './_sections/features-section'
@@ -21,7 +21,7 @@ const NAVIGATION_ANCHORS = {
 export default function LandingPage() {
   return (
     <div className='bg-black-120 text-[1rem] leading-[1.4] text-grey-40'>
-      <Header navigationAnchors={Object.values(NAVIGATION_ANCHORS)} />
+      <LandingHeader navigationAnchors={Object.values(NAVIGATION_ANCHORS)} />
       <main className='space-y-44 sm:space-y-24'>
         <HeroSection />
         <AboutSection

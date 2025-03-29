@@ -11,11 +11,12 @@ import {
   usersTable,
 } from '@/server/db/schema'
 import { DISCIPLINES } from '@/shared'
-import { eq, desc, and, lt } from 'drizzle-orm'
+import { eq, desc, and, lt, count } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
+import { api } from '@/trpc/server'
 
 export const contestRouter = createTRPCRouter({
-  pastContests: publicProcedure
+  getPastContests: publicProcedure
     .input(
       z.object({
         discipline: z.enum(DISCIPLINES),
@@ -55,7 +56,7 @@ export const contestRouter = createTRPCRouter({
       return { items, nextCursor }
     }),
 
-  ongoing: publicProcedure.query(async ({ ctx }) => {
+  getOngoing: publicProcedure.query(async ({ ctx }) => {
     const ongoingList = await ctx.db
       .select()
       .from(contestsTable)
@@ -74,6 +75,104 @@ export const contestRouter = createTRPCRouter({
 
     return ongoingList[0]!
   }),
+
+  getContestMetaData: publicProcedure
+    .input(z.object({ contestSlug: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const res = await ctx.db
+        .select()
+        .from(contestsTable)
+        .where(eq(contestsTable.slug, input.contestSlug))
+
+      if (!res || res.length === 0)
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+        })
+
+      return res[0]!
+    }),
+
+  getContestResults: publicProcedure
+    .input(
+      z.object({ contestSlug: z.string(), discipline: z.enum(DISCIPLINES) }),
+    )
+    .query(async ({ ctx, input }) => {
+      const isOngoing = await ctx.db
+        .select({ isOngoing: contestsTable.isOngoing })
+        .from(contestsTable)
+        .where(eq(contestsTable.slug, input.contestSlug))
+
+      if (isOngoing) {
+        if (!ctx.session)
+          throw new TRPCError({
+            code: 'UNAUTHORIZED',
+            message:
+              'You must be authorized to participate in an ongoing contest or view its results',
+          })
+
+        const [ownSession] = await ctx.db
+          .select({ isFinished: roundSessionTable.isFinished })
+          .from(contestsToDisciplinesTable)
+          .innerJoin(
+            roundSessionTable,
+            eq(
+              roundSessionTable.contestDisciplineId,
+              contestsToDisciplinesTable.id,
+            ),
+          )
+          .innerJoin(
+            usersTable,
+            eq(usersTable.id, roundSessionTable.contestantId),
+          )
+          .where(
+            and(
+              eq(contestsToDisciplinesTable.contestSlug, input.contestSlug),
+              eq(contestsToDisciplinesTable.disciplineSlug, input.discipline),
+              eq(usersTable.id, ctx.session.user.id),
+            ),
+          )
+        if (!ownSession || !ownSession.isFinished)
+          throw new TRPCError({
+            code: 'FORBIDDEN',
+            message:
+              "You can't see the results of an ongoing contest round before finishing it",
+          })
+      }
+
+      return ctx.db
+        .select({
+          solveId: solveTable.id,
+          timeMs: solveTable.timeMs,
+          avgMs: roundSessionTable.avgMs,
+          nickname: usersTable.name,
+          position: scrambleTable.position,
+          state: solveTable.state,
+        })
+        .from(contestsToDisciplinesTable)
+        .where(
+          and(
+            eq(contestsToDisciplinesTable.contestSlug, input.contestSlug),
+            eq(contestsToDisciplinesTable.disciplineSlug, input.discipline),
+          ),
+        )
+        .innerJoin(
+          roundSessionTable,
+          eq(
+            roundSessionTable.contestDisciplineId,
+            contestsToDisciplinesTable.id,
+          ),
+        )
+        .innerJoin(
+          solveTable,
+          eq(solveTable.roundSessionId, roundSessionTable.id),
+        )
+        .innerJoin(scrambleTable, eq(scrambleTable.id, solveTable.scrambleId))
+        .innerJoin(
+          usersTable,
+          eq(usersTable.id, roundSessionTable.contestantId),
+        )
+        .orderBy(roundSessionTable.avgMs)
+    }),
 
   getSolve: publicProcedure
     .input(

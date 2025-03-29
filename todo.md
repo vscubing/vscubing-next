@@ -21,3 +21,10 @@
     - [x] ui
 - [x] watch solve
 - [x] real time replays
+- [ ] contest results ui
+    - [ ] header
+    - [ ] section header
+    - [ ] list
+    - [ ] pinned item
+    - [ ] jump to the pinned item
+- [ ] move the header to layout

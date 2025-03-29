@@ -1,4 +1,4 @@
-import { DEFAULT_DISCIPLINE, isDiscipline } from '@/app/_types'
+import { DEFAULT_DISCIPLINE, isDiscipline, type Discipline } from '@/app/_types'
 import { db } from '@/server/db'
 import {
   usersTable,
@@ -7,12 +7,17 @@ import {
   scrambleTable,
   solveTable,
 } from '@/server/db/schema'
+import { api, HydrateClient } from '@/trpc/server'
 import { and, eq } from 'drizzle-orm'
-import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import React from 'react'
+import { formatContestDuration } from '@/app/_utils/formatDate'
+import { Header, SectionHeader } from '@/app/_components/layout'
+import { DisciplineSwitcher } from '@/app/_shared/discipline-switcher-client'
+import { NavigateBackButton } from '@/app/_shared/NavigateBackButton'
+import { PageTitleMobile } from '@/app/_shared/PageTitleMobile'
+import { Suspense } from 'react'
 
-export default async function ContestPage({
+export default async function ContestResultsPage({
   params,
   searchParams,
 }: {
@@ -24,48 +29,33 @@ export default async function ContestPage({
   const discipline = awaitedSearch.discipline ?? DEFAULT_DISCIPLINE
   if (!isDiscipline(discipline)) redirect(`/contests/${contestSlug}`)
 
-  const results = await db
-    .select({
-      solveId: solveTable.id,
-      timeMs: solveTable.timeMs,
-      avgMs: roundSessionTable.avgMs,
-      nickname: usersTable.name,
-      position: scrambleTable.position,
-      state: solveTable.state,
-    })
-    .from(contestsToDisciplinesTable)
-    .where(
-      and(
-        eq(contestsToDisciplinesTable.contestSlug, contestSlug),
-        eq(contestsToDisciplinesTable.disciplineSlug, discipline),
-      ),
-    )
-    .leftJoin(
-      roundSessionTable,
-      eq(roundSessionTable.contestDisciplineId, contestsToDisciplinesTable.id),
-    )
-    .leftJoin(solveTable, eq(solveTable.roundSessionId, roundSessionTable.id))
-    .leftJoin(scrambleTable, eq(scrambleTable.id, solveTable.scrambleId))
-    .leftJoin(usersTable, eq(usersTable.id, roundSessionTable.contestantId))
-    .orderBy(roundSessionTable.avgMs)
+  const contest = await api.contest.getContestMetaData({ contestSlug })
+
+  let title = ''
+  if (contest.isOngoing) {
+    title = `Ongoing contest (${formatContestDuration(contest)})`
+  } else {
+    title = 'Look through the contest results'
+  }
+
   return (
-    <table>
-      <tbody>
-        {results
-          .filter((res) => res.timeMs)
-          .map(({ position, state, nickname, timeMs, avgMs, solveId }) => (
-            <tr key={solveId}>
-              <td>position: {position}</td> <td>state: {state}</td>
-              <td>nickname: {nickname}</td>
-              <td>
-                <Link href={`/contests/${contestSlug}/watch/${solveId}`}>
-                  timeMs: {timeMs}
-                </Link>
-              </td>
-              <td>avgMs: {avgMs}</td> <td>solveId: {solveId}</td>
-            </tr>
-          ))}
-      </tbody>
-    </table>
+    <HydrateClient>
+      <section className='flex flex-1 flex-col gap-3 sm:gap-2'>
+        <Header title={title} />
+        <PageTitleMobile>{title}</PageTitleMobile>
+        <NavigateBackButton className='self-start' />
+        <SectionHeader>
+          <DisciplineSwitcher initialDiscipline={discipline} />
+        </SectionHeader>
+        <Suspense key={discipline} fallback={123}>
+          <PageContent discipline={discipline} />
+        </Suspense>
+      </section>
+    </HydrateClient>
   )
+}
+
+function PageContent({ discipline }: { discipline: Discipline }) {
+  // const results = api.contests.
+  return 'pageContent'
 }
