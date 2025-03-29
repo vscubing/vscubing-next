@@ -4,8 +4,8 @@ import { DisciplineSwitcherItem } from '@/app/_components/ui'
 import { type Discipline } from '@/app/_types'
 import { DISCIPLINES } from '@/shared'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { usePathname, useSearchParams } from 'next/navigation'
+import { useCallback, useState } from 'react'
 
 export function DisciplineSwitcher({
   initialDiscipline,
@@ -15,11 +15,27 @@ export function DisciplineSwitcher({
   const [currentDiscipline, setCurrentDiscipline] =
     useState<Discipline>(initialDiscipline)
 
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  const upsertSearchParam = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString())
+      params.set(name, value)
+
+      return params.toString()
+    },
+    [searchParams],
+  )
+
   return (
     <div className='flex gap-3'>
       {DISCIPLINES.map((discipline) => (
         <Link
-          href={`/contests?discipline=${discipline}`}
+          href={{
+            pathname,
+            query: upsertSearchParam('discipline', discipline),
+          }}
           onClick={() => setCurrentDiscipline(discipline)}
           key={discipline}
         >

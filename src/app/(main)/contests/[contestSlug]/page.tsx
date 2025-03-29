@@ -27,7 +27,7 @@ export default async function ContestPage({
   const results = await db
     .select({
       solveId: solveTable.id,
-      timeMs: solveTable.id,
+      timeMs: solveTable.timeMs,
       avgMs: roundSessionTable.avgMs,
       nickname: usersTable.name,
       position: scrambleTable.position,
