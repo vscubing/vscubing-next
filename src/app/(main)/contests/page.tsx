@@ -1,4 +1,5 @@
 import { HydrateClient } from '@/trpc/server'
+import { SecondaryButton } from '@/app/_components/ui'
 import { Header, SectionHeader } from '@/app/_components/layout'
 import { Suspense, type ReactNode } from 'react'
 import { DEFAULT_DISCIPLINE, isDiscipline, type Discipline } from '@/app/_types'
@@ -7,7 +8,6 @@ import { NavigateBackButton } from '@/app/_shared/NavigateBackButton'
 import { redirect } from 'next/navigation'
 import { api } from '@/trpc/server'
 import { HintSection } from '@/app/_shared/HintSection'
-import { ContestsListHeader } from './_components/contests-list-header'
 import {
   ContestRowSkeletonDesktop,
   ContestRowSkeletonMobile,
@@ -81,7 +81,14 @@ async function PageContent({ discipline }: { discipline: Discipline }) {
 function ContestListWrapper({ children }: { children: ReactNode }) {
   return (
     <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 sm:p-3'>
-      <ContestsListHeader className='sm:hidden' />
+      <div className='flex justify-between bg-black-80 pl-3 text-grey-40 sm:hidden'>
+        <span className='mr-3'>Type</span>
+        <span className='mr-8 flex-1'>Contest name</span>
+        <span className='mr-10 w-44'>Duration</span>
+        <SecondaryButton aria-hidden className='invisible h-px'>
+          view contest
+        </SecondaryButton>
+      </div>
 
       <ul className='flex flex-1 flex-col gap-2'>{children}</ul>
     </div>

@@ -13,6 +13,8 @@ import {
 import { DISCIPLINES } from '@/shared'
 import { eq, desc, and, lt } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
+import type { RoundSession } from '@/app/_types'
+import { groupBy } from '@/app/_utils/groupBy'
 
 export const contestRouter = createTRPCRouter({
   getPastContests: publicProcedure
@@ -101,56 +103,67 @@ export const contestRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      const isOngoing = await ctx.db
+      const [contest] = await ctx.db
         .select({ isOngoing: contestsTable.isOngoing })
         .from(contestsTable)
-        .where(eq(contestsTable.slug, input.contestSlug))
+        .fullJoin(
+          contestsToDisciplinesTable,
+          eq(contestsToDisciplinesTable.contestSlug, contestsTable.slug),
+        )
+        .where(
+          and(
+            eq(contestsTable.slug, input.contestSlug),
+            eq(contestsToDisciplinesTable.disciplineSlug, input.discipline),
+          ),
+        )
 
-      if (isOngoing) {
-        if (!ctx.session)
-          throw new TRPCError({
-            code: 'UNAUTHORIZED',
-            message:
-              'You need to be signed in to participate in an ongoing contest or view its results',
-          })
+      if (!contest) throw new TRPCError({ code: 'NOT_FOUND' })
 
-        const [ownSession] = await ctx.db
-          .select({ isFinished: roundSessionTable.isFinished })
-          .from(contestsToDisciplinesTable)
-          .innerJoin(
-            roundSessionTable,
-            eq(
-              roundSessionTable.contestDisciplineId,
-              contestsToDisciplinesTable.id,
-            ),
-          )
-          .innerJoin(
-            usersTable,
-            eq(usersTable.id, roundSessionTable.contestantId),
-          )
-          .where(
-            and(
-              eq(contestsToDisciplinesTable.contestSlug, input.contestSlug),
-              eq(contestsToDisciplinesTable.disciplineSlug, input.discipline),
-              eq(usersTable.id, ctx.session.user.id),
-            ),
-          )
-        if (!ownSession || !ownSession.isFinished)
-          throw new TRPCError({
-            code: 'FORBIDDEN',
-            message:
-              "You can't see the results of an ongoing contest round before finishing it",
-          })
-      }
+      if (contest.isOngoing && !ctx.session)
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message:
+            'You need to be signed in to participate in an ongoing contest or view its results',
+        })
 
-      const items = await ctx.db
+      const [ownSession] = await ctx.db
+        .select({ isFinished: roundSessionTable.isFinished })
+        .from(contestsToDisciplinesTable)
+        .innerJoin(
+          roundSessionTable,
+          eq(
+            roundSessionTable.contestDisciplineId,
+            contestsToDisciplinesTable.id,
+          ),
+        )
+        .innerJoin(
+          usersTable,
+          eq(usersTable.id, roundSessionTable.contestantId),
+        )
+        .where(
+          and(
+            eq(contestsToDisciplinesTable.contestSlug, input.contestSlug),
+            eq(contestsToDisciplinesTable.disciplineSlug, input.discipline),
+            ctx.session ? eq(usersTable.id, ctx.session?.user.id) : undefined,
+          ),
+        )
+      if (contest.isOngoing && (!ownSession || !ownSession.isFinished))
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message:
+            "You can't see the results of an ongoing contest round before finishing it",
+        })
+
+      const queryRes = await ctx.db
         .select({
+          roundSessionId: roundSessionTable.id,
+          nickname: usersTable.name,
+          contestantId: roundSessionTable.contestantId,
+          avgMs: roundSessionTable.avgMs,
           solveId: solveTable.id,
           timeMs: solveTable.timeMs,
-          avgMs: roundSessionTable.avgMs,
-          nickname: usersTable.name,
-          position: scrambleTable.position,
-          state: solveTable.state,
+          isDnf: solveTable.isDnf,
+          scramblePosition: scrambleTable.position,
         })
         .from(contestsToDisciplinesTable)
         .innerJoin(
@@ -173,11 +186,34 @@ export const contestRouter = createTRPCRouter({
           and(
             eq(contestsToDisciplinesTable.contestSlug, input.contestSlug),
             eq(contestsToDisciplinesTable.disciplineSlug, input.discipline),
+            eq(solveTable.state, 'submitted'),
           ),
         )
         .orderBy(roundSessionTable.avgMs)
         .limit(input.limit + 1)
         .offset(input.offset)
+
+      const solvesBySessionId = groupBy(
+        queryRes,
+        ({ roundSessionId }) => roundSessionId,
+      )
+
+      const items: RoundSession[] = Array.from(solvesBySessionId.values())
+        .sort((a, b) => (a[0]!.avgMs ?? -Infinity) - (b[0]!.avgMs ?? -Infinity))
+        .map((session) => ({
+          avgMs: session[0]!.avgMs,
+          id: session[0]!.roundSessionId,
+          isOwn: session[0]!.contestantId === ctx.session?.user.id,
+          solves: session.map(
+            ({ solveId, timeMs, isDnf, scramblePosition }) => ({
+              id: solveId,
+              timeMs,
+              isDnf,
+              scramblePosition,
+            }),
+          ),
+          nickname: session[0]!.nickname,
+        }))
 
       const nextOffset = items.pop() ? input.offset + 1 : undefined
 

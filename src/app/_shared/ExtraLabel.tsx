@@ -1,10 +1,11 @@
 import { cn } from '@/app/_utils/cn'
+import type { ScramblePosition } from '../_types'
 
 export function ExtraLabel({
   scramblePosition,
   className,
 }: {
-  scramblePosition: string
+  scramblePosition: ScramblePosition
   className?: string
 }) {
   if (!scramblePosition.startsWith('E')) {

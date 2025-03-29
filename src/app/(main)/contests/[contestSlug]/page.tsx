@@ -9,6 +9,7 @@ import { PageTitleMobile } from '@/app/_shared/PageTitleMobile'
 import { Suspense, type ReactNode } from 'react'
 import { tryCatchTRPC } from '@/app/_utils/try-catch'
 import { HintSection } from '@/app/_shared/HintSection'
+import { Session, SessionSkeleton } from './_components/session'
 
 export default async function ContestResultsPage({
   params,
@@ -40,7 +41,18 @@ export default async function ContestResultsPage({
         <SectionHeader>
           <DisciplineSwitcher initialDiscipline={discipline} />
         </SectionHeader>
-        <Suspense key={discipline} fallback={123}>
+        <Suspense
+          key={discipline}
+          fallback={
+            <SessionListWrapper>
+              {Array.from({ length: 20 }).map((_, idx) => (
+                <li key={idx}>
+                  <SessionSkeleton />
+                </li>
+              ))}
+            </SessionListWrapper>
+          }
+        >
           <PageContent contestSlug={contestSlug} discipline={discipline} />
         </Suspense>
       </section>
@@ -55,7 +67,7 @@ async function PageContent({
   contestSlug: string
   discipline: Discipline
 }) {
-  const { data: contests, error } = await tryCatchTRPC(
+  const { data: sessions, error } = await tryCatchTRPC(
     api.contest.getContestResults({
       contestSlug,
       discipline,
@@ -72,31 +84,48 @@ async function PageContent({
   if (error?.code === 'FORBIDDEN') return 'forbidden'
   if (error) throw error
 
-  if (contests.items?.length === 0) {
+  if (sessions.items?.length === 0) {
     return (
       <HintSection>
-        <p>
-          While this page may be empty now, it&apos;s brimming with potential
-          for thrilling contests that will soon fill this space.
-        </p>
+        <p>It seems no one participated in this round</p>
       </HintSection>
     )
   }
 
   return (
-    <ContestListWrapper>
-      <HydrateClient>
-        123
-        {/* <ContestList initialData={contests} discipline={discipline} /> */}
-      </HydrateClient>
-    </ContestListWrapper>
+    <SessionListWrapper>
+      {/* <HydrateClient> */}
+
+      {sessions.items.map((session, idx) => (
+        <Session
+          {...session}
+          contestSlug={contestSlug}
+          discipline={discipline}
+          isFirstOnPage={idx === 0}
+          place={idx + 1}
+          key={session.id}
+        />
+      ))}
+
+      {/* </HydrateClient> */}
+    </SessionListWrapper>
   )
 }
 
-function ContestListWrapper({ children }: { children: ReactNode }) {
+function SessionListWrapper({ children }: { children: ReactNode }) {
   return (
     <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 sm:p-3'>
-      {/* <ContestsListHeader className='sm:hidden' /> */}
+      <div className='flex whitespace-nowrap px-2 text-grey-40 sm:hidden'>
+        <span className='mr-2 w-11 text-center'>Place</span>
+        <span className='mr-2'>Type</span>
+        <span className='flex-1'>Nickname</span>
+        <span className='mr-4 w-24 text-center'>Average time</span>
+        {Array.from({ length: 5 }, (_, index) => (
+          <span key={index} className='mr-2 w-24 text-center last:mr-0'>
+            Attempt {index + 1}
+          </span>
+        ))}
+      </div>
 
       <ul className='flex flex-1 flex-col gap-2'>{children}</ul>
     </div>
