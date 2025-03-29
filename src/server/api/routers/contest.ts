@@ -11,9 +11,8 @@ import {
   usersTable,
 } from '@/server/db/schema'
 import { DISCIPLINES } from '@/shared'
-import { eq, desc, and, lt, count } from 'drizzle-orm'
+import { eq, desc, and, lt } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
-import { api } from '@/trpc/server'
 
 export const contestRouter = createTRPCRouter({
   getPastContests: publicProcedure
@@ -26,7 +25,7 @@ export const contestRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const items = await ctx.db
-        .select()
+        .select() // TODO: don't select *
         .from(contestsTable)
         .leftJoin(
           contestsToDisciplinesTable,
@@ -94,7 +93,12 @@ export const contestRouter = createTRPCRouter({
 
   getContestResults: publicProcedure
     .input(
-      z.object({ contestSlug: z.string(), discipline: z.enum(DISCIPLINES) }),
+      z.object({
+        contestSlug: z.string(),
+        discipline: z.enum(DISCIPLINES),
+        offset: z.number().optional().default(0),
+        limit: z.number().min(1).default(30),
+      }),
     )
     .query(async ({ ctx, input }) => {
       const isOngoing = await ctx.db
@@ -107,7 +111,7 @@ export const contestRouter = createTRPCRouter({
           throw new TRPCError({
             code: 'UNAUTHORIZED',
             message:
-              'You must be authorized to participate in an ongoing contest or view its results',
+              'You need to be signed in to participate in an ongoing contest or view its results',
           })
 
         const [ownSession] = await ctx.db
@@ -139,7 +143,7 @@ export const contestRouter = createTRPCRouter({
           })
       }
 
-      return ctx.db
+      const items = await ctx.db
         .select({
           solveId: solveTable.id,
           timeMs: solveTable.timeMs,
@@ -149,12 +153,6 @@ export const contestRouter = createTRPCRouter({
           state: solveTable.state,
         })
         .from(contestsToDisciplinesTable)
-        .where(
-          and(
-            eq(contestsToDisciplinesTable.contestSlug, input.contestSlug),
-            eq(contestsToDisciplinesTable.disciplineSlug, input.discipline),
-          ),
-        )
         .innerJoin(
           roundSessionTable,
           eq(
@@ -171,7 +169,19 @@ export const contestRouter = createTRPCRouter({
           usersTable,
           eq(usersTable.id, roundSessionTable.contestantId),
         )
+        .where(
+          and(
+            eq(contestsToDisciplinesTable.contestSlug, input.contestSlug),
+            eq(contestsToDisciplinesTable.disciplineSlug, input.discipline),
+          ),
+        )
         .orderBy(roundSessionTable.avgMs)
+        .limit(input.limit + 1)
+        .offset(input.offset)
+
+      const nextOffset = items.pop() ? input.offset + 1 : undefined
+
+      return { items, nextOffset }
     }),
 
   getSolve: publicProcedure
@@ -181,7 +191,7 @@ export const contestRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      const res = await ctx.db
+      const [solve] = await ctx.db
         .select({
           scramble: scrambleTable.moves,
           position: scrambleTable.position,
@@ -208,11 +218,9 @@ export const contestRouter = createTRPCRouter({
             roundSessionTable.contestDisciplineId,
           ),
         )
-      const solve = res[0]
 
       if (!solve) throw new TRPCError({ code: 'NOT_FOUND' })
 
-      // const { scramble, solution, timeMs, ...rest } = solve
       if (!solve.solution || !solve.timeMs || !solve.scramble)
         throw new TRPCError({
           code: 'BAD_REQUEST',

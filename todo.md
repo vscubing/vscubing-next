@@ -27,4 +27,5 @@
     - [ ] list
     - [ ] pinned item
     - [ ] jump to the pinned item
+- [ ] use page based pagination for contestindexpage
 - [ ] move the header to layout
