@@ -1,9 +1,10 @@
 'use client'
 import type { Discipline } from '@/app/_types'
-import { api, type RouterOutputs } from '@/trpc/react'
+import { useTRPC, type RouterOutputs } from '@/trpc/react'
 import React, { useEffect } from 'react'
 import { ContestRowDesktop, ContestRowMobile } from './contest'
 import { useInView } from 'react-intersection-observer'
+import { useInfiniteQuery } from '@tanstack/react-query'
 
 export default function ContestList({
   discipline,
@@ -12,8 +13,9 @@ export default function ContestList({
   discipline: Discipline
   initialData: RouterOutputs['contest']['getPastContests']
 }) {
-  const [data, { fetchNextPage }] =
-    api.contest.getPastContests.useSuspenseInfiniteQuery(
+  const trpc = useTRPC()
+  const { data, fetchNextPage } = useInfiniteQuery(
+    trpc.contest.getPastContests.infiniteQueryOptions(
       {
         discipline,
       },
@@ -21,7 +23,8 @@ export default function ContestList({
         getNextPageParam: (prevPage) => prevPage.nextCursor,
         initialData: { pages: [initialData], pageParams: [] },
       },
-    )
+    ),
+  )
 
   const [lastElementRef, inView] = useInView()
   useEffect(() => {

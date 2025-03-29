@@ -13,14 +13,18 @@ import { type ReactNode, useEffect, useState } from 'react'
 import { useSetAtom } from 'jotai'
 import { mobileMenuOpenAtom } from '../store/mobileMenuOpenAtom'
 import type { Route } from 'next'
-import { api } from '@/trpc/react'
+import { useTRPC } from '@/trpc/react'
+import { useQuery } from '@tanstack/react-query'
 
 type NavbarProps = {
   variant: 'vertical' | 'horizontal'
 }
 export function Navbar({ variant }: NavbarProps) {
   const setOpenOnMobile = useSetAtom(mobileMenuOpenAtom)
-  const { data: ongoingContest } = api.contest.getOngoing.useQuery()
+  const trpc = useTRPC()
+  const { data: ongoingContest } = useQuery(
+    trpc.contest.getOngoing.queryOptions(),
+  )
 
   const pathname = usePathname()
   const realRoute = parsePathname(pathname, ongoingContest?.slug)

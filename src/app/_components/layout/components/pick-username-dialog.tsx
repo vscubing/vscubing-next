@@ -14,7 +14,8 @@ import {
 import { useForm } from 'react-hook-form'
 import { Input } from '@/app/_components/ui'
 import { signOut, useSession } from 'next-auth/react'
-import { api } from '@/trpc/react'
+import { useTRPC } from '@/trpc/react'
+import { useMutation } from '@tanstack/react-query'
 
 export function PickUsernameDialog() {
   const {
@@ -32,8 +33,10 @@ export function PickUsernameDialog() {
     formState: { errors },
   } = useForm<{ username: string }>()
 
-  const { isPending: isMutationPending, mutate } =
-    api.user.setUsername.useMutation()
+  const trpc = useTRPC()
+  const { isPending: isMutationPending, mutate } = useMutation(
+    trpc.user.setUsername.mutationOptions(),
+  )
 
   const isPending = isMutationPending || sessionStatus === 'loading'
 
