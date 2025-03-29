@@ -22,9 +22,10 @@
 - [x] watch solve
 - [x] real time replays
 - [ ] contest results ui
-    - [ ] header
-    - [ ] section header
-    - [ ] list
+    - [x] header
+    - [x] section header
+    - [x] list
+    - [ ] fix hydration error by splitting Session component into Tablet and Desktop components
     - [ ] pinned item
     - [ ] jump to the pinned item
 - [ ] use page based pagination for contestindexpage

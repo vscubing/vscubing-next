@@ -115,7 +115,7 @@ async function PageContent({
 function SessionListWrapper({ children }: { children: ReactNode }) {
   return (
     <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 sm:p-3'>
-      <div className='flex whitespace-nowrap px-2 text-grey-40 sm:hidden'>
+      <div className='flex whitespace-nowrap px-2 text-grey-40 md:hidden'>
         <span className='mr-2 w-11 text-center'>Place</span>
         <span className='mr-2'>Type</span>
         <span className='flex-1'>Nickname</span>
