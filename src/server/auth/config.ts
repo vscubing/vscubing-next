@@ -4,10 +4,10 @@ import GoogleProvider from 'next-auth/providers/google'
 
 import { db } from '@/server/db'
 import {
-  accountsTable,
-  sessionsTable,
-  usersTable,
-  verificationTokensTable,
+  accountTable,
+  sessionTable,
+  userTable,
+  verificationTokenTable,
 } from '@/server/db/schema'
 import { env } from '@/env'
 import type { Adapter, AdapterUser } from 'next-auth/adapters'
@@ -38,7 +38,7 @@ function customCreateUser(adapter: ReturnType<typeof DrizzleAdapter>): Adapter {
   // Overwrite createUser method on adapter
   adapter.createUser = async (data): Promise<AdapterUser> => {
     const dataEntered = await db
-      .insert(usersTable)
+      .insert(userTable)
       .values({ ...data, name: '' })
       .returning()
       .then((res) => res[0] ?? null)
@@ -79,10 +79,10 @@ export const authConfig = {
   ],
   adapter: customCreateUser(
     DrizzleAdapter(db, {
-      usersTable: usersTable,
-      accountsTable: accountsTable,
-      sessionsTable: sessionsTable,
-      verificationTokensTable: verificationTokensTable,
+      usersTable: userTable,
+      accountsTable: accountTable,
+      sessionsTable: sessionTable,
+      verificationTokensTable: verificationTokenTable,
     }),
   ),
   callbacks: {
@@ -91,7 +91,7 @@ export const authConfig = {
       user: {
         ...session.user,
         id: user.id,
-        finishedRegistration: (user as typeof usersTable.$inferSelect)
+        finishedRegistration: (user as typeof userTable.$inferSelect)
           .finishedRegistration,
       },
     }),

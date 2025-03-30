@@ -2,13 +2,13 @@ import { z } from 'zod'
 
 import { createTRPCRouter, publicProcedure } from '@/server/api/trpc'
 import {
-  contestsTable,
-  contestsToDisciplinesTable,
-  disciplinesTable,
+  contestTable,
+  contestDisciplineTable,
+  disciplineTable,
   roundSessionTable,
   scrambleTable,
   solveTable,
-  usersTable,
+  userTable,
 } from '@/server/db/schema'
 import { DISCIPLINES } from '@/shared'
 import { eq, desc, and, lt } from 'drizzle-orm'
@@ -29,25 +29,23 @@ export const contestRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const items = await ctx.db
         .select() // TODO: don't select *
-        .from(contestsTable)
+        .from(contestTable)
         .leftJoin(
-          contestsToDisciplinesTable,
-          eq(contestsToDisciplinesTable.contestSlug, contestsTable.slug),
+          contestDisciplineTable,
+          eq(contestDisciplineTable.contestSlug, contestTable.slug),
         )
         .leftJoin(
-          disciplinesTable,
-          eq(contestsToDisciplinesTable.disciplineSlug, disciplinesTable.slug),
+          disciplineTable,
+          eq(contestDisciplineTable.disciplineSlug, disciplineTable.slug),
         )
         .where(
           and(
-            eq(contestsTable.isOngoing, false),
-            eq(disciplinesTable.slug, input.discipline),
-            input.cursor
-              ? lt(contestsTable.startDate, input.cursor)
-              : undefined,
+            eq(contestTable.isOngoing, false),
+            eq(disciplineTable.slug, input.discipline),
+            input.cursor ? lt(contestTable.startDate, input.cursor) : undefined,
           ),
         )
-        .orderBy(desc(contestsTable.startDate))
+        .orderBy(desc(contestTable.startDate))
         .limit(input.limit + 1)
 
       let nextCursor: typeof input.cursor | undefined = undefined
@@ -61,8 +59,8 @@ export const contestRouter = createTRPCRouter({
   getOngoing: publicProcedure.query(async ({ ctx }) => {
     const ongoingList = await ctx.db
       .select()
-      .from(contestsTable)
-      .where(eq(contestsTable.isOngoing, true))
+      .from(contestTable)
+      .where(eq(contestTable.isOngoing, true))
 
     if (!ongoingList || ongoingList.length === 0)
       throw new TRPCError({
@@ -83,18 +81,18 @@ export const contestRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const rows = await ctx.db
         .select({
-          slug: contestsTable.slug,
-          startDate: contestsTable.startDate,
-          endDate: contestsTable.endDate,
-          isOngoing: contestsTable.isOngoing,
-          disciplineSlug: contestsToDisciplinesTable.disciplineSlug,
+          slug: contestTable.slug,
+          startDate: contestTable.startDate,
+          endDate: contestTable.endDate,
+          isOngoing: contestTable.isOngoing,
+          disciplineSlug: contestDisciplineTable.disciplineSlug,
         })
-        .from(contestsTable)
+        .from(contestTable)
         .innerJoin(
-          contestsToDisciplinesTable,
-          eq(contestsToDisciplinesTable.contestSlug, input.contestSlug),
+          contestDisciplineTable,
+          eq(contestDisciplineTable.contestSlug, input.contestSlug),
         )
-        .where(eq(contestsTable.slug, input.contestSlug))
+        .where(eq(contestTable.slug, input.contestSlug))
 
       const firstRow = rows[0]
       if (!firstRow)
@@ -148,7 +146,7 @@ export const contestRouter = createTRPCRouter({
       const queryRes = await ctx.db
         .select({
           roundSessionId: roundSessionTable.id,
-          nickname: usersTable.name,
+          nickname: userTable.name,
           contestantId: roundSessionTable.contestantId,
           avgMs: roundSessionTable.avgMs,
           solveId: solveTable.id,
@@ -156,27 +154,21 @@ export const contestRouter = createTRPCRouter({
           isDnf: solveTable.isDnf,
           scramblePosition: scrambleTable.position,
         })
-        .from(contestsToDisciplinesTable)
+        .from(contestDisciplineTable)
         .innerJoin(
           roundSessionTable,
-          eq(
-            roundSessionTable.contestDisciplineId,
-            contestsToDisciplinesTable.id,
-          ),
+          eq(roundSessionTable.contestDisciplineId, contestDisciplineTable.id),
         )
         .innerJoin(
           solveTable,
           eq(solveTable.roundSessionId, roundSessionTable.id),
         )
         .innerJoin(scrambleTable, eq(scrambleTable.id, solveTable.scrambleId))
-        .innerJoin(
-          usersTable,
-          eq(usersTable.id, roundSessionTable.contestantId),
-        )
+        .innerJoin(userTable, eq(userTable.id, roundSessionTable.contestantId))
         .where(
           and(
-            eq(contestsToDisciplinesTable.contestSlug, input.contestSlug),
-            eq(contestsToDisciplinesTable.disciplineSlug, input.discipline),
+            eq(contestDisciplineTable.contestSlug, input.contestSlug),
+            eq(contestDisciplineTable.disciplineSlug, input.discipline),
             eq(solveTable.state, 'submitted'),
           ),
         )
@@ -223,9 +215,9 @@ export const contestRouter = createTRPCRouter({
           scramble: scrambleTable.moves,
           position: scrambleTable.position,
           solution: solveTable.reconstruction,
-          username: usersTable.name,
+          username: userTable.name,
           timeMs: solveTable.timeMs,
-          discipline: contestsToDisciplinesTable.disciplineSlug,
+          discipline: contestDisciplineTable.disciplineSlug,
         })
         .from(solveTable)
         .where(eq(solveTable.id, input.solveId))
@@ -234,16 +226,10 @@ export const contestRouter = createTRPCRouter({
           roundSessionTable,
           eq(roundSessionTable.id, solveTable.roundSessionId),
         )
+        .innerJoin(userTable, eq(userTable.id, roundSessionTable.contestantId))
         .innerJoin(
-          usersTable,
-          eq(usersTable.id, roundSessionTable.contestantId),
-        )
-        .innerJoin(
-          contestsToDisciplinesTable,
-          eq(
-            contestsToDisciplinesTable.id,
-            roundSessionTable.contestDisciplineId,
-          ),
+          contestDisciplineTable,
+          eq(contestDisciplineTable.id, roundSessionTable.contestDisciplineId),
         )
 
       if (!solve) throw new TRPCError({ code: 'NOT_FOUND' })
@@ -275,16 +261,16 @@ export async function getContestUserCapabilities({
   db: typeof dbType
 }): Promise<'CONTEST_NOT_FOUND' | 'SOLVE' | 'VIEW_RESULTS' | 'UNAUTHORIZED'> {
   const [contest] = await db
-    .select({ isOngoing: contestsTable.isOngoing })
-    .from(contestsTable)
+    .select({ isOngoing: contestTable.isOngoing })
+    .from(contestTable)
     .fullJoin(
-      contestsToDisciplinesTable,
-      eq(contestsToDisciplinesTable.contestSlug, contestsTable.slug),
+      contestDisciplineTable,
+      eq(contestDisciplineTable.contestSlug, contestTable.slug),
     )
     .where(
       and(
-        eq(contestsTable.slug, contestSlug),
-        eq(contestsToDisciplinesTable.disciplineSlug, discipline),
+        eq(contestTable.slug, contestSlug),
+        eq(contestDisciplineTable.disciplineSlug, discipline),
       ),
     )
 
@@ -295,17 +281,17 @@ export async function getContestUserCapabilities({
 
   const [ownSession] = await db
     .select({ isFinished: roundSessionTable.isFinished })
-    .from(contestsToDisciplinesTable)
+    .from(contestDisciplineTable)
     .innerJoin(
       roundSessionTable,
-      eq(roundSessionTable.contestDisciplineId, contestsToDisciplinesTable.id),
+      eq(roundSessionTable.contestDisciplineId, contestDisciplineTable.id),
     )
-    .innerJoin(usersTable, eq(usersTable.id, roundSessionTable.contestantId))
+    .innerJoin(userTable, eq(userTable.id, roundSessionTable.contestantId))
     .where(
       and(
-        eq(contestsToDisciplinesTable.contestSlug, contestSlug),
-        eq(contestsToDisciplinesTable.disciplineSlug, discipline),
-        eq(usersTable.id, userId),
+        eq(contestDisciplineTable.contestSlug, contestSlug),
+        eq(contestDisciplineTable.disciplineSlug, discipline),
+        eq(userTable.id, userId),
       ),
     )
 

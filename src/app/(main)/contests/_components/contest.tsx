@@ -1,6 +1,6 @@
 import { type Discipline } from '@/app/_types'
 import { DisciplineIcon, SecondaryButton } from '@/app/_components/ui'
-import type { contestsTable } from '@/server/db/schema'
+import type { contestTable } from '@/server/db/schema'
 import { formatContestDuration } from '@/app/_utils/formatDate'
 import Link from 'next/link'
 import { cn } from '@/app/_utils/cn'
@@ -12,7 +12,7 @@ export {
 
 type ContestProps = {
   contest: Pick<
-    typeof contestsTable.$inferSelect,
+    typeof contestTable.$inferSelect,
     'startDate' | 'endDate' | 'slug'
   >
   discipline: Discipline

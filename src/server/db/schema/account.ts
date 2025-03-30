@@ -3,7 +3,7 @@ import { index, pgTable, primaryKey } from 'drizzle-orm/pg-core'
 import { type AdapterAccount } from 'next-auth/adapters'
 import { createdUpdatedAtColumns } from './core'
 
-export const usersTable = pgTable('user', (d) => ({
+export const userTable = pgTable('user', (d) => ({
   ...createdUpdatedAtColumns,
   id: d
     .varchar({ length: 255 })
@@ -17,17 +17,17 @@ export const usersTable = pgTable('user', (d) => ({
   finishedRegistration: d.boolean().default(false).notNull(),
 }))
 
-export const usersRelations = relations(usersTable, ({ many }) => ({
-  accounts: many(accountsTable),
+export const userRelations = relations(userTable, ({ many }) => ({
+  accounts: many(accountTable),
 }))
 
-export const accountsTable = pgTable(
+export const accountTable = pgTable(
   'account',
   (d) => ({
     userId: d
       .varchar({ length: 255 })
       .notNull()
-      .references(() => usersTable.id),
+      .references(() => userTable.id),
     type: d.varchar({ length: 255 }).$type<AdapterAccount['type']>().notNull(),
     provider: d.varchar({ length: 255 }).notNull(),
     providerAccountId: d.varchar({ length: 255 }).notNull(),
@@ -45,34 +45,34 @@ export const accountsTable = pgTable(
   ],
 )
 
-export const accountsRelations = relations(accountsTable, ({ one }) => ({
-  user: one(usersTable, {
-    fields: [accountsTable.userId],
-    references: [usersTable.id],
+export const accountRelations = relations(accountTable, ({ one }) => ({
+  user: one(userTable, {
+    fields: [accountTable.userId],
+    references: [userTable.id],
   }),
 }))
 
-export const sessionsTable = pgTable(
+export const sessionTable = pgTable(
   'session',
   (d) => ({
     sessionToken: d.varchar({ length: 255 }).notNull().primaryKey(),
     userId: d
       .varchar({ length: 255 })
       .notNull()
-      .references(() => usersTable.id),
+      .references(() => userTable.id),
     expires: d.timestamp({ mode: 'date', withTimezone: true }).notNull(),
   }),
   (t) => [index('t_user_id_idx').on(t.userId)],
 )
 
-export const sessionsRelations = relations(sessionsTable, ({ one }) => ({
-  user: one(usersTable, {
-    fields: [sessionsTable.userId],
-    references: [usersTable.id],
+export const sessionRelations = relations(sessionTable, ({ one }) => ({
+  user: one(userTable, {
+    fields: [sessionTable.userId],
+    references: [userTable.id],
   }),
 }))
 
-export const verificationTokensTable = pgTable(
+export const verificationTokenTable = pgTable(
   'verification_token',
   (d) => ({
     identifier: d.varchar({ length: 255 }).notNull(),

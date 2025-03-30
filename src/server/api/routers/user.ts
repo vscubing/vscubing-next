@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
-import { usersTable } from '@/server/db/schema'
+import { userTable } from '@/server/db/schema'
 import { eq } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
 
@@ -33,8 +33,8 @@ export const userRouter = createTRPCRouter({
         })
       const conflict = await ctx.db
         .select()
-        .from(usersTable)
-        .where(eq(usersTable.name, input.username))
+        .from(userTable)
+        .where(eq(userTable.name, input.username))
         .then((res) => res.length > 0)
 
       if (conflict)
@@ -46,8 +46,8 @@ export const userRouter = createTRPCRouter({
         })
 
       await ctx.db
-        .update(usersTable)
+        .update(userTable)
         .set({ name: input.username, finishedRegistration: true })
-        .where(eq(usersTable.id, user.id))
+        .where(eq(userTable.id, user.id))
     }),
 })

@@ -40,3 +40,4 @@ nicities:
 - [ ] use unstable_cache a bunch
 - [ ] expandContestLink
 - [ ] tailored 404 pages
+- [ ] skip inspection by default
