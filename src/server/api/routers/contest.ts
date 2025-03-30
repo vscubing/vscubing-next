@@ -2,13 +2,13 @@ import { z } from 'zod'
 
 import { createTRPCRouter, publicProcedure } from '@/server/api/trpc'
 import {
-  contestTable,
-  contestDisciplineTable,
-  disciplineTable,
-  roundSessionTable,
-  scrambleTable,
-  solveTable,
-  userTable,
+    contestTable,
+    contestDisciplineTable,
+    disciplineTable,
+    roundSessionTable,
+    scrambleTable,
+    solveTable,
+    userTable,
 } from '@/server/db/schema'
 import { DISCIPLINES } from '@/shared'
 import { eq, desc, and, lt } from 'drizzle-orm'
@@ -17,6 +17,10 @@ import type { Discipline, RoundSession } from '@/app/_types'
 import { groupBy } from '@/app/_utils/groupBy'
 import { db } from '@/server/db'
 import dayjs from 'dayjs'
+import childProcess from 'child_process'
+import { promisify } from 'util'
+import path from 'path'
+import { tryCatch } from '@/app/_utils/try-catch'
 
 export const contestRouter = createTRPCRouter({
   getPastContests: publicProcedure
@@ -322,11 +326,66 @@ export async function closeOngoingAndCreateNewContest(
       expectedEndDate: now.add(7, 'day').toISOString(),
     })
 
-    await tx.insert(contestDisciplineTable).values(
-      disciplines.map((discipline) => ({
-        contestSlug: newContestSlug,
-        disciplineSlug: discipline,
-      })),
-    )
+    const createdContestDisciplines = await tx
+      .insert(contestDisciplineTable)
+      .values(
+        disciplines.map((discipline) => ({
+          contestSlug: newContestSlug,
+          disciplineSlug: discipline,
+        })),
+      )
+      .returning({ id: contestDisciplineTable.id })
+
+    await tx
+      .insert(scrambleTable)
+      .values(
+        createdContestDisciplines.flatMap(({ id }) => generateScrambles(id)),
+      )
   })
 }
+
+function generateScrambles(
+  contestDisciplineId: number,
+): typeof scrambleTable.$inferInsert {
+  throw new Error('Not implemented')
+}
+
+// TODO: write tests
+const execFile = promisify(childProcess.execFile)
+export async function testGenerateScrambles(
+  discipline: Discipline,
+  quantity: number,
+) {
+  const binaryPath = path.join(
+    process.cwd(),
+    'vendor',
+    'tnoodle-cli-linux_x64',
+    'bin',
+    'tnoodle',
+  )
+  const { data, error } = await tryCatch(
+    execFile(binaryPath, [
+      'scramble',
+      '--puzzle',
+      TNOODLE_DISCIPLINE_MAP[discipline],
+      '--count',
+      String(quantity),
+    ]),
+  )
+  if (error) {
+    error.message = `[TNOODLE] ${error.message}`
+    throw error
+  }
+  if (typeof data.stdout !== 'string') throw new Error()
+  const scrambles = data.stdout.trim().split('\n')
+  if (scrambles.length !== quantity)
+    throw new Error(
+      `[TNOODLE] Something went wrong during the scramble generation. Expected ${quantity} scrambles, received ${scrambles.length}`,
+    )
+  return scrambles
+}
+
+const TNOODLE_DISCIPLINE_MAP: Record<Discipline, string> = {
+  '3by3': 'three',
+  '2by2': 'two',
+} as const

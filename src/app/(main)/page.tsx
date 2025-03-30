@@ -1,5 +1,8 @@
 import { Header } from '../_components/layout'
-import { closeOngoingAndCreateNewContest } from '@/server/api/routers/contest'
+import {
+  closeOngoingAndCreateNewContest,
+  testGenerateScrambles,
+} from '@/server/api/routers/contest'
 import { PrimaryButton } from '../_components/ui'
 
 export default async function DashboardPage() {
@@ -15,6 +18,15 @@ export default async function DashboardPage() {
           }}
         >
           <PrimaryButton type='submit'>Create a new contest</PrimaryButton>
+        </form>
+        <form
+          action={async () => {
+            'use server'
+            console.log(await testGenerateScrambles('3by3', 7))
+            console.log(await testGenerateScrambles('2by2', 7))
+          }}
+        >
+          <PrimaryButton>Test generate scrambles</PrimaryButton>
         </form>
       </main>
     </>

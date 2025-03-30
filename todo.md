@@ -30,7 +30,8 @@
 - [x] rename tables and table vars
 - [x] create contest
 - [x] expectedEndDate
-- [ ] sort disciplines by created_at
+- [x] sort disciplines by created_at
+- [ ] generate scrambles
 
 nicities:
 - [ ] correct primary key autoincrementation https://stackoverflow.com/questions/4448340/postgresql-duplicate-key-violates-unique-constraint
