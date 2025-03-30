@@ -13,7 +13,11 @@ import {
 import { DISCIPLINES } from '@/shared'
 import { eq, desc, and, lt } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
-import type { Discipline, RoundSession } from '@/app/_types'
+import {
+  SCRAMBLE_POSITIONS,
+  type Discipline,
+  type RoundSession,
+} from '@/app/_types'
 import { groupBy } from '@/app/_utils/groupBy'
 import { db } from '@/server/db'
 import dayjs from 'dayjs'
@@ -21,6 +25,7 @@ import childProcess from 'child_process'
 import { promisify } from 'util'
 import path from 'path'
 import { tryCatch } from '@/app/_utils/try-catch'
+import { generateScrambles } from '@/server/internal/generate-scrambles'
 
 export const contestRouter = createTRPCRouter({
   getPastContests: publicProcedure
@@ -334,18 +339,24 @@ export async function closeOngoingAndCreateNewContest(
           disciplineSlug: discipline,
         })),
       )
-      .returning({ id: contestDisciplineTable.id })
+      .returning({
+        id: contestDisciplineTable.id,
+        discipline: contestDisciplineTable.disciplineSlug,
+      })
 
-    await tx
-      .insert(scrambleTable)
-      .values(
-        createdContestDisciplines.flatMap(({ id }) => generateScrambles(id)),
-      )
+    const scrambleRows: (typeof scrambleTable.$inferInsert)[] = []
+    for (const { id, discipline } of createdContestDisciplines) {
+      for (const [idx, moves] of (
+        await generateScrambles(discipline, 7)
+      ).entries()) {
+        scrambleRows.push({
+          contestDisciplineId: id,
+          position: SCRAMBLE_POSITIONS[idx]!,
+          moves,
+        })
+      }
+    }
+
+    await tx.insert(scrambleTable).values(scrambleRows)
   })
-}
-
-function generateScrambles(
-  contestDisciplineId: number,
-): typeof scrambleTable.$inferInsert {
-  throw new Error('Not implemented')
 }

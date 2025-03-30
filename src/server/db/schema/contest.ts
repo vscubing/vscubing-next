@@ -1,4 +1,4 @@
-import type { Discipline } from '@/app/_types'
+import { SCRAMBLE_POSITIONS, type Discipline } from '@/app/_types'
 import { DISCIPLINES } from '@/shared'
 import { sql } from 'drizzle-orm'
 import { pgTable, pgEnum } from 'drizzle-orm/pg-core'
@@ -43,15 +43,10 @@ export const contestDisciplineTable = pgTable('contest_discipline', (d) => ({
     .$type<Discipline>(),
 }))
 
-export const scramblePositionEnum = pgEnum('scramble_position', [
-  '1',
-  '2',
-  '3',
-  '4',
-  '5',
-  'E1',
-  'E2',
-])
+export const scramblePositionEnum = pgEnum(
+  'scramble_position',
+  SCRAMBLE_POSITIONS,
+)
 export const scrambleTable = pgTable('scramble', (d) => ({
   ...createdUpdatedAtColumns,
   id: d.integer('id').primaryKey().generatedByDefaultAsIdentity(),
