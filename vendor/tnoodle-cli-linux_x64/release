@@ -1,0 +1,2 @@
+JAVA_VERSION="11.0.25"
+MODULES="java.base java.compiler java.logging java.xml jdk.compiler jdk.javadoc jdk.unsupported"
