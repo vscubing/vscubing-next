@@ -89,7 +89,12 @@ export const contestRouter = createTRPCRouter({
           contestDisciplineTable,
           eq(contestDisciplineTable.contestSlug, input.contestSlug),
         )
+        .innerJoin(
+          disciplineTable,
+          eq(disciplineTable.slug, contestDisciplineTable.disciplineSlug),
+        )
         .where(eq(contestTable.slug, input.contestSlug))
+        .orderBy(disciplineTable.createdAt)
 
       const firstRow = rows[0]
       if (!firstRow)
