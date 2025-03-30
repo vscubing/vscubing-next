@@ -16,12 +16,12 @@ export default async function ContestPage(props: {
     redirect(`/contests/${contestSlug}?discipline=${DEFAULT_DISCIPLINE}`)
 
   const session = await auth()
-  const userCapabilities = await getContestUserCapabilities(
+  const userCapabilities = await getContestUserCapabilities({
     contestSlug,
     discipline,
-    session?.user.id,
+    userId: session?.user.id,
     db,
-  )
+  })
 
   if (userCapabilities === 'CONTEST_NOT_FOUND') notFound()
   if (userCapabilities === 'VIEW_RESULTS')

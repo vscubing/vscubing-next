@@ -81,17 +81,35 @@ export const contestRouter = createTRPCRouter({
   getContestMetaData: publicProcedure
     .input(z.object({ contestSlug: z.string() }))
     .query(async ({ ctx, input }) => {
-      const res = await ctx.db
-        .select()
+      const rows = await ctx.db
+        .select({
+          slug: contestsTable.slug,
+          startDate: contestsTable.startDate,
+          endDate: contestsTable.endDate,
+          isOngoing: contestsTable.isOngoing,
+          disciplineSlug: contestsToDisciplinesTable.disciplineSlug,
+        })
         .from(contestsTable)
+        .innerJoin(
+          contestsToDisciplinesTable,
+          eq(contestsToDisciplinesTable.contestSlug, input.contestSlug),
+        )
         .where(eq(contestsTable.slug, input.contestSlug))
 
-      if (!res || res.length === 0)
+      const firstRow = rows[0]
+      if (!firstRow)
         throw new TRPCError({
           code: 'NOT_FOUND',
         })
 
-      return res[0]!
+      const { slug, startDate, endDate, isOngoing } = firstRow
+      return {
+        slug,
+        startDate,
+        endDate,
+        isOngoing,
+        disciplines: rows.map(({ disciplineSlug }) => disciplineSlug),
+      }
     }),
 
   getContestResults: publicProcedure
@@ -104,12 +122,12 @@ export const contestRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      const userCapabilities = await getContestUserCapabilities(
-        input.contestSlug,
-        input.discipline,
-        ctx.session?.user.id,
-        ctx.db,
-      )
+      const userCapabilities = await getContestUserCapabilities({
+        contestSlug: input.contestSlug,
+        discipline: input.discipline,
+        userId: ctx.session?.user.id,
+        db: ctx.db,
+      })
       if (userCapabilities === 'CONTEST_NOT_FOUND')
         throw new TRPCError({ code: 'NOT_FOUND' })
 
@@ -245,12 +263,17 @@ export const contestRouter = createTRPCRouter({
     }),
 })
 
-export async function getContestUserCapabilities(
-  contestSlug: string,
-  discipline: Discipline,
-  userId?: string,
-  db: typeof dbType,
-): Promise<'CONTEST_NOT_FOUND' | 'SOLVE' | 'VIEW_RESULTS' | 'UNAUTHORIZED'> {
+export async function getContestUserCapabilities({
+  contestSlug,
+  discipline,
+  userId,
+  db,
+}: {
+  contestSlug: string
+  discipline: Discipline
+  userId?: string
+  db: typeof dbType
+}): Promise<'CONTEST_NOT_FOUND' | 'SOLVE' | 'VIEW_RESULTS' | 'UNAUTHORIZED'> {
   const [contest] = await db
     .select({ isOngoing: contestsTable.isOngoing })
     .from(contestsTable)
@@ -265,10 +288,10 @@ export async function getContestUserCapabilities(
       ),
     )
 
-  if (!contest) return 'NOT_FOUND'
+  if (!contest) return 'CONTEST_NOT_FOUND'
   if (!contest.isOngoing) return 'VIEW_RESULTS'
 
-  if (userId === null) return 'UNAUTHORIZED'
+  if (!userId) return 'UNAUTHORIZED'
 
   const [ownSession] = await db
     .select({ isFinished: roundSessionTable.isFinished })

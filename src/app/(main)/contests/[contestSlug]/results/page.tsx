@@ -39,7 +39,10 @@ export default async function ContestResultsPage({
         <PageTitleMobile>{title}</PageTitleMobile>
         <NavigateBackButton className='self-start' />
         <SectionHeader>
-          <DisciplineSwitcher initialDiscipline={discipline} />
+          <DisciplineSwitcher
+            disciplines={contest.disciplines}
+            initialDiscipline={discipline}
+          />
         </SectionHeader>
         <Suspense
           key={discipline}

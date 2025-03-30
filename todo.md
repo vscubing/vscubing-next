@@ -21,15 +21,22 @@
     - [x] ui
 - [x] watch solve
 - [x] real time replays
-- [ ] contest results ui
+- [x] contest results ui
     - [x] header
     - [x] section header
     - [x] list
     - [x] fix hydration error by splitting Session component into Tablet and Desktop components
-    - [ ] pinned item
-    - [ ] jump to the pinned item
-- [ ] use page based pagination for contestindexpage
-- [ ] move the header to layout
+- [x] un-hardcode disciplines
+- [ ] rename tables and table vars
+
+nicities:
 - [ ] contest 17 bohdan's result shift?
-- [ ] remove hardcoded disciplines
+- [ ] move the header to layout
+- [ ] use page based pagination for contestindexpage
 - [ ] make contest link based on capabilities
+- [ ] pinned items
+- [ ] jump to the pinned item
+- [ ] loading.ts for everything
+- [ ] use unstable_cache a bunch
+- [ ] expandContestLink
+- [ ] tailored 404 pages

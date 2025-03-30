@@ -2,7 +2,12 @@ import { HydrateClient } from '@/trpc/server'
 import { SecondaryButton } from '@/app/_components/ui'
 import { Header, SectionHeader } from '@/app/_components/layout'
 import { Suspense, type ReactNode } from 'react'
-import { DEFAULT_DISCIPLINE, isDiscipline, type Discipline } from '@/app/_types'
+import {
+  DEFAULT_DISCIPLINE,
+  DISCIPLINES,
+  isDiscipline,
+  type Discipline,
+} from '@/app/_types'
 import { PageTitleMobile } from '@/app/_shared/PageTitleMobile'
 import { NavigateBackButton } from '@/app/_shared/NavigateBackButton'
 import { redirect } from 'next/navigation'
@@ -32,7 +37,10 @@ export default async function ContestsIndexPage(props: {
       <PageTitleMobile>{title}</PageTitleMobile>
       <NavigateBackButton className='self-start' />
       <SectionHeader>
-        <DisciplineSwitcher initialDiscipline={discipline} />
+        <DisciplineSwitcher
+          disciplines={DISCIPLINES}
+          initialDiscipline={discipline}
+        />
       </SectionHeader>
       <Suspense
         key={discipline}
