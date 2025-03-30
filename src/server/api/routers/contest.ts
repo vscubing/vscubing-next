@@ -2,13 +2,13 @@ import { z } from 'zod'
 
 import { createTRPCRouter, publicProcedure } from '@/server/api/trpc'
 import {
-    contestTable,
-    contestDisciplineTable,
-    disciplineTable,
-    roundSessionTable,
-    scrambleTable,
-    solveTable,
-    userTable,
+  contestTable,
+  contestDisciplineTable,
+  disciplineTable,
+  roundSessionTable,
+  scrambleTable,
+  solveTable,
+  userTable,
 } from '@/server/db/schema'
 import { DISCIPLINES } from '@/shared'
 import { eq, desc, and, lt } from 'drizzle-orm'
@@ -349,43 +349,3 @@ function generateScrambles(
 ): typeof scrambleTable.$inferInsert {
   throw new Error('Not implemented')
 }
-
-// TODO: write tests
-const execFile = promisify(childProcess.execFile)
-export async function testGenerateScrambles(
-  discipline: Discipline,
-  quantity: number,
-) {
-  const binaryPath = path.join(
-    process.cwd(),
-    'vendor',
-    'tnoodle-cli-linux_x64',
-    'bin',
-    'tnoodle',
-  )
-  const { data, error } = await tryCatch(
-    execFile(binaryPath, [
-      'scramble',
-      '--puzzle',
-      TNOODLE_DISCIPLINE_MAP[discipline],
-      '--count',
-      String(quantity),
-    ]),
-  )
-  if (error) {
-    error.message = `[TNOODLE] ${error.message}`
-    throw error
-  }
-  if (typeof data.stdout !== 'string') throw new Error()
-  const scrambles = data.stdout.trim().split('\n')
-  if (scrambles.length !== quantity)
-    throw new Error(
-      `[TNOODLE] Something went wrong during the scramble generation. Expected ${quantity} scrambles, received ${scrambles.length}`,
-    )
-  return scrambles
-}
-
-const TNOODLE_DISCIPLINE_MAP: Record<Discipline, string> = {
-  '3by3': 'three',
-  '2by2': 'two',
-} as const
