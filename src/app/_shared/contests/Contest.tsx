@@ -8,7 +8,7 @@ import { cn } from '@/app/_utils/cn'
 type ContestProps = {
   contest: Pick<
     typeof contestTable.$inferSelect,
-    'startDate' | 'endDate' | 'slug'
+    'startDate' | 'endDate' | 'expectedEndDate' | 'slug'
   >
   discipline: Discipline
   className?: string
@@ -23,12 +23,7 @@ export function Contest({ contest, discipline, className }: ContestProps) {
     >
       <div className='sm:space-y-2'>
         <p className='title-h3'>Contest {contest.slug}</p>
-        <p className='text-grey-40'>
-          {formatContestDuration({
-            startDate: contest.startDate,
-            endDate: contest.endDate!,
-          })}
-        </p>
+        <p className='text-grey-40'>{formatContestDuration(contest)}</p>
       </div>
       <SecondaryButton size='iconLg' asChild className='sm:h-16 sm:w-16'>
         <Link

@@ -79,6 +79,7 @@ export const contestRouter = createTRPCRouter({
         .select({
           slug: contestTable.slug,
           startDate: contestTable.startDate,
+          expectedEndDate: contestTable.expectedEndDate,
           endDate: contestTable.endDate,
           isOngoing: contestTable.isOngoing,
           disciplineSlug: contestDisciplineTable.disciplineSlug,
@@ -96,10 +97,11 @@ export const contestRouter = createTRPCRouter({
           code: 'NOT_FOUND',
         })
 
-      const { slug, startDate, endDate, isOngoing } = firstRow
+      const { slug, startDate, expectedEndDate, endDate, isOngoing } = firstRow
       return {
         slug,
         startDate,
+        expectedEndDate,
         endDate,
         isOngoing,
         disciplines: rows.map(({ disciplineSlug }) => disciplineSlug),
@@ -312,7 +314,7 @@ export async function closeOngoingAndCreateNewContest(
       slug: newContestSlug,
       isOngoing: true,
       startDate: now.toISOString(),
-      endDate: now.add(7, 'day').toISOString(),
+      expectedEndDate: now.add(7, 'day').toISOString(),
     })
 
     await tx.insert(contestDisciplineTable).values(

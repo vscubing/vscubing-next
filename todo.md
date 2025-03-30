@@ -28,8 +28,8 @@
     - [x] fix hydration error by splitting Session component into Tablet and Desktop components
 - [x] un-hardcode disciplines
 - [x] rename tables and table vars
-- [ ] create contest
-- [ ] expectedEndDate
+- [x] create contest
+- [x] expectedEndDate
 - [ ] sort disciplines by created_at
 
 nicities:

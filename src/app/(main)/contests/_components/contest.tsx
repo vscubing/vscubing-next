@@ -13,7 +13,7 @@ export {
 type ContestProps = {
   contest: Pick<
     typeof contestTable.$inferSelect,
-    'startDate' | 'endDate' | 'slug'
+    'startDate' | 'endDate' | 'expectedEndDate' | 'slug'
   >
   discipline: Discipline
   height?: number
