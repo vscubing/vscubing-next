@@ -2,7 +2,6 @@ import { DEFAULT_DISCIPLINE, isDiscipline } from '@/app/_types'
 import { assertUnreachable } from '@/app/_utils/assert-unreachable'
 import { getContestUserCapabilities } from '@/server/api/routers/contest'
 import { auth } from '@/server/auth'
-import { db } from '@/server/db'
 import { notFound, redirect } from 'next/navigation'
 
 export default async function ContestPage(props: {
@@ -20,7 +19,6 @@ export default async function ContestPage(props: {
     contestSlug,
     discipline,
     userId: session?.user.id,
-    db,
   })
 
   if (userCapabilities === 'CONTEST_NOT_FOUND') notFound()

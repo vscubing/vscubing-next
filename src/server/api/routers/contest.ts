@@ -15,7 +15,7 @@ import { eq, desc, and, lt } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
 import type { Discipline, RoundSession } from '@/app/_types'
 import { groupBy } from '@/app/_utils/groupBy'
-import type { db as dbType } from '@/server/db'
+import { db } from '@/server/db'
 
 export const contestRouter = createTRPCRouter({
   getPastContests: publicProcedure
@@ -124,7 +124,6 @@ export const contestRouter = createTRPCRouter({
         contestSlug: input.contestSlug,
         discipline: input.discipline,
         userId: ctx.session?.user.id,
-        db: ctx.db,
       })
       if (userCapabilities === 'CONTEST_NOT_FOUND')
         throw new TRPCError({ code: 'NOT_FOUND' })
@@ -169,6 +168,7 @@ export const contestRouter = createTRPCRouter({
           and(
             eq(contestDisciplineTable.contestSlug, input.contestSlug),
             eq(contestDisciplineTable.disciplineSlug, input.discipline),
+            eq(roundSessionTable.isFinished, true),
             eq(solveTable.state, 'submitted'),
           ),
         )
@@ -220,7 +220,6 @@ export const contestRouter = createTRPCRouter({
           discipline: contestDisciplineTable.disciplineSlug,
         })
         .from(solveTable)
-        .where(eq(solveTable.id, input.solveId))
         .innerJoin(scrambleTable, eq(scrambleTable.id, solveTable.scrambleId))
         .innerJoin(
           roundSessionTable,
@@ -231,6 +230,7 @@ export const contestRouter = createTRPCRouter({
           contestDisciplineTable,
           eq(contestDisciplineTable.id, roundSessionTable.contestDisciplineId),
         )
+        .where(eq(solveTable.id, input.solveId))
 
       if (!solve) throw new TRPCError({ code: 'NOT_FOUND' })
 
@@ -253,12 +253,10 @@ export async function getContestUserCapabilities({
   contestSlug,
   discipline,
   userId,
-  db,
 }: {
   contestSlug: string
   discipline: Discipline
   userId?: string
-  db: typeof dbType
 }): Promise<'CONTEST_NOT_FOUND' | 'SOLVE' | 'VIEW_RESULTS' | 'UNAUTHORIZED'> {
   const [contest] = await db
     .select({ isOngoing: contestTable.isOngoing })
@@ -297,3 +295,5 @@ export async function getContestUserCapabilities({
 
   return ownSession?.isFinished ? 'VIEW_RESULTS' : 'SOLVE'
 }
+
+// export function createNewContest
