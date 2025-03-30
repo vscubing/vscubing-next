@@ -25,8 +25,11 @@
     - [x] header
     - [x] section header
     - [x] list
-    - [ ] fix hydration error by splitting Session component into Tablet and Desktop components
+    - [x] fix hydration error by splitting Session component into Tablet and Desktop components
     - [ ] pinned item
     - [ ] jump to the pinned item
 - [ ] use page based pagination for contestindexpage
 - [ ] move the header to layout
+- [ ] contest 17 bohdan's result shift?
+- [ ] remove hardcoded disciplines
+- [ ] make contest link based on capabilities

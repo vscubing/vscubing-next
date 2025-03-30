@@ -13,8 +13,9 @@ import {
 import { DISCIPLINES } from '@/shared'
 import { eq, desc, and, lt } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
-import type { RoundSession } from '@/app/_types'
+import type { Discipline, RoundSession } from '@/app/_types'
 import { groupBy } from '@/app/_utils/groupBy'
+import type { db as dbType } from '@/server/db'
 
 export const contestRouter = createTRPCRouter({
   getPastContests: publicProcedure
@@ -103,51 +104,23 @@ export const contestRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      const [contest] = await ctx.db
-        .select({ isOngoing: contestsTable.isOngoing })
-        .from(contestsTable)
-        .fullJoin(
-          contestsToDisciplinesTable,
-          eq(contestsToDisciplinesTable.contestSlug, contestsTable.slug),
-        )
-        .where(
-          and(
-            eq(contestsTable.slug, input.contestSlug),
-            eq(contestsToDisciplinesTable.disciplineSlug, input.discipline),
-          ),
-        )
+      const userCapabilities = await getContestUserCapabilities(
+        input.contestSlug,
+        input.discipline,
+        ctx.session?.user.id,
+        ctx.db,
+      )
+      if (userCapabilities === 'CONTEST_NOT_FOUND')
+        throw new TRPCError({ code: 'NOT_FOUND' })
 
-      if (!contest) throw new TRPCError({ code: 'NOT_FOUND' })
-
-      if (contest.isOngoing && !ctx.session)
+      if (userCapabilities === 'UNAUTHORIZED')
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message:
             'You need to be signed in to participate in an ongoing contest or view its results',
         })
 
-      const [ownSession] = await ctx.db
-        .select({ isFinished: roundSessionTable.isFinished })
-        .from(contestsToDisciplinesTable)
-        .innerJoin(
-          roundSessionTable,
-          eq(
-            roundSessionTable.contestDisciplineId,
-            contestsToDisciplinesTable.id,
-          ),
-        )
-        .innerJoin(
-          usersTable,
-          eq(usersTable.id, roundSessionTable.contestantId),
-        )
-        .where(
-          and(
-            eq(contestsToDisciplinesTable.contestSlug, input.contestSlug),
-            eq(contestsToDisciplinesTable.disciplineSlug, input.discipline),
-            ctx.session ? eq(usersTable.id, ctx.session?.user.id) : undefined,
-          ),
-        )
-      if (contest.isOngoing && (!ownSession || !ownSession.isFinished))
+      if (userCapabilities === 'SOLVE')
         throw new TRPCError({
           code: 'FORBIDDEN',
           message:
@@ -271,3 +244,47 @@ export const contestRouter = createTRPCRouter({
       }
     }),
 })
+
+export async function getContestUserCapabilities(
+  contestSlug: string,
+  discipline: Discipline,
+  userId?: string,
+  db: typeof dbType,
+): Promise<'CONTEST_NOT_FOUND' | 'SOLVE' | 'VIEW_RESULTS' | 'UNAUTHORIZED'> {
+  const [contest] = await db
+    .select({ isOngoing: contestsTable.isOngoing })
+    .from(contestsTable)
+    .fullJoin(
+      contestsToDisciplinesTable,
+      eq(contestsToDisciplinesTable.contestSlug, contestsTable.slug),
+    )
+    .where(
+      and(
+        eq(contestsTable.slug, contestSlug),
+        eq(contestsToDisciplinesTable.disciplineSlug, discipline),
+      ),
+    )
+
+  if (!contest) return 'NOT_FOUND'
+  if (!contest.isOngoing) return 'VIEW_RESULTS'
+
+  if (userId === null) return 'UNAUTHORIZED'
+
+  const [ownSession] = await db
+    .select({ isFinished: roundSessionTable.isFinished })
+    .from(contestsToDisciplinesTable)
+    .innerJoin(
+      roundSessionTable,
+      eq(roundSessionTable.contestDisciplineId, contestsToDisciplinesTable.id),
+    )
+    .innerJoin(usersTable, eq(usersTable.id, roundSessionTable.contestantId))
+    .where(
+      and(
+        eq(contestsToDisciplinesTable.contestSlug, contestSlug),
+        eq(contestsToDisciplinesTable.disciplineSlug, discipline),
+        eq(usersTable.id, userId),
+      ),
+    )
+
+  return ownSession?.isFinished ? 'VIEW_RESULTS' : 'SOLVE'
+}
