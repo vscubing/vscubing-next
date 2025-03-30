@@ -7,37 +7,37 @@ import { createdUpdatedAtColumns } from './core'
 
 export const disciplineTable = pgTable('discipline', (d) => ({
   ...createdUpdatedAtColumns,
-  slug: d.text({ enum: DISCIPLINES }).primaryKey(),
+  slug: d.text('slug', { enum: DISCIPLINES }).primaryKey(),
 }))
 
 export const contestTable = pgTable('contest', (d) => ({
   ...createdUpdatedAtColumns,
-  slug: d.text().notNull().primaryKey().unique(), // index this?
+  slug: d.text('slug').notNull().primaryKey().unique(), // index this?
   startDate: d
-    .timestamp({
+    .timestamp('start_date', {
       withTimezone: true,
       mode: 'string',
     })
     .notNull(),
-  endDate: d.timestamp({ withTimezone: true, mode: 'string' }),
-  isOngoing: d.boolean().notNull(),
+  endDate: d.timestamp('end_date', { withTimezone: true, mode: 'string' }),
+  isOngoing: d.boolean('is_ongoing').notNull(),
 }))
 
 export const contestDisciplineTable = pgTable('contest_discipline', (d) => ({
   ...createdUpdatedAtColumns,
-  id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
+  id: d.integer('id').primaryKey().generatedByDefaultAsIdentity(),
   contestSlug: d
-    .text()
+    .text('contest_slug')
     .notNull()
     .references(() => contestTable.slug, { onDelete: 'cascade' }),
   disciplineSlug: d
-    .text()
+    .text('discipline_slug')
     .notNull()
     .references(() => disciplineTable.slug, { onDelete: 'cascade' })
     .$type<Discipline>(),
 }))
 
-export const scramblePositionEnum = pgEnum('scramblePosition', [
+export const scramblePositionEnum = pgEnum('scramble_position', [
   '1',
   '2',
   '3',
@@ -48,55 +48,55 @@ export const scramblePositionEnum = pgEnum('scramblePosition', [
 ])
 export const scrambleTable = pgTable('scramble', (d) => ({
   ...createdUpdatedAtColumns,
-  id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
+  id: d.integer('id').primaryKey().generatedByDefaultAsIdentity(),
   contestDisciplineId: d
-    .integer()
+    .integer('contest_discipline_id')
     .notNull()
     .references(() => contestDisciplineTable.id, { onDelete: 'cascade' }),
-  position: scramblePositionEnum().notNull(),
+  position: scramblePositionEnum('position').notNull(),
   isExtra: d
-    .boolean()
+    .boolean('is_extra')
     .generatedAlwaysAs(
       sql<boolean>`CASE WHEN position IN ('E1', 'E2') THEN TRUE ELSE FALSE END`,
     )
     .notNull(),
-  moves: d.text(),
+  moves: d.text('moves'),
 }))
 
-export const roundSessionTable = pgTable('roundSession', (d) => ({
+export const roundSessionTable = pgTable('round_session', (d) => ({
   ...createdUpdatedAtColumns,
-  id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
+  id: d.integer('id').primaryKey().generatedByDefaultAsIdentity(),
   contestantId: d
-    .text()
+    .text('contestant_id')
     .notNull()
     .references(() => userTable.id, { onDelete: 'cascade' }),
   contestDisciplineId: d
-    .integer()
+    .integer('contest_discipline_id')
     .notNull()
     .references(() => contestDisciplineTable.id, { onDelete: 'cascade' }),
-  avgMs: d.integer(),
-  isDnf: d.boolean(),
-  isFinished: d.boolean().notNull(),
+  avgMs: d.integer('avg_ms'),
+  isDnf: d.boolean('is_dnf'),
+  isFinished: d.boolean('is_finished').notNull(),
 }))
 
-export const solveStateEnum = pgEnum('solveState', [
+export const solveStateEnum = pgEnum('solve_state', [
   'pending',
   'submitted',
   'changed_to_extra',
 ])
 export const solveTable = pgTable('solve', (d) => ({
   ...createdUpdatedAtColumns,
-  id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
+  id: d.integer('id').primaryKey().generatedByDefaultAsIdentity(),
   scrambleId: d
-    .integer()
+    .integer('scramble_id')
     .notNull()
     .references(() => scrambleTable.id, { onDelete: 'cascade' }),
   roundSessionId: d
-    .integer()
+    .integer('round_session_id')
     .notNull()
     .references(() => roundSessionTable.id, { onDelete: 'cascade' }),
-  state: solveStateEnum().notNull().default('pending'),
-  timeMs: d.integer(),
-  isDnf: d.boolean().notNull(),
-  reconstruction: d.varchar({ length: 10000 }),
+  state: solveStateEnum('state').notNull().default('pending'),
+  timeMs: d.integer('time_ms'),
+  isDnf: d.boolean('is_dnf').notNull(),
+  reconstruction: d.varchar('solution', { length: 10000 }), // TODO: rename reconstruction field to solution
 }))

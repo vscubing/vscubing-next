@@ -6,15 +6,18 @@ import { createdUpdatedAtColumns } from './core'
 export const userTable = pgTable('user', (d) => ({
   ...createdUpdatedAtColumns,
   id: d
-    .varchar({ length: 255 })
+    .varchar('id', { length: 255 })
     .notNull()
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()), // NOTE: legacy userId's are just integers
-  name: d.varchar({ length: 255 }).notNull(),
-  email: d.varchar({ length: 255 }).notNull(),
-  emailVerified: d.timestamp({ mode: 'date' }),
+  name: d.varchar('name', { length: 255 }).notNull(),
+  email: d.varchar('email', { length: 255 }).notNull(),
+  emailVerified: d.timestamp('email_verified', { mode: 'date' }),
   image: d.text('image'),
-  finishedRegistration: d.boolean().default(false).notNull(),
+  finishedRegistration: d
+    .boolean('finished_registration')
+    .default(false)
+    .notNull(),
 }))
 
 export const userRelations = relations(userTable, ({ many }) => ({
@@ -25,19 +28,24 @@ export const accountTable = pgTable(
   'account',
   (d) => ({
     userId: d
-      .varchar({ length: 255 })
+      .varchar('user_id', { length: 255 })
       .notNull()
       .references(() => userTable.id),
-    type: d.varchar({ length: 255 }).$type<AdapterAccount['type']>().notNull(),
-    provider: d.varchar({ length: 255 }).notNull(),
-    providerAccountId: d.varchar({ length: 255 }).notNull(),
-    refresh_token: d.text(),
-    access_token: d.text(),
-    expires_at: d.integer(),
-    token_type: d.varchar({ length: 255 }),
-    scope: d.varchar({ length: 255 }),
-    id_token: d.text(),
-    session_state: d.varchar({ length: 255 }),
+    type: d
+      .varchar('type', { length: 255 })
+      .$type<AdapterAccount['type']>()
+      .notNull(),
+    provider: d.varchar('provider', { length: 255 }).notNull(),
+    providerAccountId: d
+      .varchar('provider_account_id', { length: 255 })
+      .notNull(),
+    refresh_token: d.text('refresh_token'),
+    access_token: d.text('access_token'),
+    expires_at: d.integer('expires_at'),
+    token_type: d.varchar('token_type', { length: 255 }),
+    scope: d.varchar('scope', { length: 255 }),
+    id_token: d.text('id_token'),
+    session_state: d.varchar('session_state', { length: 255 }),
   }),
   (t) => [
     primaryKey({ columns: [t.provider, t.providerAccountId] }),
@@ -55,12 +63,17 @@ export const accountRelations = relations(accountTable, ({ one }) => ({
 export const sessionTable = pgTable(
   'session',
   (d) => ({
-    sessionToken: d.varchar({ length: 255 }).notNull().primaryKey(),
+    sessionToken: d
+      .varchar('session_token', { length: 255 })
+      .notNull()
+      .primaryKey(),
     userId: d
-      .varchar({ length: 255 })
+      .varchar('user_id', { length: 255 })
       .notNull()
       .references(() => userTable.id),
-    expires: d.timestamp({ mode: 'date', withTimezone: true }).notNull(),
+    expires: d
+      .timestamp('expires', { mode: 'date', withTimezone: true })
+      .notNull(),
   }),
   (t) => [index('t_user_id_idx').on(t.userId)],
 )
@@ -75,9 +88,11 @@ export const sessionRelations = relations(sessionTable, ({ one }) => ({
 export const verificationTokenTable = pgTable(
   'verification_token',
   (d) => ({
-    identifier: d.varchar({ length: 255 }).notNull(),
-    token: d.varchar({ length: 255 }).notNull(),
-    expires: d.timestamp({ mode: 'date', withTimezone: true }).notNull(),
+    identifier: d.varchar('identifier', { length: 255 }).notNull(),
+    token: d.varchar('token', { length: 255 }).notNull(),
+    expires: d
+      .timestamp('expires', { mode: 'date', withTimezone: true })
+      .notNull(),
   }),
   (t) => [primaryKey({ columns: [t.identifier, t.token] })],
 )

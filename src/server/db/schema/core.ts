@@ -2,13 +2,13 @@ import { sql } from 'drizzle-orm'
 import { timestamp } from 'drizzle-orm/pg-core'
 
 export const createdUpdatedAtColumns = {
-  createdAt: timestamp({
+  createdAt: timestamp('created_at', {
     withTimezone: true,
     mode: 'string',
   })
     .defaultNow()
     .notNull(),
-  updatedAt: timestamp({
+  updatedAt: timestamp('updated_at', {
     withTimezone: true,
     mode: 'string',
   })
