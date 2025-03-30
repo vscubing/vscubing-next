@@ -37,7 +37,7 @@
     "@trpc/react-query": "^11.0.0",
     "@trpc/server": "^11.0.1",
     "@trpc/tanstack-react-query": "^11.0.1",
-    "@vscubing/cubing": "0.55.0-vscubing.10",
+    "@vscubing/cubing": "0.55.0-vscubing.11",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "dayjs": "^1.11.10",
