@@ -1,0 +1,2 @@
+ALTER TABLE "scramble" ADD CONSTRAINT "contest_discipline_position_unique" UNIQUE("contest_discipline_id","position");--> statement-breakpoint
+ALTER TABLE "solve" ADD CONSTRAINT "round_session_scramble_unique" UNIQUE("round_session_id","scramble_id");

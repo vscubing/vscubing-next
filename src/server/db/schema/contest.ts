@@ -1,7 +1,7 @@
 import { SCRAMBLE_POSITIONS, type Discipline } from '@/app/_types'
 import { DISCIPLINES } from '@/shared'
 import { sql } from 'drizzle-orm'
-import { pgTable, pgEnum } from 'drizzle-orm/pg-core'
+import { pgTable, pgEnum, unique } from 'drizzle-orm/pg-core'
 import { userTable } from './account'
 import { createdUpdatedAtColumns } from './core'
 
@@ -47,22 +47,31 @@ export const scramblePositionEnum = pgEnum(
   'scramble_position',
   SCRAMBLE_POSITIONS,
 )
-export const scrambleTable = pgTable('scramble', (d) => ({
-  ...createdUpdatedAtColumns,
-  id: d.integer('id').primaryKey().generatedByDefaultAsIdentity(),
-  contestDisciplineId: d
-    .integer('contest_discipline_id')
-    .notNull()
-    .references(() => contestDisciplineTable.id, { onDelete: 'cascade' }),
-  position: scramblePositionEnum('position').notNull(),
-  isExtra: d
-    .boolean('is_extra')
-    .generatedAlwaysAs(
-      sql<boolean>`CASE WHEN position IN ('E1', 'E2') THEN TRUE ELSE FALSE END`,
-    )
-    .notNull(),
-  moves: d.text('moves'),
-}))
+export const scrambleTable = pgTable(
+  'scramble',
+  (d) => ({
+    ...createdUpdatedAtColumns,
+    id: d.integer('id').primaryKey().generatedByDefaultAsIdentity(),
+    contestDisciplineId: d
+      .integer('contest_discipline_id')
+      .notNull()
+      .references(() => contestDisciplineTable.id, { onDelete: 'cascade' }),
+    position: scramblePositionEnum('position').notNull(),
+    isExtra: d
+      .boolean('is_extra')
+      .generatedAlwaysAs(
+        sql<boolean>`CASE WHEN position IN ('E1', 'E2') THEN TRUE ELSE FALSE END`,
+      )
+      .notNull(),
+    moves: d.text('moves'),
+  }),
+  (t) => [
+    unique('contest_discipline_position_unique').on(
+      t.contestDisciplineId,
+      t.position,
+    ),
+  ],
+)
 
 export const roundSessionTable = pgTable('round_session', (d) => ({
   ...createdUpdatedAtColumns,
@@ -85,19 +94,25 @@ export const solveStateEnum = pgEnum('solve_state', [
   'submitted',
   'changed_to_extra',
 ])
-export const solveTable = pgTable('solve', (d) => ({
-  ...createdUpdatedAtColumns,
-  id: d.integer('id').primaryKey().generatedByDefaultAsIdentity(),
-  scrambleId: d
-    .integer('scramble_id')
-    .notNull()
-    .references(() => scrambleTable.id, { onDelete: 'cascade' }),
-  roundSessionId: d
-    .integer('round_session_id')
-    .notNull()
-    .references(() => roundSessionTable.id, { onDelete: 'cascade' }),
-  state: solveStateEnum('state').notNull().default('pending'),
-  timeMs: d.integer('time_ms'),
-  isDnf: d.boolean('is_dnf').notNull(),
-  reconstruction: d.varchar('solution', { length: 10000 }), // TODO: rename reconstruction field to solution
-}))
+export const solveTable = pgTable(
+  'solve',
+  (d) => ({
+    ...createdUpdatedAtColumns,
+    id: d.integer('id').primaryKey().generatedByDefaultAsIdentity(),
+    scrambleId: d
+      .integer('scramble_id')
+      .notNull()
+      .references(() => scrambleTable.id, { onDelete: 'cascade' }),
+    roundSessionId: d
+      .integer('round_session_id')
+      .notNull()
+      .references(() => roundSessionTable.id, { onDelete: 'cascade' }),
+    state: solveStateEnum('state').notNull().default('pending'),
+    timeMs: d.integer('time_ms'),
+    isDnf: d.boolean('is_dnf').notNull(),
+    reconstruction: d.varchar('solution', { length: 10000 }), // TODO: rename reconstruction field to solution
+  }),
+  (t) => [
+    unique('round_session_scramble_unique').on(t.roundSessionId, t.scrambleId),
+  ],
+)

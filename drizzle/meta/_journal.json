@@ -281,6 +281,27 @@
       "when": 1743326411359,
       "tag": "0043_unique_lady_ursula",
       "breakpoints": true
+    },
+    {
+      "idx": 44,
+      "version": "7",
+      "when": 1743345521562,
+      "tag": "0044_elite_radioactive_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 45,
+      "version": "7",
+      "when": 1743345591075,
+      "tag": "0045_fix-serial-sequence-scramble",
+      "breakpoints": true
+    },
+    {
+      "idx": 46,
+      "version": "7",
+      "when": 1743345600554,
+      "tag": "0046_fix-serial-sequence-contest_discipline",
+      "breakpoints": true
     }
   ]
 }
