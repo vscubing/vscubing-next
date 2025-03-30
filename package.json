@@ -8,17 +8,18 @@
     "check": "next lint && tsc --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
+    "db:custom": "drizzle-kit generate --custom --name",
+    "db:drop": "drizzle-kit drop",
     "dev": "next dev",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
     "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
+    "typecheck": "tsc --noEmit",
     "test": "bun test",
     "preview": "next build && next start",
-    "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "start": "next start"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.7.2",
@@ -61,7 +62,6 @@
     "tailwindcss-animate": "^1.0.7",
     "usehooks-ts": "^3.0.1",
     "vaul": "^0.9.0",
-    "vitest": "^3.0.9",
     "zod": "^3.24.2"
   },
   "devDependencies": {
