@@ -48,3 +48,4 @@ nicities:
 - [ ] tailored 404 pages
 - [ ] skip inspection by default
 - [ ] cron job
+- [ ] figure out why deployment's initial db migration doesn't work (maybe it will be solved after redoing the migrations from scratch)
