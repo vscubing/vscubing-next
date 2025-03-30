@@ -31,8 +31,8 @@
 - [x] create contest
 - [x] expectedEndDate
 - [x] sort disciplines by created_at
-- [ ] generate scrambles
-- [ ] maybe move scramble generation to a separate repository
+- [x] generate scrambles
+- [x] write a script that downloads and unzips a release of tnoodle-cli
 
 nicities:
 - [ ] correct primary key autoincrementation https://stackoverflow.com/questions/4448340/postgresql-duplicate-key-violates-unique-constraint
