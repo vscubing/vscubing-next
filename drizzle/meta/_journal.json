@@ -239,6 +239,69 @@
       "when": 1743187412694,
       "tag": "0037_magenta_smasher",
       "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1743320943864,
+      "tag": "0038_legal_landau",
+      "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "7",
+      "when": 1743321049166,
+      "tag": "0039_steep_thing",
+      "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1743323029033,
+      "tag": "0040_chilly_master_chief",
+      "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "7",
+      "when": 1743326127689,
+      "tag": "0041_striped_maginty",
+      "breakpoints": true
+    },
+    {
+      "idx": 42,
+      "version": "7",
+      "when": 1743326160342,
+      "tag": "0042_insert-expected-end-date",
+      "breakpoints": true
+    },
+    {
+      "idx": 43,
+      "version": "7",
+      "when": 1743326411359,
+      "tag": "0043_unique_lady_ursula",
+      "breakpoints": true
+    },
+    {
+      "idx": 44,
+      "version": "7",
+      "when": 1743345521562,
+      "tag": "0044_elite_radioactive_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 45,
+      "version": "7",
+      "when": 1743345591075,
+      "tag": "0045_fix-serial-sequence-scramble",
+      "breakpoints": true
+    },
+    {
+      "idx": 46,
+      "version": "7",
+      "when": 1743345600554,
+      "tag": "0046_fix-serial-sequence-contest_discipline",
+      "breakpoints": true
     }
   ]
 }

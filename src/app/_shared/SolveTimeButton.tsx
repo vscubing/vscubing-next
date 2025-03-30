@@ -1,18 +1,9 @@
-'use client'
-
-import {
-  Popover,
-  PopoverAnchor,
-  PopoverCloseButton,
-  PopoverContent,
-} from '@/app/_components/ui'
 import { type VariantProps, cva } from 'class-variance-authority'
 import Link from 'next/link'
-import { type ReactNode, forwardRef, type ComponentProps } from 'react'
-import { useLocalStorage } from 'usehooks-ts'
+import { forwardRef, type ComponentProps } from 'react'
 import { formatSolveTime } from '../_utils/formatSolveTime'
-import { useIsTouchDevice } from '../_utils/useMediaQuery'
 import { cn } from '../_utils/cn'
+import { WatchSolveHintPopover } from './watch-solve-hint-popover.client'
 
 const solveTimeButtonVariants = cva(
   'transition-base outline-ring after-border-bottom vertical-alignment-fix inline-flex h-8 min-w-24 items-center justify-center hover:after:scale-x-100',
@@ -31,7 +22,7 @@ const solveTimeButtonVariants = cva(
 )
 
 type SolveTimeLinkOrDnfProps = VariantProps<typeof solveTimeButtonVariants> & {
-  timeMs: number
+  timeMs: number | null
   isDnf: boolean
   contestSlug: string
   discipline: string
@@ -50,15 +41,13 @@ export function SolveTimeLinkOrDnf({
   solveId,
   canShowHint,
 }: SolveTimeLinkOrDnfProps) {
-  if (isDnf) {
+  if (isDnf || !timeMs) {
     return <SolveTimeLabel isDnf className={className} />
   }
   return (
     <WatchSolveHintPopover disabled={!canShowHint}>
       <Link
-        href='/contests/$contestSlug/watch/$solveId'
-        // params={{ contestSlug, solveId: String(solveId) }}
-        // search={{ discipline }}
+        href={`/contests/${contestSlug}/watch/${solveId}?discipline=${discipline}`}
         className={cn(solveTimeButtonVariants({ variant, className }))}
       >
         {formatSolveTime(timeMs)}
@@ -126,40 +115,3 @@ export const SolveTimeLabel = forwardRef<HTMLSpanElement, SolveTimeLabelProps>(
   },
 )
 SolveTimeLabel.displayName = 'SolveTimeLabel'
-
-type WatchSolveHintPopoverProps = {
-  children: ReactNode
-  className?: string
-  disabled: boolean
-}
-export function WatchSolveHintPopover({
-  children,
-  disabled,
-}: WatchSolveHintPopoverProps) {
-  const isTouchDevice = useIsTouchDevice()
-  const [seenHint, setSeenHint] = useLocalStorage(
-    'vs-seenWatchSolveHint',
-    false,
-  )
-
-  function handleClose() {
-    setSeenHint(true)
-  }
-
-  return (
-    <Popover open={!seenHint && !disabled}>
-      <PopoverContent>
-        <p>
-          {isTouchDevice
-            ? 'Tap on a time result to watch the solution'
-            : 'Click on a time result to watch the solution'}
-        </p>
-        <PopoverCloseButton onClick={handleClose} />
-      </PopoverContent>
-
-      <PopoverAnchor asChild onClick={handleClose}>
-        {children}
-      </PopoverAnchor>
-    </Popover>
-  )
-}

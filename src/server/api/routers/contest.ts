@@ -2,18 +2,30 @@ import { z } from 'zod'
 
 import { createTRPCRouter, publicProcedure } from '@/server/api/trpc'
 import {
-  contestsTable,
-  contestsToDisciplinesTable,
-  disciplinesTable,
+  contestTable,
+  contestDisciplineTable,
+  disciplineTable,
   roundSessionTable,
   scrambleTable,
   solveTable,
-  usersTable,
+  userTable,
 } from '@/server/db/schema'
 import { DISCIPLINES } from '@/shared'
-import { eq, desc, and, lt, count } from 'drizzle-orm'
+import { eq, desc, and, lt } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
-import { api } from '@/trpc/server'
+import {
+  SCRAMBLE_POSITIONS,
+  type Discipline,
+  type RoundSession,
+} from '@/app/_types'
+import { groupBy } from '@/app/_utils/groupBy'
+import { db } from '@/server/db'
+import dayjs from 'dayjs'
+import childProcess from 'child_process'
+import { promisify } from 'util'
+import path from 'path'
+import { tryCatch } from '@/app/_utils/try-catch'
+import { generateScrambles } from '@/server/internal/generate-scrambles'
 
 export const contestRouter = createTRPCRouter({
   getPastContests: publicProcedure
@@ -26,26 +38,24 @@ export const contestRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const items = await ctx.db
-        .select()
-        .from(contestsTable)
+        .select() // TODO: don't select *
+        .from(contestTable)
         .leftJoin(
-          contestsToDisciplinesTable,
-          eq(contestsToDisciplinesTable.contestSlug, contestsTable.slug),
+          contestDisciplineTable,
+          eq(contestDisciplineTable.contestSlug, contestTable.slug),
         )
         .leftJoin(
-          disciplinesTable,
-          eq(contestsToDisciplinesTable.disciplineSlug, disciplinesTable.slug),
+          disciplineTable,
+          eq(contestDisciplineTable.disciplineSlug, disciplineTable.slug),
         )
         .where(
           and(
-            eq(contestsTable.isOngoing, false),
-            eq(disciplinesTable.slug, input.discipline),
-            input.cursor
-              ? lt(contestsTable.startDate, input.cursor)
-              : undefined,
+            eq(contestTable.isOngoing, false),
+            eq(disciplineTable.slug, input.discipline),
+            input.cursor ? lt(contestTable.startDate, input.cursor) : undefined,
           ),
         )
-        .orderBy(desc(contestsTable.startDate))
+        .orderBy(desc(contestTable.startDate))
         .limit(input.limit + 1)
 
       let nextCursor: typeof input.cursor | undefined = undefined
@@ -57,121 +67,152 @@ export const contestRouter = createTRPCRouter({
     }),
 
   getOngoing: publicProcedure.query(async ({ ctx }) => {
-    const ongoingList = await ctx.db
+    const [ongoing] = await ctx.db
       .select()
-      .from(contestsTable)
-      .where(eq(contestsTable.isOngoing, true))
+      .from(contestTable)
+      .where(eq(contestTable.isOngoing, true))
 
-    if (!ongoingList || ongoingList.length === 0)
+    if (!ongoing)
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message: 'No ongoing contest!',
       })
-    if (ongoingList.length > 1)
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'More then one ongoing contest!',
-      })
 
-    return ongoingList[0]!
+    return ongoing
   }),
 
   getContestMetaData: publicProcedure
     .input(z.object({ contestSlug: z.string() }))
     .query(async ({ ctx, input }) => {
-      const res = await ctx.db
-        .select()
-        .from(contestsTable)
-        .where(eq(contestsTable.slug, input.contestSlug))
+      const rows = await ctx.db
+        .select({
+          slug: contestTable.slug,
+          startDate: contestTable.startDate,
+          expectedEndDate: contestTable.expectedEndDate,
+          endDate: contestTable.endDate,
+          isOngoing: contestTable.isOngoing,
+          disciplineSlug: contestDisciplineTable.disciplineSlug,
+        })
+        .from(contestTable)
+        .innerJoin(
+          contestDisciplineTable,
+          eq(contestDisciplineTable.contestSlug, input.contestSlug),
+        )
+        .innerJoin(
+          disciplineTable,
+          eq(disciplineTable.slug, contestDisciplineTable.disciplineSlug),
+        )
+        .where(eq(contestTable.slug, input.contestSlug))
+        .orderBy(disciplineTable.createdAt)
 
-      if (!res || res.length === 0)
+      const firstRow = rows[0]
+      if (!firstRow)
         throw new TRPCError({
           code: 'NOT_FOUND',
         })
 
-      return res[0]!
+      const { slug, startDate, expectedEndDate, endDate, isOngoing } = firstRow
+      return {
+        slug,
+        startDate,
+        expectedEndDate,
+        endDate,
+        isOngoing,
+        disciplines: rows.map(({ disciplineSlug }) => disciplineSlug),
+      }
     }),
 
   getContestResults: publicProcedure
     .input(
-      z.object({ contestSlug: z.string(), discipline: z.enum(DISCIPLINES) }),
+      z.object({
+        contestSlug: z.string(),
+        discipline: z.enum(DISCIPLINES),
+        offset: z.number().optional().default(0),
+        limit: z.number().min(1).default(30),
+      }),
     )
     .query(async ({ ctx, input }) => {
-      const isOngoing = await ctx.db
-        .select({ isOngoing: contestsTable.isOngoing })
-        .from(contestsTable)
-        .where(eq(contestsTable.slug, input.contestSlug))
+      const userCapabilities = await getContestUserCapabilities({
+        contestSlug: input.contestSlug,
+        discipline: input.discipline,
+        userId: ctx.session?.user.id,
+      })
+      if (userCapabilities === 'CONTEST_NOT_FOUND')
+        throw new TRPCError({ code: 'NOT_FOUND' })
 
-      if (isOngoing) {
-        if (!ctx.session)
-          throw new TRPCError({
-            code: 'UNAUTHORIZED',
-            message:
-              'You must be authorized to participate in an ongoing contest or view its results',
-          })
+      if (userCapabilities === 'UNAUTHORIZED')
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message:
+            'You need to be signed in to participate in an ongoing contest or view its results',
+        })
 
-        const [ownSession] = await ctx.db
-          .select({ isFinished: roundSessionTable.isFinished })
-          .from(contestsToDisciplinesTable)
-          .innerJoin(
-            roundSessionTable,
-            eq(
-              roundSessionTable.contestDisciplineId,
-              contestsToDisciplinesTable.id,
-            ),
-          )
-          .innerJoin(
-            usersTable,
-            eq(usersTable.id, roundSessionTable.contestantId),
-          )
-          .where(
-            and(
-              eq(contestsToDisciplinesTable.contestSlug, input.contestSlug),
-              eq(contestsToDisciplinesTable.disciplineSlug, input.discipline),
-              eq(usersTable.id, ctx.session.user.id),
-            ),
-          )
-        if (!ownSession || !ownSession.isFinished)
-          throw new TRPCError({
-            code: 'FORBIDDEN',
-            message:
-              "You can't see the results of an ongoing contest round before finishing it",
-          })
-      }
+      if (userCapabilities === 'SOLVE')
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message:
+            "You can't see the results of an ongoing contest round before finishing it",
+        })
 
-      return ctx.db
+      const queryRes = await ctx.db
         .select({
+          roundSessionId: roundSessionTable.id,
+          nickname: userTable.name,
+          contestantId: roundSessionTable.contestantId,
+          avgMs: roundSessionTable.avgMs,
           solveId: solveTable.id,
           timeMs: solveTable.timeMs,
-          avgMs: roundSessionTable.avgMs,
-          nickname: usersTable.name,
-          position: scrambleTable.position,
-          state: solveTable.state,
+          isDnf: solveTable.isDnf,
+          scramblePosition: scrambleTable.position,
         })
-        .from(contestsToDisciplinesTable)
-        .where(
-          and(
-            eq(contestsToDisciplinesTable.contestSlug, input.contestSlug),
-            eq(contestsToDisciplinesTable.disciplineSlug, input.discipline),
-          ),
-        )
+        .from(contestDisciplineTable)
         .innerJoin(
           roundSessionTable,
-          eq(
-            roundSessionTable.contestDisciplineId,
-            contestsToDisciplinesTable.id,
-          ),
+          eq(roundSessionTable.contestDisciplineId, contestDisciplineTable.id),
         )
         .innerJoin(
           solveTable,
           eq(solveTable.roundSessionId, roundSessionTable.id),
         )
         .innerJoin(scrambleTable, eq(scrambleTable.id, solveTable.scrambleId))
-        .innerJoin(
-          usersTable,
-          eq(usersTable.id, roundSessionTable.contestantId),
+        .innerJoin(userTable, eq(userTable.id, roundSessionTable.contestantId))
+        .where(
+          and(
+            eq(contestDisciplineTable.contestSlug, input.contestSlug),
+            eq(contestDisciplineTable.disciplineSlug, input.discipline),
+            eq(roundSessionTable.isFinished, true),
+            eq(solveTable.state, 'submitted'),
+          ),
         )
         .orderBy(roundSessionTable.avgMs)
+        .limit(input.limit + 1)
+        .offset(input.offset)
+
+      const solvesBySessionId = groupBy(
+        queryRes,
+        ({ roundSessionId }) => roundSessionId,
+      )
+
+      const items: RoundSession[] = Array.from(solvesBySessionId.values())
+        .sort((a, b) => (a[0]!.avgMs ?? -Infinity) - (b[0]!.avgMs ?? -Infinity))
+        .map((session) => ({
+          avgMs: session[0]!.avgMs,
+          id: session[0]!.roundSessionId,
+          isOwn: session[0]!.contestantId === ctx.session?.user.id,
+          solves: session.map(
+            ({ solveId, timeMs, isDnf, scramblePosition }) => ({
+              id: solveId,
+              timeMs,
+              isDnf,
+              scramblePosition,
+            }),
+          ),
+          nickname: session[0]!.nickname,
+        }))
+
+      const nextOffset = items.pop() ? input.offset + 1 : undefined
+
+      return { items, nextOffset }
     }),
 
   getSolve: publicProcedure
@@ -181,42 +222,34 @@ export const contestRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      const res = await ctx.db
+      const [solve] = await ctx.db
         .select({
           scramble: scrambleTable.moves,
           position: scrambleTable.position,
           solution: solveTable.reconstruction,
-          username: usersTable.name,
+          username: userTable.name,
           timeMs: solveTable.timeMs,
-          discipline: contestsToDisciplinesTable.disciplineSlug,
+          discipline: contestDisciplineTable.disciplineSlug,
         })
         .from(solveTable)
-        .where(eq(solveTable.id, input.solveId))
         .innerJoin(scrambleTable, eq(scrambleTable.id, solveTable.scrambleId))
         .innerJoin(
           roundSessionTable,
           eq(roundSessionTable.id, solveTable.roundSessionId),
         )
+        .innerJoin(userTable, eq(userTable.id, roundSessionTable.contestantId))
         .innerJoin(
-          usersTable,
-          eq(usersTable.id, roundSessionTable.contestantId),
+          contestDisciplineTable,
+          eq(contestDisciplineTable.id, roundSessionTable.contestDisciplineId),
         )
-        .innerJoin(
-          contestsToDisciplinesTable,
-          eq(
-            contestsToDisciplinesTable.id,
-            roundSessionTable.contestDisciplineId,
-          ),
-        )
-      const solve = res[0]
+        .where(eq(solveTable.id, input.solveId))
 
       if (!solve) throw new TRPCError({ code: 'NOT_FOUND' })
 
-      // const { scramble, solution, timeMs, ...rest } = solve
       if (!solve.solution || !solve.timeMs || !solve.scramble)
         throw new TRPCError({
           code: 'BAD_REQUEST',
-          message: `The solve exists, but is incomplete. \nSolution: ${solve.solution} \ntimeMs: ${solve.timeMs} \nscramble: ${solve.scramble}`,
+          message: `The solve exists, but it is incomplete. \nSolution: ${solve.solution} \ntimeMs: ${solve.timeMs} \nscramble: ${solve.scramble}`,
         })
 
       return {
@@ -227,3 +260,103 @@ export const contestRouter = createTRPCRouter({
       }
     }),
 })
+
+export async function getContestUserCapabilities({
+  contestSlug,
+  discipline,
+  userId,
+}: {
+  contestSlug: string
+  discipline: Discipline
+  userId?: string
+}): Promise<'CONTEST_NOT_FOUND' | 'SOLVE' | 'VIEW_RESULTS' | 'UNAUTHORIZED'> {
+  const [contest] = await db
+    .select({ isOngoing: contestTable.isOngoing })
+    .from(contestTable)
+    .fullJoin(
+      contestDisciplineTable,
+      eq(contestDisciplineTable.contestSlug, contestTable.slug),
+    )
+    .where(
+      and(
+        eq(contestTable.slug, contestSlug),
+        eq(contestDisciplineTable.disciplineSlug, discipline),
+      ),
+    )
+
+  if (!contest) return 'CONTEST_NOT_FOUND'
+  if (!contest.isOngoing) return 'VIEW_RESULTS'
+
+  if (!userId) return 'UNAUTHORIZED'
+
+  const [ownSession] = await db
+    .select({ isFinished: roundSessionTable.isFinished })
+    .from(contestDisciplineTable)
+    .innerJoin(
+      roundSessionTable,
+      eq(roundSessionTable.contestDisciplineId, contestDisciplineTable.id),
+    )
+    .innerJoin(userTable, eq(userTable.id, roundSessionTable.contestantId))
+    .where(
+      and(
+        eq(contestDisciplineTable.contestSlug, contestSlug),
+        eq(contestDisciplineTable.disciplineSlug, discipline),
+        eq(userTable.id, userId),
+      ),
+    )
+
+  return ownSession?.isFinished ? 'VIEW_RESULTS' : 'SOLVE'
+}
+
+export async function closeOngoingAndCreateNewContest(
+  disciplines: Discipline[],
+) {
+  await db.transaction(async (tx) => {
+    const now = dayjs()
+    const [oldOngoing] = await tx
+      .update(contestTable)
+      .set({ isOngoing: false, endDate: now.toISOString() })
+      .where(eq(contestTable.isOngoing, true))
+      .returning({ slug: contestTable.slug })
+
+    if (!oldOngoing) throw new Error('No ongoing contest!')
+
+    const nextContestNumber = Number(oldOngoing.slug) + 1
+    const newContestSlug = String(nextContestNumber)
+
+    await tx.insert(contestTable).values({
+      slug: newContestSlug,
+      isOngoing: true,
+      startDate: now.toISOString(),
+      expectedEndDate: now.add(7, 'day').toISOString(),
+    })
+
+    const createdContestDisciplines = await tx
+      .insert(contestDisciplineTable)
+      .values(
+        disciplines.map((discipline) => ({
+          contestSlug: newContestSlug,
+          disciplineSlug: discipline,
+        })),
+      )
+      .returning({
+        id: contestDisciplineTable.id,
+        discipline: contestDisciplineTable.disciplineSlug,
+      })
+
+    const scrambleRows: (typeof scrambleTable.$inferInsert)[] = []
+    for (const { id, discipline } of createdContestDisciplines) {
+      for (const [idx, moves] of (
+        await generateScrambles(discipline, 7)
+      ).entries()) {
+        scrambleRows.push({
+          contestDisciplineId: id,
+          position: SCRAMBLE_POSITIONS[idx]!,
+          moves,
+        })
+      }
+    }
+
+    await tx.insert(scrambleTable).values(scrambleRows)
+  })
+}

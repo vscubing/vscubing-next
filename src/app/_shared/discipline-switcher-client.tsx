@@ -2,15 +2,16 @@
 
 import { DisciplineSwitcherItem } from '@/app/_components/ui'
 import { type Discipline } from '@/app/_types'
-import { DISCIPLINES } from '@/shared'
 import Link from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { useCallback, useState } from 'react'
 
 export function DisciplineSwitcher({
   initialDiscipline,
+  disciplines,
 }: {
   initialDiscipline: Discipline
+  readonly disciplines: Discipline[]
 }) {
   const [currentDiscipline, setCurrentDiscipline] =
     useState<Discipline>(initialDiscipline)
@@ -30,7 +31,7 @@ export function DisciplineSwitcher({
 
   return (
     <div className='flex gap-3'>
-      {DISCIPLINES.map((discipline) => (
+      {disciplines.map((discipline) => (
         <Link
           href={{
             pathname,

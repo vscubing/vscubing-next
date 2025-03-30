@@ -1,29 +1,24 @@
-# Create T3 App
+# 🚧 WIP 🚧  <img src="https://vscubing.com/favicon.svg" width="35px" /> vscubing next
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+This is a fullstack port of [@vscubing](https://github.com/vscubing) that is meant to replace [@vscubing/vscubing-frontend](https://github.com/vscubing/vscubing-frontend) and [@vscubing/vscubing-backend](https://github.com/vscubing/vscubing-backend).
 
-## What's next? How do I make an app with this?
+Vscubing is contest platform to compete in virtual speedcubing: the art of solving twisty puzzles (like the Rubik's Cube) via a computer emulator controlled from the keyboard as fast as possible. For more detailed information refer to the [landing page](https://vscubing.com/landing).
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+## Development
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+### Local setup
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+- Add environment variables to `.env` (use `.env.example`, some of the variables are already set there)
+- You need a local DB to run the project locally. Run `./start-database.sh` to create a docker container for it. This script automatically sources `.env`. Make sure to have a docker runtime, e.g. `Docker Desktop`. After creating a database you have to temporarily uncomment the initial migration in `./drizzle/0000_sleepy_speed_demon.sql`, run `bun db:migrate` once and then comment the initial migration out again.
+- (Optional) Import a database backup:
+    ```bash
+    docker cp PATH_TO_THE_BACKUP.sql vscubing-pg:/vscubing.sql
+    sleep 2
+    docker exec -it vscubing-pg pg_restore -U homa -d vscubing-pg --verbose /vscubing.sql
+    ```
+- (Optional) Scramble generation relies on [tnoodle-cli](https://github.com/SpeedcuberOSS/tnoodle-cli). To be able to generate scrambles locally, you need to install it with `./install-vendor.sh` first. Note: the script was only tested on WSL.
+- Run the project: `bun dev`
 
-## Learn More
+### Deploying
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
-
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
-
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
-
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+- `pg_restore --no-owner -d 'CONNECTION_STRING' BACKUP_PATH` to import the db backup

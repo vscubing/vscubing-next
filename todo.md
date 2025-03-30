@@ -21,10 +21,30 @@
     - [x] ui
 - [x] watch solve
 - [x] real time replays
-- [ ] contest results ui
-    - [ ] header
-    - [ ] section header
-    - [ ] list
-    - [ ] pinned item
-    - [ ] jump to the pinned item
+- [x] contest results ui
+    - [x] header
+    - [x] section header
+    - [x] list
+    - [x] fix hydration error by splitting Session component into Tablet and Desktop components
+- [x] un-hardcode disciplines
+- [x] rename tables and table vars
+- [x] create contest
+- [x] expectedEndDate
+- [x] sort disciplines by created_at
+- [x] generate scrambles
+- [x] write a script that downloads and unzips a release of tnoodle-cli
+
+nicities:
+- [ ] correct primary key autoincrementation https://stackoverflow.com/questions/4448340/postgresql-duplicate-key-violates-unique-constraint
+- [ ] contest 17 bohdan's result shift?
 - [ ] move the header to layout
+- [ ] use page based pagination for contestindexpage
+- [ ] make contest link based on capabilities
+- [ ] pinned items
+- [ ] jump to the pinned item
+- [ ] loading.ts for everything
+- [ ] use unstable_cache a bunch
+- [ ] expandContestLink
+- [ ] tailored 404 pages
+- [ ] skip inspection by default
+- [ ] cron job

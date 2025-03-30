@@ -14,10 +14,12 @@ export function formatDate(
 
 export function formatContestDuration({
   startDate,
+  expectedEndDate,
   endDate,
 }: {
   startDate: string
+  expectedEndDate: string
   endDate: string | null
 }) {
-  return `${formatDate(startDate, 'long')} - ${formatDate(endDate ?? '', 'long')}`
+  return `${formatDate(startDate, 'long')} - ${formatDate(endDate ?? expectedEndDate, 'long')}`
 }
