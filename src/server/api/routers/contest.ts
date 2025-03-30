@@ -16,6 +16,7 @@ import { TRPCError } from '@trpc/server'
 import type { Discipline, RoundSession } from '@/app/_types'
 import { groupBy } from '@/app/_utils/groupBy'
 import { db } from '@/server/db'
+import dayjs from 'dayjs'
 
 export const contestRouter = createTRPCRouter({
   getPastContests: publicProcedure
@@ -57,23 +58,18 @@ export const contestRouter = createTRPCRouter({
     }),
 
   getOngoing: publicProcedure.query(async ({ ctx }) => {
-    const ongoingList = await ctx.db
+    const [ongoing] = await ctx.db
       .select()
       .from(contestTable)
       .where(eq(contestTable.isOngoing, true))
 
-    if (!ongoingList || ongoingList.length === 0)
+    if (!ongoing)
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message: 'No ongoing contest!',
       })
-    if (ongoingList.length > 1)
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'More then one ongoing contest!',
-      })
 
-    return ongoingList[0]!
+    return ongoing
   }),
 
   getContestMetaData: publicProcedure
@@ -237,7 +233,7 @@ export const contestRouter = createTRPCRouter({
       if (!solve.solution || !solve.timeMs || !solve.scramble)
         throw new TRPCError({
           code: 'BAD_REQUEST',
-          message: `The solve exists, but is incomplete. \nSolution: ${solve.solution} \ntimeMs: ${solve.timeMs} \nscramble: ${solve.scramble}`,
+          message: `The solve exists, but it is incomplete. \nSolution: ${solve.solution} \ntimeMs: ${solve.timeMs} \nscramble: ${solve.scramble}`,
         })
 
       return {
@@ -296,4 +292,34 @@ export async function getContestUserCapabilities({
   return ownSession?.isFinished ? 'VIEW_RESULTS' : 'SOLVE'
 }
 
-// export function createNewContest
+export async function closeOngoingAndCreateNewContest(
+  disciplines: Discipline[],
+) {
+  await db.transaction(async (tx) => {
+    const now = dayjs()
+    const [oldOngoing] = await tx
+      .update(contestTable)
+      .set({ isOngoing: false, endDate: now.toISOString() })
+      .where(eq(contestTable.isOngoing, true))
+      .returning({ slug: contestTable.slug })
+
+    if (!oldOngoing) throw new Error('No ongoing contest!')
+
+    const nextContestNumber = Number(oldOngoing.slug) + 1
+    const newContestSlug = String(nextContestNumber)
+
+    await tx.insert(contestTable).values({
+      slug: newContestSlug,
+      isOngoing: true,
+      startDate: now.toISOString(),
+      endDate: now.add(7, 'day').toISOString(),
+    })
+
+    await tx.insert(contestDisciplineTable).values(
+      disciplines.map((discipline) => ({
+        contestSlug: newContestSlug,
+        disciplineSlug: discipline,
+      })),
+    )
+  })
+}

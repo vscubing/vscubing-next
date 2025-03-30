@@ -27,9 +27,13 @@
     - [x] list
     - [x] fix hydration error by splitting Session component into Tablet and Desktop components
 - [x] un-hardcode disciplines
-- [ ] rename tables and table vars
+- [x] rename tables and table vars
+- [ ] create contest
+- [ ] expectedEndDate
+- [ ] sort disciplines by created_at
 
 nicities:
+- [ ] correct primary key autoincrementation https://stackoverflow.com/questions/4448340/postgresql-duplicate-key-violates-unique-constraint
 - [ ] contest 17 bohdan's result shift?
 - [ ] move the header to layout
 - [ ] use page based pagination for contestindexpage
@@ -41,3 +45,4 @@ nicities:
 - [ ] expandContestLink
 - [ ] tailored 404 pages
 - [ ] skip inspection by default
+- [ ] cron job

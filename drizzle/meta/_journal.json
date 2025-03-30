@@ -253,6 +253,13 @@
       "when": 1743321049166,
       "tag": "0039_steep_thing",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1743323029033,
+      "tag": "0040_chilly_master_chief",
+      "breakpoints": true
     }
   ]
 }

@@ -19,7 +19,9 @@ export const contestTable = pgTable('contest', (d) => ({
       mode: 'string',
     })
     .notNull(),
-  endDate: d.timestamp('end_date', { withTimezone: true, mode: 'string' }),
+  endDate: d
+    .timestamp('end_date', { withTimezone: true, mode: 'string' })
+    .notNull(),
   isOngoing: d.boolean('is_ongoing').notNull(),
 }))
 
