@@ -18,3 +18,7 @@ Vscubing is contest platform to compete in virtual speedcubing: the art of solvi
     ```
 - (Optional) Scramble generation relies on [tnoodle-cli](https://github.com/SpeedcuberOSS/tnoodle-cli). To be able to generate scrambles locally, you need to install it with `./install-vendor.sh` first. Note: the script was only tested on WSL.
 - Run the project: `bun dev`
+
+### Deploying
+
+- `pg_restore --no-owner -d 'CONNECTION_STRING' BACKUP_PATH` to import the db backup
