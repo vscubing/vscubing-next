@@ -79,16 +79,19 @@ export const contestRoundAttempt = createTRPCRouter({
 
       return {
         availableExtras: EXTRAS_PER_ROUND - changedToExtraSolveRows.length,
-        submittedSolves: submittedSolveRows.map(({ id, timeMs, isDnf }) =>
-          solveInvariant.parse({ id, timeMs, isDnf }),
-        ),
+        submittedSolves: submittedSolveRows.map(({ id, timeMs, isDnf }) => ({
+          id,
+          ...solveInvariant.parse({ id, timeMs, isDnf }),
+        })),
         currentScramble: currentSolveRow.scramble,
         pendingSolve: pendingSolve
-          ? solveInvariant.parse({
+          ? {
               id: pendingSolve.id,
-              isDnf: pendingSolve.isDnf,
-              timeMs: pendingSolve.timeMs,
-            })
+              ...solveInvariant.parse({
+                isDnf: pendingSolve.isDnf,
+                timeMs: pendingSolve.timeMs,
+              }),
+            }
           : undefined,
       }
     }),
@@ -119,7 +122,7 @@ const solveRowInvariant = z.object(
     position: z.enum(SCRAMBLE_POSITIONS),
     id: z.number(),
     isDnf: z.boolean(),
-    timeMs: z.number(),
+    timeMs: z.number().nullable(),
     state: z.enum(SOLVE_STATES),
   },
   {
@@ -127,15 +130,15 @@ const solveRowInvariant = z.object(
   },
 )
 
-const solveInvariant = z.union(
-  [
-    z.object({ id: z.number(), timeMs: z.number(), isDnf: z.literal(false) }),
-    z.object({
-      id: z.number(),
-      timeMs: z.number().nullable(),
-      isDnf: z.literal(false),
-    }),
-  ],
+const solveInvariant = z.custom<
+  // TODO: check if this works
+  { timeMs: number | null; isDnf: true } | { timeMs: number; isDnf: false }
+>(
+  (input) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    if (input.isDnf === false && input.timeMs === null) return false
+    return true
+  },
   {
     message: '[SOLVE] invalid state',
   },
