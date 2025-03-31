@@ -19,11 +19,16 @@ import {
   DialogClose,
 } from '@/app/_components/ui'
 import { BaseDialogButton } from '@/app/_components/ui/popovers/BaseDialog'
+import type { ScramblePosition, SolveResult } from '@/app/_types'
 
 export function CurrentSolve({
   areActionsDisabled,
   number,
-  currentSolve,
+  canChangeToExtra,
+  position,
+  solve,
+  solveId,
+  scramble,
   onChangeToExtra,
   onSolveInit,
   onSolveSubmit,
@@ -31,7 +36,11 @@ export function CurrentSolve({
 }: {
   areActionsDisabled: boolean
   number: number
-  currentSolve: any // TODO:
+  canChangeToExtra: boolean
+  scramble: string
+  position: ScramblePosition
+  solve: SolveResult | null
+  solveId: number | null
   onChangeToExtra: (reason: string) => void
   onSolveInit: () => void
   onSolveSubmit: () => void
@@ -41,13 +50,12 @@ export function CurrentSolve({
     <SolvePanel
       contestSlug={contestSlug}
       number={number}
-      scramble={currentSolve.scramble}
-      isInited={currentSolve.solve !== null}
-      id={currentSolve.solve?.id}
-      timeMs={currentSolve.solve?.timeMs}
-      isDnf={currentSolve.solve?.isDnf}
+      scramble={scramble}
+      position={position}
+      solve={solve}
+      solveId={solveId}
       ActionComponent={
-        currentSolve.solve === null ? (
+        solve === null ? (
           <PrimaryButton
             size='sm'
             onClick={onSolveInit}
@@ -57,7 +65,7 @@ export function CurrentSolve({
           </PrimaryButton>
         ) : (
           <div className='flex gap-1'>
-            {currentSolve.canChangeToExtra && (
+            {canChangeToExtra && (
               <ExtraReasonPrompt
                 onChangeToExtra={onChangeToExtra}
                 trigger={

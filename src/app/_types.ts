@@ -26,6 +26,10 @@ export type RoundSession = {
   isOwn: boolean
 }
 
+export type SolveResult =
+  | { timeMs: number | null; isDnf: true }
+  | { timeMs: number; isDnf: false }
+
 // export type ContestDTO = ContestsContestListOutput['results'][number]
 // export type ContestList = ContestsContestListOutput
 

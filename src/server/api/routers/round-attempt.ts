@@ -1,6 +1,6 @@
 import { DISCIPLINES } from '@/shared'
 import { z } from 'zod'
-import { eq, and, DrizzleError } from 'drizzle-orm'
+import { eq, and } from 'drizzle-orm'
 import { createTRPCRouter, protectedProcedure } from '../trpc'
 import { getContestUserCapabilities } from './contest'
 import { TRPCError } from '@trpc/server'
@@ -14,6 +14,7 @@ import {
   SCRAMBLE_POSITIONS,
   SOLVE_STATES,
   type ScramblePosition,
+  type SolveResult,
 } from '@/app/_types'
 
 const solveRowInvariant = z.object(
@@ -30,10 +31,8 @@ const solveRowInvariant = z.object(
   },
 )
 
-const solveInvariant = z.custom<
-  // TODO: check if this works
-  { timeMs: number | null; isDnf: true } | { timeMs: number; isDnf: false }
->(
+const solveInvariant = z.custom<// TODO: check if this works
+SolveResult>(
   (input) => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (input.isDnf === false && input.timeMs === null) return false
@@ -44,7 +43,7 @@ const solveInvariant = z.custom<
   },
 )
 
-export const contestRoundAttempt = createTRPCRouter({
+export const roundAttempt = createTRPCRouter({
   state: protectedProcedure
     .input(
       z.object({
@@ -117,33 +116,37 @@ export const contestRoundAttempt = createTRPCRouter({
       if (!currentSolveRow)
         throw new Error(`[SOLVE] Invalid state: ${JSON.stringify(rows)}`)
 
-      const [pendingSolve] = rows
-        .filter(({ state }) => state === 'pending')
-        .map((row) => solveRowInvariant.parse(row))
-
       const extrasUsed = rows.filter(
         ({ state }) => state === 'changed_to_extra',
       ).length
 
       return {
-        submittedSolves: submittedSolveRows.map(({ id, timeMs, isDnf }) => ({
-          id,
-          ...solveInvariant.parse({ id, timeMs, isDnf }),
-        })),
+        submittedSolves: submittedSolveRows.map(
+          ({ id, position, scramble, timeMs, isDnf }) => ({
+            id,
+            position,
+            scramble,
+            ...solveInvariant.parse({ id, timeMs, isDnf }),
+          }),
+        ),
         currentScramble: {
           id: currentSolveRow.scrambleId,
+          position: currentSolveRow.position,
           moves: currentSolveRow.scrambleMoves,
         },
-        pendingSolve: pendingSolve
-          ? {
-              id: pendingSolve.id,
-              ...solveInvariant.parse({
-                isDnf: pendingSolve.isDnf,
-                timeMs: pendingSolve.timeMs,
-              }),
-            }
-          : undefined,
-        availableExtras: EXTRAS_PER_ROUND - extrasUsed,
+        currentSolve:
+          currentSolveRow.timeMs &&
+          currentSolveRow.id &&
+          currentSolveRow.isDnf !== null
+            ? {
+                id: currentSolveRow.id,
+                ...solveInvariant.parse({
+                  isDnf: currentSolveRow.isDnf,
+                  timeMs: currentSolveRow.timeMs,
+                }),
+              }
+            : null,
+        canChangeToExtra: EXTRAS_PER_ROUND - extrasUsed > 0,
       }
     }),
 

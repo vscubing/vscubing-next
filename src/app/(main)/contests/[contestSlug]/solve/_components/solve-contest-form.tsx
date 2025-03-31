@@ -1,9 +1,23 @@
 'use client'
+
+import type { Discipline } from '@/app/_types'
 import { CurrentSolve } from './current-solve'
 import { Progress } from './progress'
 import { SolvePanel } from './solve-panel'
+import { useTRPC } from '@/trpc/react'
+import { useQuery } from '@tanstack/react-query'
 
-export function SolveContestForm({ contestSlug }: { contestSlug: string }) {
+export function SolveContestForm({
+  contestSlug,
+  discipline,
+}: {
+  contestSlug: string
+  discipline: Discipline
+}) {
+  const trpc = useTRPC()
+  const { data: state } = useQuery(
+    trpc.roundAttempt.state.queryOptions({ contestSlug, discipline }),
+  )
   const currentSolve = {
     canChangeToExtra: true,
     scramble: {
@@ -31,8 +45,6 @@ export function SolveContestForm({ contestSlug }: { contestSlug: string }) {
     // )
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const submittedSolveSet: any[] = []
   async function handleSolveAction(
     payload: { type: 'change_to_extra'; reason: string } | { type: 'submit' },
   ) {
@@ -56,7 +68,9 @@ export function SolveContestForm({ contestSlug }: { contestSlug: string }) {
     // }
   }
 
-  const currentSolveNumber = (submittedSolveSet?.length ?? 0) + 1
+  if (!state) return 'Loading...'
+
+  const currentSolveNumber = (state?.submittedSolves?.length ?? 0) + 1
   return (
     <div className='flex flex-1 justify-center pl-16 pr-12'>
       <div className='flex max-w-[64rem] flex-1 flex-col'>
@@ -71,14 +85,14 @@ export function SolveContestForm({ contestSlug }: { contestSlug: string }) {
             currentSolveNumber={currentSolveNumber}
           />
           <div className='flex w-full flex-1 flex-col gap-12 xl-short:gap-6'>
-            {submittedSolveSet?.map(({ solve }, index) => (
+            {state?.submittedSolves?.map((solve, index) => (
               <SolvePanel
                 contestSlug={contestSlug}
                 number={index + 1}
-                timeMs={solve.timeMs}
-                isDnf={solve.isDnf}
+                solve={solve}
+                solveId={solve.id}
+                position={solve.position}
                 scramble={solve.scramble}
-                id={solve.id}
                 key={solve.id}
               />
             ))}
@@ -86,7 +100,11 @@ export function SolveContestForm({ contestSlug }: { contestSlug: string }) {
             <CurrentSolve
               contestSlug={contestSlug}
               areActionsDisabled={false} // TODO:
-              currentSolve={currentSolve}
+              canChangeToExtra={state.canChangeToExtra}
+              position={state.currentScramble.position}
+              scramble={state.currentScramble.moves}
+              solveId={state.currentSolve?.id ?? null}
+              solve={state.currentSolve}
               onChangeToExtra={(reason) =>
                 handleSolveAction({ type: 'change_to_extra', reason })
               }

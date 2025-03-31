@@ -91,7 +91,7 @@ export default async function SolveContestPage(props: {
           You have five attempts to solve the contest
         </p>
         {/*TODO: suspense*/}
-        <SolveContestForm contestSlug={contestSlug} />
+        <SolveContestForm contestSlug={contestSlug} discipline={discipline} />
       </div>
     </section>
   )

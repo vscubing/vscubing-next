@@ -44,6 +44,9 @@
 - [ ] coolify CI/CD on PRs and on dev/main
 
 nicities:
+- [ ] rename state to status
+- [ ] rename round session to round attempt
+- [ ] rename contestdiscipline to round
 - [ ] move the header to layout
 - [ ] use page based pagination for contestindexpage
 - [ ] make contest link based on capabilities

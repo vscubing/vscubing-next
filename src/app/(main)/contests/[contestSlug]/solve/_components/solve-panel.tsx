@@ -4,24 +4,24 @@ import {
   SolveTimeLabel,
   SolveTimeLinkOrDnf,
 } from '@/app/_shared/SolveTimeButton'
-import type { ScramblePosition } from '@/app/_types'
+import type { ScramblePosition, SolveResult } from '@/app/_types'
 import { type ReactNode } from 'react'
 
 export function SolvePanel({
   number,
-  timeMs,
-  isDnf,
-  scramble: { moves, position },
-  id,
+  position,
+  scramble,
+  solveId,
+  solve,
   isInited = true,
   ActionComponent,
   contestSlug,
 }: {
   number: number
-  timeMs?: number
-  isDnf?: boolean
-  scramble: { moves: string; position: ScramblePosition }
-  id?: number
+  solveId: number | null
+  solve: SolveResult | null
+  position: ScramblePosition
+  scramble: string
   isInited?: boolean
   ActionComponent?: ReactNode
   contestSlug: string
@@ -35,15 +35,11 @@ export function SolvePanel({
           className='absolute right-0 top-0'
         />
       </span>
-      <TimeSection
-        timeMs={timeMs}
-        isDnf={isDnf}
-        id={id}
-        isInited={isInited}
-        contestSlug={contestSlug}
-      />
+      <TimeSection solve={solve} id={solveId} contestSlug={contestSlug} />
       {isInited ? (
-        <Ellipsis className='vertical-alignment-fix flex-1'>{moves}</Ellipsis>
+        <Ellipsis className='vertical-alignment-fix flex-1'>
+          {scramble}
+        </Ellipsis>
       ) : (
         <span className='vertical-alignment-fix text-grey-40'>
           Your scramble will be displayed here after you start solving
@@ -57,37 +53,23 @@ export function SolvePanel({
 }
 
 type TimeSectionProps = {
-  timeMs?: number
-  isDnf?: boolean
-  id?: number
-  isInited: boolean
   contestSlug: string
+  id: number | null
+  solve: SolveResult | null
 }
-function TimeSection({
-  timeMs,
-  isDnf,
-  id,
-  isInited,
-  contestSlug,
-}: TimeSectionProps) {
-  if (!isInited) {
+function TimeSection({ solve, id, contestSlug }: TimeSectionProps) {
+  if (!solve || !id) {
     return <SolveTimeLabel isPlaceholder />
   }
-  if (isDnf) {
+  if (solve.isDnf) {
     return <SolveTimeLabel isDnf />
-  }
-  if (id === undefined) {
-    throw Error('solve id is undefined')
-  }
-  if (timeMs === undefined) {
-    throw Error('solve time is undefined')
   }
   return (
     <SolveTimeLinkOrDnf
       canShowHint={false}
       contestSlug={contestSlug}
       solveId={id}
-      timeMs={timeMs}
+      timeMs={solve.timeMs}
       isDnf={false}
     />
   )
