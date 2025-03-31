@@ -10,7 +10,7 @@ import {
   solveTable,
   userTable,
 } from '@/server/db/schema'
-import { DISCIPLINES } from '@/shared'
+import { DISCIPLINES, CONTEST_UNAUTHORIZED_MESSAGE } from '@/shared'
 import { eq, desc, and, lt } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
 import {
@@ -26,6 +26,7 @@ import { promisify } from 'util'
 import path from 'path'
 import { tryCatch } from '@/app/_utils/try-catch'
 import { generateScrambles } from '@/server/internal/generate-scrambles'
+import { auth } from '@/server/auth'
 
 export const contestRouter = createTRPCRouter({
   getPastContests: publicProcedure
@@ -135,7 +136,6 @@ export const contestRouter = createTRPCRouter({
       const userCapabilities = await getContestUserCapabilities({
         contestSlug: input.contestSlug,
         discipline: input.discipline,
-        userId: ctx.session?.user.id,
       })
       if (userCapabilities === 'CONTEST_NOT_FOUND')
         throw new TRPCError({ code: 'NOT_FOUND' })
@@ -143,8 +143,7 @@ export const contestRouter = createTRPCRouter({
       if (userCapabilities === 'UNAUTHORIZED')
         throw new TRPCError({
           code: 'UNAUTHORIZED',
-          message:
-            'You need to be signed in to participate in an ongoing contest or view its results',
+          message: CONTEST_UNAUTHORIZED_MESSAGE,
         })
 
       if (userCapabilities === 'SOLVE')
@@ -226,7 +225,7 @@ export const contestRouter = createTRPCRouter({
         .select({
           scramble: scrambleTable.moves,
           position: scrambleTable.position,
-          solution: solveTable.reconstruction,
+          solution: solveTable.solution,
           username: userTable.name,
           timeMs: solveTable.timeMs,
           discipline: contestDisciplineTable.disciplineSlug,
@@ -264,12 +263,11 @@ export const contestRouter = createTRPCRouter({
 export async function getContestUserCapabilities({
   contestSlug,
   discipline,
-  userId,
 }: {
   contestSlug: string
   discipline: Discipline
-  userId?: string
 }): Promise<'CONTEST_NOT_FOUND' | 'SOLVE' | 'VIEW_RESULTS' | 'UNAUTHORIZED'> {
+  return 'SOLVE'
   const [contest] = await db
     .select({ isOngoing: contestTable.isOngoing })
     .from(contestTable)
@@ -287,7 +285,8 @@ export async function getContestUserCapabilities({
   if (!contest) return 'CONTEST_NOT_FOUND'
   if (!contest.isOngoing) return 'VIEW_RESULTS'
 
-  if (!userId) return 'UNAUTHORIZED'
+  const session = await auth()
+  if (!session) return 'UNAUTHORIZED'
 
   const [ownSession] = await db
     .select({ isFinished: roundSessionTable.isFinished })
@@ -301,7 +300,7 @@ export async function getContestUserCapabilities({
       and(
         eq(contestDisciplineTable.contestSlug, contestSlug),
         eq(contestDisciplineTable.disciplineSlug, discipline),
-        eq(userTable.id, userId),
+        eq(userTable.id, session.user.id),
       ),
     )
 

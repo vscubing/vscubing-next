@@ -1,3 +1,3 @@
 export * from './Layout'
-export { LayoutHeader as Header } from './header'
+export { LayoutHeader } from './header'
 export { SectionHeader } from './SectionHeader'

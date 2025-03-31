@@ -110,7 +110,7 @@ export const solveTable = pgTable(
     state: solveStateEnum('state').notNull().default('pending'),
     timeMs: d.integer('time_ms'),
     isDnf: d.boolean('is_dnf').notNull(),
-    reconstruction: d.varchar('solution', { length: 10000 }), // TODO: rename reconstruction field to solution
+    solution: d.varchar('solution', { length: 10000 }),
   }),
   (t) => [
     unique('round_session_scramble_unique').on(t.roundSessionId, t.scrambleId),

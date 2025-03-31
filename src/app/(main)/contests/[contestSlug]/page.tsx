@@ -1,7 +1,9 @@
+import { LayoutHeader } from '@/app/_components/layout'
+import { HintSignInSection } from '@/app/_shared/HintSection'
 import { DEFAULT_DISCIPLINE, isDiscipline } from '@/app/_types'
 import { assertUnreachable } from '@/app/_utils/assert-unreachable'
 import { getContestUserCapabilities } from '@/server/api/routers/contest'
-import { auth } from '@/server/auth'
+import { CONTEST_UNAUTHORIZED_MESSAGE } from '@/shared'
 import { notFound, redirect } from 'next/navigation'
 
 export default async function ContestPage(props: {
@@ -14,17 +16,22 @@ export default async function ContestPage(props: {
   if (!isDiscipline(discipline))
     redirect(`/contests/${contestSlug}?discipline=${DEFAULT_DISCIPLINE}`)
 
-  const session = await auth()
   const userCapabilities = await getContestUserCapabilities({
     contestSlug,
     discipline,
-    userId: session?.user.id,
   })
 
   if (userCapabilities === 'CONTEST_NOT_FOUND') notFound()
   if (userCapabilities === 'VIEW_RESULTS')
     redirect(`/contests/${contestSlug}/results?discipline=${discipline}`)
-  if (userCapabilities === 'SOLVE' || userCapabilities === 'UNAUTHORIZED')
+  if (userCapabilities === 'UNAUTHORIZED')
+    return (
+      <section className='flex flex-1 flex-col gap-3 sm:gap-2'>
+        <LayoutHeader />
+        <HintSignInSection description={CONTEST_UNAUTHORIZED_MESSAGE} />
+      </section>
+    )
+  if (userCapabilities === 'SOLVE')
     redirect(`/contests/${contestSlug}/solve?discipline=${discipline}`)
 
   assertUnreachable(userCapabilities)

@@ -25,7 +25,6 @@ type SolveTimeLinkOrDnfProps = VariantProps<typeof solveTimeButtonVariants> & {
   timeMs: number | null
   isDnf: boolean
   contestSlug: string
-  discipline: string
   solveId: number
   canShowHint: boolean
   className?: string
@@ -37,7 +36,6 @@ export function SolveTimeLinkOrDnf({
   variant,
   className,
   contestSlug,
-  discipline,
   solveId,
   canShowHint,
 }: SolveTimeLinkOrDnfProps) {
@@ -47,7 +45,7 @@ export function SolveTimeLinkOrDnf({
   return (
     <WatchSolveHintPopover disabled={!canShowHint}>
       <Link
-        href={`/contests/${contestSlug}/watch/${solveId}?discipline=${discipline}`}
+        href={`/contests/${contestSlug}/watch/${solveId}`}
         className={cn(solveTimeButtonVariants({ variant, className }))}
       >
         {formatSolveTime(timeMs)}
