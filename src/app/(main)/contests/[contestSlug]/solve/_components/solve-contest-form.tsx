@@ -6,6 +6,7 @@ import { Progress } from './progress'
 import { SolvePanel } from './solve-panel'
 import { useTRPC } from '@/trpc/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useRouter } from 'next/navigation'
 
 export function SolveContestForm({
   contestSlug,
@@ -20,7 +21,16 @@ export function SolveContestForm({
     contestSlug,
     discipline,
   })
-  const { data: state, isFetching: isStateFetching } = useQuery(stateQuery)
+  const {
+    data: state,
+    isFetching: isStateFetching,
+    error,
+  } = useQuery(stateQuery)
+
+  const router = useRouter()
+  if (error?.data?.code === 'FORBIDDEN')
+    router.push(`/contests/${contestSlug}/results?discipline=${discipline}`)
+
   const { mutate: postSolveResult, isPending: isPostSolvePending } =
     useMutation(
       trpc.roundAttempt.postSolve.mutationOptions({

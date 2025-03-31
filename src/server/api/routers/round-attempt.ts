@@ -111,11 +111,41 @@ export const roundAttempt = createTRPCRouter({
         }
       }
 
+      if (submittedSolveRows.length === ROUND_ATTEMPTS_QTY) {
+        const [roundSession] = await ctx.db // TODO: can we do this in the update?
+          .select({ id: roundSessionTable.id })
+          .from(roundSessionTable)
+          .innerJoin(
+            contestDisciplineTable,
+            eq(
+              contestDisciplineTable.id,
+              roundSessionTable.contestDisciplineId,
+            ),
+          )
+          .where(
+            and(
+              eq(contestDisciplineTable.contestSlug, input.contestSlug),
+              eq(contestDisciplineTable.disciplineSlug, input.discipline),
+            ),
+          )
+        const { avgMs, isDnf } = calculateAvg(submittedSolveRows)
+        await ctx.db
+          .update(roundSessionTable)
+          .set({ isFinished: true, avgMs, isDnf })
+          .where(eq(roundSessionTable.id, roundSession!.id))
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: "You can't participate in a round you've already completed.",
+        })
+      }
+
       const currentSolveRow = rows.find(
         ({ state }) => state === null || state === 'pending',
       )
       if (!currentSolveRow)
-        throw new Error(`[SOLVE] Invalid state: ${JSON.stringify(rows)}`)
+        throw new Error(
+          '[SOLVE] no currentSolveRow but also no 5 submitted solves',
+        )
 
       const extrasUsed = rows.filter(
         ({ state }) => state === 'changed_to_extra',
@@ -286,3 +316,17 @@ function swap<T>(arr: T[], i1: number, i2: number) {
   arr[i1] = arr[i2]!
   arr[i2] = temp!
 }
+function calculateAvg( // TODO:
+  _submittedSolveRows: {
+    scrambleMoves: string
+    position: '1' | '2' | '3' | '4' | '5' | 'E1' | 'E2'
+    id: number
+    isDnf: boolean
+    timeMs: number | null
+    state: 'pending' | 'submitted' | 'changed_to_extra'
+  }[],
+): { avgMs: number; isDnf: boolean } {
+  return { avgMs: 1000, isDnf: false }
+}
+
+const ROUND_ATTEMPTS_QTY = 5
