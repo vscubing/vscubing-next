@@ -12,7 +12,7 @@ export async function generateScrambles(
   const binaryPath = path.join(
     process.cwd(),
     'vendor',
-    'tnoodle-cli-linux_x64',
+    'tnoodle-cli-1.1.1',
     'bin',
     'tnoodle',
   )
