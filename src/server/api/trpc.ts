@@ -119,10 +119,10 @@ export const publicProcedure = t.procedure.use(timingMiddleware)
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure
+  // TODO: maybe make this a middleware? can we nest middlewares? (for solveContestProcedure)
   .use(timingMiddleware)
   .use(({ ctx, next, path, type }) => {
-    // const user = ctx.session?.user
-    const user = { id: '2', finishedRegistration: true, name: '123' }
+    const user = ctx.session?.user
     if (!user) {
       throw new TRPCError({ code: 'UNAUTHORIZED' })
     }
