@@ -63,7 +63,7 @@ export const scrambleTable = pgTable(
         sql<boolean>`CASE WHEN position IN ('E1', 'E2') THEN TRUE ELSE FALSE END`,
       )
       .notNull(),
-    moves: d.text('moves'),
+    moves: d.text('moves').notNull(),
   }),
   (t) => [
     unique('contest_discipline_position_unique').on(

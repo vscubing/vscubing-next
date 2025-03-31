@@ -302,6 +302,13 @@
       "when": 1743345600554,
       "tag": "0046_fix-serial-sequence-contest_discipline",
       "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "7",
+      "when": 1743439803452,
+      "tag": "0047_tiresome_anthem",
+      "breakpoints": true
     }
   ]
 }
