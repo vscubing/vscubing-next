@@ -35,6 +35,7 @@
 - [x] write a script that downloads and unzips a release of tnoodle-cli
 - [x] mac/linux for scramble gen
 - [x] seed disciplines and initial contest
+- [ ] [build docker images in github actions](https://coolify.io/docs/knowledge-base/git/github/github-actions)
 - [ ] coolify CI/CD on PRs and on dev/main
 
 nicities:

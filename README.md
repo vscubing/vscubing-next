@@ -22,5 +22,4 @@ Vscubing is contest platform to compete in virtual speedcubing: the art of solvi
 ### Deploying
 
 - `pg_restore --no-owner -d 'CONNECTION_STRING' BACKUP_PATH` to import the db backup
-- `apt install unzip && bun run vendor && bun install --no-save --frozen-lockfile` in Nixpack's Build>Install Command
 - post-deployment: `bun run db:migrate`
