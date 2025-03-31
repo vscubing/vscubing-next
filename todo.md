@@ -35,6 +35,7 @@
 - [x] write a script that downloads and unzips a release of tnoodle-cli
 - [x] mac/linux for scramble gen
 - [x] seed disciplines and initial contest
+- [ ] coolify CI/CD on PRs and on dev/main
 
 nicities:
 - [ ] correct primary key autoincrementation https://stackoverflow.com/questions/4448340/postgresql-duplicate-key-violates-unique-constraint
