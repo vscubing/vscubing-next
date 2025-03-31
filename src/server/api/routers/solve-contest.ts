@@ -1,6 +1,6 @@
 import { DISCIPLINES } from '@/shared'
 import { z } from 'zod'
-import { eq, and } from 'drizzle-orm'
+import { eq, and, DrizzleError } from 'drizzle-orm'
 import { createTRPCRouter, protectedProcedure } from '../trpc'
 import { getContestUserCapabilities } from './contest'
 import { TRPCError } from '@trpc/server'
@@ -67,7 +67,8 @@ export const contestRoundAttempt = createTRPCRouter({
 
       const unsortedRows = await ctx.db
         .select({
-          scramble: scrambleTable.moves,
+          scrambleMoves: scrambleTable.moves,
+          scrambleId: scrambleTable.id,
           position: scrambleTable.position,
           id: solveTable.id,
           isDnf: solveTable.isDnf,
@@ -129,7 +130,10 @@ export const contestRoundAttempt = createTRPCRouter({
           id,
           ...solveInvariant.parse({ id, timeMs, isDnf }),
         })),
-        currentScramble: currentSolveRow.scramble,
+        currentScramble: {
+          id: currentSolveRow.scrambleId,
+          moves: currentSolveRow.scrambleMoves,
+        },
         pendingSolve: pendingSolve
           ? {
               id: pendingSolve.id,
@@ -150,6 +154,7 @@ export const contestRoundAttempt = createTRPCRouter({
         contestSlug: z.string(),
         solve: solveInvariant,
         solution: z.string(),
+        scrambleId: z.number(),
       }),
     )
     .query(async ({ ctx, input }) => {
@@ -165,13 +170,14 @@ export const contestRoundAttempt = createTRPCRouter({
           message: "You can't participate in a round you've already completed.",
         })
 
-      const [roundSession] = await ctx.db
+      const [roundSession] = await ctx.db // TODO: can we retrieve this during insertion?
         .select({ id: roundSessionTable.id })
         .from(roundSessionTable)
         .innerJoin(
           contestDisciplineTable,
           eq(contestDisciplineTable.id, roundSessionTable.contestDisciplineId),
         )
+        .innerJoin(scrambleTable, eq(scrambleTable.id, input.scrambleId))
         .where(
           and(
             eq(contestDisciplineTable.contestSlug, input.contestSlug),
@@ -179,68 +185,49 @@ export const contestRoundAttempt = createTRPCRouter({
           ),
         )
 
-      const unsortedScrambles = await ctx.db
-        .select({
-          id: scrambleTable.id,
-          position: scrambleTable.position,
-          state: solveTable.state,
+      if (!roundSession)
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: `Either you can't solve the scramble ${input.scrambleId} right now or it belongs to a different round.`,
         })
-        .from(contestDisciplineTable)
-        .innerJoin(
-          scrambleTable,
-          eq(scrambleTable.contestDisciplineId, contestDisciplineTable.id),
-        )
-        .leftJoin(solveTable, eq(solveTable.scrambleId, scrambleTable.id))
-        .where(
-          and(
-            eq(contestDisciplineTable.contestSlug, input.contestSlug),
-            eq(contestDisciplineTable.disciplineSlug, input.discipline),
-          ),
-        )
-
-      const scrambles = unsortedScrambles.sort(
-        (a, b) =>
-          positionComparator(a.position) - positionComparator(b.position),
-      )
-
-      let scrambleId: number | undefined
-      {
-        for (const { id, state } of scrambles) {
-          if (state === null) {
-            scrambleId = id
-            break
-          }
-          if (state === 'pending')
-            throw new TRPCError({
-              code: 'CONFLICT',
-              message:
-                'You must first submit or change to extra the pending solve before posting a solve.',
-            })
-          if (state === 'changed_to_extra') {
-            const extraNext = scrambles.find(
-              (x) =>
-                (x.position === 'E1' || x.position === 'E2') &&
-                x.state === null,
-            )
-            if (extraNext) {
-              scrambleId = extraNext.id
-              break
-            }
-          }
-        }
-      }
-
-      if (!scrambleId) throw new Error('[SOLVE] no unsolved scramble found')
-      // TODO: add solve validation
 
       ctx.db.insert(solveTable).values({
-        roundSessionId: roundSession!.id,
+        // TODO: check for a conflict error
+        roundSessionId: roundSession.id,
         isDnf: input.solve.isDnf,
         timeMs: input.solve.timeMs,
         solution: input.solution,
         state: 'pending',
-        scrambleId,
+        scrambleId: input.scrambleId,
       })
+    }),
+
+  submitSolve: protectedProcedure
+    .input(
+      z.object({
+        discipline: z.enum(DISCIPLINES),
+        contestSlug: z.string(),
+        solveId: z.number(),
+        newState: z.enum(['submitted', 'changed_to_extra']),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const userCapabilities = await getContestUserCapabilities({
+        contestSlug: input.contestSlug,
+        discipline: input.discipline,
+      })
+      if (userCapabilities === 'CONTEST_NOT_FOUND')
+        throw new TRPCError({ code: 'NOT_FOUND' })
+      if (userCapabilities !== 'SOLVE')
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: "You can't participate in a round you've already completed.",
+        })
+
+      await ctx.db
+        .update(solveTable)
+        .set({ state: input.newState })
+        .where(eq(solveTable.id, input.solveId))
     }),
 })
 
