@@ -19,14 +19,14 @@ import {
   DialogClose,
 } from '@/app/_components/ui'
 import { BaseDialogButton } from '@/app/_components/ui/popovers/BaseDialog'
-import type { ScramblePosition, SolveResult } from '@/app/_types'
+import type { ScramblePosition, ResultDnfish } from '@/app/_types'
 
 export function CurrentSolve({
   areActionsDisabled,
   number,
   canChangeToExtra,
   position,
-  solve,
+  result,
   solveId,
   scramble,
   onChangeToExtra,
@@ -39,7 +39,7 @@ export function CurrentSolve({
   canChangeToExtra: boolean
   scramble: string
   position: ScramblePosition
-  solve: SolveResult | null
+  result: ResultDnfish | null
   solveId: number | null
   onChangeToExtra: (reason: string) => void
   onSolveInit: () => void
@@ -52,10 +52,10 @@ export function CurrentSolve({
       number={number}
       scramble={scramble}
       position={position}
-      solve={solve}
+      result={result}
       solveId={solveId}
       ActionComponent={
-        solve === null ? (
+        result === null ? (
           <PrimaryButton
             size='sm'
             onClick={onSolveInit}

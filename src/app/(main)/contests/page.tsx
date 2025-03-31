@@ -69,10 +69,8 @@ async function PageContent({ discipline }: { discipline: Discipline }) {
   if (contests.items?.length === 0) {
     return (
       <HintSection>
-        <p>
-          While this page may be empty now, it&apos;s brimming with potential
-          for thrilling contests that will soon fill this space.
-        </p>
+        While this page may be empty now, it&apos;s brimming with potential for
+        thrilling contests that will soon fill this space.
       </HintSection>
     )
   }

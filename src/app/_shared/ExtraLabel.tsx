@@ -8,7 +8,7 @@ export function ExtraLabel({
   scramblePosition: ScramblePosition
   className?: string
 }) {
-  if (!isExtra) {
+  if (!isExtra(scramblePosition)) {
     return null
   }
   const extraNumber = scramblePosition[1]

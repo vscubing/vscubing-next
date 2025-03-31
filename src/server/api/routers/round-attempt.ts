@@ -12,10 +12,11 @@ import {
 } from '@/server/db/schema'
 import {
   isExtra,
+  resultWrapped,
   SCRAMBLE_POSITIONS,
   SOLVE_STATES,
+  type ResultDnfish,
   type ScramblePosition,
-  type SolveResult,
 } from '@/app/_types'
 
 const solveRowInvariant = z.object(
@@ -26,18 +27,6 @@ const solveRowInvariant = z.object(
     isDnf: z.boolean(),
     timeMs: z.number().nullable(),
     state: z.enum(SOLVE_STATES),
-  },
-  {
-    message: '[SOLVE] invalid state',
-  },
-)
-
-const solveInvariant = z.custom<// TODO: check if this works
-SolveResult>(
-  (input) => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (input.isDnf === false && input.timeMs === null) return false
-    return true
   },
   {
     message: '[SOLVE] invalid state',
@@ -96,24 +85,25 @@ export const roundAttempt = createTRPCRouter({
       const extrasUsed = allRows.filter(
         ({ state }) => state === 'changed_to_extra',
       ).length
-      const resultRows = allRows.filter(({ position }) => !isExtra(position)) // also the first 5 elements of allRows
 
+      // usedRows contains the 5 used session's rows in order (change_to_extra'd solves are replaced with extras)
+      const usedRows = allRows.filter(({ position }) => !isExtra(position))
       {
         const extras = allRows.filter(({ position }) => isExtra(position))
 
         let nextExtraIdx: number | null = 0
         for (let idx = 0; idx < ROUND_ATTEMPTS_QTY; idx++) {
-          if (resultRows[idx]?.state !== 'changed_to_extra') continue
+          if (usedRows[idx]?.state !== 'changed_to_extra') continue
           if (nextExtraIdx === null)
             throw new Error('[SOLVE] Too many changed_to_extra solves!')
 
-          resultRows[idx] = extras[nextExtraIdx]!
+          usedRows[idx] = extras[nextExtraIdx]!
           if (nextExtraIdx === 0) nextExtraIdx = 1
           else if (nextExtraIdx === 1) nextExtraIdx = null
         }
       }
 
-      const submittedSolveRows = resultRows
+      const submittedSolveRows = usedRows
         .filter(({ state }) => state === 'submitted')
         .map((row) => solveRowInvariant.parse(row))
 
@@ -134,7 +124,7 @@ export const roundAttempt = createTRPCRouter({
               eq(contestDisciplineTable.disciplineSlug, input.discipline),
             ),
           )
-        const { avgMs, isDnf } = calculateAvg(submittedSolveRows)
+        const { timeMs: avgMs, isDnf } = calculateAvg(submittedSolveRows)
         await ctx.db
           .update(roundSessionTable)
           .set({ isFinished: true, avgMs, isDnf })
@@ -145,7 +135,7 @@ export const roundAttempt = createTRPCRouter({
         })
       }
 
-      const currentSolveRow = resultRows.find(
+      const currentSolveRow = usedRows.find(
         ({ state }) => state === null || state === 'pending',
       )
       if (!currentSolveRow)
@@ -159,7 +149,7 @@ export const roundAttempt = createTRPCRouter({
             id,
             position,
             scramble: scrambleMoves,
-            ...solveInvariant.parse({ id, timeMs, isDnf }),
+            result: resultWrapped.parse({ timeMs, isDnf }),
           }),
         ),
         currentScramble: {
@@ -173,7 +163,7 @@ export const roundAttempt = createTRPCRouter({
           currentSolveRow.isDnf !== null
             ? {
                 id: currentSolveRow.id,
-                ...solveInvariant.parse({
+                result: resultWrapped.parse({
                   isDnf: currentSolveRow.isDnf,
                   timeMs: currentSolveRow.timeMs,
                 }),
@@ -188,7 +178,7 @@ export const roundAttempt = createTRPCRouter({
       z.object({
         discipline: z.enum(DISCIPLINES),
         contestSlug: z.string(),
-        solve: solveInvariant,
+        result: resultWrapped,
         solution: z.string(),
         scrambleId: z.number(),
       }),
@@ -253,8 +243,8 @@ export const roundAttempt = createTRPCRouter({
       await ctx.db.insert(solveTable).values({
         // TODO: check for a conflict error
         roundSessionId,
-        isDnf: input.solve.isDnf,
-        timeMs: input.solve.timeMs,
+        isDnf: input.result.isDnf,
+        timeMs: input.result.timeMs,
         solution: input.solution,
         state: 'pending',
         scrambleId: input.scrambleId,
@@ -312,23 +302,26 @@ function positionComparator(position: ScramblePosition): number {
 }
 
 const EXTRAS_PER_ROUND = 2
+const ROUND_ATTEMPTS_QTY = 5
+const MIN_SUCCESSES_NECESSARY = 3
 
-function swap<T>(arr: T[], i1: number, i2: number) {
-  const temp = arr[i1]
-  arr[i1] = arr[i2]!
-  arr[i2] = temp!
-}
-function calculateAvg( // TODO:
-  _submittedSolveRows: {
-    scrambleMoves: string
-    position: '1' | '2' | '3' | '4' | '5' | 'E1' | 'E2'
-    id: number
+function calculateAvg(
+  submittedSolves: {
     isDnf: boolean
     timeMs: number | null
-    state: 'pending' | 'submitted' | 'changed_to_extra'
   }[],
-): { avgMs: number; isDnf: boolean } {
-  return { avgMs: 1000, isDnf: false }
+): ResultDnfish {
+  const successes = submittedSolves
+    .map(({ timeMs }) => timeMs)
+    .filter(Boolean) as number[]
+  if (successes.length < ROUND_ATTEMPTS_QTY - 1)
+    return { timeMs: null, isDnf: true }
+  successes.sort((a, b) => a - b)
+  return {
+    timeMs:
+      successes
+        .slice(1, 1 + MIN_SUCCESSES_NECESSARY)
+        .reduce((a, b) => a + b, 0) / MIN_SUCCESSES_NECESSARY,
+    isDnf: false,
+  }
 }
-
-const ROUND_ATTEMPTS_QTY = 5

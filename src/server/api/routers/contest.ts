@@ -205,7 +205,8 @@ export const contestRouter = createTRPCRouter({
           nickname: session[0]!.nickname,
         }))
 
-      const nextOffset = items.pop() ? input.offset + 1 : undefined
+      let nextOffset: number | undefined = undefined
+      if (items.length > input.limit) nextOffset = input.offset + input.limit
 
       return { items, nextOffset }
     }),
@@ -263,7 +264,6 @@ export async function getContestUserCapabilities({
   contestSlug: string
   discipline: Discipline
 }): Promise<'CONTEST_NOT_FOUND' | 'SOLVE' | 'VIEW_RESULTS' | 'UNAUTHORIZED'> {
-  return 'SOLVE'
   const [contest] = await db
     .select({ isOngoing: contestTable.isOngoing })
     .from(contestTable)

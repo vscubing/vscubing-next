@@ -11,6 +11,8 @@ import { tryCatchTRPC } from '@/app/_utils/try-catch'
 import { HintSection, HintSignInSection } from '@/app/_shared/HintSection'
 import { Session, SessionSkeleton } from './_components/session'
 import { CONTEST_UNAUTHORIZED_MESSAGE } from '@/shared'
+import { PrimaryButton } from '@/app/_components/ui'
+import Link from 'next/link'
 
 export default async function ContestResultsPage({
   params,
@@ -81,7 +83,22 @@ async function PageContent({
   if (error?.code === 'UNAUTHORIZED')
     return <HintSignInSection description={CONTEST_UNAUTHORIZED_MESSAGE} />
 
-  if (error?.code === 'FORBIDDEN') return 'forbidden'
+  if (error?.code === 'FORBIDDEN')
+    return (
+      <HintSection>
+        <p>
+          You can&apos;t see the results of an ongoing round until you solve all
+          scrambles or the round ends
+        </p>
+        <PrimaryButton asChild>
+          <Link
+            href={`/contests/${contestSlug}/solve?discipline=${discipline}`}
+          >
+            To the solve page
+          </Link>
+        </PrimaryButton>
+      </HintSection>
+    )
   if (error) throw error
 
   if (sessions.items?.length === 0) {

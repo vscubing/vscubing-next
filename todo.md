@@ -38,6 +38,7 @@
 - [x] contest 17 bohdan's result shift?
 - [x] solve page ui
 - [x] solve page server logic
+- [ ] useSimulator
 
 - [ ] react 19 codemod
 - [ ] [build docker images in github actions](https://coolify.io/docs/knowledge-base/git/github/github-actions)

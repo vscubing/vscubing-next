@@ -6,7 +6,7 @@ export type Discipline = (typeof DISCIPLINES)[number]
 export const SCRAMBLE_POSITIONS = ['1', '2', '3', '4', '5', 'E1', 'E2'] as const
 export type ScramblePosition = (typeof SCRAMBLE_POSITIONS)[number]
 export function isExtra(position: ScramblePosition) {
-  return position[0] === 'E'
+  return position.startsWith('E')
 }
 
 export const SOLVE_STATES = [
@@ -17,21 +17,32 @@ export const SOLVE_STATES = [
 export type SolveState = (typeof SOLVE_STATES)[number]
 
 export type RoundSession = {
-  solves: {
-    id: number
-    timeMs: number | null
-    isDnf: boolean
-    scramblePosition: ScramblePosition
-  }[]
+  solves: ResultDnfish &
+    {
+      id: number
+      scramblePosition: ScramblePosition
+    }[]
   id: number
   avgMs: number | null
   nickname: string
   isOwn: boolean
 }
 
-export type SolveResult =
-  | { timeMs: number | null; isDnf: true }
-  | { timeMs: number; isDnf: false }
+export type ResultDnfish = ResultSuccess | ResultDnf
+type ResultSuccess = { timeMs: number; isDnf: false }
+type ResultDnf = { timeMs: null | number; isDnf: true }
+
+export const resultWrapped = z.custom<// TODO: check if this works
+ResultDnfish>(
+  (input) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    if (input.isDnf === false && input.timeMs === null) return false
+    return true
+  },
+  {
+    message: '[SOLVE] invalid state',
+  },
+)
 
 // export type ContestDTO = ContestsContestListOutput['results'][number]
 // export type ContestList = ContestsContestListOutput

@@ -56,7 +56,10 @@ export function SolveContestForm({
       discipline,
       scrambleId: state!.currentScramble.id,
       solution: 'R U',
-      solve: { isDnf: false, timeMs: 1000 },
+      result: {
+        isDnf: false,
+        timeMs: Math.floor((Math.random() * 3 + 9) * 1000),
+      },
     })
     // const onSolveFinish = async (result: CubeSolveResult) => {
     //   await postSolveResult({ scrambleId: currentSolve.scramble.id, result })
@@ -119,7 +122,7 @@ export function SolveContestForm({
               <SolvePanel
                 contestSlug={contestSlug}
                 number={index + 1}
-                solve={solve}
+                result={solve.result}
                 solveId={solve.id}
                 position={solve.position}
                 scramble={solve.scramble}
@@ -129,12 +132,12 @@ export function SolveContestForm({
 
             <CurrentSolve
               contestSlug={contestSlug}
-              areActionsDisabled={isFormPending} // TODO:
+              areActionsDisabled={isFormPending}
               canChangeToExtra={state.canChangeToExtra}
               position={state.currentScramble.position}
               scramble={state.currentScramble.moves}
               solveId={state.currentSolve?.id ?? null}
-              solve={state.currentSolve}
+              result={state.currentSolve?.result ?? null}
               onChangeToExtra={(reason) =>
                 handleSubmitSolve({ type: 'changed_to_extra', reason })
               }
