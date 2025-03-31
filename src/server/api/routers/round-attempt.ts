@@ -11,6 +11,7 @@ import {
   solveTable,
 } from '@/server/db/schema'
 import {
+  isExtra,
   SCRAMBLE_POSITIONS,
   SOLVE_STATES,
   type ScramblePosition,
@@ -64,7 +65,7 @@ export const roundAttempt = createTRPCRouter({
           message: "You can't participate in a round you've already completed.",
         })
 
-      const unsortedRows = await ctx.db
+      const allRows = await ctx.db
         .select({
           scrambleMoves: scrambleTable.moves,
           scrambleId: scrambleTable.id,
@@ -87,29 +88,34 @@ export const roundAttempt = createTRPCRouter({
           ),
         )
 
-      const rows = unsortedRows.sort(
+      allRows.sort(
         (a, b) =>
           positionComparator(a.position) - positionComparator(b.position),
       )
 
-      const submittedSolveRows = rows
-        .filter(({ state }) => state === 'submitted')
-        .map((row) => solveRowInvariant.parse(row))
+      const extrasUsed = allRows.filter(
+        ({ state }) => state === 'changed_to_extra',
+      ).length
+      const resultRows = allRows.filter(({ position }) => !isExtra(position)) // also the first 5 elements of allRows
+
       {
-        // TODO: this doesn't work
-        let nextExtra: 'E1' | 'E2' | null = 'E1'
-        for (let idx = 0; idx < submittedSolveRows.length; idx++) {
-          if (submittedSolveRows[idx]?.state !== 'changed_to_extra') continue
-          if (!nextExtra)
+        const extras = allRows.filter(({ position }) => isExtra(position))
+
+        let nextExtraIdx: number | null = 0
+        for (let idx = 0; idx < ROUND_ATTEMPTS_QTY; idx++) {
+          if (resultRows[idx]?.state !== 'changed_to_extra') continue
+          if (nextExtraIdx === null)
             throw new Error('[SOLVE] Too many changed_to_extra solves!')
-          const extraIdx = submittedSolveRows.findIndex(
-            ({ position }) => position === nextExtra,
-          )
-          swap(submittedSolveRows, idx, extraIdx)
-          if (nextExtra === 'E1') nextExtra = 'E2'
-          if (nextExtra === 'E2') nextExtra = null
+
+          resultRows[idx] = extras[nextExtraIdx]!
+          if (nextExtraIdx === 0) nextExtraIdx = 1
+          else if (nextExtraIdx === 1) nextExtraIdx = null
         }
       }
+
+      const submittedSolveRows = resultRows
+        .filter(({ state }) => state === 'submitted')
+        .map((row) => solveRowInvariant.parse(row))
 
       if (submittedSolveRows.length === ROUND_ATTEMPTS_QTY) {
         const [roundSession] = await ctx.db // TODO: can we do this in the update?
@@ -139,17 +145,13 @@ export const roundAttempt = createTRPCRouter({
         })
       }
 
-      const currentSolveRow = rows.find(
+      const currentSolveRow = resultRows.find(
         ({ state }) => state === null || state === 'pending',
       )
       if (!currentSolveRow)
         throw new Error(
           '[SOLVE] no currentSolveRow but also no 5 submitted solves',
         )
-
-      const extrasUsed = rows.filter(
-        ({ state }) => state === 'changed_to_extra',
-      ).length
 
       return {
         submittedSolves: submittedSolveRows.map(

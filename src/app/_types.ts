@@ -5,6 +5,9 @@ export type Discipline = (typeof DISCIPLINES)[number]
 
 export const SCRAMBLE_POSITIONS = ['1', '2', '3', '4', '5', 'E1', 'E2'] as const
 export type ScramblePosition = (typeof SCRAMBLE_POSITIONS)[number]
+export function isExtra(position: ScramblePosition) {
+  return position[0] === 'E'
+}
 
 export const SOLVE_STATES = [
   'pending',
