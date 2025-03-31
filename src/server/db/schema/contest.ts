@@ -86,7 +86,7 @@ export const roundSessionTable = pgTable('round_session', (d) => ({
     .references(() => contestDisciplineTable.id, { onDelete: 'cascade' }),
   avgMs: d.integer('avg_ms'),
   isDnf: d.boolean('is_dnf'),
-  isFinished: d.boolean('is_finished').notNull(),
+  isFinished: d.boolean('is_finished').default(false).notNull(),
 }))
 
 export const solveStateEnum = pgEnum('solve_state', SOLVE_STATES)

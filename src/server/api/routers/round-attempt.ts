@@ -19,7 +19,7 @@ import {
 
 const solveRowInvariant = z.object(
   {
-    scramble: z.string(),
+    scrambleMoves: z.string(),
     position: z.enum(SCRAMBLE_POSITIONS),
     id: z.number(),
     isDnf: z.boolean(),
@@ -96,6 +96,7 @@ export const roundAttempt = createTRPCRouter({
         .filter(({ state }) => state === 'submitted')
         .map((row) => solveRowInvariant.parse(row))
       {
+        // TODO: this doesn't work
         let nextExtra: 'E1' | 'E2' | null = 'E1'
         for (let idx = 0; idx < submittedSolveRows.length; idx++) {
           if (submittedSolveRows[idx]?.state !== 'changed_to_extra') continue
@@ -122,10 +123,10 @@ export const roundAttempt = createTRPCRouter({
 
       return {
         submittedSolves: submittedSolveRows.map(
-          ({ id, position, scramble, timeMs, isDnf }) => ({
+          ({ id, position, scrambleMoves, timeMs, isDnf }) => ({
             id,
             position,
-            scramble,
+            scramble: scrambleMoves,
             ...solveInvariant.parse({ id, timeMs, isDnf }),
           }),
         ),
@@ -160,7 +161,7 @@ export const roundAttempt = createTRPCRouter({
         scrambleId: z.number(),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       const userCapabilities = await getContestUserCapabilities({
         contestSlug: input.contestSlug,
         discipline: input.discipline,
@@ -173,30 +174,53 @@ export const roundAttempt = createTRPCRouter({
           message: "You can't participate in a round you've already completed.",
         })
 
-      const [roundSession] = await ctx.db // TODO: can we retrieve this during insertion?
-        .select({ id: roundSessionTable.id })
-        .from(roundSessionTable)
-        .innerJoin(
-          contestDisciplineTable,
-          eq(contestDisciplineTable.id, roundSessionTable.contestDisciplineId),
-        )
-        .innerJoin(scrambleTable, eq(scrambleTable.id, input.scrambleId))
-        .where(
-          and(
-            eq(contestDisciplineTable.contestSlug, input.contestSlug),
-            eq(contestDisciplineTable.disciplineSlug, input.discipline),
-          ),
-        )
+      const contestDisciplineId = (
+        await ctx.db
+          .select({ id: contestDisciplineTable.id })
+          .from(contestDisciplineTable)
+          .where(
+            and(
+              eq(contestDisciplineTable.contestSlug, input.contestSlug),
+              eq(contestDisciplineTable.disciplineSlug, input.discipline),
+            ),
+          )
+      )[0]!.id
 
-      if (!roundSession)
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: `Either you can't solve the scramble ${input.scrambleId} right now or it belongs to a different round.`,
-        })
+      let roundSessionId = (
+        await ctx.db // TODO: can we retrieve this during insertion?
+          .select({ id: roundSessionTable.id })
+          .from(roundSessionTable)
+          .innerJoin(
+            contestDisciplineTable,
+            eq(
+              contestDisciplineTable.id,
+              roundSessionTable.contestDisciplineId,
+            ),
+          )
+          .innerJoin(
+            scrambleTable,
+            eq(scrambleTable.contestDisciplineId, contestDisciplineTable.id),
+          )
+          .where(
+            and(
+              eq(contestDisciplineTable.contestSlug, input.contestSlug),
+              eq(contestDisciplineTable.disciplineSlug, input.discipline),
+              eq(scrambleTable.id, input.scrambleId),
+            ),
+          )
+      )[0]?.id
 
-      ctx.db.insert(solveTable).values({
+      if (!roundSessionId) {
+        const [roundSession] = await ctx.db
+          .insert(roundSessionTable)
+          .values({ contestDisciplineId, contestantId: ctx.session.user.id })
+          .returning({ id: roundSessionTable.id })
+        roundSessionId = roundSession!.id
+      }
+
+      await ctx.db.insert(solveTable).values({
         // TODO: check for a conflict error
-        roundSessionId: roundSession.id,
+        roundSessionId,
         isDnf: input.solve.isDnf,
         timeMs: input.solve.timeMs,
         solution: input.solution,
@@ -214,7 +238,7 @@ export const roundAttempt = createTRPCRouter({
         newState: z.enum(['submitted', 'changed_to_extra']),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       const userCapabilities = await getContestUserCapabilities({
         contestSlug: input.contestSlug,
         discipline: input.discipline,
@@ -226,6 +250,8 @@ export const roundAttempt = createTRPCRouter({
           code: 'FORBIDDEN',
           message: "You can't participate in a round you've already completed.",
         })
+
+      // TODO: close attempt
 
       await ctx.db
         .update(solveTable)

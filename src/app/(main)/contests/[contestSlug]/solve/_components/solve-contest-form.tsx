@@ -5,7 +5,7 @@ import { CurrentSolve } from './current-solve'
 import { Progress } from './progress'
 import { SolvePanel } from './solve-panel'
 import { useTRPC } from '@/trpc/react'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 export function SolveContestForm({
   contestSlug,
@@ -15,26 +15,39 @@ export function SolveContestForm({
   discipline: Discipline
 }) {
   const trpc = useTRPC()
-  const { data: state } = useQuery(
-    trpc.roundAttempt.state.queryOptions({ contestSlug, discipline }),
+  const queryClient = useQueryClient()
+  const stateQuery = trpc.roundAttempt.state.queryOptions({
+    contestSlug,
+    discipline,
+  })
+  const { data: state, isFetching: isStateFetching } = useQuery(stateQuery)
+  const { mutate: postSolveResult, isPending: isPostSolvePending } =
+    useMutation(
+      trpc.roundAttempt.postSolve.mutationOptions({
+        onSettled: () => queryClient.invalidateQueries(stateQuery),
+      }),
+    )
+  const { mutate: submitSolve, isPending: isSubmitSolvePending } = useMutation(
+    trpc.roundAttempt.submitSolve.mutationOptions({
+      onSettled: () => queryClient.invalidateQueries(stateQuery),
+    }),
   )
-  const currentSolve = {
-    canChangeToExtra: true,
-    scramble: {
-      id: 1,
-      isExtra: false,
-      moves: 'R U',
-      position: '1',
-    },
-    solve: null,
-  }
 
-  // const { initSolve } = useCube()
+  const isFormPending =
+    isStateFetching || isPostSolvePending || isSubmitSolvePending
+
   // TODO: useCube
 
   // TODO: discord invite
 
   function handleInitSolve() {
+    void postSolveResult({
+      contestSlug,
+      discipline,
+      scrambleId: state!.currentScramble.id,
+      solution: 'R U',
+      solve: { isDnf: false, timeMs: 1000 },
+    })
     // const onSolveFinish = async (result: CubeSolveResult) => {
     //   await postSolveResult({ scrambleId: currentSolve.scramble.id, result })
     // }
@@ -45,10 +58,17 @@ export function SolveContestForm({
     // )
   }
 
-  async function handleSolveAction(
-    payload: { type: 'change_to_extra'; reason: string } | { type: 'submit' },
+  async function handleSubmitSolve(
+    payload:
+      | { type: 'changed_to_extra'; reason: string }
+      | { type: 'submitted' },
   ) {
-    // await solveAction(payload)
+    submitSolve({
+      contestSlug,
+      discipline,
+      newState: payload.type,
+      solveId: state!.currentSolve!.id,
+    })
     //
     // if (
     //   submittedSolveSet?.length === 4 &&
@@ -99,17 +119,17 @@ export function SolveContestForm({
 
             <CurrentSolve
               contestSlug={contestSlug}
-              areActionsDisabled={false} // TODO:
+              areActionsDisabled={isFormPending} // TODO:
               canChangeToExtra={state.canChangeToExtra}
               position={state.currentScramble.position}
               scramble={state.currentScramble.moves}
               solveId={state.currentSolve?.id ?? null}
               solve={state.currentSolve}
               onChangeToExtra={(reason) =>
-                handleSolveAction({ type: 'change_to_extra', reason })
+                handleSubmitSolve({ type: 'changed_to_extra', reason })
               }
               onSolveInit={handleInitSolve}
-              onSolveSubmit={() => handleSolveAction({ type: 'submit' })}
+              onSolveSubmit={() => handleSubmitSolve({ type: 'submitted' })}
               number={currentSolveNumber}
             />
           </div>
