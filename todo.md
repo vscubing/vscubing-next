@@ -34,7 +34,7 @@
 - [x] generate scrambles
 - [x] write a script that downloads and unzips a release of tnoodle-cli
 - [x] mac/linux for scramble gen
-- [ ] seed disciplines and initial contest
+- [x] seed disciplines and initial contest
 
 nicities:
 - [ ] correct primary key autoincrementation https://stackoverflow.com/questions/4448340/postgresql-duplicate-key-violates-unique-constraint
