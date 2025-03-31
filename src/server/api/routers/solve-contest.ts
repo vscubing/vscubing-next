@@ -6,6 +6,7 @@ import { getContestUserCapabilities } from './contest'
 import { TRPCError } from '@trpc/server'
 import {
   contestDisciplineTable,
+  roundSessionTable,
   scrambleTable,
   solveTable,
 } from '@/server/db/schema'
@@ -14,6 +15,34 @@ import {
   SOLVE_STATES,
   type ScramblePosition,
 } from '@/app/_types'
+
+const solveRowInvariant = z.object(
+  {
+    scramble: z.string(),
+    position: z.enum(SCRAMBLE_POSITIONS),
+    id: z.number(),
+    isDnf: z.boolean(),
+    timeMs: z.number().nullable(),
+    state: z.enum(SOLVE_STATES),
+  },
+  {
+    message: '[SOLVE] invalid state',
+  },
+)
+
+const solveInvariant = z.custom<
+  // TODO: check if this works
+  { timeMs: number | null; isDnf: true } | { timeMs: number; isDnf: false }
+>(
+  (input) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    if (input.isDnf === false && input.timeMs === null) return false
+    return true
+  },
+  {
+    message: '[SOLVE] invalid state',
+  },
+)
 
 export const contestRoundAttempt = createTRPCRouter({
   state: protectedProcedure
@@ -28,10 +57,12 @@ export const contestRoundAttempt = createTRPCRouter({
         contestSlug: input.contestSlug,
         discipline: input.discipline,
       })
+      if (userCapabilities === 'CONTEST_NOT_FOUND')
+        throw new TRPCError({ code: 'NOT_FOUND' })
       if (userCapabilities !== 'SOLVE')
         throw new TRPCError({
           code: 'FORBIDDEN',
-          message: "You can't solve a round you've already finished.",
+          message: "You can't participate in a round you've already completed.",
         })
 
       const unsortedRows = await ctx.db
@@ -64,12 +95,20 @@ export const contestRoundAttempt = createTRPCRouter({
       const submittedSolveRows = rows
         .filter(({ state }) => state === 'submitted')
         .map((row) => solveRowInvariant.parse(row))
-      const changedToExtraSolveRows = rows
-        .filter(({ state }) => state === 'changed_to_extra')
-        .map((row) => solveRowInvariant.parse(row))
-      const [pendingSolve] = rows
-        .filter(({ state }) => state === 'pending')
-        .map((row) => solveRowInvariant.parse(row))
+      {
+        let nextExtra: 'E1' | 'E2' | null = 'E1'
+        for (let idx = 0; idx < submittedSolveRows.length; idx++) {
+          if (submittedSolveRows[idx]?.state !== 'changed_to_extra') continue
+          if (!nextExtra)
+            throw new Error('[SOLVE] Too many changed_to_extra solves!')
+          const extraIdx = submittedSolveRows.findIndex(
+            ({ position }) => position === nextExtra,
+          )
+          swap(submittedSolveRows, idx, extraIdx)
+          if (nextExtra === 'E1') nextExtra = 'E2'
+          if (nextExtra === 'E2') nextExtra = null
+        }
+      }
 
       const currentSolveRow = rows.find(
         ({ state }) => state === null || state === 'pending',
@@ -77,8 +116,15 @@ export const contestRoundAttempt = createTRPCRouter({
       if (!currentSolveRow)
         throw new Error(`[SOLVE] Invalid state: ${JSON.stringify(rows)}`)
 
+      const [pendingSolve] = rows
+        .filter(({ state }) => state === 'pending')
+        .map((row) => solveRowInvariant.parse(row))
+
+      const extrasUsed = rows.filter(
+        ({ state }) => state === 'changed_to_extra',
+      ).length
+
       return {
-        availableExtras: EXTRAS_PER_ROUND - changedToExtraSolveRows.length,
         submittedSolves: submittedSolveRows.map(({ id, timeMs, isDnf }) => ({
           id,
           ...solveInvariant.parse({ id, timeMs, isDnf }),
@@ -93,7 +139,108 @@ export const contestRoundAttempt = createTRPCRouter({
               }),
             }
           : undefined,
+        availableExtras: EXTRAS_PER_ROUND - extrasUsed,
       }
+    }),
+
+  postSolve: protectedProcedure
+    .input(
+      z.object({
+        discipline: z.enum(DISCIPLINES),
+        contestSlug: z.string(),
+        solve: solveInvariant,
+        solution: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const userCapabilities = await getContestUserCapabilities({
+        contestSlug: input.contestSlug,
+        discipline: input.discipline,
+      })
+      if (userCapabilities === 'CONTEST_NOT_FOUND')
+        throw new TRPCError({ code: 'NOT_FOUND' })
+      if (userCapabilities !== 'SOLVE')
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: "You can't participate in a round you've already completed.",
+        })
+
+      const [roundSession] = await ctx.db
+        .select({ id: roundSessionTable.id })
+        .from(roundSessionTable)
+        .innerJoin(
+          contestDisciplineTable,
+          eq(contestDisciplineTable.id, roundSessionTable.contestDisciplineId),
+        )
+        .where(
+          and(
+            eq(contestDisciplineTable.contestSlug, input.contestSlug),
+            eq(contestDisciplineTable.disciplineSlug, input.discipline),
+          ),
+        )
+
+      const unsortedScrambles = await ctx.db
+        .select({
+          id: scrambleTable.id,
+          position: scrambleTable.position,
+          state: solveTable.state,
+        })
+        .from(contestDisciplineTable)
+        .innerJoin(
+          scrambleTable,
+          eq(scrambleTable.contestDisciplineId, contestDisciplineTable.id),
+        )
+        .leftJoin(solveTable, eq(solveTable.scrambleId, scrambleTable.id))
+        .where(
+          and(
+            eq(contestDisciplineTable.contestSlug, input.contestSlug),
+            eq(contestDisciplineTable.disciplineSlug, input.discipline),
+          ),
+        )
+
+      const scrambles = unsortedScrambles.sort(
+        (a, b) =>
+          positionComparator(a.position) - positionComparator(b.position),
+      )
+
+      let scrambleId: number | undefined
+      {
+        for (const { id, state } of scrambles) {
+          if (state === null) {
+            scrambleId = id
+            break
+          }
+          if (state === 'pending')
+            throw new TRPCError({
+              code: 'CONFLICT',
+              message:
+                'You must first submit or change to extra the pending solve before posting a solve.',
+            })
+          if (state === 'changed_to_extra') {
+            const extraNext = scrambles.find(
+              (x) =>
+                (x.position === 'E1' || x.position === 'E2') &&
+                x.state === null,
+            )
+            if (extraNext) {
+              scrambleId = extraNext.id
+              break
+            }
+          }
+        }
+      }
+
+      if (!scrambleId) throw new Error('[SOLVE] no unsolved scramble found')
+      // TODO: add solve validation
+
+      ctx.db.insert(solveTable).values({
+        roundSessionId: roundSession!.id,
+        isDnf: input.solve.isDnf,
+        timeMs: input.solve.timeMs,
+        solution: input.solution,
+        state: 'pending',
+        scrambleId,
+      })
     }),
 })
 
@@ -116,32 +263,10 @@ function positionComparator(position: ScramblePosition): number {
   }
 }
 
-const solveRowInvariant = z.object(
-  {
-    scramble: z.string(),
-    position: z.enum(SCRAMBLE_POSITIONS),
-    id: z.number(),
-    isDnf: z.boolean(),
-    timeMs: z.number().nullable(),
-    state: z.enum(SOLVE_STATES),
-  },
-  {
-    message: '[SOLVE] invalid state',
-  },
-)
-
-const solveInvariant = z.custom<
-  // TODO: check if this works
-  { timeMs: number | null; isDnf: true } | { timeMs: number; isDnf: false }
->(
-  (input) => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (input.isDnf === false && input.timeMs === null) return false
-    return true
-  },
-  {
-    message: '[SOLVE] invalid state',
-  },
-)
-
 const EXTRAS_PER_ROUND = 2
+
+function swap<T>(arr: T[], i1: number, i2: number) {
+  const temp = arr[i1]
+  arr[i1] = arr[i2]!
+  arr[i2] = temp!
+}
