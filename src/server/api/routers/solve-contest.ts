@@ -6,13 +6,16 @@ import { getContestUserCapabilities } from './contest'
 import { TRPCError } from '@trpc/server'
 import {
   contestDisciplineTable,
-  roundSessionTable,
   scrambleTable,
   solveTable,
 } from '@/server/db/schema'
-import type { ScramblePosition, SolveState } from '@/app/_types'
+import {
+  SCRAMBLE_POSITIONS,
+  SOLVE_STATES,
+  type ScramblePosition,
+} from '@/app/_types'
 
-export const contestRouter = createTRPCRouter({
+export const contestRoundAttempt = createTRPCRouter({
   state: protectedProcedure
     .input(
       z.object({
@@ -46,10 +49,6 @@ export const contestRouter = createTRPCRouter({
           eq(scrambleTable.contestDisciplineId, contestDisciplineTable.id),
         )
         .leftJoin(solveTable, eq(solveTable.scrambleId, scrambleTable.id))
-        .leftJoin(
-          roundSessionTable,
-          eq(roundSessionTable.contestantId, ctx.session.user.id),
-        )
         .where(
           and(
             eq(contestDisciplineTable.contestSlug, input.contestSlug),
@@ -64,24 +63,28 @@ export const contestRouter = createTRPCRouter({
 
       const submittedSolveRows = rows
         .filter(({ state }) => state === 'submitted')
-        .map(castNonNullableSolveRow)
+        .map((row) => solveRowInvariant.parse(row))
       const changedToExtraSolveRows = rows
         .filter(({ state }) => state === 'changed_to_extra')
-        .map(castNonNullableSolveRow)
+        .map((row) => solveRowInvariant.parse(row))
       const [pendingSolve] = rows
         .filter(({ state }) => state === 'pending')
-        .map(castNonNullableSolveRow)
+        .map((row) => solveRowInvariant.parse(row))
+
+      const currentSolveRow = rows.find(
+        ({ state }) => state === null || state === 'pending',
+      )
+      if (!currentSolveRow)
+        throw new Error(`[SOLVE] Invalid state: ${JSON.stringify(rows)}`)
 
       return {
         availableExtras: EXTRAS_PER_ROUND - changedToExtraSolveRows.length,
         submittedSolves: submittedSolveRows.map(({ id, timeMs, isDnf }) =>
-          castSolveInvariant({ id, timeMs, isDnf }),
+          solveInvariant.parse({ id, timeMs, isDnf }),
         ),
-        currentScramble: rows.find(
-          ({ state }) => state === null || state === 'pending',
-        ),
+        currentScramble: currentSolveRow.scramble,
         pendingSolve: pendingSolve
-          ? castSolveInvariant({
+          ? solveInvariant.parse({
               id: pendingSolve.id,
               isDnf: pendingSolve.isDnf,
               timeMs: pendingSolve.timeMs,
@@ -110,68 +113,32 @@ function positionComparator(position: ScramblePosition): number {
   }
 }
 
-type NullableSolveRow = {
-  scramble: string
-  position: ScramblePosition
-  id: number | null
-  isDnf: boolean | null
-  timeMs: number | null
-  state: SolveState | null
-}
-function castNonNullableSolveRow({
-  id,
-  isDnf,
-  position,
-  scramble,
-  state,
-  timeMs,
-}: NullableSolveRow) {
-  if (id === null || state === null || isDnf === null)
-    throw new Error(
-      `[SOLVE] invalid solve state: ${JSON.stringify({ id, state, isDnf })}`,
-    )
+const solveRowInvariant = z.object(
+  {
+    scramble: z.string(),
+    position: z.enum(SCRAMBLE_POSITIONS),
+    id: z.number(),
+    isDnf: z.boolean(),
+    timeMs: z.number(),
+    state: z.enum(SOLVE_STATES),
+  },
+  {
+    message: '[SOLVE] invalid state',
+  },
+)
 
-  if (isDnf === false) {
-    if (timeMs === null)
-      throw new Error(
-        `[SOLVE] invalid solve state: ${JSON.stringify({ id, isDnf, timeMs })}`,
-      )
-    return {
-      id: id,
-      isDnf: isDnf,
-      position: position,
-      scramble: scramble,
-      state: state,
-      timeMs: timeMs,
-    }
-  }
-  return {
-    id: id,
-    isDnf: isDnf,
-    position: position,
-    scramble: scramble,
-    state: state,
-    timeMs: timeMs,
-  }
-}
-
-function castSolveInvariant({
-  id,
-  timeMs,
-  isDnf,
-}: {
-  id: number
-  timeMs: number | null
-  isDnf: boolean
-}) {
-  if (isDnf === false) {
-    if (timeMs === null)
-      throw new Error(
-        `[SOLVE] invalid solve state: ${JSON.stringify({ id, isDnf, timeMs })}`,
-      )
-    return { id, timeMs, isDnf }
-  }
-  return { id, timeMs, isDnf }
-}
+const solveInvariant = z.union(
+  [
+    z.object({ id: z.number(), timeMs: z.number(), isDnf: z.literal(false) }),
+    z.object({
+      id: z.number(),
+      timeMs: z.number().nullable(),
+      isDnf: z.literal(false),
+    }),
+  ],
+  {
+    message: '[SOLVE] invalid state',
+  },
+)
 
 const EXTRAS_PER_ROUND = 2
