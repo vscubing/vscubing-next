@@ -1,4 +1,4 @@
-import { SCRAMBLE_POSITIONS, type Discipline } from '@/app/_types'
+import { SCRAMBLE_POSITIONS, SOLVE_STATES, type Discipline } from '@/app/_types'
 import { DISCIPLINES } from '@/shared'
 import { sql } from 'drizzle-orm'
 import { pgTable, pgEnum, unique } from 'drizzle-orm/pg-core'
@@ -89,11 +89,7 @@ export const roundSessionTable = pgTable('round_session', (d) => ({
   isFinished: d.boolean('is_finished').notNull(),
 }))
 
-export const solveStateEnum = pgEnum('solve_state', [
-  'pending',
-  'submitted',
-  'changed_to_extra',
-])
+export const solveStateEnum = pgEnum('solve_state', SOLVE_STATES)
 export const solveTable = pgTable(
   'solve',
   (d) => ({

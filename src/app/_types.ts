@@ -2,8 +2,16 @@ import { z } from 'zod'
 
 // export type ScrambleDTO = SolveContestStateDTO['currentSolve']['scramble']
 export type Discipline = (typeof DISCIPLINES)[number]
+
 export const SCRAMBLE_POSITIONS = ['1', '2', '3', '4', '5', 'E1', 'E2'] as const
 export type ScramblePosition = (typeof SCRAMBLE_POSITIONS)[number]
+
+export const SOLVE_STATES = [
+  'pending',
+  'submitted',
+  'changed_to_extra',
+] as const
+export type SolveState = (typeof SOLVE_STATES)[number]
 
 export type RoundSession = {
   solves: {

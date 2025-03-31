@@ -36,8 +36,8 @@
 - [x] mac/linux for scramble gen
 - [x] seed disciplines and initial contest
 - [x] contest 17 bohdan's result shift?
-- [ ] solve page ui
-- [ ] solve page server logic
+- [x] solve page ui
+- [x] solve page server logic
 
 - [ ] react 19 codemod
 - [ ] [build docker images in github actions](https://coolify.io/docs/knowledge-base/git/github/github-actions)
