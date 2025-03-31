@@ -6,6 +6,7 @@
   "scripts": {
     "build": "next build",
     "check": "next lint && tsc --noEmit",
+    "db:local": "./start-database.sh",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
@@ -19,6 +20,7 @@
     "typecheck": "tsc --noEmit",
     "test": "bun test",
     "preview": "next build && next start",
+    "vendor": "./install-vendor.sh",
     "start": "next start"
   },
   "dependencies": {
