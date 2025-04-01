@@ -10,7 +10,7 @@
     "start": "next start",
     "db:migrate": "drizzle-kit migrate",
     "db:generate": "drizzle-kit generate",
-    "db:seed": "drizzle-kit seed",
+    "db:seed": "bun run ./src/server/internal/seed",
     "db:custom": "drizzle-kit generate --custom --name",
     "db:drop": "drizzle-kit drop",
     "db:local": "./start-database.sh && drizzle-kit studio",
