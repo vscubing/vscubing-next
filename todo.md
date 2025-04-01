@@ -40,8 +40,9 @@
 - [x] solve page server logic
 - [x] use custom middleware trpc
 - [x] improve queries
-- [ ] fix redirect to results after attempt is closed
+- [x] fix redirect to results after attempt is closed
 - [ ] fix solve order in contest results
+- [ ] add dnfs to mock solves
 - [ ] unit test avg
 - [ ] close attempt
 - [ ] submitSolve user validation

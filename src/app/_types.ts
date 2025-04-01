@@ -16,12 +16,12 @@ export const SOLVE_STATES = [
 ] as const
 export type SolveState = (typeof SOLVE_STATES)[number]
 
-export type RoundSession = {
-  solves: ResultDnfish &
-    {
-      id: number
-      scramblePosition: ScramblePosition
-    }[]
+export type ContestResultRoundSession = {
+  solves: {
+    id: number
+    scramblePosition: ScramblePosition
+    result: ResultDnfish
+  }[]
   id: number
   avgMs: number | null
   nickname: string
@@ -34,13 +34,12 @@ type ResultDnf = { timeMs: null | number; isDnf: true }
 
 export const resultDnfish = z.custom<// TODO: check if this works
 ResultDnfish>(
-  (input) => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (input.isDnf === false && input.timeMs === null) return false
-    return true
+  ({ isDnf, timeMs }: { isDnf: boolean; timeMs: number | null }) => {
+    if ((isDnf === false && timeMs !== null) || isDnf === true) return true
+    return false
   },
   {
-    message: '[SOLVE] invalid state',
+    message: 'Invalid resultDnfish',
   },
 )
 

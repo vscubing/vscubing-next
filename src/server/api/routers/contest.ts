@@ -14,9 +14,10 @@ import { DISCIPLINES, CONTEST_UNAUTHORIZED_MESSAGE } from '@/shared'
 import { eq, desc, and, lt } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
 import {
+  resultDnfish,
   SCRAMBLE_POSITIONS,
   type Discipline,
-  type RoundSession,
+  type ContestResultRoundSession,
 } from '@/app/_types'
 import { groupBy } from '@/app/_utils/groupBy'
 import { db } from '@/server/db'
@@ -188,7 +189,9 @@ export const contestRouter = createTRPCRouter({
         ({ roundSessionId }) => roundSessionId,
       )
 
-      const items: RoundSession[] = Array.from(solvesBySessionId.values())
+      const items: ContestResultRoundSession[] = Array.from(
+        solvesBySessionId.values(),
+      )
         .sort((a, b) => (a[0]!.avgMs ?? -Infinity) - (b[0]!.avgMs ?? -Infinity))
         .map((session) => ({
           avgMs: session[0]!.avgMs,
@@ -197,9 +200,8 @@ export const contestRouter = createTRPCRouter({
           solves: session.map(
             ({ solveId, timeMs, isDnf, scramblePosition }) => ({
               id: solveId,
-              timeMs,
-              isDnf,
               scramblePosition,
+              result: resultDnfish.parse({ timeMs, isDnf }),
             }),
           ),
           nickname: session[0]!.nickname,

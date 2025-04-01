@@ -4,6 +4,7 @@ import { forwardRef, type ComponentProps } from 'react'
 import { formatSolveTime } from '../_utils/formatSolveTime'
 import { cn } from '../_utils/cn'
 import { WatchSolveHintPopover } from './watch-solve-hint-popover.client'
+import type { ResultDnfish } from '../_types'
 
 const solveTimeButtonVariants = cva(
   'transition-base outline-ring after-border-bottom vertical-alignment-fix inline-flex h-8 min-w-24 items-center justify-center hover:after:scale-x-100',
@@ -22,8 +23,7 @@ const solveTimeButtonVariants = cva(
 )
 
 type SolveTimeLinkOrDnfProps = VariantProps<typeof solveTimeButtonVariants> & {
-  timeMs: number | null
-  isDnf: boolean
+  result: ResultDnfish
   contestSlug: string
   solveId: number
   canShowHint: boolean
@@ -31,15 +31,14 @@ type SolveTimeLinkOrDnfProps = VariantProps<typeof solveTimeButtonVariants> & {
 }
 
 export function SolveTimeLinkOrDnf({
-  timeMs,
-  isDnf,
+  result,
   variant,
   className,
   contestSlug,
   solveId,
   canShowHint,
 }: SolveTimeLinkOrDnfProps) {
-  if (isDnf || !timeMs) {
+  if (result.isDnf) {
     return <SolveTimeLabel isDnf className={className} />
   }
   return (
@@ -48,7 +47,7 @@ export function SolveTimeLinkOrDnf({
         href={`/contests/${contestSlug}/watch/${solveId}`}
         className={cn(solveTimeButtonVariants({ variant, className }))}
       >
-        {formatSolveTime(timeMs)}
+        {formatSolveTime(result.timeMs)}
       </Link>
     </WatchSolveHintPopover>
   )
