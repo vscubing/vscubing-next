@@ -1,6 +1,6 @@
 import { DISCIPLINES } from '@/shared'
 import { z } from 'zod'
-import { eq, and, sql } from 'drizzle-orm'
+import { eq, and, sql, count } from 'drizzle-orm'
 import { createTRPCRouter, protectedProcedure } from '../trpc'
 import { getContestUserCapabilities } from './contest'
 import { TRPCError } from '@trpc/server'
@@ -148,19 +148,6 @@ export const roundAttempt = createTRPCRouter({
       .filter(({ state }) => state === 'submitted')
       .map((row) => solveRowInvariant.parse(row))
 
-    // TODO: move this to submit in one transaction
-    if (submittedSolveRows.length === ROUND_ATTEMPTS_QTY) {
-      const { timeMs: avgMs, isDnf } = calculateAvg(submittedSolveRows)
-      await ctx.db
-        .update(roundSessionTable)
-        .set({ isFinished: true, avgMs, isDnf })
-        .where(eq(roundSessionTable.id, ctx.roundAttempt.id))
-      throw new TRPCError({
-        code: 'FORBIDDEN',
-        message: "You can't participate in a round you've already completed.",
-      })
-    }
-
     const currentSolveRow = usedRows.find(
       ({ state }) => state === null || state === 'pending',
     )
@@ -225,15 +212,28 @@ export const roundAttempt = createTRPCRouter({
         newState: z.enum(['submitted', 'changed_to_extra']),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
-      // TODO: close attempt
+    .mutation(async ({ ctx, input }) =>
+      ctx.db.transaction(async (t) => {
+        // TODO: .where(userId)
+        await t
+          .update(solveTable)
+          .set({ state: input.newState })
+          .where(eq(solveTable.id, input.solveId))
 
-      // TODO: .where(userId)
-      await ctx.db
-        .update(solveTable)
-        .set({ state: input.newState })
-        .where(eq(solveTable.id, input.solveId))
-    }),
+        const submittedResults = await t
+          .select({ isDnf: solveTable.isDnf, timeMs: solveTable.timeMs })
+          .from(solveTable)
+          .where(eq(solveTable.roundSessionId, ctx.roundAttempt.id))
+
+        if (submittedResults.length === ROUND_ATTEMPTS_QTY) {
+          const { timeMs: avgMs, isDnf } = calculateAvg(submittedResults)
+          await t
+            .update(roundSessionTable)
+            .set({ isFinished: true, avgMs, isDnf })
+            .where(eq(roundSessionTable.id, ctx.roundAttempt.id))
+        }
+      }),
+    ),
 })
 
 function positionComparator(position: ScramblePosition): number {
@@ -261,12 +261,12 @@ const MIN_SUCCESSES_NECESSARY = 3
 
 // TODO: unit test
 function calculateAvg(
-  submittedSolves: {
+  results: {
     isDnf: boolean
     timeMs: number | null
   }[],
 ): ResultDnfish {
-  const successes = submittedSolves
+  const successes = results
     .map(({ timeMs }) => timeMs)
     .filter(Boolean) as number[]
   if (successes.length < ROUND_ATTEMPTS_QTY - 1)
