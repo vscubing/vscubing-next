@@ -79,7 +79,7 @@ export function SolveContestForm({
     submitSolve({
       contestSlug,
       discipline,
-      newState: payload.type,
+      type: payload.type,
       solveId: state!.currentSolve!.id,
     })
     //

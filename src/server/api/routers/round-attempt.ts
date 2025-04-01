@@ -209,16 +209,20 @@ export const roundAttempt = createTRPCRouter({
     .input(
       z.object({
         solveId: z.number(),
-        newState: z.enum(['submitted', 'changed_to_extra']),
+        type: z.enum(['submitted', 'changed_to_extra']),
       }),
     )
     .mutation(async ({ ctx, input }) =>
       ctx.db.transaction(async (t) => {
-        // TODO: .where(userId)
         await t
           .update(solveTable)
-          .set({ state: input.newState })
-          .where(eq(solveTable.id, input.solveId))
+          .set({ state: input.type })
+          .where(
+            and(
+              eq(solveTable.id, input.solveId),
+              eq(solveTable.roundSessionId, ctx.roundAttempt.id),
+            ),
+          )
 
         const submittedResults = await t
           .select({ isDnf: solveTable.isDnf, timeMs: solveTable.timeMs })
