@@ -1,5 +1,5 @@
 import { cn } from '@/app/_utils/cn'
-import type { ScramblePosition } from '../_types'
+import { isExtra, type ScramblePosition } from '../_types'
 
 export function ExtraLabel({
   scramblePosition,
@@ -8,7 +8,7 @@ export function ExtraLabel({
   scramblePosition: ScramblePosition
   className?: string
 }) {
-  if (!scramblePosition.startsWith('E')) {
+  if (!isExtra(scramblePosition)) {
     return null
   }
   const extraNumber = scramblePosition[1]

@@ -11,7 +11,7 @@ export function DisciplineSwitcher({
   disciplines,
 }: {
   initialDiscipline: Discipline
-  readonly disciplines: Discipline[]
+  disciplines: Readonly<Discipline[]>
 }) {
   const [currentDiscipline, setCurrentDiscipline] =
     useState<Discipline>(initialDiscipline)

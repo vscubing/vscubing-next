@@ -35,12 +35,26 @@
 - [x] write a script that downloads and unzips a release of tnoodle-cli
 - [x] mac/linux for scramble gen
 - [x] seed disciplines and initial contest
+- [x] contest 17 bohdan's result shift?
+- [x] solve page ui
+- [x] solve page server logic
+- [x] use custom middleware trpc
+- [x] improve queries
+- [x] fix redirect to results after attempt is closed
+- [x] fix solve order in contest results
+- [x] add dnfs to mock solves
+- [x] unit test avg
+- [x] close attempt
+- [x] submitSolve user validation
 - [ ] [build docker images in github actions](https://coolify.io/docs/knowledge-base/git/github/github-actions)
 - [ ] coolify CI/CD on PRs and on dev/main
+- [ ] rename add auth_ prefix to auth tables
+- [ ] useSimulator
+- [ ] react 19 codemod
 
 nicities:
-- [ ] correct primary key autoincrementation https://stackoverflow.com/questions/4448340/postgresql-duplicate-key-violates-unique-constraint
-- [ ] contest 17 bohdan's result shift?
+- [ ] rename state to status
+- [ ] rename contestdiscipline to round
 - [ ] move the header to layout
 - [ ] use page based pagination for contestindexpage
 - [ ] make contest link based on capabilities
@@ -52,5 +66,11 @@ nicities:
 - [ ] tailored 404 pages
 - [ ] skip inspection by default
 - [ ] cron job
-- [ ] figure out why deployment's initial db migration doesn't work (maybe it will be solved after redoing the migrations from scratch)
+- [ ] redo migrations
+    - [ ] correct primary key autoincrementation https://stackoverflow.com/questions/4448340/postgresql-duplicate-key-violates-unique-constraint
+    - [ ] figure out why deployment's initial db migration doesn't work (maybe it will be solved after redoing the migrations from scratch)
 - [ ] no ongoing contest handling
+- [ ] unify contest header
+- [ ] "ongoinghint"
+- [ ] cleanup (posts)
+- [ ] refactor file structure (shared/ui/components)

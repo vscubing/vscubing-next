@@ -15,9 +15,9 @@ import {
   SolveTimeLabel,
   SolveTimeLinkOrDnf,
 } from '@/app/_shared/SolveTimeButton'
-import type { Discipline, RoundSession } from '@/app/_types'
+import type { Discipline, ContestResultRoundSession } from '@/app/_types'
 
-type SessionProps = RoundSession & {
+type SessionProps = ContestResultRoundSession & {
   contestSlug: string
   discipline: Discipline
   isFirstOnPage: boolean
@@ -89,10 +89,8 @@ function SessionTablet({
                   <SolveTimeLinkOrDnf
                     canShowHint={isFirstOnPage && index === 0}
                     contestSlug={contestSlug}
-                    discipline={discipline}
                     solveId={solve.id}
-                    timeMs={solve.timeMs}
-                    isDnf={solve.isDnf}
+                    result={solve.result}
                     variant={
                       solve.id === bestId
                         ? 'best'
@@ -103,7 +101,7 @@ function SessionTablet({
                   />
 
                   <ExtraLabel
-                    scramblePosition={solve.scramblePosition}
+                    scramblePosition={solve.position}
                     className='absolute -top-2 right-[1.1rem] sm:-top-1'
                   />
                 </span>
@@ -166,10 +164,8 @@ function SessionDesktop({
                 <SolveTimeLinkOrDnf
                   canShowHint={isFirstOnPage && index === 0}
                   contestSlug={contestSlug}
-                  discipline={discipline}
                   solveId={solve.id}
-                  timeMs={solve.timeMs}
-                  isDnf={solve.isDnf}
+                  result={solve.result}
                   variant={
                     solve.id === bestId
                       ? 'best'
@@ -180,7 +176,7 @@ function SessionDesktop({
                 />
 
                 <ExtraLabel
-                  scramblePosition={solve.scramblePosition}
+                  scramblePosition={solve.position}
                   className='absolute -top-2 right-[1.1rem]'
                 />
               </span>
@@ -199,10 +195,10 @@ export function SessionSkeleton() {
 }
 
 function getBestAndWorstIds(solves: SessionProps['solves']) {
-  const dnfSolve = solves.find(({ isDnf }) => isDnf)
+  const dnfSolve = solves.find(({ result: { isDnf } }) => isDnf)
   const successful = solves
-    .filter(({ timeMs, isDnf }) => timeMs !== null && !isDnf)
-    .sort((a, b) => a.timeMs! - b.timeMs!)
+    .filter(({ result: { timeMs, isDnf } }) => timeMs !== null && !isDnf)
+    .sort((a, b) => a.result.timeMs! - b.result.timeMs!)
   const bestId = successful.at(0)?.id
   const worstId = dnfSolve?.id ?? successful.at(-1)?.id
 

@@ -2,14 +2,17 @@ import { DEFAULT_DISCIPLINE, isDiscipline, type Discipline } from '@/app/_types'
 import { api, HydrateClient } from '@/trpc/server'
 import { redirect } from 'next/navigation'
 import { formatContestDuration } from '@/app/_utils/formatDate'
-import { Header, SectionHeader } from '@/app/_components/layout'
+import { LayoutHeader, SectionHeader } from '@/app/_components/layout'
 import { DisciplineSwitcher } from '@/app/_shared/discipline-switcher-client'
 import { NavigateBackButton } from '@/app/_shared/NavigateBackButton'
 import { PageTitleMobile } from '@/app/_shared/PageTitleMobile'
 import { Suspense, type ReactNode } from 'react'
 import { tryCatchTRPC } from '@/app/_utils/try-catch'
-import { HintSection } from '@/app/_shared/HintSection'
+import { HintSection, HintSignInSection } from '@/app/_shared/HintSection'
 import { Session, SessionSkeleton } from './_components/session'
+import { CONTEST_UNAUTHORIZED_MESSAGE } from '@/shared'
+import { PrimaryButton } from '@/app/_components/ui'
+import Link from 'next/link'
 
 export default async function ContestResultsPage({
   params,
@@ -35,7 +38,7 @@ export default async function ContestResultsPage({
   return (
     <HydrateClient>
       <section className='flex flex-1 flex-col gap-3 sm:gap-2'>
-        <Header title={title} />
+        <LayoutHeader title={title} />
         <PageTitleMobile>{title}</PageTitleMobile>
         <NavigateBackButton className='self-start' />
         <SectionHeader>
@@ -78,13 +81,24 @@ async function PageContent({
   )
 
   if (error?.code === 'UNAUTHORIZED')
+    return <HintSignInSection description={CONTEST_UNAUTHORIZED_MESSAGE} />
+
+  if (error?.code === 'FORBIDDEN')
     return (
       <HintSection>
-        <p>{error.message}</p>
+        <p>
+          You can&apos;t see the results of an ongoing round until you solve all
+          scrambles or the round ends
+        </p>
+        <PrimaryButton asChild>
+          <Link
+            href={`/contests/${contestSlug}/solve?discipline=${discipline}`}
+          >
+            To the solve page
+          </Link>
+        </PrimaryButton>
       </HintSection>
     )
-
-  if (error?.code === 'FORBIDDEN') return 'forbidden'
   if (error) throw error
 
   if (sessions.items?.length === 0) {
@@ -99,6 +113,7 @@ async function PageContent({
     <SessionListWrapper>
       {/* <HydrateClient> */}
 
+      {/* TODO: pagination */}
       {sessions.items.map((session, idx) => (
         <Session
           {...session}

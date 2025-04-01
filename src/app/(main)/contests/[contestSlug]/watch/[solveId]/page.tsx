@@ -1,4 +1,4 @@
-import { Header, SectionHeader } from '@/app/_components/layout'
+import { LayoutHeader, SectionHeader } from '@/app/_components/layout'
 import { DisciplineBadge } from '@/app/_components/ui'
 import { NavigateBackButton } from '@/app/_shared/NavigateBackButton'
 import { formatSolveTime } from '@/app/_utils/formatSolveTime'
@@ -26,7 +26,7 @@ export default async function WatchSolvePage({
 
   return (
     <section className='flex flex-1 flex-col gap-3'>
-      <Header title='Watch the solution' />
+      <LayoutHeader title='Watch the solution' />
 
       <NavigateBackButton className='self-start' />
       <div className='grid flex-1 grid-cols-[1.22fr_1fr] grid-rows-[min-content,1fr] gap-3 lg:grid-cols-2 sm:grid-cols-1 sm:grid-rows-[min-content,min-content,1fr]'>

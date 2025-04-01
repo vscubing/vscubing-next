@@ -1,4 +1,4 @@
-import { Header } from '../_components/layout'
+import { LayoutHeader } from '../_components/layout'
 import { closeOngoingAndCreateNewContest } from '@/server/api/routers/contest'
 import { PrimaryButton } from '../_components/ui'
 import { generateScrambles } from '../../server/internal/generate-scrambles'
@@ -6,7 +6,7 @@ import { generateScrambles } from '../../server/internal/generate-scrambles'
 export default async function DashboardPage() {
   return (
     <>
-      <Header />
+      <LayoutHeader />
       <main className='text-white flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]'>
         <form
           action={async () => {

@@ -1,4 +1,4 @@
-import { SCRAMBLE_POSITIONS, type Discipline } from '@/app/_types'
+import { SCRAMBLE_POSITIONS, SOLVE_STATES, type Discipline } from '@/app/_types'
 import { DISCIPLINES } from '@/shared'
 import { sql } from 'drizzle-orm'
 import { pgTable, pgEnum, unique } from 'drizzle-orm/pg-core'
@@ -63,7 +63,7 @@ export const scrambleTable = pgTable(
         sql<boolean>`CASE WHEN position IN ('E1', 'E2') THEN TRUE ELSE FALSE END`,
       )
       .notNull(),
-    moves: d.text('moves'),
+    moves: d.text('moves').notNull(),
   }),
   (t) => [
     unique('contest_discipline_position_unique').on(
@@ -86,14 +86,10 @@ export const roundSessionTable = pgTable('round_session', (d) => ({
     .references(() => contestDisciplineTable.id, { onDelete: 'cascade' }),
   avgMs: d.integer('avg_ms'),
   isDnf: d.boolean('is_dnf'),
-  isFinished: d.boolean('is_finished').notNull(),
+  isFinished: d.boolean('is_finished').default(false).notNull(),
 }))
 
-export const solveStateEnum = pgEnum('solve_state', [
-  'pending',
-  'submitted',
-  'changed_to_extra',
-])
+export const solveStateEnum = pgEnum('solve_state', SOLVE_STATES)
 export const solveTable = pgTable(
   'solve',
   (d) => ({
@@ -110,7 +106,7 @@ export const solveTable = pgTable(
     state: solveStateEnum('state').notNull().default('pending'),
     timeMs: d.integer('time_ms'),
     isDnf: d.boolean('is_dnf').notNull(),
-    reconstruction: d.varchar('solution', { length: 10000 }), // TODO: rename reconstruction field to solution
+    solution: d.varchar('solution', { length: 10000 }),
   }),
   (t) => [
     unique('round_session_scramble_unique').on(t.roundSessionId, t.scrambleId),

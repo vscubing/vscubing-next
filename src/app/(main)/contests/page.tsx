@@ -1,6 +1,6 @@
 import { HydrateClient } from '@/trpc/server'
 import { SecondaryButton } from '@/app/_components/ui'
-import { Header, SectionHeader } from '@/app/_components/layout'
+import { LayoutHeader, SectionHeader } from '@/app/_components/layout'
 import { Suspense, type ReactNode } from 'react'
 import {
   DEFAULT_DISCIPLINE,
@@ -33,7 +33,7 @@ export default async function ContestsIndexPage(props: {
   const title = 'Explore contests'
   return (
     <section className='flex flex-1 flex-col gap-3 sm:gap-2'>
-      <Header title={title} />
+      <LayoutHeader title={title} />
       <PageTitleMobile>{title}</PageTitleMobile>
       <NavigateBackButton className='self-start' />
       <SectionHeader>
@@ -69,10 +69,8 @@ async function PageContent({ discipline }: { discipline: Discipline }) {
   if (contests.items?.length === 0) {
     return (
       <HintSection>
-        <p>
-          While this page may be empty now, it&apos;s brimming with potential
-          for thrilling contests that will soon fill this space.
-        </p>
+        While this page may be empty now, it&apos;s brimming with potential for
+        thrilling contests that will soon fill this space.
       </HintSection>
     )
   }
