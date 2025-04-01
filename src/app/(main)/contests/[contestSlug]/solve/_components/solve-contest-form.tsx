@@ -35,6 +35,8 @@ export function SolveContestForm({
       `/contests/${contestSlug}/results?discipline=${discipline}`,
       RedirectType.replace,
     )
+  // eslint-disable-next-line @typescript-eslint/only-throw-error
+  if (error) throw error
 
   const { mutate: postSolveResult, isPending: isPostSolvePending } =
     useMutation(
