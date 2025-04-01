@@ -297,10 +297,11 @@ function calculateAvg(
     return { timeMs: null, isDnf: true }
   successes.sort((a, b) => a - b)
   return {
-    timeMs:
+    timeMs: Math.floor(
       successes
         .slice(1, 1 + MIN_SUCCESSES_NECESSARY)
         .reduce((a, b) => a + b, 0) / MIN_SUCCESSES_NECESSARY,
+    ),
     isDnf: false,
   }
 }
