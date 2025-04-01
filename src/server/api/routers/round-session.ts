@@ -10,12 +10,7 @@ import {
   scrambleTable,
   solveTable,
 } from '@/server/db/schema'
-import {
-  resultDnfish,
-  SCRAMBLE_POSITIONS,
-  SOLVE_STATES,
-  type ResultDnfish,
-} from '@/app/_types'
+import { resultDnfish, SCRAMBLE_POSITIONS, SOLVE_STATES } from '@/app/_types'
 import { sortWithRespectToExtras } from './sort-with-respect-to-extras'
 import { calculateAvg } from './calculate-avg'
 

@@ -44,14 +44,13 @@
 - [x] fix solve order in contest results
 - [x] add dnfs to mock solves
 - [x] unit test avg
-- [ ] unit test round session state
-- [ ] close attempt
-- [ ] submitSolve user validation
-- [ ] useSimulator
-- [ ] react 19 codemod
+- [x] close attempt
+- [x] submitSolve user validation
 - [ ] [build docker images in github actions](https://coolify.io/docs/knowledge-base/git/github/github-actions)
 - [ ] coolify CI/CD on PRs and on dev/main
 - [ ] rename add auth_ prefix to auth tables
+- [ ] useSimulator
+- [ ] react 19 codemod
 
 nicities:
 - [ ] rename state to status
