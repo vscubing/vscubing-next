@@ -39,7 +39,7 @@ export default async function SolveContestPage(props: {
   if (userCapabilities === 'UNAUTHORIZED')
     return <HintSignInSection description={CONTEST_UNAUTHORIZED_MESSAGE} />
   if (userCapabilities === 'VIEW_RESULTS')
-    redirect(`/contests/${contestSlug}/results/${discipline}`)
+    redirect(`/contests/${contestSlug}/results?discipline=${discipline}`)
 
   const contest = await api.contest.getContestMetaData({
     contestSlug,
