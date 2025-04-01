@@ -21,5 +21,6 @@ Vscubing is contest platform to compete in virtual speedcubing: the art of solvi
 
 ### Deploying
 
+- apparently, ghcr.io doesn't support fine-grained access tokens, so you have to create a "Classic" token and [manually login in the ssh](https://coolify.io/docs/knowledge-base/docker/registry#docker-credentials). also see this [issue](https://github.com/docker/docker-credential-helpers/issues/182#issuecomment-1898955055).
 - `pg_restore --no-owner -d 'CONNECTION_STRING' BACKUP_PATH` to import the db backup
 - post-deployment: `bun run db:migrate`

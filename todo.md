@@ -46,7 +46,9 @@
 - [x] unit test avg
 - [x] close attempt
 - [x] submitSolve user validation
-- [ ] [build docker images in github actions](https://coolify.io/docs/knowledge-base/git/github/github-actions)
+- [x] [build docker images in github actions](https://coolify.io/docs/knowledge-base/git/github/github-actions)
+- [ ] reset the droplet and setup docker credentials
+- [ ] coolify pull docker images
 - [ ] coolify CI/CD on PRs and on dev/main
 - [ ] don't forget to merge back into dev
 - [ ] rename add auth_ prefix to auth tables
