@@ -38,15 +38,19 @@ jobs:
       #   id: date
       #   run: echo "DATE_STAMP=$(date +%s)" > "$GITHUB_ENV"
 
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build and push Docker images
         uses: iloveitaly/github-action-nixpacks@main
         with:
           push: true
           tags: |
             vscubing/${{ github.repository }}:latest
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy to Coolify
         run: | 
