@@ -22,6 +22,17 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Populate .env file
+        run: |
+          cat <<EOF > .env
+          DATABASE_URL=${{ secrets.DATABASE_URL }}
+          AUTH_SECRET=${{ secrets.AUTH_SECRET }}
+          AUTH_GOOGLE_CLIENT_ID=${{ secrets.AUTH_GOOGLE_CLIENT_ID }}
+          AUTH_GOOGLE_CLIENT_SECRET=${{ secrets.AUTH_GOOGLE_CLIENT_SECRET }}
+          AUTH_TRUST_HOST=${{ vars.AUTH_TRUST_HOST }}
+          AUTH_URL=${{ vars.AUTH_URL }}
+          EOF
+
       # # create a unique tag for each build for debugging
       # - name: Set Docker tag
       #   id: date
@@ -33,8 +44,6 @@ jobs:
           push: true
           tags: |
             ${{ env.IMAGE_NAME }}:latest
-          env: |
-            DATABASE_URL=${{ secrets.DATABASE_URL }} AUTH_SECRET=${{ secrets.AUTH_SECRET }} AUTH_GOOGLE_CLIENT_ID=${{ secrets.AUTH_GOOGLE_CLIENT_ID }} AUTH_GOOGLE_CLIENT_SECRET=${{ secrets.AUTH_GOOGLE_CLIENT_SECRET }} AUTH_TRUST_HOST=${{ vars.AUTH_TRUST_HOST }} AUTH_URL=${{ vars.AUTH_URL }}
 
       - name: Deploy to Coolify
         run: | 
