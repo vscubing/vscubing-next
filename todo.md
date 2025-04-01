@@ -43,7 +43,8 @@
 - [x] fix redirect to results after attempt is closed
 - [x] fix solve order in contest results
 - [x] add dnfs to mock solves
-- [ ] unit test avg
+- [x] unit test avg
+- [ ] unit test round session state
 - [ ] close attempt
 - [ ] submitSolve user validation
 - [ ] useSimulator

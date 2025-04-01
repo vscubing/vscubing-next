@@ -17,6 +17,7 @@ import {
   type ResultDnfish,
 } from '@/app/_types'
 import { sortWithRespectToExtras } from './sort-with-respect-to-extras'
+import { calculateAvg } from './calculate-avg'
 
 const submittedSolvesInvariant = z.array(
   z.object(
@@ -229,23 +230,3 @@ export const roundSession = createTRPCRouter({
 
 const EXTRAS_PER_ROUND = 2
 const ROUND_ATTEMPTS_QTY = 5
-const MIN_SUCCESSES_NECESSARY = 3
-const COUNTING_RESULTS = 3
-
-// TODO: unit test
-function calculateAvg(results: ResultDnfish[]): ResultDnfish {
-  const counting = results
-    .filter(({ isDnf }) => !isDnf)
-    .map(({ timeMs }) => timeMs!)
-    .sort()
-  counting.sort((a, b) => a - b)
-
-  counting.shift()
-  if (counting.length > COUNTING_RESULTS) counting.pop()
-  if (counting.length < COUNTING_RESULTS) return { timeMs: null, isDnf: true }
-
-  return {
-    timeMs: Math.floor(counting.reduce((a, b) => a + b, 0) / COUNTING_RESULTS),
-    isDnf: false,
-  }
-}
