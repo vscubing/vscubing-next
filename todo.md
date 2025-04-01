@@ -39,10 +39,11 @@
 - [x] solve page ui
 - [x] solve page server logic
 - [x] use custom middleware trpc
+- [x] improve queries
+- [ ] fix redirect to results after attempt is closed
 - [ ] unit test avg
 - [ ] close attempt
 - [ ] submitSolve user validation
-- [ ] improve queries
 - [ ] useSimulator
 - [ ] react 19 codemod
 - [ ] [build docker images in github actions](https://coolify.io/docs/knowledge-base/git/github/github-actions)
@@ -51,7 +52,6 @@
 
 nicities:
 - [ ] rename state to status
-- [ ] rename round session to round attempt
 - [ ] rename contestdiscipline to round
 - [ ] move the header to layout
 - [ ] use page based pagination for contestindexpage

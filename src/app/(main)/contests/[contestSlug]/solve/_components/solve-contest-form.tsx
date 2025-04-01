@@ -17,7 +17,7 @@ export function SolveContestForm({
 }) {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
-  const stateQuery = trpc.roundAttempt.state.queryOptions({
+  const stateQuery = trpc.roundSession.state.queryOptions({
     contestSlug,
     discipline,
   })
@@ -33,12 +33,12 @@ export function SolveContestForm({
 
   const { mutate: postSolveResult, isPending: isPostSolvePending } =
     useMutation(
-      trpc.roundAttempt.postSolve.mutationOptions({
+      trpc.roundSession.postSolve.mutationOptions({
         onSettled: () => queryClient.invalidateQueries(stateQuery),
       }),
     )
   const { mutate: submitSolve, isPending: isSubmitSolvePending } = useMutation(
-    trpc.roundAttempt.submitSolve.mutationOptions({
+    trpc.roundSession.submitSolve.mutationOptions({
       onSettled: () => queryClient.invalidateQueries(stateQuery),
     }),
   )

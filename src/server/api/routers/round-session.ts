@@ -1,6 +1,6 @@
 import { DISCIPLINES } from '@/shared'
 import { z } from 'zod'
-import { eq, and, sql, count } from 'drizzle-orm'
+import { eq, and, sql } from 'drizzle-orm'
 import { createTRPCRouter, protectedProcedure } from '../trpc'
 import { getContestUserCapabilities } from './contest'
 import { TRPCError } from '@trpc/server'
@@ -33,7 +33,7 @@ const solveRowInvariant = z.object(
   },
 )
 
-export const roundAttemptAuthProcedure = protectedProcedure
+export const roundSessionAuthProcedure = protectedProcedure
   .input(
     z.object({
       discipline: z.enum(DISCIPLINES),
@@ -64,7 +64,7 @@ export const roundAttemptAuthProcedure = protectedProcedure
       )
       .as('subquery')
 
-    const [roundAttempt] = await ctx.db
+    const [roundSession] = await ctx.db
       .select({ id: roundSessionTable.id })
       .from(contestDisciplineSubquery)
       .innerJoin(
@@ -77,9 +77,9 @@ export const roundAttemptAuthProcedure = protectedProcedure
       )
       .where(eq(roundSessionTable.contestantId, ctx.session.user.id))
 
-    if (roundAttempt) return next({ ctx: { roundAttempt } })
+    if (roundSession) return next({ ctx: { roundSession: roundSession } })
 
-    const [createdRoundAttempt] = await ctx.db
+    const [createdRoundSession] = await ctx.db
       .with(contestDisciplineSubquery)
       .insert(roundSessionTable)
       .values({
@@ -87,16 +87,16 @@ export const roundAttemptAuthProcedure = protectedProcedure
         contestantId: ctx.session.user.id,
       })
       .returning({ id: roundSessionTable.id })
-    if (!createdRoundAttempt)
+    if (!createdRoundSession)
       throw new Error(
-        `Error while creating a round attempt for ${JSON.stringify(input)}`,
+        `Error while creating a round session for ${JSON.stringify(input)}`,
       )
 
-    return next({ ctx: { roundAttempt: createdRoundAttempt } })
+    return next({ ctx: { roundSession: createdRoundSession } })
   })
 
-export const roundAttempt = createTRPCRouter({
-  state: roundAttemptAuthProcedure.query(async ({ ctx }) => {
+export const roundSession = createTRPCRouter({
+  state: roundSessionAuthProcedure.query(async ({ ctx }) => {
     const allRows = await ctx.db
       .select({
         scrambleMoves: scrambleTable.moves,
@@ -117,7 +117,7 @@ export const roundAttempt = createTRPCRouter({
         eq(roundSessionTable.contestDisciplineId, contestDisciplineTable.id),
       )
       .leftJoin(solveTable, eq(solveTable.scrambleId, scrambleTable.id))
-      .where(eq(roundSessionTable.id, ctx.roundAttempt.id))
+      .where(eq(roundSessionTable.id, ctx.roundSession.id))
 
     allRows.sort(
       (a, b) => positionComparator(a.position) - positionComparator(b.position),
@@ -186,7 +186,7 @@ export const roundAttempt = createTRPCRouter({
     }
   }),
 
-  postSolve: roundAttemptAuthProcedure
+  postSolve: roundSessionAuthProcedure
     .input(
       z.object({
         result: resultDnfish,
@@ -196,7 +196,7 @@ export const roundAttempt = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       await ctx.db.insert(solveTable).values({
-        roundSessionId: ctx.roundAttempt.id,
+        roundSessionId: ctx.roundSession.id,
         isDnf: input.result.isDnf,
         timeMs: input.result.timeMs,
         solution: input.solution,
@@ -205,7 +205,7 @@ export const roundAttempt = createTRPCRouter({
       })
     }),
 
-  submitSolve: roundAttemptAuthProcedure
+  submitSolve: roundSessionAuthProcedure
     .input(
       z.object({
         solveId: z.number(),
@@ -220,21 +220,21 @@ export const roundAttempt = createTRPCRouter({
           .where(
             and(
               eq(solveTable.id, input.solveId),
-              eq(solveTable.roundSessionId, ctx.roundAttempt.id),
+              eq(solveTable.roundSessionId, ctx.roundSession.id),
             ),
           )
 
         const submittedResults = await t
           .select({ isDnf: solveTable.isDnf, timeMs: solveTable.timeMs })
           .from(solveTable)
-          .where(eq(solveTable.roundSessionId, ctx.roundAttempt.id))
+          .where(eq(solveTable.roundSessionId, ctx.roundSession.id))
 
         if (submittedResults.length === ROUND_ATTEMPTS_QTY) {
           const { timeMs: avgMs, isDnf } = calculateAvg(submittedResults)
           await t
             .update(roundSessionTable)
             .set({ isFinished: true, avgMs, isDnf })
-            .where(eq(roundSessionTable.id, ctx.roundAttempt.id))
+            .where(eq(roundSessionTable.id, ctx.roundSession.id))
         }
       }),
     ),
