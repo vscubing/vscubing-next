@@ -43,7 +43,7 @@ jobs:
         with:
           push: true
           tags: |
-            vscubing/${{ github.repository }}:latest
+            ${{ github.repository }}:latest
 
       - name: Deploy to Coolify
         run: | 
