@@ -42,7 +42,7 @@
 - [x] improve queries
 - [x] fix redirect to results after attempt is closed
 - [x] fix solve order in contest results
-- [ ] add dnfs to mock solves
+- [x] add dnfs to mock solves
 - [ ] unit test avg
 - [ ] close attempt
 - [ ] submitSolve user validation
