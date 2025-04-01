@@ -34,12 +34,7 @@ jobs:
           tags: |
             ${{ env.IMAGE_NAME }}:latest
           env: |
-            DATABASE_URL=${{ secrets.DATABASE_URL }}
-            AUTH_SECRET=${{ secrets.AUTH_SECRET }}
-            AUTH_GOOGLE_CLIENT_ID=${{ secrets.AUTH_GOOGLE_CLIENT_ID }}
-            AUTH_GOOGLE_CLIENT_SECRET=${{ secrets.AUTH_GOOGLE_CLIENT_SECRET }}
-            AUTH_TRUST_HOST=${{ vars.AUTH_TRUST_HOST }}
-            AUTH_URL=${{ vars.AUTH_URL }}
+            DATABASE_URL=${{ secrets.DATABASE_URL }} AUTH_SECRET=${{ secrets.AUTH_SECRET }} AUTH_GOOGLE_CLIENT_ID=${{ secrets.AUTH_GOOGLE_CLIENT_ID }} AUTH_GOOGLE_CLIENT_SECRET=${{ secrets.AUTH_GOOGLE_CLIENT_SECRET }} AUTH_TRUST_HOST=${{ vars.AUTH_TRUST_HOST }} AUTH_URL=${{ vars.AUTH_URL }}
 
       - name: Deploy to Coolify
         run: | 
