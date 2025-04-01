@@ -32,7 +32,7 @@ export type ResultDnfish = ResultSuccess | ResultDnf
 type ResultSuccess = { timeMs: number; isDnf: false }
 type ResultDnf = { timeMs: null | number; isDnf: true }
 
-export const resultWrapped = z.custom<// TODO: check if this works
+export const resultDnfish = z.custom<// TODO: check if this works
 ResultDnfish>(
   (input) => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access

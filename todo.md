@@ -38,8 +38,12 @@
 - [x] contest 17 bohdan's result shift?
 - [x] solve page ui
 - [x] solve page server logic
+- [x] use custom middleware trpc
+- [ ] unit test avg
+- [ ] close attempt
+- [ ] submitSolve user validation
+- [ ] improve queries
 - [ ] useSimulator
-
 - [ ] react 19 codemod
 - [ ] [build docker images in github actions](https://coolify.io/docs/knowledge-base/git/github/github-actions)
 - [ ] coolify CI/CD on PRs and on dev/main
@@ -65,3 +69,5 @@ nicities:
 - [ ] no ongoing contest handling
 - [ ] unify contest header
 - [ ] "ongoinghint"
+- [ ] cleanup (posts)
+- [ ] refactor file structure (shared/ui/components)

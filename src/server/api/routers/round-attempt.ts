@@ -12,7 +12,7 @@ import {
 } from '@/server/db/schema'
 import {
   isExtra,
-  resultWrapped,
+  resultDnfish,
   SCRAMBLE_POSITIONS,
   SOLVE_STATES,
   type ResultDnfish,
@@ -33,169 +33,156 @@ const solveRowInvariant = z.object(
   },
 )
 
-export const roundAttempt = createTRPCRouter({
-  state: protectedProcedure
-    .input(
-      z.object({
-        discipline: z.enum(DISCIPLINES),
-        contestSlug: z.string(),
-      }),
-    )
-    .query(async ({ ctx, input }) => {
-      const userCapabilities = await getContestUserCapabilities({
-        contestSlug: input.contestSlug,
-        discipline: input.discipline,
+export const roundAttemptAuthProcedure = protectedProcedure
+  .input(
+    z.object({
+      discipline: z.enum(DISCIPLINES),
+      contestSlug: z.string(),
+    }),
+  )
+  .use(async ({ next, input }) => {
+    const userCapabilities = await getContestUserCapabilities({
+      contestSlug: input.contestSlug,
+      discipline: input.discipline,
+    })
+    if (userCapabilities === 'CONTEST_NOT_FOUND')
+      throw new TRPCError({ code: 'NOT_FOUND' })
+    if (userCapabilities !== 'SOLVE')
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: "You can't participate in a round you've already completed.",
       })
-      if (userCapabilities === 'CONTEST_NOT_FOUND')
-        throw new TRPCError({ code: 'NOT_FOUND' })
-      if (userCapabilities !== 'SOLVE')
-        throw new TRPCError({
-          code: 'FORBIDDEN',
-          message: "You can't participate in a round you've already completed.",
-        })
 
-      const allRows = await ctx.db
-        .select({
-          scrambleMoves: scrambleTable.moves,
-          scrambleId: scrambleTable.id,
-          position: scrambleTable.position,
-          id: solveTable.id,
-          isDnf: solveTable.isDnf,
-          timeMs: solveTable.timeMs,
-          state: solveTable.state,
-        })
-        .from(contestDisciplineTable)
+    return next()
+  })
+
+export const roundAttempt = createTRPCRouter({
+  state: roundAttemptAuthProcedure.query(async ({ ctx, input }) => {
+    const allRows = await ctx.db
+      .select({
+        scrambleMoves: scrambleTable.moves,
+        scrambleId: scrambleTable.id,
+        position: scrambleTable.position,
+        id: solveTable.id,
+        isDnf: solveTable.isDnf,
+        timeMs: solveTable.timeMs,
+        state: solveTable.state,
+      })
+      .from(contestDisciplineTable)
+      .innerJoin(
+        scrambleTable,
+        eq(scrambleTable.contestDisciplineId, contestDisciplineTable.id),
+      )
+      .leftJoin(solveTable, eq(solveTable.scrambleId, scrambleTable.id))
+      .where(
+        and(
+          eq(contestDisciplineTable.contestSlug, input.contestSlug),
+          eq(contestDisciplineTable.disciplineSlug, input.discipline),
+        ),
+      )
+
+    allRows.sort(
+      (a, b) => positionComparator(a.position) - positionComparator(b.position),
+    )
+
+    const extrasUsed = allRows.filter(
+      ({ state }) => state === 'changed_to_extra',
+    ).length
+
+    // usedRows contains the 5 used session's rows in order (change_to_extra'd solves are replaced with extras)
+    const usedRows = allRows.filter(({ position }) => !isExtra(position))
+    {
+      const extras = allRows.filter(({ position }) => isExtra(position))
+
+      let nextExtraIdx: number | null = 0
+      for (let idx = 0; idx < ROUND_ATTEMPTS_QTY; idx++) {
+        if (usedRows[idx]?.state !== 'changed_to_extra') continue
+        if (nextExtraIdx === null)
+          throw new Error('[SOLVE] Too many changed_to_extra solves!')
+
+        usedRows[idx] = extras[nextExtraIdx]!
+        if (nextExtraIdx === 0) nextExtraIdx = 1
+        else if (nextExtraIdx === 1) nextExtraIdx = null
+      }
+    }
+
+    const submittedSolveRows = usedRows
+      .filter(({ state }) => state === 'submitted')
+      .map((row) => solveRowInvariant.parse(row))
+
+    // TODO: move this to submit in one transaction
+    if (submittedSolveRows.length === ROUND_ATTEMPTS_QTY) {
+      const [roundSession] = await ctx.db // TODO: can we do this in the update?
+        .select({ id: roundSessionTable.id })
+        .from(roundSessionTable)
         .innerJoin(
-          scrambleTable,
-          eq(scrambleTable.contestDisciplineId, contestDisciplineTable.id),
+          contestDisciplineTable,
+          eq(contestDisciplineTable.id, roundSessionTable.contestDisciplineId),
         )
-        .leftJoin(solveTable, eq(solveTable.scrambleId, scrambleTable.id))
         .where(
           and(
             eq(contestDisciplineTable.contestSlug, input.contestSlug),
             eq(contestDisciplineTable.disciplineSlug, input.discipline),
           ),
         )
+      const { timeMs: avgMs, isDnf } = calculateAvg(submittedSolveRows)
+      await ctx.db
+        .update(roundSessionTable)
+        .set({ isFinished: true, avgMs, isDnf })
+        .where(eq(roundSessionTable.id, roundSession!.id))
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: "You can't participate in a round you've already completed.",
+      })
+    }
 
-      allRows.sort(
-        (a, b) =>
-          positionComparator(a.position) - positionComparator(b.position),
+    const currentSolveRow = usedRows.find(
+      ({ state }) => state === null || state === 'pending',
+    )
+    if (!currentSolveRow)
+      throw new Error(
+        '[SOLVE] no currentSolveRow but also no 5 submitted solves',
       )
 
-      const extrasUsed = allRows.filter(
-        ({ state }) => state === 'changed_to_extra',
-      ).length
+    return {
+      submittedSolves: submittedSolveRows.map(
+        ({ id, position, scrambleMoves, timeMs, isDnf }) => ({
+          id,
+          position,
+          scramble: scrambleMoves,
+          result: resultDnfish.parse({ timeMs, isDnf }),
+        }),
+      ),
+      currentScramble: {
+        id: currentSolveRow.scrambleId,
+        position: currentSolveRow.position,
+        moves: currentSolveRow.scrambleMoves,
+      },
+      currentSolve:
+        currentSolveRow.timeMs &&
+        currentSolveRow.id &&
+        currentSolveRow.isDnf !== null
+          ? {
+              id: currentSolveRow.id,
+              result: resultDnfish.parse({
+                isDnf: currentSolveRow.isDnf,
+                timeMs: currentSolveRow.timeMs,
+              }),
+            }
+          : null,
+      canChangeToExtra: EXTRAS_PER_ROUND - extrasUsed > 0,
+    }
+  }),
 
-      // usedRows contains the 5 used session's rows in order (change_to_extra'd solves are replaced with extras)
-      const usedRows = allRows.filter(({ position }) => !isExtra(position))
-      {
-        const extras = allRows.filter(({ position }) => isExtra(position))
-
-        let nextExtraIdx: number | null = 0
-        for (let idx = 0; idx < ROUND_ATTEMPTS_QTY; idx++) {
-          if (usedRows[idx]?.state !== 'changed_to_extra') continue
-          if (nextExtraIdx === null)
-            throw new Error('[SOLVE] Too many changed_to_extra solves!')
-
-          usedRows[idx] = extras[nextExtraIdx]!
-          if (nextExtraIdx === 0) nextExtraIdx = 1
-          else if (nextExtraIdx === 1) nextExtraIdx = null
-        }
-      }
-
-      const submittedSolveRows = usedRows
-        .filter(({ state }) => state === 'submitted')
-        .map((row) => solveRowInvariant.parse(row))
-
-      if (submittedSolveRows.length === ROUND_ATTEMPTS_QTY) {
-        const [roundSession] = await ctx.db // TODO: can we do this in the update?
-          .select({ id: roundSessionTable.id })
-          .from(roundSessionTable)
-          .innerJoin(
-            contestDisciplineTable,
-            eq(
-              contestDisciplineTable.id,
-              roundSessionTable.contestDisciplineId,
-            ),
-          )
-          .where(
-            and(
-              eq(contestDisciplineTable.contestSlug, input.contestSlug),
-              eq(contestDisciplineTable.disciplineSlug, input.discipline),
-            ),
-          )
-        const { timeMs: avgMs, isDnf } = calculateAvg(submittedSolveRows)
-        await ctx.db
-          .update(roundSessionTable)
-          .set({ isFinished: true, avgMs, isDnf })
-          .where(eq(roundSessionTable.id, roundSession!.id))
-        throw new TRPCError({
-          code: 'FORBIDDEN',
-          message: "You can't participate in a round you've already completed.",
-        })
-      }
-
-      const currentSolveRow = usedRows.find(
-        ({ state }) => state === null || state === 'pending',
-      )
-      if (!currentSolveRow)
-        throw new Error(
-          '[SOLVE] no currentSolveRow but also no 5 submitted solves',
-        )
-
-      return {
-        submittedSolves: submittedSolveRows.map(
-          ({ id, position, scrambleMoves, timeMs, isDnf }) => ({
-            id,
-            position,
-            scramble: scrambleMoves,
-            result: resultWrapped.parse({ timeMs, isDnf }),
-          }),
-        ),
-        currentScramble: {
-          id: currentSolveRow.scrambleId,
-          position: currentSolveRow.position,
-          moves: currentSolveRow.scrambleMoves,
-        },
-        currentSolve:
-          currentSolveRow.timeMs &&
-          currentSolveRow.id &&
-          currentSolveRow.isDnf !== null
-            ? {
-                id: currentSolveRow.id,
-                result: resultWrapped.parse({
-                  isDnf: currentSolveRow.isDnf,
-                  timeMs: currentSolveRow.timeMs,
-                }),
-              }
-            : null,
-        canChangeToExtra: EXTRAS_PER_ROUND - extrasUsed > 0,
-      }
-    }),
-
-  postSolve: protectedProcedure
+  postSolve: roundAttemptAuthProcedure
     .input(
       z.object({
-        discipline: z.enum(DISCIPLINES),
-        contestSlug: z.string(),
-        result: resultWrapped,
+        result: resultDnfish,
         solution: z.string(),
         scrambleId: z.number(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const userCapabilities = await getContestUserCapabilities({
-        contestSlug: input.contestSlug,
-        discipline: input.discipline,
-      })
-      if (userCapabilities === 'CONTEST_NOT_FOUND')
-        throw new TRPCError({ code: 'NOT_FOUND' })
-      if (userCapabilities !== 'SOLVE')
-        throw new TRPCError({
-          code: 'FORBIDDEN',
-          message: "You can't participate in a round you've already completed.",
-        })
-
       const contestDisciplineId = (
         await ctx.db
           .select({ id: contestDisciplineTable.id })
@@ -206,7 +193,11 @@ export const roundAttempt = createTRPCRouter({
               eq(contestDisciplineTable.disciplineSlug, input.discipline),
             ),
           )
-      )[0]!.id
+      )[0]?.id
+      if (!contestDisciplineId)
+        throw new Error(
+          `[SOLVE] no contestDiscipline found for ${JSON.stringify(input)}`,
+        )
 
       let roundSessionId = (
         await ctx.db // TODO: can we retrieve this during insertion?
@@ -251,30 +242,17 @@ export const roundAttempt = createTRPCRouter({
       })
     }),
 
-  submitSolve: protectedProcedure
+  submitSolve: roundAttemptAuthProcedure
     .input(
       z.object({
-        discipline: z.enum(DISCIPLINES),
-        contestSlug: z.string(),
         solveId: z.number(),
         newState: z.enum(['submitted', 'changed_to_extra']),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const userCapabilities = await getContestUserCapabilities({
-        contestSlug: input.contestSlug,
-        discipline: input.discipline,
-      })
-      if (userCapabilities === 'CONTEST_NOT_FOUND')
-        throw new TRPCError({ code: 'NOT_FOUND' })
-      if (userCapabilities !== 'SOLVE')
-        throw new TRPCError({
-          code: 'FORBIDDEN',
-          message: "You can't participate in a round you've already completed.",
-        })
-
       // TODO: close attempt
 
+      // TODO: .where(userId)
       await ctx.db
         .update(solveTable)
         .set({ state: input.newState })
@@ -305,6 +283,7 @@ const EXTRAS_PER_ROUND = 2
 const ROUND_ATTEMPTS_QTY = 5
 const MIN_SUCCESSES_NECESSARY = 3
 
+// TODO: unit test
 function calculateAvg(
   submittedSolves: {
     isDnf: boolean
