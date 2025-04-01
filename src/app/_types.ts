@@ -19,7 +19,7 @@ export type SolveState = (typeof SOLVE_STATES)[number]
 export type ContestResultRoundSession = {
   solves: {
     id: number
-    scramblePosition: ScramblePosition
+    position: ScramblePosition
     result: ResultDnfish
   }[]
   id: number

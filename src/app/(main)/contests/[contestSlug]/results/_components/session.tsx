@@ -101,7 +101,7 @@ function SessionTablet({
                   />
 
                   <ExtraLabel
-                    scramblePosition={solve.scramblePosition}
+                    scramblePosition={solve.position}
                     className='absolute -top-2 right-[1.1rem] sm:-top-1'
                   />
                 </span>
@@ -176,7 +176,7 @@ function SessionDesktop({
                 />
 
                 <ExtraLabel
-                  scramblePosition={solve.scramblePosition}
+                  scramblePosition={solve.position}
                   className='absolute -top-2 right-[1.1rem]'
                 />
               </span>

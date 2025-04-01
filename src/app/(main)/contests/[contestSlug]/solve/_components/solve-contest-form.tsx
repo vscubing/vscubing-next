@@ -129,8 +129,8 @@ export function SolveContestForm({
                 number={index + 1}
                 result={solve.result}
                 solveId={solve.id}
-                position={solve.position}
-                scramble={solve.scramble}
+                position={solve.scramble.position}
+                scramble={solve.scramble.moves}
                 key={solve.id}
               />
             ))}

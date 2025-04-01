@@ -11,26 +11,29 @@ import {
   solveTable,
 } from '@/server/db/schema'
 import {
-  isExtra,
   resultDnfish,
   SCRAMBLE_POSITIONS,
   SOLVE_STATES,
   type ResultDnfish,
-  type ScramblePosition,
 } from '@/app/_types'
+import { sortWithRespectToExtras } from './sort-with-respect-to-extras'
 
-const solveRowInvariant = z.object(
-  {
-    scrambleMoves: z.string(),
-    position: z.enum(SCRAMBLE_POSITIONS),
-    id: z.number(),
-    isDnf: z.boolean(),
-    timeMs: z.number().nullable(),
-    state: z.enum(SOLVE_STATES),
-  },
-  {
-    message: '[SOLVE] invalid state',
-  },
+const submittedSolvesInvariant = z.array(
+  z.object(
+    {
+      scramble: z.object({
+        id: z.number(),
+        moves: z.string(),
+        position: z.enum(SCRAMBLE_POSITIONS),
+      }),
+      id: z.number(),
+      state: z.enum(SOLVE_STATES),
+      result: resultDnfish,
+    },
+    {
+      message: '[SOLVE] invalid submitted solve invariant',
+    },
+  ),
 )
 
 export const roundSessionAuthProcedure = protectedProcedure
@@ -99,12 +102,16 @@ export const roundSession = createTRPCRouter({
   state: roundSessionAuthProcedure.query(async ({ ctx }) => {
     const allRows = await ctx.db
       .select({
-        scrambleMoves: scrambleTable.moves,
-        scrambleId: scrambleTable.id,
-        position: scrambleTable.position,
+        scramble: {
+          id: scrambleTable.id,
+          moves: scrambleTable.moves,
+          position: scrambleTable.position,
+        },
+        result: {
+          isDnf: solveTable.isDnf,
+          timeMs: solveTable.timeMs,
+        },
         id: solveTable.id,
-        isDnf: solveTable.isDnf,
-        timeMs: solveTable.timeMs,
         state: solveTable.state,
       })
       .from(contestDisciplineTable)
@@ -119,69 +126,42 @@ export const roundSession = createTRPCRouter({
       .leftJoin(solveTable, eq(solveTable.scrambleId, scrambleTable.id))
       .where(eq(roundSessionTable.id, ctx.roundSession.id))
 
-    allRows.sort(
-      (a, b) => positionComparator(a.position) - positionComparator(b.position),
-    )
-
     const extrasUsed = allRows.filter(
       ({ state }) => state === 'changed_to_extra',
     ).length
 
-    // usedRows contains the 5 used session's rows in order (change_to_extra'd solves are replaced with extras)
-    const usedRows = allRows.filter(({ position }) => !isExtra(position))
-    {
-      const extras = allRows.filter(({ position }) => isExtra(position))
+    const notChangedToExtraSolves = sortWithRespectToExtras(
+      allRows
+        .filter(({ state }) => state !== 'changed_to_extra')
+        .map(({ id, result, scramble, state }) => ({
+          scramble,
+          position: scramble.position,
+          id,
+          state,
+          result: result && resultDnfish.parse(result),
+        })),
+    )
 
-      let nextExtraIdx: number | null = 0
-      for (let idx = 0; idx < ROUND_ATTEMPTS_QTY; idx++) {
-        if (usedRows[idx]?.state !== 'changed_to_extra') continue
-        if (nextExtraIdx === null)
-          throw new Error('[SOLVE] Too many changed_to_extra solves!')
-
-        usedRows[idx] = extras[nextExtraIdx]!
-        if (nextExtraIdx === 0) nextExtraIdx = 1
-        else if (nextExtraIdx === 1) nextExtraIdx = null
-      }
-    }
-
-    const submittedSolveRows = usedRows
-      .filter(({ state }) => state === 'submitted')
-      .map((row) => solveRowInvariant.parse(row))
-
-    const currentSolveRow = usedRows.find(
+    const currentSolveRow = notChangedToExtraSolves.find(
       ({ state }) => state === null || state === 'pending',
     )
     if (!currentSolveRow)
       throw new Error(
         '[SOLVE] no currentSolveRow but also no 5 submitted solves',
       )
+    const currentSolve = currentSolveRow.id
+      ? {
+          id: currentSolveRow.id,
+          result: resultDnfish.parse(currentSolveRow.result),
+        }
+      : null
 
     return {
-      submittedSolves: submittedSolveRows.map(
-        ({ id, position, scrambleMoves, timeMs, isDnf }) => ({
-          id,
-          position,
-          scramble: scrambleMoves,
-          result: resultDnfish.parse({ timeMs, isDnf }),
-        }),
+      submittedSolves: submittedSolvesInvariant.parse(
+        notChangedToExtraSolves.filter(({ state }) => state === 'submitted'),
       ),
-      currentScramble: {
-        id: currentSolveRow.scrambleId,
-        position: currentSolveRow.position,
-        moves: currentSolveRow.scrambleMoves,
-      },
-      currentSolve:
-        currentSolveRow.timeMs &&
-        currentSolveRow.id &&
-        currentSolveRow.isDnf !== null
-          ? {
-              id: currentSolveRow.id,
-              result: resultDnfish.parse({
-                isDnf: currentSolveRow.isDnf,
-                timeMs: currentSolveRow.timeMs,
-              }),
-            }
-          : null,
+      currentScramble: currentSolveRow.scramble,
+      currentSolve,
       canChangeToExtra: EXTRAS_PER_ROUND - extrasUsed > 0,
     }
   }),
@@ -244,25 +224,6 @@ export const roundSession = createTRPCRouter({
       }),
     ),
 })
-
-function positionComparator(position: ScramblePosition): number {
-  switch (position) {
-    case '1':
-      return 1
-    case '2':
-      return 2
-    case '3':
-      return 3
-    case '4':
-      return 4
-    case '5':
-      return 5
-    case 'E1':
-      return 6
-    case 'E2':
-      return 7
-  }
-}
 
 const EXTRAS_PER_ROUND = 2
 const ROUND_ATTEMPTS_QTY = 5

@@ -24,6 +24,7 @@ import { db } from '@/server/db'
 import dayjs from 'dayjs'
 import { generateScrambles } from '@/server/internal/generate-scrambles'
 import { auth } from '@/server/auth'
+import { sortWithRespectToExtras } from './sort-with-respect-to-extras'
 
 export const contestRouter = createTRPCRouter({
   getPastContests: publicProcedure
@@ -159,7 +160,7 @@ export const contestRouter = createTRPCRouter({
           solveId: solveTable.id,
           timeMs: solveTable.timeMs,
           isDnf: solveTable.isDnf,
-          scramblePosition: scrambleTable.position,
+          position: scrambleTable.position,
         })
         .from(contestDisciplineTable)
         .innerJoin(
@@ -197,12 +198,12 @@ export const contestRouter = createTRPCRouter({
           avgMs: session[0]!.avgMs,
           id: session[0]!.roundSessionId,
           isOwn: session[0]!.contestantId === ctx.session?.user.id,
-          solves: session.map(
-            ({ solveId, timeMs, isDnf, scramblePosition }) => ({
+          solves: sortWithRespectToExtras(
+            session.map(({ solveId, timeMs, isDnf, position }) => ({
               id: solveId,
-              scramblePosition,
+              position,
               result: resultDnfish.parse({ timeMs, isDnf }),
-            }),
+            })),
           ),
           nickname: session[0]!.nickname,
         }))

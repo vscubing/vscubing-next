@@ -11,7 +11,7 @@ export function SolvePanel({
   number,
   position,
   scramble,
-  solveId: solveId,
+  solveId,
   result,
   ActionComponent,
   contestSlug,
@@ -33,7 +33,7 @@ export function SolvePanel({
           className='absolute right-0 top-0'
         />
       </span>
-      <TimeSection solve={result} id={solveId} contestSlug={contestSlug} />
+      <TimeSection result={result} id={solveId} contestSlug={contestSlug} />
       {!!result ? (
         <Ellipsis className='vertical-alignment-fix flex-1'>
           {scramble}
@@ -53,13 +53,13 @@ export function SolvePanel({
 type TimeSectionProps = {
   contestSlug: string
   id: number | null
-  solve: ResultDnfish | null
+  result: ResultDnfish | null
 }
-function TimeSection({ solve, id, contestSlug }: TimeSectionProps) {
-  if (!solve || !id) {
+function TimeSection({ result, id, contestSlug }: TimeSectionProps) {
+  if (!result || !id) {
     return <SolveTimeLabel isPlaceholder />
   }
-  if (solve.isDnf) {
+  if (result.isDnf) {
     return <SolveTimeLabel isDnf />
   }
   return (
@@ -67,8 +67,7 @@ function TimeSection({ solve, id, contestSlug }: TimeSectionProps) {
       canShowHint={false}
       contestSlug={contestSlug}
       solveId={id}
-      timeMs={solve.timeMs}
-      isDnf={false}
+      result={result}
     />
   )
 }
