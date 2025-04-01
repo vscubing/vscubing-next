@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
-import type { db as dbType } from '.'
-import { contestTable, disciplineTable } from './schema'
+import type { db as dbType } from '../db'
 import { tryCatch } from '@/app/_utils/try-catch'
+import { contestTable, disciplineTable } from '../db/schema'
 
 export async function seedDb(db: typeof dbType) {
   const { error } = await tryCatch(

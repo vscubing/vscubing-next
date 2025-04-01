@@ -3,7 +3,6 @@ import postgres from 'postgres'
 import * as schema from './schema'
 
 import { env } from '@/env'
-import { seedDb } from './seed'
 
 /**
  * Cache the database connection in development. This avoids creating a new connection on every HMR
@@ -17,4 +16,3 @@ const conn = globalForDb.conn ?? postgres(env.DATABASE_URL)
 if (env.NODE_ENV !== 'production') globalForDb.conn = conn
 
 export const db = drizzle(conn, { schema })
-await seedDb(db)
