@@ -227,7 +227,12 @@ export const roundSession = createTRPCRouter({
         const submittedResults = await t
           .select({ isDnf: solveTable.isDnf, timeMs: solveTable.timeMs })
           .from(solveTable)
-          .where(eq(solveTable.roundSessionId, ctx.roundSession.id))
+          .where(
+            and(
+              eq(solveTable.roundSessionId, ctx.roundSession.id),
+              eq(solveTable.state, 'submitted'),
+            ),
+          )
 
         if (submittedResults.length === ROUND_ATTEMPTS_QTY) {
           const { timeMs: avgMs, isDnf } = calculateAvg(submittedResults)

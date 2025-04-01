@@ -41,6 +41,7 @@
 - [x] use custom middleware trpc
 - [x] improve queries
 - [ ] fix redirect to results after attempt is closed
+- [ ] fix solve order in contest results
 - [ ] unit test avg
 - [ ] close attempt
 - [ ] submitSolve user validation
