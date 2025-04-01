@@ -47,6 +47,7 @@
 - [ ] react 19 codemod
 - [ ] [build docker images in github actions](https://coolify.io/docs/knowledge-base/git/github/github-actions)
 - [ ] coolify CI/CD on PRs and on dev/main
+- [ ] rename add auth_ prefix to auth tables
 
 nicities:
 - [ ] rename state to status

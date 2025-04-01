@@ -1,6 +1,6 @@
 import { DISCIPLINES } from '@/shared'
 import { z } from 'zod'
-import { eq, and } from 'drizzle-orm'
+import { eq, and, sql } from 'drizzle-orm'
 import { createTRPCRouter, protectedProcedure } from '../trpc'
 import { getContestUserCapabilities } from './contest'
 import { TRPCError } from '@trpc/server'
@@ -40,7 +40,7 @@ export const roundAttemptAuthProcedure = protectedProcedure
       contestSlug: z.string(),
     }),
   )
-  .use(async ({ next, input }) => {
+  .use(async ({ next, input, ctx }) => {
     const userCapabilities = await getContestUserCapabilities({
       contestSlug: input.contestSlug,
       discipline: input.discipline,
@@ -53,11 +53,50 @@ export const roundAttemptAuthProcedure = protectedProcedure
         message: "You can't participate in a round you've already completed.",
       })
 
-    return next()
+    const contestDisciplineSubquery = ctx.db
+      .select()
+      .from(contestDisciplineTable)
+      .where(
+        and(
+          eq(contestDisciplineTable.contestSlug, input.contestSlug),
+          eq(contestDisciplineTable.disciplineSlug, input.discipline),
+        ),
+      )
+      .as('subquery')
+
+    const [roundAttempt] = await ctx.db
+      .select({ id: roundSessionTable.id })
+      .from(contestDisciplineSubquery)
+      .innerJoin(
+        roundSessionTable,
+        eq(roundSessionTable.contestDisciplineId, contestDisciplineSubquery.id),
+      )
+      .innerJoin(
+        scrambleTable,
+        eq(scrambleTable.contestDisciplineId, contestDisciplineSubquery.id),
+      )
+      .where(eq(roundSessionTable.contestantId, ctx.session.user.id))
+
+    if (roundAttempt) return next({ ctx: { roundAttempt } })
+
+    const [createdRoundAttempt] = await ctx.db
+      .with(contestDisciplineSubquery)
+      .insert(roundSessionTable)
+      .values({
+        contestDisciplineId: sql`(select id from ${contestDisciplineSubquery})`,
+        contestantId: ctx.session.user.id,
+      })
+      .returning({ id: roundSessionTable.id })
+    if (!createdRoundAttempt)
+      throw new Error(
+        `Error while creating a round attempt for ${JSON.stringify(input)}`,
+      )
+
+    return next({ ctx: { roundAttempt: createdRoundAttempt } })
   })
 
 export const roundAttempt = createTRPCRouter({
-  state: roundAttemptAuthProcedure.query(async ({ ctx, input }) => {
+  state: roundAttemptAuthProcedure.query(async ({ ctx }) => {
     const allRows = await ctx.db
       .select({
         scrambleMoves: scrambleTable.moves,
@@ -73,13 +112,12 @@ export const roundAttempt = createTRPCRouter({
         scrambleTable,
         eq(scrambleTable.contestDisciplineId, contestDisciplineTable.id),
       )
-      .leftJoin(solveTable, eq(solveTable.scrambleId, scrambleTable.id))
-      .where(
-        and(
-          eq(contestDisciplineTable.contestSlug, input.contestSlug),
-          eq(contestDisciplineTable.disciplineSlug, input.discipline),
-        ),
+      .innerJoin(
+        roundSessionTable,
+        eq(roundSessionTable.contestDisciplineId, contestDisciplineTable.id),
       )
+      .leftJoin(solveTable, eq(solveTable.scrambleId, scrambleTable.id))
+      .where(eq(roundSessionTable.id, ctx.roundAttempt.id))
 
     allRows.sort(
       (a, b) => positionComparator(a.position) - positionComparator(b.position),
@@ -112,24 +150,11 @@ export const roundAttempt = createTRPCRouter({
 
     // TODO: move this to submit in one transaction
     if (submittedSolveRows.length === ROUND_ATTEMPTS_QTY) {
-      const [roundSession] = await ctx.db // TODO: can we do this in the update?
-        .select({ id: roundSessionTable.id })
-        .from(roundSessionTable)
-        .innerJoin(
-          contestDisciplineTable,
-          eq(contestDisciplineTable.id, roundSessionTable.contestDisciplineId),
-        )
-        .where(
-          and(
-            eq(contestDisciplineTable.contestSlug, input.contestSlug),
-            eq(contestDisciplineTable.disciplineSlug, input.discipline),
-          ),
-        )
       const { timeMs: avgMs, isDnf } = calculateAvg(submittedSolveRows)
       await ctx.db
         .update(roundSessionTable)
         .set({ isFinished: true, avgMs, isDnf })
-        .where(eq(roundSessionTable.id, roundSession!.id))
+        .where(eq(roundSessionTable.id, ctx.roundAttempt.id))
       throw new TRPCError({
         code: 'FORBIDDEN',
         message: "You can't participate in a round you've already completed.",
@@ -183,57 +208,8 @@ export const roundAttempt = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const contestDisciplineId = (
-        await ctx.db
-          .select({ id: contestDisciplineTable.id })
-          .from(contestDisciplineTable)
-          .where(
-            and(
-              eq(contestDisciplineTable.contestSlug, input.contestSlug),
-              eq(contestDisciplineTable.disciplineSlug, input.discipline),
-            ),
-          )
-      )[0]?.id
-      if (!contestDisciplineId)
-        throw new Error(
-          `[SOLVE] no contestDiscipline found for ${JSON.stringify(input)}`,
-        )
-
-      let roundSessionId = (
-        await ctx.db // TODO: can we retrieve this during insertion?
-          .select({ id: roundSessionTable.id })
-          .from(roundSessionTable)
-          .innerJoin(
-            contestDisciplineTable,
-            eq(
-              contestDisciplineTable.id,
-              roundSessionTable.contestDisciplineId,
-            ),
-          )
-          .innerJoin(
-            scrambleTable,
-            eq(scrambleTable.contestDisciplineId, contestDisciplineTable.id),
-          )
-          .where(
-            and(
-              eq(contestDisciplineTable.contestSlug, input.contestSlug),
-              eq(contestDisciplineTable.disciplineSlug, input.discipline),
-              eq(scrambleTable.id, input.scrambleId),
-            ),
-          )
-      )[0]?.id
-
-      if (!roundSessionId) {
-        const [roundSession] = await ctx.db
-          .insert(roundSessionTable)
-          .values({ contestDisciplineId, contestantId: ctx.session.user.id })
-          .returning({ id: roundSessionTable.id })
-        roundSessionId = roundSession!.id
-      }
-
       await ctx.db.insert(solveTable).values({
-        // TODO: check for a conflict error
-        roundSessionId,
+        roundSessionId: ctx.roundAttempt.id,
         isDnf: input.result.isDnf,
         timeMs: input.result.timeMs,
         solution: input.solution,
