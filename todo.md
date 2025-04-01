@@ -48,6 +48,7 @@
 - [x] submitSolve user validation
 - [ ] [build docker images in github actions](https://coolify.io/docs/knowledge-base/git/github/github-actions)
 - [ ] coolify CI/CD on PRs and on dev/main
+- [ ] don't forget to merge back into dev
 - [ ] rename add auth_ prefix to auth tables
 - [ ] useSimulator
 - [ ] react 19 codemod
