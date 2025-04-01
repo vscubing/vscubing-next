@@ -2,4 +2,4 @@
 nixpkgsArchive = "477d26d111feea02901d740cb4b9cae3b679e8d9"
 
 [phases.install]
-cmds = ["bun install --no-save --frozen-lockfile", "apt install unzip", "bun run vendor"]
+cmds = ["sudo apt-get upgrade", "apt install unzip", "bun run vendor", "bun install --no-save --frozen-lockfile"]
