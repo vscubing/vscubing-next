@@ -3,14 +3,14 @@ on:
   push:
     branches:
       - main
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: vscubing/${{ github.repository }}
 
 jobs:
   build-and-push:
     environment: production
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       - uses: actions/checkout@v4
@@ -43,7 +43,10 @@ jobs:
         with:
           push: true
           tags: |
-            ${{ env.IMAGE_NAME }}:latest
+            vscubing/${{ github.repository }}:latest
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy to Coolify
         run: | 
