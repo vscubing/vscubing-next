@@ -204,15 +204,17 @@ export const roundSession = createTRPCRouter({
             ),
           )
 
-        const submittedResults = await t
-          .select({ isDnf: solveTable.isDnf, timeMs: solveTable.timeMs })
-          .from(solveTable)
-          .where(
-            and(
-              eq(solveTable.roundSessionId, ctx.roundSession.id),
-              eq(solveTable.state, 'submitted'),
-            ),
-          )
+        const submittedResults = (
+          await t
+            .select({ isDnf: solveTable.isDnf, timeMs: solveTable.timeMs })
+            .from(solveTable)
+            .where(
+              and(
+                eq(solveTable.roundSessionId, ctx.roundSession.id),
+                eq(solveTable.state, 'submitted'),
+              ),
+            )
+        ).map((res) => resultDnfish.parse(res))
 
         if (submittedResults.length === ROUND_ATTEMPTS_QTY) {
           const { timeMs: avgMs, isDnf } = calculateAvg(submittedResults)
@@ -228,26 +230,22 @@ export const roundSession = createTRPCRouter({
 const EXTRAS_PER_ROUND = 2
 const ROUND_ATTEMPTS_QTY = 5
 const MIN_SUCCESSES_NECESSARY = 3
+const COUNTING_RESULTS = 3
 
 // TODO: unit test
-function calculateAvg(
-  results: {
-    isDnf: boolean
-    timeMs: number | null
-  }[],
-): ResultDnfish {
-  const successes = results
-    .map(({ timeMs }) => timeMs)
-    .filter(Boolean) as number[]
-  if (successes.length < ROUND_ATTEMPTS_QTY - 1)
-    return { timeMs: null, isDnf: true }
-  successes.sort((a, b) => a - b)
+function calculateAvg(results: ResultDnfish[]): ResultDnfish {
+  const counting = results
+    .filter(({ isDnf }) => !isDnf)
+    .map(({ timeMs }) => timeMs!)
+    .sort()
+  counting.sort((a, b) => a - b)
+
+  counting.shift()
+  if (counting.length > COUNTING_RESULTS) counting.pop()
+  if (counting.length < COUNTING_RESULTS) return { timeMs: null, isDnf: true }
+
   return {
-    timeMs: Math.floor(
-      successes
-        .slice(1, 1 + MIN_SUCCESSES_NECESSARY)
-        .reduce((a, b) => a + b, 0) / MIN_SUCCESSES_NECESSARY,
-    ),
+    timeMs: Math.floor(counting.reduce((a, b) => a + b, 0) / COUNTING_RESULTS),
     isDnf: false,
   }
 }

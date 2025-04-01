@@ -62,7 +62,7 @@ export function SolveContestForm({
       scrambleId: state!.currentScramble.id,
       solution: 'R U',
       result: {
-        isDnf: false,
+        isDnf: state!.currentScramble.position === '2',
         timeMs: Math.floor((Math.random() * 3 + 9) * 1000),
       },
     })
