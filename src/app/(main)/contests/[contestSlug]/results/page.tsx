@@ -84,21 +84,8 @@ async function PageContent({
     return <HintSignInSection description={CONTEST_UNAUTHORIZED_MESSAGE} />
 
   if (error?.code === 'FORBIDDEN')
-    return (
-      <HintSection>
-        <p>
-          You can&apos;t see the results of an ongoing round until you solve all
-          scrambles or the round ends
-        </p>
-        <PrimaryButton asChild>
-          <Link
-            href={`/contests/${contestSlug}/solve?discipline=${discipline}`}
-          >
-            To the solve page
-          </Link>
-        </PrimaryButton>
-      </HintSection>
-    )
+    redirect(`/contests/${contestSlug}/solve?discipline=${discipline}`)
+
   if (error) throw error
 
   if (sessions.items?.length === 0) {

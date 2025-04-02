@@ -11,7 +11,8 @@ const config = {
   webpack(config) {
     // Find the default image loader rule
     const imageLoaderRule = config.module.rules.find(
-      (rule) => rule.loader === 'next-image-loader',
+      (/** @type {{ loader: string; }} */ rule) =>
+        rule.loader === 'next-image-loader',
     )
     if (imageLoaderRule == null) {
       throw new Error('Image loader rule not found')
@@ -52,6 +53,8 @@ const config = {
   },
   experimental: {
     typedRoutes: true,
+    urlImports: ['https://code.jquery.com'],
+
     // turbo: {
     //   rules: {
     //     '*.svg?inline': { // ?inline doesn't work

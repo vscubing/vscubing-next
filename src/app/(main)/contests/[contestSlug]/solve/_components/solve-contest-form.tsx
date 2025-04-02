@@ -7,6 +7,7 @@ import { SolvePanel } from './solve-panel'
 import { useTRPC } from '@/trpc/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { redirect, RedirectType } from 'next/navigation'
+import { useSimulator } from '../_simulator'
 
 export function SolveContestForm({
   contestSlug,
@@ -53,29 +54,20 @@ export function SolveContestForm({
   const isFormPending =
     isStateFetching || isPostSolvePending || isSubmitSolvePending
 
-  // TODO: useCube
+  const { initSolve } = useSimulator()
 
   // TODO: discord invite
 
   function handleInitSolve() {
-    void postSolveResult({
-      contestSlug,
-      discipline,
-      scrambleId: state!.currentScramble.id,
-      solution: 'R U',
-      result: {
-        isDnf: state!.currentScramble.position === '2',
-        timeMs: Math.floor((Math.random() * 3 + 9) * 1000),
-      },
-    })
-    // const onSolveFinish = async (result: CubeSolveResult) => {
-    //   await postSolveResult({ scrambleId: currentSolve.scramble.id, result })
-    // }
-    //
-    // initSolve(
-    //   { scramble: currentSolve.scramble.moves, discipline },
-    //   (result) => void onSolveFinish(result),
-    // )
+    initSolve({ discipline, scramble: state!.currentScramble.moves }, (solve) =>
+      postSolveResult({
+        result: solve.result,
+        solution: solve.solution,
+        scrambleId: state!.currentScramble.id,
+        contestSlug,
+        discipline,
+      }),
+    )
   }
 
   async function handleSubmitSolve(

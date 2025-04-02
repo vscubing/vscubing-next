@@ -21,6 +21,7 @@ import { notFound } from 'next/navigation'
 import { redirect } from 'next/navigation'
 import React from 'react'
 import { SolveContestForm } from './_components'
+import { SimulatorProvider } from './_simulator'
 
 export default async function SolveContestPage(props: {
   params: Promise<{ contestSlug: string }>
@@ -91,7 +92,9 @@ export default async function SolveContestPage(props: {
           You have five attempts to solve the contest
         </p>
         {/*TODO: suspense*/}
-        <SolveContestForm contestSlug={contestSlug} discipline={discipline} />
+        <SimulatorProvider>
+          <SolveContestForm contestSlug={contestSlug} discipline={discipline} />
+        </SimulatorProvider>
       </div>
     </section>
   )
