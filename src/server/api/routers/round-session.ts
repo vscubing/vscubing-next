@@ -14,6 +14,7 @@ import { resultDnfish, SCRAMBLE_POSITIONS, SOLVE_STATES } from '@/app/_types'
 import { sortWithRespectToExtras } from './sort-with-respect-to-extras'
 import { calculateAvg } from './calculate-avg'
 import { validateSolve } from '@/server/internal/validate-solve'
+import { removeComments } from '@/app/_utils/remove-solve-comments'
 
 const submittedSolvesInvariant = z.array(
   z.object(
@@ -185,21 +186,30 @@ export const roundSession = createTRPCRouter({
         .where(eq(scrambleTable.id, input.scrambleId))
       if (!scramble) throw new TRPCError({ code: 'NOT_FOUND' })
 
-      const isValid = await validateSolve({
-        discipline: scramble.discipline,
-        scramble: scramble.moves,
-        solution: input.solution,
-      })
-      if (!isValid) throw new TRPCError({ code: 'BAD_REQUEST' })
+      let isDnf = input.result.isDnf
+      let isValid = true
+
+      if (!isDnf) {
+        isValid = await validateSolve({
+          discipline: scramble.discipline,
+          scramble: scramble.moves,
+          solution: removeComments(input.solution),
+        })
+        if (!isValid) isDnf = true
+      }
 
       await ctx.db.insert(solveTable).values({
         roundSessionId: ctx.roundSession.id,
-        isDnf: input.result.isDnf,
+        isDnf,
         timeMs: input.result.timeMs,
         solution: input.solution,
         state: 'pending',
         scrambleId: input.scrambleId,
       })
+
+      if (!isValid) {
+        throw new TRPCError({ code: 'BAD_REQUEST' })
+      }
     }),
 
   submitSolve: roundSessionAuthProcedure

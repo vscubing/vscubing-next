@@ -1,7 +1,7 @@
 import { LayoutHeader } from '../_components/layout'
-import { closeOngoingAndCreateNewContest } from '@/server/api/routers/contest'
 import { PrimaryButton } from '../_components/ui'
 import { generateScrambles } from '../../server/internal/generate-scrambles'
+import { closeOngoingAndCreateNewContest } from '@/server/internal/close-ongoing-and-create-new-contest'
 
 export default async function DashboardPage() {
   return (

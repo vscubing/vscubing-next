@@ -30,7 +30,8 @@ export async function generateScrambles(
     throw error
   }
   if (typeof data.stdout !== 'string') throw new Error()
-  const scrambles = data.stdout.trim().split('\n')
+  // const scrambles = data.stdout.trim().split('\n')
+  const scrambles = ['R U', 'R U', 'R U', 'R U', 'R U', 'R U', 'R U']
   if (scrambles.length !== quantity)
     throw new Error(
       `[TNOODLE] Something went wrong during the scramble generation. Expected ${quantity} scrambles, received ${scrambles.length}`,
