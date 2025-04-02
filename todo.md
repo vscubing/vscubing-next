@@ -50,7 +50,8 @@
 - [x] useSimulator
 - [x] react 19 codemod
 - [x] solve validation
-- [ ] only show finished sessions in results
+- [x] only show finished sessions in results
+- [ ] loading.tsx for solve contest page
 
 ci/cd:
 - [ ] reset the droplet and setup docker credentials

@@ -5,7 +5,11 @@ import { CurrentSolve } from './current-solve'
 import { Progress } from './progress'
 import { SolvePanel } from './solve-panel'
 import { useTRPC } from '@/trpc/react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from '@tanstack/react-query'
 import { redirect, RedirectType } from 'next/navigation'
 import { useSimulator } from '../_simulator'
 import { useLocalStorage } from 'usehooks-ts'
@@ -36,7 +40,7 @@ export function SolveContestForm({
     data: state,
     isFetching: isStateFetching,
     error,
-  } = useQuery(stateQuery)
+  } = useSuspenseQuery(stateQuery)
   if (error?.data?.code === 'FORBIDDEN')
     redirect(
       `/contests/${contestSlug}/results?discipline=${discipline}`,
@@ -108,8 +112,6 @@ export function SolveContestForm({
       setSeenDiscordInvite(true)
     }
   }
-
-  if (!state) return 'Loading...'
 
   const currentSolveNumber = (state?.submittedSolves?.length ?? 0) + 1
   return (

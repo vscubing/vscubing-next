@@ -49,7 +49,6 @@ export function PickUsernameDialog() {
         },
         onError: (error) => {
           if (error.data?.zodError) {
-            console.log(error.data.zodError)
             setError('username', {
               message: error.data?.zodError.fieldErrors?.username?.[0],
             })

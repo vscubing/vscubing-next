@@ -13,19 +13,19 @@ import {
 } from '@/app/_shared/KeyMapDialog'
 import { NavigateBackButton } from '@/app/_shared/NavigateBackButton'
 import { DEFAULT_DISCIPLINE, isDiscipline } from '@/app/_types'
-import { formatContestDuration } from '@/app/_utils/formatDate'
 import { getContestUserCapabilities } from '@/server/api/routers/contest'
 import { CONTEST_UNAUTHORIZED_MESSAGE } from '@/shared'
 import { api } from '@/trpc/server'
 import { notFound } from 'next/navigation'
 import { redirect } from 'next/navigation'
-import React from 'react'
-import { SolveContestForm } from './_components'
+import { Suspense, type ReactNode } from 'react'
 import { SimulatorProvider } from './_simulator'
+import { SolveContestForm } from './_components'
 
 export default async function SolveContestPage(props: {
   params: Promise<{ contestSlug: string }>
   searchParams: Promise<Record<string, string | string[] | undefined>>
+  children: ReactNode
 }) {
   const { contestSlug } = await props.params
   const searchParams = await props.searchParams
@@ -46,14 +46,7 @@ export default async function SolveContestPage(props: {
     contestSlug,
   })
 
-  const title = (
-    <>
-      Ongoing contest{' '}
-      <span className='whitespace-nowrap'>
-        ({formatContestDuration(contest)})
-      </span>
-    </>
-  )
+  const title = 'Solve the ongoing contest'
 
   // TODO: ongoing contest hint
   // TODO: touch devices not supported hint
@@ -92,9 +85,14 @@ export default async function SolveContestPage(props: {
           You have five attempts to solve the contest
         </p>
         {/*TODO: suspense*/}
-        <SimulatorProvider>
-          <SolveContestForm contestSlug={contestSlug} discipline={discipline} />
-        </SimulatorProvider>
+        <Suspense key={discipline} fallback='loading in suspense...'>
+          <SimulatorProvider>
+            <SolveContestForm
+              contestSlug={contestSlug}
+              discipline={discipline}
+            />
+          </SimulatorProvider>
+        </Suspense>
       </div>
     </section>
   )

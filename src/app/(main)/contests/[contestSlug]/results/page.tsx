@@ -30,7 +30,7 @@ export default async function ContestResultsPage({
 
   let title = ''
   if (contest.isOngoing) {
-    title = `Ongoing contest (${formatContestDuration(contest)})`
+    title = 'Check out the preliminary results'
   } else {
     title = 'Look through the contest results'
   }
