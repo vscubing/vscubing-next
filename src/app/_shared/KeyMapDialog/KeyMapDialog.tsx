@@ -6,54 +6,59 @@ import {
 } from '@/app/_components/ui'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { cn } from '@/app/_utils/cn'
-import {
-  type ElementRef,
-  forwardRef,
-  type ComponentPropsWithoutRef,
-} from 'react'
+import { type ComponentPropsWithoutRef, type ComponentRef } from 'react'
 import { KEY_MAP } from '.'
 
-export const KeyMapDialogTrigger = forwardRef<
-  ElementRef<typeof UnderlineButton>,
-  ComponentPropsWithoutRef<typeof UnderlineButton>
->((props, ref) => (
-  <DialogTrigger asChild>
-    <UnderlineButton size='sm' {...props} ref={ref}>
-      Virtual Cube Key Map
-    </UnderlineButton>
-  </DialogTrigger>
-))
+export function KeyMapDialogTrigger({
+  ref,
+  ...props
+}: ComponentPropsWithoutRef<typeof UnderlineButton> & {
+  ref?: React.RefObject<ComponentRef<typeof UnderlineButton>>
+}) {
+  return (
+    <DialogTrigger asChild>
+      <UnderlineButton size='sm' {...props} ref={ref}>
+        Virtual Cube Key Map
+      </UnderlineButton>
+    </DialogTrigger>
+  )
+}
 
-export const KeyMapDialogContent = forwardRef<
-  ElementRef<typeof DialogContent>,
-  ComponentPropsWithoutRef<typeof DialogContent>
->(({ className, ...props }, ref) => (
-  <DialogContent
-    className={cn('max-w-none p-10', className)}
-    {...props}
-    ref={ref}
-    aria-describedby={undefined}
-  >
-    <div className='grid grid-cols-[repeat(10,auto)] gap-1'>
-      <div className='col-span-full flex items-center justify-between rounded-xl bg-black-80 p-4'>
-        <DialogPrimitive.Title className='title-h2 text-secondary-20'>
-          Virtual Cube Key Map
-        </DialogPrimitive.Title>
-        <DialogCloseCross />
+export function KeyMapDialogContent({
+  ref,
+  className,
+  ...props
+}: ComponentPropsWithoutRef<typeof DialogContent> & {
+  ref?: React.RefObject<ComponentRef<typeof DialogContent>>
+}) {
+  return (
+    <DialogContent
+      className={cn('max-w-none p-10', className)}
+      {...props}
+      ref={ref}
+      aria-describedby={undefined}
+    >
+      <div className='grid grid-cols-[repeat(10,auto)] gap-1'>
+        <div className='col-span-full flex items-center justify-between rounded-xl bg-black-80 p-4'>
+          <DialogPrimitive.Title className='title-h2 text-secondary-20'>
+            Virtual Cube Key Map
+          </DialogPrimitive.Title>
+          <DialogCloseCross />
+        </div>
+
+        <ul className='contents'>
+          {KEY_MAP.map(({ keyName, cubeMovement }) => (
+            <KeyMapTile
+              key={keyName}
+              keyName={keyName}
+              cubeMovement={cubeMovement}
+            />
+          ))}
+        </ul>
       </div>
-
-      <ul className='contents'>
-        {KEY_MAP.map(({ keyName, cubeMovement }) => (
-          <KeyMapTile
-            key={keyName}
-            keyName={keyName}
-            cubeMovement={cubeMovement}
-          />
-        ))}
-      </ul>
-    </div>
-  </DialogContent>
-))
+    </DialogContent>
+  )
+}
 
 export function KeyMapTile({
   keyName,

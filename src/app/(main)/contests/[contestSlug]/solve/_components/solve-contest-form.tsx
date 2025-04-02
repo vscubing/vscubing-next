@@ -8,6 +8,8 @@ import { useTRPC } from '@/trpc/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { redirect, RedirectType } from 'next/navigation'
 import { useSimulator } from '../_simulator'
+import { useLocalStorage } from 'usehooks-ts'
+import { toast } from '@/app/_components/ui'
 
 export function SolveContestForm({
   contestSlug,
@@ -18,6 +20,10 @@ export function SolveContestForm({
 }) {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
+  const [seenDiscordInvite, setSeenDiscordInvite] = useLocalStorage(
+    'vs-seenDiscordInvite',
+    false,
+  )
 
   const stateQuery = trpc.roundSession.state.queryOptions(
     {
@@ -56,14 +62,13 @@ export function SolveContestForm({
 
   const { initSolve } = useSimulator()
 
-  // TODO: discord invite
-
   function handleInitSolve() {
-    initSolve({ discipline, scramble: state!.currentScramble.moves }, (solve) =>
+    if (!state) throw new Error('handleInitSolve called with no round state')
+    initSolve({ discipline, scramble: state.currentScramble.moves }, (solve) =>
       postSolveResult({
         result: solve.result,
         solution: solve.solution,
-        scrambleId: state!.currentScramble.id,
+        scrambleId: state.currentScramble.id,
         contestSlug,
         discipline,
       }),
@@ -75,29 +80,30 @@ export function SolveContestForm({
       | { type: 'changed_to_extra'; reason: string }
       | { type: 'submitted' },
   ) {
+    if (!state) throw new Error('handleSubmitSolve called with no round state')
     submitSolve({
       contestSlug,
       discipline,
       type: payload.type,
-      solveId: state!.currentSolve!.id,
+      solveId: state.currentSolve!.id,
     })
-    //
-    // if (
-    //   submittedSolveSet?.length === 4 &&
-    //   payload.type === 'submit' &&
-    //   !seenDiscordInvite
-    // ) {
-    //   toast({
-    //     title: 'Great to have you on board',
-    //     description:
-    //       'Join our Discord community to connect with other cubing fans',
-    //     contactUsButton: true,
-    //     contactUsButtonLabel: 'Join us on Discord',
-    //     duration: 'infinite',
-    //     className: 'w-[23.75rem]',
-    //   })
-    //   setSeenDiscordInvite(true)
-    // }
+
+    if (
+      state.submittedSolves.length === 4 &&
+      payload.type === 'submitted' &&
+      !seenDiscordInvite
+    ) {
+      toast({
+        title: 'Great to have you on board',
+        description:
+          'Join our Discord community to connect with other cubing fans',
+        contactUsButton: true,
+        contactUsButtonLabel: 'Join us on Discord',
+        duration: 'infinite',
+        className: 'w-[23.75rem]',
+      })
+      setSeenDiscordInvite(true)
+    }
   }
 
   if (!state) return 'Loading...'

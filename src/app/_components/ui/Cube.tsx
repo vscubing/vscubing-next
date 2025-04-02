@@ -1,27 +1,31 @@
 import { cn } from '@/app/_utils/cn'
-import { forwardRef, type HTMLAttributes } from 'react'
+import { type HTMLAttributes } from 'react'
 import { DisciplineIcon } from './icons'
 
 type DisciplineBadgeProps = HTMLAttributes<HTMLDivElement> & {
   discipline: string
 }
-export const DisciplineBadge = forwardRef<HTMLDivElement, DisciplineBadgeProps>(
-  ({ discipline, className, ...props }, ref) => {
-    return (
-      <span
-        className={cn(
-          'inline-flex h-15 w-15 items-center justify-center rounded-xl bg-secondary-20 text-black-100 sm:h-11 sm:w-11 sm:rounded-lg',
-          className,
-        )}
-        ref={ref}
-        {...props}
-      >
-        <DisciplineIcon discipline={discipline} />
-      </span>
-    )
-  },
-)
-DisciplineBadge.displayName = 'DisciplineBadge'
+export function DisciplineBadge({
+  ref,
+  discipline,
+  className,
+  ...props
+}: DisciplineBadgeProps & {
+  ref?: React.RefObject<HTMLDivElement>
+}) {
+  return (
+    <span
+      className={cn(
+        'inline-flex h-15 w-15 items-center justify-center rounded-xl bg-secondary-20 text-black-100 sm:h-11 sm:w-11 sm:rounded-lg',
+        className,
+      )}
+      ref={ref}
+      {...props}
+    >
+      <DisciplineIcon discipline={discipline} />
+    </span>
+  )
+}
 
 type DisciplineSwitcherProps = {
   className?: string
@@ -29,10 +33,16 @@ type DisciplineSwitcherProps = {
   isActive?: boolean
   discipline: string
 }
-export const DisciplineSwitcherItem = forwardRef<
-  HTMLButtonElement,
-  DisciplineSwitcherProps
->(({ className, isActive, discipline, asButton = true, ...props }, ref) => {
+export function DisciplineSwitcherItem({
+  ref,
+  className,
+  isActive,
+  discipline,
+  asButton = true,
+  ...props
+}: DisciplineSwitcherProps & {
+  ref?: React.RefObject<HTMLButtonElement>
+}) {
   const Comp = asButton ? 'button' : 'span'
   return (
     <Comp ref={ref} {...props}>
@@ -46,5 +56,4 @@ export const DisciplineSwitcherItem = forwardRef<
       />
     </Comp>
   )
-})
-DisciplineSwitcherItem.displayName = 'DisciplineSwitcher'
+}

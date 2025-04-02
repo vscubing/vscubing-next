@@ -35,7 +35,7 @@ import SettingIcon from '@/../public/icons/setting.svg?inline'
 
 import { isDiscipline } from '@/app/_types'
 import { cn } from '@/app/_utils/cn'
-import { type HTMLAttributes, forwardRef } from 'react'
+import { type HTMLAttributes } from 'react'
 
 export {
   AllContestsIcon,
@@ -80,19 +80,19 @@ const ICONS = {
   '3by3': Discipline3by3Icon,
   '2by2': Discipline2by2Icon,
 } as const
-export const DisciplineIcon = forwardRef<SVGSVGElement, DisciplineIconProps>(
-  ({ discipline: cube, className, ...props }, ref) => {
-    const Comp = isDiscipline(cube) ? ICONS[cube] : PlaceholderIcon
-    return (
-      <Comp
-        {...props}
-        ref={ref}
-        className={cn('h-[27px] w-[27px]', className)}
-      />
-    )
-  },
-)
-DisciplineIcon.displayName = 'DisciplineIcon'
+export function DisciplineIcon({
+  ref,
+  discipline,
+  className,
+  ...props
+}: DisciplineIconProps & {
+  ref?: React.RefObject<SVGSVGElement>
+}) {
+  const Comp = isDiscipline(discipline) ? ICONS[discipline] : PlaceholderIcon
+  return (
+    <Comp {...props} ref={ref} className={cn('h-[27px] w-[27px]', className)} />
+  )
+}
 
 function PlaceholderIcon({ className }: { className?: string }) {
   return <svg className={cn('animate-pulse bg-grey-60', className)}></svg>

@@ -2,7 +2,7 @@ import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
 
 import { cn } from '@/app/_utils/cn'
-import { type ButtonHTMLAttributes, forwardRef } from 'react'
+import { type ButtonHTMLAttributes } from 'react'
 
 const ghostButtonVariants = cva(
   'transition-base outline-ring inline-flex items-center justify-center',
@@ -28,18 +28,24 @@ type GhostButtonProps = ButtonHTMLAttributes<HTMLButtonElement> &
     asChild?: boolean
   }
 
-const GhostButton = forwardRef<HTMLButtonElement, GhostButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : 'button'
-    return (
-      <Comp
-        className={cn(ghostButtonVariants({ variant, size, className }))}
-        ref={ref}
-        {...props}
-      />
-    )
-  },
-)
-GhostButton.displayName = 'GhostButton'
+function GhostButton({
+  ref,
+  className,
+  variant,
+  size,
+  asChild = false,
+  ...props
+}: GhostButtonProps & {
+  ref?: React.RefObject<HTMLButtonElement>
+}) {
+  const Comp = asChild ? Slot : 'button'
+  return (
+    <Comp
+      className={cn(ghostButtonVariants({ variant, size, className }))}
+      ref={ref}
+      {...props}
+    />
+  )
+}
 
 export { GhostButton }

@@ -2,7 +2,7 @@ import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
 
 import { cn } from '@/app/_utils/cn'
-import { forwardRef, type ButtonHTMLAttributes } from 'react'
+import { type ButtonHTMLAttributes } from 'react'
 
 const secondaryButtonVariants = cva(
   'transition-base outline-ring inline-flex items-center justify-center',
@@ -31,18 +31,24 @@ type SecondaryButtonProps = ButtonHTMLAttributes<HTMLButtonElement> &
     asChild?: boolean
   }
 
-const SecondaryButton = forwardRef<HTMLButtonElement, SecondaryButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : 'button'
-    return (
-      <Comp
-        className={cn(secondaryButtonVariants({ variant, size, className }))}
-        ref={ref}
-        {...props}
-      />
-    )
-  },
-)
-SecondaryButton.displayName = 'SecondaryButton'
+function SecondaryButton({
+  ref,
+  className,
+  variant,
+  size,
+  asChild = false,
+  ...props
+}: SecondaryButtonProps & {
+  ref?: React.RefObject<HTMLButtonElement>
+}) {
+  const Comp = asChild ? Slot : 'button'
+  return (
+    <Comp
+      className={cn(secondaryButtonVariants({ variant, size, className }))}
+      ref={ref}
+      {...props}
+    />
+  )
+}
 
 export { SecondaryButton }

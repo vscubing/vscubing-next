@@ -1,10 +1,6 @@
 'use client'
 
-import {
-  type ElementRef,
-  forwardRef,
-  type ComponentPropsWithoutRef,
-} from 'react'
+import { type ComponentRef, type ComponentPropsWithoutRef } from 'react'
 import { PrimaryButton, SecondaryButton } from '../buttons'
 import { tw, useMatchesScreen } from '@/app/_utils/tailwind'
 import { cn } from '@/app/_utils/cn'
@@ -26,10 +22,16 @@ type BaseDialogButtonProps = ComponentPropsWithoutRef<'button'> & {
   version: 'secondary' | 'primary'
 }
 
-export const BaseDialogButton = forwardRef<
-  ElementRef<'button'>,
-  BaseDialogButtonProps
->(({ className, size, version, children, ...props }, ref) => {
+export function BaseDialogButton({
+  ref,
+  className,
+  size,
+  version,
+  children,
+  ...props
+}: BaseDialogButtonProps & {
+  ref?: React.RefObject<ComponentRef<'button'>>
+}) {
   const isSmScreen = useMatchesScreen('sm')
   if (!size) size = isSmScreen ? 'sm' : 'lg'
 
@@ -62,7 +64,6 @@ export const BaseDialogButton = forwardRef<
         {children}
       </SecondaryButton>
     )
-})
-BaseDialogButton.displayName = 'Dialog button'
+}
 
 export const baseDialogFooter = tw('flex w-full justify-center gap-4')

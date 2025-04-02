@@ -1,6 +1,6 @@
 import { type VariantProps, cva } from 'class-variance-authority'
 import Link from 'next/link'
-import { forwardRef, type ComponentProps } from 'react'
+import { type ComponentProps } from 'react'
 import { formatSolveTime } from '../_utils/formatSolveTime'
 import { cn } from '../_utils/cn'
 import { WatchSolveHintPopover } from './watch-solve-hint-popover.client'
@@ -67,48 +67,45 @@ type SolveTimeLabelProps = {
   isPlaceholder?: boolean
   isAverage?: boolean
 } & Omit<ComponentProps<'span'>, 'children'>
-export const SolveTimeLabel = forwardRef<HTMLSpanElement, SolveTimeLabelProps>(
-  (
-    {
-      timeMs,
-      isDnf = false,
-      isPlaceholder = false,
-      isAverage,
-      className,
-      ...props
-    },
-    ref,
-  ) => {
-    let variant: 'average' | 'dnf' | undefined
+export function SolveTimeLabel({
+  ref,
+  timeMs,
+  isDnf = false,
+  isPlaceholder = false,
+  isAverage,
+  className,
+  ...props
+}: SolveTimeLabelProps & {
+  ref?: React.RefObject<HTMLSpanElement>
+}) {
+  let variant: 'average' | 'dnf' | undefined
 
-    if (timeMs === 2147483647) {
-      isDnf = true
-    }
+  if (timeMs === 2147483647) {
+    isDnf = true
+  }
 
-    if (isDnf) {
-      variant = 'dnf'
-    } else if (isAverage) {
-      variant = 'average'
-    }
+  if (isDnf) {
+    variant = 'dnf'
+  } else if (isAverage) {
+    variant = 'average'
+  }
 
-    let content = ''
-    if (isPlaceholder) {
-      content = '00:00.000'
-    } else if (isDnf) {
-      content = 'DNF'
-    } else {
-      content = formatSolveTime(timeMs!)
-    }
+  let content = ''
+  if (isPlaceholder) {
+    content = '00:00.000'
+  } else if (isDnf) {
+    content = 'DNF'
+  } else {
+    content = formatSolveTime(timeMs!)
+  }
 
-    return (
-      <span
-        {...props}
-        className={cn(solveTimeLabelVariants({ variant, className }))}
-        ref={ref}
-      >
-        {content}
-      </span>
-    )
-  },
-)
-SolveTimeLabel.displayName = 'SolveTimeLabel'
+  return (
+    <span
+      {...props}
+      className={cn(solveTimeLabelVariants({ variant, className }))}
+      ref={ref}
+    >
+      {content}
+    </span>
+  )
+}

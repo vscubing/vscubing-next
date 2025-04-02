@@ -2,7 +2,7 @@ import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
 
 import { cn } from '@/app/_utils/cn'
-import { type ButtonHTMLAttributes, forwardRef } from 'react'
+import { type ButtonHTMLAttributes } from 'react'
 
 const underlineButtonVariants = cva(
   'transition-base outline-ring inline-flex items-center justify-center',
@@ -29,18 +29,24 @@ type UnderlineButtonProps = ButtonHTMLAttributes<HTMLButtonElement> &
     asChild?: boolean
   }
 
-const UnderlineButton = forwardRef<HTMLButtonElement, UnderlineButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : 'button'
-    return (
-      <Comp
-        className={cn(underlineButtonVariants({ variant, size, className }))}
-        ref={ref}
-        {...props}
-      />
-    )
-  },
-)
-UnderlineButton.displayName = 'UnderlineButton'
+function UnderlineButton({
+  ref,
+  className,
+  variant,
+  size,
+  asChild = false,
+  ...props
+}: UnderlineButtonProps & {
+  ref?: React.RefObject<HTMLButtonElement>
+}) {
+  const Comp = asChild ? Slot : 'button'
+  return (
+    <Comp
+      className={cn(underlineButtonVariants({ variant, size, className }))}
+      ref={ref}
+      {...props}
+    />
+  )
+}
 
 export { UnderlineButton }

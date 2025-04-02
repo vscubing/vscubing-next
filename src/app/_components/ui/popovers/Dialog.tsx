@@ -2,9 +2,10 @@ import * as DialogPrimitive from '@radix-ui/react-dialog'
 
 import { cn } from '@/app/_utils/cn'
 import {
+  type ComponentRef,
+  type ComponentPropsWithoutRef,
   forwardRef,
   type ElementRef,
-  type ComponentPropsWithoutRef,
 } from 'react'
 import {
   BaseDialogButton,
@@ -25,67 +26,86 @@ const DialogPortal = DialogPrimitive.Portal
 
 const DialogDescription = DialogPrimitive.Description
 
-const DialogOverlay = forwardRef<
-  ElementRef<typeof DialogPrimitive.Overlay>,
-  ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay> & {
-    withCubes?: boolean
-  }
->(({ className, withCubes = true, ...props }, ref) => (
-  <DialogPrimitive.Overlay
-    className={cn(baseDialogOverlay, className)}
-    {...props}
-    ref={ref}
-  >
-    {withCubes && <div className={cn(baseDialogOverlayInner)}></div>}
-  </DialogPrimitive.Overlay>
-))
-DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
+function DialogOverlay({
+  ref,
+  className,
+  withCubes = true,
+  ...props
+}: ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay> & {
+  ref?: React.RefObject<ComponentRef<typeof DialogPrimitive.Overlay>>
+  withCubes?: boolean
+}) {
+  return (
+    <DialogPrimitive.Overlay
+      className={cn(baseDialogOverlay, className)}
+      {...props}
+      ref={ref}
+    >
+      {withCubes && <div className={cn(baseDialogOverlayInner)}></div>}
+    </DialogPrimitive.Overlay>
+  )
+}
 
-const DialogContent = forwardRef<
-  ElementRef<typeof DialogPrimitive.Content>,
-  ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, ...props }, ref) => (
-  <DialogPrimitive.Content
-    ref={ref}
-    className={cn(baseDialogContent, className)}
-    {...props}
-  />
-))
-DialogContent.displayName = DialogPrimitive.Content.displayName
+function DialogContent({
+  ref,
+  className,
+  ...props
+}: ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & {
+  ref?: React.RefObject<ComponentRef<typeof DialogPrimitive.Content>>
+}) {
+  return (
+    <DialogPrimitive.Content
+      ref={ref}
+      className={cn(baseDialogContent, className)}
+      {...props}
+    />
+  )
+}
 
-const DialogTitle = forwardRef<
-  ElementRef<typeof DialogPrimitive.Title>,
-  ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
->(({ className, ...props }, ref) => (
-  <DialogPrimitive.Title
-    ref={ref}
-    className={cn(baseDialogTitle, className)}
-    {...props}
-  />
-))
-DialogTitle.displayName = DialogPrimitive.Title.displayName
+function DialogTitle({
+  ref,
+  className,
+  ...props
+}: ComponentPropsWithoutRef<typeof DialogPrimitive.Title> & {
+  ref?: React.RefObject<ComponentRef<typeof DialogPrimitive.Title>>
+}) {
+  return (
+    <DialogPrimitive.Title
+      ref={ref}
+      className={cn(baseDialogTitle, className)}
+      {...props}
+    />
+  )
+}
 
-const DialogCloseCross = forwardRef<
-  ElementRef<typeof DialogPrimitive.Close>,
-  ComponentPropsWithoutRef<typeof SecondaryButton>
->((props, ref) => (
-  <DialogPrimitive.Close asChild>
-    <SecondaryButton size='iconSm' ref={ref} {...props}>
-      <CloseIcon />
-    </SecondaryButton>
-  </DialogPrimitive.Close>
-))
-DialogCloseCross.displayName = DialogPrimitive.Close.displayName
+function DialogCloseCross({
+  ref,
+  ...props
+}: ComponentPropsWithoutRef<typeof SecondaryButton> & {
+  ref?: React.RefObject<ComponentRef<typeof DialogPrimitive.Close>>
+}) {
+  return (
+    <DialogPrimitive.Close asChild>
+      <SecondaryButton size='iconSm' ref={ref} {...props}>
+        <CloseIcon />
+      </SecondaryButton>
+    </DialogPrimitive.Close>
+  )
+}
 
-const DialogClose = forwardRef<
-  ElementRef<typeof DialogPrimitive.Close>,
-  ComponentPropsWithoutRef<typeof BaseDialogButton>
->(({ version, ...props }, ref) => (
-  <DialogPrimitive.Close asChild>
-    <BaseDialogButton version={version} ref={ref} {...props} />
-  </DialogPrimitive.Close>
-))
-DialogClose.displayName = DialogPrimitive.Close.displayName
+function DialogClose({
+  ref,
+  version,
+  ...props
+}: ComponentPropsWithoutRef<typeof BaseDialogButton> & {
+  ref?: React.RefObject<ComponentRef<typeof DialogPrimitive.Close>>
+}) {
+  return (
+    <DialogPrimitive.Close asChild>
+      <BaseDialogButton version={version} ref={ref} {...props} />
+    </DialogPrimitive.Close>
+  )
+}
 
 const DialogFooter = ({
   className,
@@ -93,7 +113,6 @@ const DialogFooter = ({
 }: ComponentPropsWithoutRef<'div'>) => (
   <div className={cn(baseDialogFooter, className)} {...props} />
 )
-DialogFooter.displayName = 'DialogFooter'
 
 export {
   Dialog,

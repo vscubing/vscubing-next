@@ -3,7 +3,7 @@
 import { cn } from '@/app/_utils/cn'
 import type { User } from 'next-auth'
 import Link from 'next/link'
-import { forwardRef, useState, type ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import {
   AvatarIcon,
   ChevronDownIcon,
@@ -127,10 +127,14 @@ function LogoutButton({
   )
 }
 
-const DropdownButton = forwardRef<
-  HTMLButtonElement,
-  { children: ReactNode; className?: string; asChild?: boolean }
->(({ children, className, asChild = false }, ref) => {
+function DropdownButton({
+  ref,
+  children,
+  className,
+  asChild = false,
+}: { children: ReactNode; className?: string; asChild?: boolean } & {
+  ref?: React.RefObject<HTMLButtonElement>
+}) {
   const Comp = asChild ? Slot : 'button'
   return (
     <Comp
@@ -143,8 +147,7 @@ const DropdownButton = forwardRef<
       {children}
     </Comp>
   )
-})
-DropdownButton.displayName = 'DropdownButton'
+}
 
 function LoadingDots({ className }: { className?: string }) {
   return (
