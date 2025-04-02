@@ -9,7 +9,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { redirect, RedirectType } from 'next/navigation'
 import { useSimulator } from '../_simulator'
 import { useLocalStorage } from 'usehooks-ts'
-import { toast } from '@/app/_components/ui'
+import { toast, type Toast } from '@/app/_components/ui'
 
 export function SolveContestForm({
   contestSlug,
@@ -49,6 +49,9 @@ export function SolveContestForm({
     useMutation(
       trpc.roundSession.postSolve.mutationOptions({
         onSettled: () => queryClient.invalidateQueries(stateQuery),
+        onError: (error) => {
+          if (error?.data?.code === 'BAD_REQUEST') toast(SOLVE_REJECTED_TOAST)
+        },
       }),
     )
   const { mutate: submitSolve, isPending: isSubmitSolvePending } = useMutation(
@@ -156,3 +159,10 @@ export function SolveContestForm({
     </div>
   )
 }
+
+const SOLVE_REJECTED_TOAST = {
+  title: 'Uh-oh! Solve rejected by the server',
+  description: "Under normal circumstances this shouldn't happen.",
+  duration: 'infinite',
+  contactUsButton: true,
+} satisfies Toast
