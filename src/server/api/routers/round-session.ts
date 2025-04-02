@@ -13,6 +13,7 @@ import {
 import { resultDnfish, SCRAMBLE_POSITIONS, SOLVE_STATES } from '@/app/_types'
 import { sortWithRespectToExtras } from './sort-with-respect-to-extras'
 import { calculateAvg } from './calculate-avg'
+import { validateSolve } from '@/server/internal/validate-solve'
 
 const submittedSolvesInvariant = z.array(
   z.object(
@@ -171,6 +172,26 @@ export const roundSession = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const [scramble] = await ctx.db
+        .select({
+          moves: scrambleTable.moves,
+          discipline: contestDisciplineTable.disciplineSlug,
+        })
+        .from(scrambleTable)
+        .innerJoin(
+          contestDisciplineTable,
+          eq(contestDisciplineTable.id, scrambleTable.contestDisciplineId),
+        )
+        .where(eq(scrambleTable.id, input.scrambleId))
+      if (!scramble) throw new TRPCError({ code: 'NOT_FOUND' })
+
+      const isValid = await validateSolve({
+        discipline: scramble.discipline,
+        scramble: scramble.moves,
+        solution: input.solution,
+      })
+      if (!isValid) throw new TRPCError({ code: 'BAD_REQUEST' })
+
       await ctx.db.insert(solveTable).values({
         roundSessionId: ctx.roundSession.id,
         isDnf: input.result.isDnf,
@@ -222,6 +243,11 @@ export const roundSession = createTRPCRouter({
       }),
     ),
 })
+
+const DISCIPLINE_TO_KPUZZLE: Record<Discipline, string> = {
+  '3by3': '3x3x3',
+  '2by2': '2x2x2',
+}
 
 const EXTRAS_PER_ROUND = 2
 const ROUND_ATTEMPTS_QTY = 5

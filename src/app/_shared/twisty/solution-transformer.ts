@@ -7,7 +7,7 @@ import {
 } from '@vscubing/cubing/twisty'
 import { Alg, LineComment } from '@vscubing/cubing/alg'
 import type { Discipline } from '@/app/_types'
-import { env } from '@/env'
+import { removeComments } from '@/app/_utils/remove-solve-comments'
 
 // TODO: simultaneous moves???
 // TODO: realtime animation speed
@@ -69,21 +69,6 @@ function embedDurations(
 
     return comment
   })
-}
-
-function removeComments(moves: string): string {
-  if (
-    moves.split('  ').length > 1 &&
-    env.NEXT_PUBLIC_NODE_ENV !== 'production'
-  ) {
-    alert('[TWISTY] double space in reconstruction with timing')
-    throw new Error('[TWISTY] double space in reconstruction with timing')
-  }
-
-  return moves
-    .replace(/\/\*\d+?\*\//g, '')
-    .trim()
-    .replaceAll('  ', ' ') // TODO: we shouldn't need this, investigate discrepancies between cstimer and phpless-cstimer
 }
 
 function annotateMoves(

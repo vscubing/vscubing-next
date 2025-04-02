@@ -49,6 +49,8 @@
 - [x] [build docker images in github actions](https://coolify.io/docs/knowledge-base/git/github/github-actions)
 - [x] useSimulator
 - [x] react 19 codemod
+- [x] solve validation
+- [ ] only show finished sessions in results
 
 ci/cd:
 - [ ] reset the droplet and setup docker credentials
