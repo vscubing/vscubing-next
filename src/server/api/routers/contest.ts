@@ -151,6 +151,10 @@ export const contestRouter = createTRPCRouter({
             "You can't see the results of an ongoing contest round before finishing it",
         })
 
+      // `input.limit` and `input.offset` correspond to the amount of sessions, and we query for solve rows, which map 5 to 1 to sessions
+      const rowLimit = input.limit * 5
+      const rowOffset = input.offset * 5
+
       const queryRes = await ctx.db
         .select({
           roundSessionId: roundSessionTable.id,
@@ -182,8 +186,8 @@ export const contestRouter = createTRPCRouter({
           ),
         )
         .orderBy(roundSessionTable.avgMs)
-        .limit(input.limit + 1)
-        .offset(input.offset)
+        .limit(rowLimit + 5)
+        .offset(rowOffset)
 
       const solvesBySessionId = groupBy(
         queryRes,
@@ -209,7 +213,10 @@ export const contestRouter = createTRPCRouter({
         }))
 
       let nextOffset: number | undefined = undefined
-      if (items.length > input.limit) nextOffset = input.offset + input.limit
+      if (items.length > input.limit) {
+        items.pop()
+        nextOffset = input.offset + input.limit
+      }
 
       return { items, nextOffset }
     }),
