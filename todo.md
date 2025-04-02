@@ -77,3 +77,4 @@ nicities:
 - [ ] "ongoinghint"
 - [ ] cleanup (posts)
 - [ ] refactor file structure (shared/ui/components)
+- [ ] "you have X unapplied migrations"
