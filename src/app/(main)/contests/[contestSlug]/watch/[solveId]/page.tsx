@@ -1,4 +1,4 @@
-import { LayoutHeader, SectionHeader } from '@/app/_components/layout'
+import { SectionHeader } from '@/app/(main)/_layout/index'
 import { DisciplineBadge } from '@/app/_components/ui'
 import { NavigateBackButton } from '@/app/_shared/NavigateBackButton'
 import { formatSolveTime } from '@/app/_utils/formatSolveTime'
@@ -9,6 +9,7 @@ import { TwistySection } from './twisty-section.client'
 import { api } from '@/trpc/server'
 import { tryCatchTRPC } from '@/app/_utils/try-catch'
 import { notFound } from 'next/navigation'
+import { LayoutHeaderTitlePortal } from '@/app/(main)/_layout/layout-header'
 
 export default async function WatchSolvePage({
   params,
@@ -26,9 +27,8 @@ export default async function WatchSolvePage({
 
   return (
     <section className='flex flex-1 flex-col gap-3'>
-      <LayoutHeader title='Watch the solution' />
-
       <NavigateBackButton className='self-start' />
+      <LayoutHeaderTitlePortal>Watch the solve replay</LayoutHeaderTitlePortal>
       <div className='grid flex-1 grid-cols-[1.22fr_1fr] grid-rows-[min-content,1fr] gap-3 lg:grid-cols-2 sm:grid-cols-1 sm:grid-rows-[min-content,min-content,1fr]'>
         <SectionHeader className='gap-4'>
           <DisciplineBadge discipline={solve.discipline} />

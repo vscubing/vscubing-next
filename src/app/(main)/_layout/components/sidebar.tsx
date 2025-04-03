@@ -1,10 +1,15 @@
 import { cn } from '@/app/_utils/cn'
-import { CloseIcon, GithubIcon, LinkedinIcon, DiscordIcon } from '../../ui'
 import { ControlMobileMenuButton } from '../store/mobileMenuOpenAtom'
 import { LogoWithLinkToLanding } from './logo'
 import { Navbar } from './navbar'
 import Image from 'next/image'
 import standWithUkraineImg from '@/../public/images/stand-with-ukraine.svg'
+import {
+  CloseIcon,
+  GithubIcon,
+  LinkedinIcon,
+  DiscordIcon,
+} from '@/app/_components/ui'
 
 export function Sidebar({ className }: { className?: string }) {
   return (

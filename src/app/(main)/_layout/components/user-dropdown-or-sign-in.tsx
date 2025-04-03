@@ -4,26 +4,26 @@ import { cn } from '@/app/_utils/cn'
 import type { User } from 'next-auth'
 import Link from 'next/link'
 import { useState, type ReactNode } from 'react'
-import {
-  AvatarIcon,
-  ChevronDownIcon,
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogOverlay,
-  DialogPortal,
-  DialogTitle,
-  DialogTrigger,
-  LogoutIcon,
-  SettingIcon,
-} from '../../ui'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { useSetAtom } from 'jotai'
 import { mobileMenuOpenAtom } from '../store/mobileMenuOpenAtom'
 import { Slot } from '@radix-ui/react-slot'
 import { signOut, useSession } from 'next-auth/react'
 import { SignInButton } from '@/app/_shared/SignInButton'
+import {
+  AvatarIcon,
+  ChevronDownIcon,
+  SettingIcon,
+  Dialog,
+  DialogTrigger,
+  LogoutIcon,
+  DialogPortal,
+  DialogOverlay,
+  DialogContent,
+  DialogTitle,
+  DialogFooter,
+  DialogClose,
+} from '@/app/_components/ui'
 
 export function UserDropdownOrSignIn() {
   const { data, status } = useSession()

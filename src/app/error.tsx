@@ -1,6 +1,6 @@
 'use client'
 
-import { Layout } from './_components/layout'
+import { Layout } from './(main)/_layout'
 import { PrimaryButton } from './_components/ui'
 import { ParallaxCubes, ParallaxCubesWrapper } from './_parallax-cubes'
 import { useMatchesScreen } from './_utils/tailwind'
@@ -17,7 +17,7 @@ export default function Error({
 
   return (
     <ParallaxCubesWrapper>
-      <Layout>
+      <Layout withoutHeader>
         <div className='flex flex-1 flex-col gap-3 sm:gap-0'>
           <div className='relative flex-1 rounded-xl bg-black-80 p-16 sm:p-8'>
             <ParallaxCubes mainImgSrc={img500} mainImgAlt='505' />

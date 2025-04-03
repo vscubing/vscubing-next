@@ -1,4 +1,4 @@
-import { LayoutHeader, SectionHeader } from '@/app/_components/layout'
+import { SectionHeader } from '@/app/(main)/_layout/index'
 import {
   Dialog,
   DialogOverlay,
@@ -21,6 +21,7 @@ import { redirect } from 'next/navigation'
 import { Suspense, type ReactNode } from 'react'
 import { SimulatorProvider } from './_simulator'
 import { SolveContestForm } from './_components'
+import { LayoutHeaderTitlePortal } from '@/app/(main)/_layout/layout-header'
 
 export default async function SolveContestPage(props: {
   params: Promise<{ contestSlug: string }>
@@ -53,8 +54,8 @@ export default async function SolveContestPage(props: {
 
   return (
     <section className='flex flex-1 flex-col gap-3'>
-      <LayoutHeader title={title} />
       <h1 className='title-h2 hidden text-secondary-20 lg:block'>{title}</h1>
+      <LayoutHeaderTitlePortal>{title}</LayoutHeaderTitlePortal>
       <NavigateBackButton className='self-start' />
       <SectionHeader>
         <div className='flex gap-3'>

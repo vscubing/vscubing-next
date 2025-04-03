@@ -1,4 +1,3 @@
-import { LayoutHeader } from '@/app/_components/layout'
 import { HintSignInSection } from '@/app/_shared/HintSection'
 import { DEFAULT_DISCIPLINE, isDiscipline } from '@/app/_types'
 import { assertUnreachable } from '@/app/_utils/assert-unreachable'
@@ -35,7 +34,6 @@ export default async function ContestPage(props: {
     case 'UNAUTHORIZED':
       return (
         <section className='flex flex-1 flex-col gap-3 sm:gap-2'>
-          <LayoutHeader />
           <HintSignInSection description={CONTEST_UNAUTHORIZED_MESSAGE} />
         </section>
       )

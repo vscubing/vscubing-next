@@ -4,9 +4,15 @@ import { Sidebar } from './components/sidebar'
 import { Navbar } from './components/navbar'
 import { PickUsernameDialog } from './components/pick-username-dialog'
 import { SessionProvider } from 'next-auth/react'
+import { LayoutHeader } from './layout-header'
 
-type LayoutProps = { children: React.ReactNode }
-export function Layout({ children }: LayoutProps) {
+export function Layout({
+  children,
+  withoutHeader = false,
+}: {
+  children: React.ReactNode
+  withoutHeader?: boolean
+}) {
   return (
     <SessionProvider>
       <PickUsernameDialog />
@@ -16,10 +22,16 @@ export function Layout({ children }: LayoutProps) {
           vaul-drawer-wrapper='vaul-drawer-wrapper'
           className='flex h-svh gap-3 bg-black-100 p-[1.625rem] sm:flex-col sm:gap-0 sm:px-3 sm:py-0'
         >
+          {/* TODO: display grid */}
           <Sidebar className='w-[clamp(16rem,20vw,21rem)] xl-short:min-w-[19rem] lg:sr-only' />
-          <main className='flex flex-1 flex-col overflow-y-auto'>
-            {children}
-          </main>
+          <div className='flex flex-1 flex-col'>
+            {withoutHeader ? null : <LayoutHeader className='mb-3 sm:mb-2' />}
+            <main className='contents'>
+              <section className='flex flex-1 flex-col gap-3 overflow-y-auto sm:gap-2'>
+                {children}
+              </section>
+            </main>
+          </div>
           <BottomNavbar className='hidden sm:block' />
         </div>
       </div>

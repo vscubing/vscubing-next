@@ -1,17 +1,16 @@
 import Link from 'next/link'
-import { Layout, LayoutHeader } from './_components/layout'
 import { PrimaryButton } from './_components/ui'
 import { ParallaxCubes, ParallaxCubesWrapper } from './_parallax-cubes'
 import img404 from '@/../public/images/404.svg'
+import { Layout } from './(main)/_layout'
 
 export const dynamic = 'force-static'
 
 export default function NotFound() {
   return (
     <ParallaxCubesWrapper>
-      <Layout>
+      <Layout withoutHeader>
         <div className='flex flex-1 flex-col gap-3 sm:gap-0'>
-          <LayoutHeader className='hidden lg:flex' />
           <div className='relative flex-1 rounded-xl bg-black-80 p-16 sm:p-8'>
             <ParallaxCubes mainImgSrc={img404} mainImgAlt='404' />
             <div className='relative max-w-[35rem] sm:max-w-none'>

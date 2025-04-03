@@ -2,12 +2,6 @@
 
 import { cn } from '@/app/_utils/cn'
 import Link from 'next/link'
-import {
-  DashboardIcon,
-  LeaderboardIcon,
-  AllContestsIcon,
-  OngoingContestIcon,
-} from '../../ui'
 import { usePathname } from 'next/navigation'
 import { type ReactNode, useEffect, useState } from 'react'
 import { useSetAtom } from 'jotai'
@@ -15,6 +9,12 @@ import { mobileMenuOpenAtom } from '../store/mobileMenuOpenAtom'
 import type { Route } from 'next'
 import { useTRPC } from '@/trpc/react'
 import { useQuery } from '@tanstack/react-query'
+import {
+  DashboardIcon,
+  LeaderboardIcon,
+  AllContestsIcon,
+  OngoingContestIcon,
+} from '@/app/_components/ui'
 
 type NavbarProps = {
   variant: 'vertical' | 'horizontal'

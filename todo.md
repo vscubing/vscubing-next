@@ -51,6 +51,7 @@
 - [x] react 19 codemod
 - [x] solve validation
 - [x] only show finished sessions in results
+- [ ] move the header to layout
 - [ ] loading.tsx for solve contest page
 
 ci/cd:
@@ -63,7 +64,6 @@ ci/cd:
 nicities:
 - [ ] rename state to status
 - [ ] rename contestdiscipline to round
-- [ ] move the header to layout
 - [ ] use page based pagination for contestindexpage
 - [ ] make contest link based on capabilities
 - [ ] pinned items
