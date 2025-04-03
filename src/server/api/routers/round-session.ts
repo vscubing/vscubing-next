@@ -2,7 +2,6 @@ import { DISCIPLINES } from '@/shared'
 import { z } from 'zod'
 import { eq, and, sql } from 'drizzle-orm'
 import { createTRPCRouter, protectedProcedure } from '../trpc'
-import { getContestUserCapabilities } from './contest'
 import { TRPCError } from '@trpc/server'
 import {
   contestDisciplineTable,
@@ -15,6 +14,7 @@ import { sortWithRespectToExtras } from './sort-with-respect-to-extras'
 import { calculateAvg } from './calculate-avg'
 import { validateSolve } from '@/server/internal/validate-solve'
 import { removeComments } from '@/app/_utils/remove-solve-comments'
+import { getContestUserCapabilities } from '../../internal/get-contest-user-capabilities'
 
 const submittedSolvesInvariant = z.array(
   z.object(

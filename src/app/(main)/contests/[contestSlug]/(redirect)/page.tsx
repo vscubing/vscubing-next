@@ -1,7 +1,7 @@
 import { HintSignInSection } from '@/app/_shared/HintSection'
 import { DEFAULT_DISCIPLINE, isDiscipline } from '@/app/_types'
 import { assertUnreachable } from '@/app/_utils/assert-unreachable'
-import { getContestUserCapabilities } from '@/server/api/routers/contest'
+import { getContestUserCapabilities } from '@/server/internal/get-contest-user-capabilities'
 import { CONTEST_UNAUTHORIZED_MESSAGE } from '@/shared'
 import { notFound, redirect, RedirectType } from 'next/navigation'
 

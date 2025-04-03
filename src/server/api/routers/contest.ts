@@ -13,15 +13,10 @@ import {
 import { DISCIPLINES, CONTEST_UNAUTHORIZED_MESSAGE } from '@/shared'
 import { eq, desc, and, lt } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
-import {
-  resultDnfish,
-  type Discipline,
-  type ContestResultRoundSession,
-} from '@/app/_types'
+import { resultDnfish, type ContestResultRoundSession } from '@/app/_types'
 import { groupBy } from '@/app/_utils/groupBy'
-import { db } from '@/server/db'
-import { auth } from '@/server/auth'
 import { sortWithRespectToExtras } from './sort-with-respect-to-extras'
+import { getContestUserCapabilities } from '../../internal/get-contest-user-capabilities'
 
 export const contestRouter = createTRPCRouter({
   getPastContests: publicProcedure
@@ -263,49 +258,3 @@ export const contestRouter = createTRPCRouter({
       }
     }),
 })
-
-export async function getContestUserCapabilities({
-  contestSlug,
-  discipline,
-}: {
-  contestSlug: string
-  discipline: Discipline
-}): Promise<'CONTEST_NOT_FOUND' | 'SOLVE' | 'VIEW_RESULTS' | 'UNAUTHORIZED'> {
-  const [contest] = await db
-    .select({ isOngoing: contestTable.isOngoing })
-    .from(contestTable)
-    .fullJoin(
-      contestDisciplineTable,
-      eq(contestDisciplineTable.contestSlug, contestTable.slug),
-    )
-    .where(
-      and(
-        eq(contestTable.slug, contestSlug),
-        eq(contestDisciplineTable.disciplineSlug, discipline),
-      ),
-    )
-
-  if (!contest) return 'CONTEST_NOT_FOUND'
-  if (!contest.isOngoing) return 'VIEW_RESULTS'
-
-  const session = await auth()
-  if (!session) return 'UNAUTHORIZED'
-
-  const [ownSession] = await db
-    .select({ isFinished: roundSessionTable.isFinished })
-    .from(contestDisciplineTable)
-    .innerJoin(
-      roundSessionTable,
-      eq(roundSessionTable.contestDisciplineId, contestDisciplineTable.id),
-    )
-    .innerJoin(userTable, eq(userTable.id, roundSessionTable.contestantId))
-    .where(
-      and(
-        eq(contestDisciplineTable.contestSlug, contestSlug),
-        eq(contestDisciplineTable.disciplineSlug, discipline),
-        eq(userTable.id, session.user.id),
-      ),
-    )
-
-  return ownSession?.isFinished ? 'VIEW_RESULTS' : 'SOLVE'
-}
