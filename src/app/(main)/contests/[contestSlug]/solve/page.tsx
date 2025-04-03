@@ -12,7 +12,7 @@ import {
   KeyMapDialogContent,
 } from '@/app/_shared/KeyMapDialog'
 import { NavigateBackButton } from '@/app/_shared/NavigateBackButton'
-import { DEFAULT_DISCIPLINE, isDiscipline } from '@/app/_types'
+import { DEFAULT_DISCIPLINE, isDiscipline, type Discipline } from '@/app/_types'
 import { getContestUserCapabilities } from '@/server/api/routers/contest'
 import { CONTEST_UNAUTHORIZED_MESSAGE } from '@/shared'
 import { api } from '@/trpc/server'
@@ -83,7 +83,7 @@ export default async function SolveContestPage(props: {
         </Dialog>
 
         <p className='title-h2 mb-6 text-center text-secondary-20'>
-          You have five attempts to solve the contest
+          {getSplashText({ contestSlug, discipline })}
         </p>
         {/*TODO: suspense*/}
         <Suspense key={discipline} fallback='loading in suspense...'>
@@ -97,4 +97,38 @@ export default async function SolveContestPage(props: {
       </div>
     </section>
   )
+}
+
+const SPLASH_TEXTS = [
+  'You have five attempts to solve the contest.',
+  'GLHF!',
+  'No DNFs today, huh?',
+  "It's not a +2 if no one is watching, right?",
+  'The cube just popped!',
+  'Shaky hands?',
+  'These are TNoodle scrambles btw',
+  '8 seconds! 12 seconds! Go! Just kidding.',
+  "Feliks Zemdegs would've been proud of you.",
+]
+function getSplashText({
+  contestSlug,
+  discipline,
+}: {
+  contestSlug: string
+  discipline: Discipline
+}) {
+  const random = seededRandom(contestSlug + discipline)
+  const idx = Math.floor(random * SPLASH_TEXTS.length)
+  return SPLASH_TEXTS[idx]
+}
+
+function seededRandom(seed: string) {
+  let hash = 0
+  for (let i = 0; i < seed.length; i++) {
+    hash = (hash << 5) - hash + seed.charCodeAt(i)
+    hash |= 0 // Convert to 32-bit integer
+  }
+
+  const x = Math.sin(hash) * 10000
+  return x - Math.floor(x)
 }

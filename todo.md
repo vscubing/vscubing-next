@@ -51,7 +51,7 @@
 - [x] react 19 codemod
 - [x] solve validation
 - [x] only show finished sessions in results
-- [ ] move the header to layout
+- [x] move the header to layout
 - [ ] loading.tsx for solve contest page
 
 ci/cd:
