@@ -4,6 +4,7 @@ import {
   DialogOverlay,
   DialogPortal,
   ExclamationCircleIcon,
+  LoadingSpinner,
 } from '@/app/_components/ui'
 import { DisciplineSwitcher } from '@/app/_shared/discipline-switcher-client'
 import { HintSignInSection } from '@/app/_shared/HintSection'
@@ -22,6 +23,7 @@ import { Suspense, type ReactNode } from 'react'
 import { SimulatorProvider } from './_simulator'
 import { SolveContestForm } from './_components'
 import { LayoutHeaderTitlePortal } from '@/app/(main)/_layout/layout-header'
+import Link from 'next/link'
 
 export default async function SolveContestPage(props: {
   params: Promise<{ contestSlug: string }>
@@ -85,8 +87,14 @@ export default async function SolveContestPage(props: {
         <p className='title-h2 mb-6 text-center text-secondary-20'>
           {getSplashText({ contestSlug, discipline })}
         </p>
-        {/*TODO: suspense*/}
-        <Suspense key={discipline} fallback='loading in suspense...'>
+        <Suspense
+          key={discipline}
+          fallback={
+            <div className='flex flex-1 items-center justify-center'>
+              <LoadingSpinner />
+            </div>
+          }
+        >
           <SimulatorProvider>
             <SolveContestForm
               contestSlug={contestSlug}
@@ -109,6 +117,15 @@ const SPLASH_TEXTS = [
   'These are TNoodle scrambles btw',
   '8 seconds! 12 seconds! Go! Just kidding.',
   "Feliks Zemdegs would've been proud of you.",
+  <>
+    Check out{' '}
+    <Link
+      className='text-secondary-60 underline'
+      href='https://js.cubing.net/cubing/'
+    >
+      cubing.js
+    </Link>
+  </>,
 ]
 function getSplashText({
   contestSlug,
