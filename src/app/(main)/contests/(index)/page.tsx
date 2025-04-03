@@ -1,4 +1,3 @@
-import { HydrateClient } from '@/trpc/server'
 import { SecondaryButton } from '@/app/_components/ui'
 import { LayoutSectionHeader } from '@/app/(main)/_layout/index'
 import { Suspense, type ReactNode } from 'react'
@@ -46,14 +45,14 @@ export default async function ContestsIndexPage(props: {
       <Suspense
         key={discipline}
         fallback={
-          <ContestListWrapper>
+          <ContestListShell>
             {Array.from({ length: 20 }).map((_, idx) => (
               <li key={idx}>
                 <ContestRowSkeletonDesktop className='sm:hidden' />
                 <ContestRowSkeletonMobile className='hidden sm:flex' />
               </li>
             ))}
-          </ContestListWrapper>
+          </ContestListShell>
         }
       >
         <PageContent discipline={discipline} />
@@ -77,15 +76,13 @@ async function PageContent({ discipline }: { discipline: Discipline }) {
   }
 
   return (
-    <ContestListWrapper>
-      <HydrateClient>
-        <ContestList initialData={contests} discipline={discipline} />
-      </HydrateClient>
-    </ContestListWrapper>
+    <ContestListShell>
+      <ContestList initialData={contests} discipline={discipline} />
+    </ContestListShell>
   )
 }
 
-function ContestListWrapper({ children }: { children: ReactNode }) {
+function ContestListShell({ children }: { children: ReactNode }) {
   return (
     <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 sm:p-3'>
       <div className='flex justify-between bg-black-80 pl-3 text-grey-40 sm:hidden'>

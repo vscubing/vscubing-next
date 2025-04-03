@@ -1,23 +1,55 @@
-import { LayoutSectionHeader } from '@/app/(main)/_layout/index'
-import { DisciplineBadge, LoadingSpinner } from '@/app/_components/ui'
-import { NavigateBackButton } from '@/app/_shared/NavigateBackButton'
-import { formatSolveTime } from '@/app/_utils/formatSolveTime'
-import Link from 'next/link'
 import { z } from 'zod'
-import { ShareSolveButton } from './_components/share-button'
 import { TwistySection } from './_components/twisty-section'
 import { api } from '@/trpc/server'
 import { tryCatchTRPC } from '@/app/_utils/try-catch'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
+import { DisciplineBadge, LoadingSpinner } from '@/app/_components/ui'
+import { isDiscipline, DEFAULT_DISCIPLINE, type Discipline } from '@/app/_types'
+import { Suspense, type ReactNode } from 'react'
+import { LayoutSectionHeader } from '@/app/(main)/_layout'
 import { LayoutHeaderTitlePortal } from '@/app/(main)/_layout/layout-header'
-import { Suspense } from 'react'
+import { NavigateBackButton } from '@/app/_shared/NavigateBackButton'
+import { formatSolveTime } from '@/app/_utils/formatSolveTime'
+import Link from 'next/link'
+import { ShareSolveButton } from './_components/share-button'
 
+type PathParams = { contestSlug: string; solveId: string }
 export default async function WatchSolvePage({
   params,
+  searchParams,
 }: {
-  params: Promise<{ contestSlug: string; solveId: string }>
+  params: Promise<PathParams>
+  searchParams: Promise<Record<string, string | undefined>>
 }) {
   const { contestSlug, solveId } = await params
+  const { discipline } = await searchParams
+  if (!isDiscipline(discipline))
+    redirect(
+      `/contests/${contestSlug}/watch/${solveId}?discipline=${DEFAULT_DISCIPLINE}`,
+    )
+
+  return (
+    <Suspense
+      fallback={
+        <PageShell
+          discipline={discipline}
+          contestSlug={contestSlug}
+          username='...'
+          timeMs={0}
+          scramblePosition='...'
+        >
+          <div className='col-span-full flex items-center justify-center rounded-2xl bg-black-80'>
+            <LoadingSpinner />
+          </div>
+        </PageShell>
+      }
+    >
+      <PageContentWithShell solveId={solveId} contestSlug={contestSlug} />
+    </Suspense>
+  )
+}
+
+async function PageContentWithShell({ solveId, contestSlug }: PathParams) {
   const { data: solve, error } = await tryCatchTRPC(
     api.contest.getSolve({ solveId: Number(solveId) }),
   )
@@ -25,42 +57,65 @@ export default async function WatchSolvePage({
     if (error.code === 'NOT_FOUND' || error.code === 'BAD_REQUEST') notFound()
     throw error
   }
-  // await new Promise((res) => setTimeout(res, 2000))
 
+  return (
+    <PageShell
+      discipline={solve.discipline}
+      contestSlug={contestSlug}
+      username={solve.username}
+      timeMs={solve.timeMs}
+      scramblePosition={expandScramblePosition(solve.position)}
+    >
+      <TwistySection
+        solution={solve.solution}
+        scramble={solve.scramble}
+        discipline={solve.discipline}
+      />
+    </PageShell>
+  )
+}
+
+function PageShell({
+  discipline,
+  username,
+  timeMs,
+  scramblePosition,
+  contestSlug,
+  children,
+}: {
+  discipline: Discipline
+  contestSlug: string
+  scramblePosition: string
+  timeMs: number
+  username: string
+  children: ReactNode
+}) {
   return (
     <section className='flex flex-1 flex-col gap-3'>
       <NavigateBackButton className='self-start' />
       <LayoutHeaderTitlePortal>Watch the solve replay</LayoutHeaderTitlePortal>
       <div className='grid flex-1 grid-cols-[1.22fr_1fr] grid-rows-[min-content,1fr] gap-3 lg:grid-cols-2 sm:grid-cols-1 sm:grid-rows-[min-content,min-content,1fr]'>
         <LayoutSectionHeader className='gap-4'>
-          <DisciplineBadge discipline={solve.discipline} />
+          <DisciplineBadge discipline={discipline} />
           <div>
             <Link
-              href={`/contests/${contestSlug}?discipline=${solve.discipline}`}
+              href={`/contests/${contestSlug}?discipline=${discipline}`}
               className='title-h2 mb-1 text-secondary-20'
             >
               Contest {contestSlug}
             </Link>
-            <p className='text-large'>
-              Scramble {expandScramblePosition(solve.position)}
-            </p>
+            <p className='text-large'>Scramble {scramblePosition}</p>
           </div>
         </LayoutSectionHeader>
         <div className='flex items-center justify-between rounded-2xl bg-black-80 px-4 py-2'>
           <div className='sm:min-h-14'>
-            <p className='title-h3 mb-1'>{solve.username}</p>
-            <p className='text-large text-grey-20'>
-              {formatSolveTime(solve.timeMs)}
-            </p>
+            <p className='title-h3 mb-1'>{username}</p>
+            <p className='text-large text-grey-20'>{formatSolveTime(timeMs)}</p>
           </div>
           <ShareSolveButton />
         </div>
 
-        <TwistySection
-          solution={solve.solution}
-          scramble={solve.scramble}
-          discipline={solve.discipline}
-        />
+        {children}
       </div>
     </section>
   )

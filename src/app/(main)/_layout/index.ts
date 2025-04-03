@@ -1,3 +1,3 @@
 export { Layout } from './layout'
 export { LayoutSectionHeader } from './section-header'
-export { PageSkeleton } from './page-skeleton'
+export { LayoutPageSkeleton } from './layout-page-skeleton'

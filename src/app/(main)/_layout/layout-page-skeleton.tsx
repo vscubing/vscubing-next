@@ -3,7 +3,7 @@ import { NavigateBackButton } from '@/app/_shared/NavigateBackButton'
 import { title } from 'process'
 import { LayoutSectionHeader } from './section-header'
 
-export function PageSkeleton() {
+export function LayoutPageSkeleton() {
   return (
     <section className='flex flex-1 flex-col gap-3'>
       <h1 className='title-h2 hidden text-secondary-20 lg:block'>{title}</h1>

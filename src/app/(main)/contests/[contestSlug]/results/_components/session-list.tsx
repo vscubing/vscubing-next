@@ -1,44 +1,38 @@
 'use client'
 import { HintSection } from '@/app/_shared/HintSection'
 import { type Discipline } from '@/app/_types'
-import { useQuery } from '@tanstack/react-query'
-import { useTRPC } from '@/trpc/react'
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { useTRPC, type RouterOutputs } from '@/trpc/react'
 import type { ReactNode } from 'react'
-import { Session, SessionSkeleton } from './session'
+import { Session } from './session'
 
 export function SessionList({
   contestSlug,
   discipline,
+  initialData,
 }: {
   contestSlug: string
   discipline: Discipline
+  initialData?: RouterOutputs['contest']['getContestResults']
 }) {
   const trpc = useTRPC()
-  const { data: sessions } = useQuery(
-    trpc.contest.getContestResults.queryOptions({
-      contestSlug,
-      discipline,
-    }),
+  const { data: sessions } = useSuspenseQuery(
+    trpc.contest.getContestResults.queryOptions(
+      {
+        contestSlug,
+        discipline,
+      },
+      { initialData },
+    ),
   )
 
-  if (sessions?.items?.length === 0) {
+  if (sessions.items.length === 0) {
     return (
       <HintSection>
         <p>It seems no one participated in this round</p>
       </HintSection>
     )
   }
-
-  if (!sessions)
-    return (
-      <SessionListShell>
-        {Array.from({ length: 20 }).map((_, idx) => (
-          <li key={idx}>
-            <SessionSkeleton />
-          </li>
-        ))}
-      </SessionListShell>
-    )
 
   return (
     <SessionListShell>

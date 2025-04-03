@@ -6,7 +6,7 @@ export function NavigateBackButton({ className }: { className?: string }) {
   // TODO: add more sophisticated logic with a 'from' search param
   return (
     <GhostButton
-      className={cn(className, 'shrink-0')}
+      className={cn(className, 'w-min shrink-0 whitespace-nowrap')}
       size='sm'
       onClick={() => history.back()}
     >

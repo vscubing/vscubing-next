@@ -41,7 +41,9 @@ export function ContestRowDesktop({
         {formatContestDuration(contest)}
       </span>
       <SecondaryButton asChild className='h-full'>
-        <Link href={`/contests/${contest.slug}?discipline=${discipline}`}>
+        <Link
+          href={`/contests/${contest.slug}/results?discipline=${discipline}`}
+        >
           view contest
         </Link>
       </SecondaryButton>

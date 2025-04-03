@@ -1,4 +1,3 @@
-import { LayoutSectionHeader } from '@/app/(main)/_layout/index'
 import {
   Dialog,
   DialogOverlay,
@@ -6,55 +5,62 @@ import {
   ExclamationCircleIcon,
   LoadingSpinner,
 } from '@/app/_components/ui'
-import { DisciplineSwitcher } from '@/app/_shared/discipline-switcher-client'
 import { HintSignInSection } from '@/app/_shared/HintSection'
 import {
   KeyMapDialogTrigger,
   KeyMapDialogContent,
 } from '@/app/_shared/KeyMapDialog'
-import { NavigateBackButton } from '@/app/_shared/NavigateBackButton'
-import { DEFAULT_DISCIPLINE, isDiscipline, type Discipline } from '@/app/_types'
-import { getContestUserCapabilities } from '@/server/api/routers/contest'
-import { CONTEST_UNAUTHORIZED_MESSAGE } from '@/shared'
-import { api } from '@/trpc/server'
+import { isDiscipline, type Discipline } from '@/app/_types'
+import { CONTEST_UNAUTHORIZED_MESSAGE, DISCIPLINES } from '@/shared'
 import { notFound } from 'next/navigation'
 import { redirect } from 'next/navigation'
 import { Suspense, type ReactNode } from 'react'
-import { SimulatorProvider } from './_simulator'
+import { SimulatorProvider } from './_components/simulator'
 import { SolveContestForm } from './_components'
-import { LayoutHeaderTitlePortal } from '@/app/(main)/_layout/layout-header'
 import Link from 'next/link'
+import { api } from '@/trpc/server'
+import { tryCatchTRPC } from '@/app/_utils/try-catch'
+import { LayoutSectionHeader } from '@/app/(main)/_layout'
+import { LayoutHeaderTitlePortal } from '@/app/(main)/_layout/layout-header'
+import { DisciplineSwitcher } from '@/app/_shared/discipline-switcher-client'
+import { NavigateBackButton } from '@/app/_shared/NavigateBackButton'
 
-export default async function SolveContestPage(props: {
+export default async function SolveContestPage({
+  searchParams,
+  params,
+}: {
   params: Promise<{ contestSlug: string }>
   searchParams: Promise<Record<string, string | string[] | undefined>>
   children: ReactNode
 }) {
-  const { contestSlug } = await props.params
-  const searchParams = await props.searchParams
-  const discipline = searchParams.discipline ?? DEFAULT_DISCIPLINE
+  const { discipline } = await searchParams
+  const { contestSlug } = await params
   if (!isDiscipline(discipline)) redirect(`/contests/${contestSlug}`)
 
-  const userCapabilities = await getContestUserCapabilities({
-    contestSlug,
-    discipline,
-  })
-  if (userCapabilities === 'CONTEST_NOT_FOUND') notFound()
-  if (userCapabilities === 'UNAUTHORIZED')
-    return <HintSignInSection description={CONTEST_UNAUTHORIZED_MESSAGE} />
-  if (userCapabilities === 'VIEW_RESULTS')
-    redirect(`/contests/${contestSlug}/results?discipline=${discipline}`)
+  return (
+    <PageShell discipline={discipline}>
+      <Suspense
+        key={discipline}
+        fallback={
+          <div className='flex h-full items-center justify-center'>
+            <LoadingSpinner size='lg' />
+          </div>
+        }
+      >
+        <PageContent contestSlug={contestSlug} discipline={discipline} />
+      </Suspense>
+    </PageShell>
+  )
+}
 
-  const contest = await api.contest.getContestMetaData({
-    contestSlug,
-  })
-
+function PageShell({
+  discipline,
+  children,
+}: {
+  discipline: Discipline
+  children: ReactNode
+}) {
   const title = 'Solve the ongoing contest'
-
-  // TODO: ongoing contest hint
-  // TODO: touch devices not supported hint
-  // await new Promise((res) => setTimeout(res, 2000))
-
   return (
     <section className='flex flex-1 flex-col gap-3'>
       <h1 className='title-h2 hidden text-secondary-20 lg:block'>{title}</h1>
@@ -63,8 +69,8 @@ export default async function SolveContestPage(props: {
       <LayoutSectionHeader>
         <div className='flex gap-3'>
           <DisciplineSwitcher
+            disciplines={DISCIPLINES}
             initialDiscipline={discipline}
-            disciplines={contest.disciplines}
           />
         </div>
         <div className='ml-10 flex flex-1 items-center gap-4'>
@@ -76,36 +82,53 @@ export default async function SolveContestPage(props: {
         </div>
       </LayoutSectionHeader>
 
-      <Suspense
-        key={discipline}
-        fallback={
-          <div className='flex flex-1 items-center justify-center rounded-2xl bg-black-80'>
-            <LoadingSpinner size='lg' />
-          </div>
-        }
-      >
-        <div className='relative flex flex-1 flex-col rounded-2xl bg-black-80 pb-8 pt-7 xl-short:pb-6 xl-short:pt-4'>
-          <Dialog>
-            <KeyMapDialogTrigger className='absolute right-4 top-4' />
-            <DialogPortal>
-              <DialogOverlay className='bg-black-1000/40' withCubes={false} />
-              <KeyMapDialogContent />
-            </DialogPortal>
-          </Dialog>
-
-          <p className='title-h2 mb-6 text-center text-secondary-20'>
-            {getSplashText({ contestSlug, discipline })}
-          </p>
-
-          <SimulatorProvider>
-            <SolveContestForm
-              contestSlug={contestSlug}
-              discipline={discipline}
-            />
-          </SimulatorProvider>
-        </div>
-      </Suspense>
+      <div className='flex-1 rounded-2xl bg-black-80'>{children}</div>
     </section>
+  )
+}
+
+async function PageContent({
+  contestSlug,
+  discipline,
+}: {
+  contestSlug: string
+  discipline: Discipline
+}) {
+  const { data: roundSessionState, error } = await tryCatchTRPC(
+    api.roundSession.state({ contestSlug, discipline }),
+  )
+  if (error?.code === 'NOT_FOUND') notFound()
+  if (error?.code === 'UNAUTHORIZED')
+    return <HintSignInSection description={CONTEST_UNAUTHORIZED_MESSAGE} />
+  if (error?.code === 'FORBIDDEN')
+    redirect(`/contests/${contestSlug}/results?discipline=${discipline}`)
+  if (error) throw error
+
+  // TODO: ongoing contest hint
+  // TODO: touch devices not supported hint
+
+  return (
+    <div className='relative flex h-full flex-col pb-8 pt-7 xl-short:pb-6 xl-short:pt-4'>
+      <Dialog>
+        <KeyMapDialogTrigger className='absolute right-4 top-4' />
+        <DialogPortal>
+          <DialogOverlay className='bg-black-1000/40' withCubes={false} />
+          <KeyMapDialogContent />
+        </DialogPortal>
+      </Dialog>
+
+      <p className='title-h2 mb-6 text-center text-secondary-20'>
+        {getSplashText({ contestSlug, discipline })}
+      </p>
+
+      <SimulatorProvider>
+        <SolveContestForm
+          initialData={roundSessionState}
+          contestSlug={contestSlug}
+          discipline={discipline}
+        />
+      </SimulatorProvider>
+    </div>
   )
 }
 

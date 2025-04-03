@@ -4,23 +4,26 @@ import type { Discipline } from '@/app/_types'
 import { CurrentSolve } from './current-solve'
 import { Progress } from './progress'
 import { SolvePanel } from './solve-panel'
-import { useTRPC } from '@/trpc/react'
+import { useTRPC, type RouterOutputs } from '@/trpc/react'
 import {
   useMutation,
   useQueryClient,
   useSuspenseQuery,
 } from '@tanstack/react-query'
 import { redirect, RedirectType } from 'next/navigation'
-import { useSimulator } from '../_simulator'
+import { useSimulator } from './simulator'
 import { useLocalStorage } from 'usehooks-ts'
 import { toast, type Toast } from '@/app/_components/ui'
+import { TRPCError } from '@trpc/server'
 
 export function SolveContestForm({
   contestSlug,
   discipline,
+  initialData,
 }: {
   contestSlug: string
   discipline: Discipline
+  initialData: RouterOutputs['roundSession']['state']
 }) {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
@@ -34,7 +37,11 @@ export function SolveContestForm({
       contestSlug,
       discipline,
     },
-    { retry: (_, err) => err.data?.code !== 'FORBIDDEN' },
+    {
+      retry: (_, err) =>
+        err.data?.code !== 'FORBIDDEN' && err.data?.code !== 'UNAUTHORIZED', // TODO: why does removing unauthorized result in server errors
+      initialData,
+    },
   )
   const {
     data: state,
@@ -46,8 +53,9 @@ export function SolveContestForm({
       `/contests/${contestSlug}/results?discipline=${discipline}`,
       RedirectType.replace,
     )
-  // eslint-disable-next-line @typescript-eslint/only-throw-error
-  if (error) throw error
+
+  if (error)
+    throw new TRPCError({ message: error.message, code: error.data!.code })
 
   const { mutate: postSolveResult, isPending: isPostSolvePending } =
     useMutation(
