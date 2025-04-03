@@ -19,7 +19,7 @@ export async function getContestUserCapabilities({
   const [contest] = await db
     .select({ isOngoing: contestTable.isOngoing })
     .from(contestTable)
-    .fullJoin(
+    .innerJoin(
       contestDisciplineTable,
       eq(contestDisciplineTable.contestSlug, contestTable.slug),
     )

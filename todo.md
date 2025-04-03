@@ -52,8 +52,11 @@
 - [x] solve validation
 - [x] only show finished sessions in results
 - [x] move the header to layout
-- [ ] loading.tsx
-- [ ] unauthorized?? /round-session/state
+- [x] loading.tsx
+- [x] unauthorized?? /round-session/state
+- [ ] single-leaderboard
+    - [x] server route
+    - [ ] ui
 
 ci/cd:
 - [ ] reset the droplet and setup docker credentials
@@ -84,3 +87,4 @@ nicities:
 - [ ] cleanup (posts)
 - [ ] refactor file structure (shared/ui/components)
 - [ ] "you have X unapplied migrations"
+- [ ] pagination everywhere
