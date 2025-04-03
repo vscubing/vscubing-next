@@ -1,9 +1,4 @@
-import {
-  castDiscipline,
-  DEFAULT_DISCIPLINE,
-  isDiscipline,
-  type Discipline,
-} from '@/app/_types'
+import { DEFAULT_DISCIPLINE, isDiscipline, type Discipline } from '@/app/_types'
 import { api } from '@/trpc/server'
 import { DisciplineSwitcher } from '@/app/_shared/discipline-switcher-client'
 import { NavigateBackButton } from '@/app/_shared/NavigateBackButton'

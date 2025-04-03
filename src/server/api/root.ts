@@ -2,7 +2,8 @@ import { postRouter } from '@/server/api/routers/post'
 import { createCallerFactory, createTRPCRouter } from '@/server/api/trpc'
 import { contestRouter } from './routers/contest'
 import { userRouter } from './routers/user'
-import { roundSession } from './routers/round-session'
+import { roundSessionRouter } from './routers/round-session'
+import { leaderboardRouter } from './routers/leaderboard'
 
 /**
  * This is the primary router for your server.
@@ -13,7 +14,8 @@ export const appRouter = createTRPCRouter({
   user: userRouter,
   post: postRouter,
   contest: contestRouter,
-  roundSession,
+  roundSession: roundSessionRouter,
+  leaderboard: leaderboardRouter,
 })
 
 // export type definition of API

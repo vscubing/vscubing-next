@@ -96,7 +96,7 @@ export const roundSessionAuthProcedure = protectedProcedure
     return next({ ctx: { roundSession: createdRoundSession } })
   })
 
-export const roundSession = createTRPCRouter({
+export const roundSessionRouter = createTRPCRouter({
   state: roundSessionAuthProcedure.query(async ({ ctx }) => {
     const allRows = await ctx.db
       .select({

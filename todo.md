@@ -56,7 +56,9 @@
 - [x] unauthorized?? /round-session/state
 - [ ] single-leaderboard
     - [x] server route
-    - [ ] ui
+    - [x] ui
+    - [ ] fix 2by2
+    - [ ] fix accordions and matchMedia
 
 ci/cd:
 - [ ] reset the droplet and setup docker credentials
@@ -88,3 +90,4 @@ nicities:
 - [ ] refactor file structure (shared/ui/components)
 - [ ] "you have X unapplied migrations"
 - [ ] pagination everywhere
+- [ ] rename roundsession to average

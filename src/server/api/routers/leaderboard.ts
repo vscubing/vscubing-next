@@ -3,13 +3,14 @@ import { z } from 'zod'
 import { createTRPCRouter, publicProcedure } from '../trpc'
 import {
   contestDisciplineTable,
+  contestTable,
   roundSessionTable,
   solveTable,
   userTable,
 } from '@/server/db/schema'
 import { and, eq, isNotNull } from 'drizzle-orm'
 
-export const contestRouter = createTRPCRouter({
+export const leaderboardRouter = createTRPCRouter({
   bySingle: publicProcedure
     .input(
       z.object({
@@ -32,26 +33,33 @@ export const contestRouter = createTRPCRouter({
           contestDisciplineTable,
           eq(contestDisciplineTable.id, roundSessionTable.contestDisciplineId),
         )
+        .innerJoin(
+          contestTable,
+          eq(contestTable.slug, contestDisciplineTable.contestSlug),
+        )
         .innerJoin(userTable, eq(userTable.id, roundSessionTable.contestantId))
         .where(
           and(
             eq(solveTable.isDnf, false),
             isNotNull(solveTable.timeMs),
             eq(contestDisciplineTable.disciplineSlug, input.discipline),
+            eq(contestTable.isOngoing, false),
           ),
         )
         .orderBy(userTable.id, solveTable.timeMs)
         .as('sq')
 
-      return ctx.db
+      const rows = await ctx.db
         .select({
           id: bestSolveByUserUnsorted.id,
           timeMs: solveTable.timeMs,
           createdAt: solveTable.createdAt,
-          contestantId: userTable.id,
+          nickname: userTable.name,
+          userId: userTable.id,
           contestSlug: contestDisciplineTable.contestSlug,
         })
         .from(bestSolveByUserUnsorted)
+        .innerJoin(solveTable, eq(solveTable.id, bestSolveByUserUnsorted.id))
         .innerJoin(
           roundSessionTable,
           eq(roundSessionTable.id, solveTable.roundSessionId),
@@ -62,5 +70,11 @@ export const contestRouter = createTRPCRouter({
         )
         .innerJoin(userTable, eq(userTable.id, roundSessionTable.contestantId))
         .orderBy(solveTable.timeMs)
+
+      return rows.map((row) => ({
+        ...row,
+        timeMs: row.timeMs!, // manually cast timeMs as non nullable because drizzle doesn't pick up on `isNotNull` in the query
+        isOwn: ctx.session?.user?.id === row.userId,
+      }))
     }),
 })
