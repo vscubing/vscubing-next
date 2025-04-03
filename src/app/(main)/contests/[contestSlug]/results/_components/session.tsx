@@ -1,5 +1,3 @@
-'use client'
-
 import {
   DisciplineIcon,
   Ellipsis,
@@ -7,7 +5,6 @@ import {
   MinusIcon,
 } from '@/app/_components/ui'
 import { cn } from '@/app/_utils/cn'
-import { useMemo } from 'react'
 import * as Accordion from '@radix-ui/react-accordion'
 import { ExtraLabel } from '@/app/_shared/ExtraLabel'
 import { PlaceLabel } from '@/app/_shared/PlaceLabel'
@@ -45,10 +42,8 @@ function SessionTablet({
 }: SessionProps & { className: string }) {
   const currentUserLabel = isOwn ? ' (you)' : ''
 
-  const { bestId, worstId } = useMemo(
-    () => getBestAndWorstIds(solves),
-    [solves],
-  )
+  const { bestId, worstId } = getBestAndWorstIds(solves)
+
   return (
     <Accordion.Root type='single' collapsible className={className}>
       <Accordion.Item
@@ -127,10 +122,8 @@ function SessionDesktop({
 }: SessionProps & { className: string }) {
   const currentUserLabel = isOwn ? ' (you)' : ''
 
-  const { bestId, worstId } = useMemo(
-    () => getBestAndWorstIds(solves),
-    [solves],
-  )
+  const { bestId, worstId } = getBestAndWorstIds(solves)
+
   return (
     <div
       className={cn(

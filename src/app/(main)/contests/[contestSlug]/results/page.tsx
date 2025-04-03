@@ -1,16 +1,15 @@
-import { DEFAULT_DISCIPLINE, isDiscipline, type Discipline } from '@/app/_types'
-import { api, HydrateClient } from '@/trpc/server'
-import { redirect } from 'next/navigation'
-import { SectionHeader } from '@/app/(main)/_layout/index'
+import { castDiscipline } from '@/app/_types'
+import { api } from '@/trpc/server'
 import { DisciplineSwitcher } from '@/app/_shared/discipline-switcher-client'
 import { NavigateBackButton } from '@/app/_shared/NavigateBackButton'
 import { PageTitleMobile } from '@/app/_shared/PageTitleMobile'
-import { Suspense, type ReactNode } from 'react'
-import { tryCatchTRPC } from '@/app/_utils/try-catch'
-import { HintSection, HintSignInSection } from '@/app/_shared/HintSection'
-import { Session, SessionSkeleton } from './_components/session'
-import { CONTEST_UNAUTHORIZED_MESSAGE } from '@/shared'
 import { LayoutHeaderTitlePortal } from '@/app/(main)/_layout/layout-header'
+import { tryCatchTRPC } from '@/app/_utils/try-catch'
+import { redirect } from 'next/navigation'
+import { HintSignInSection } from '@/app/_shared/HintSection'
+import { CONTEST_UNAUTHORIZED_MESSAGE } from '@/shared'
+import { SessionList } from './_components/session-list'
+import { LayoutSectionHeader } from '@/app/(main)/_layout'
 
 export default async function ContestResultsPage({
   params,
@@ -20,61 +19,10 @@ export default async function ContestResultsPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
   const { contestSlug } = await params
-  const awaitedSearch = await searchParams
-  const discipline = awaitedSearch.discipline ?? DEFAULT_DISCIPLINE
-  if (!isDiscipline(discipline)) redirect(`/contests/${contestSlug}`)
-
-  const contest = await api.contest.getContestMetaData({ contestSlug })
-
-  let title = ''
-  if (contest.isOngoing) {
-    title = 'Check out the preliminary results'
-  } else {
-    title = 'Look through the contest results'
-  }
-
-  return (
-    <HydrateClient>
-      <PageTitleMobile>{title}</PageTitleMobile>
-      <LayoutHeaderTitlePortal>{title}</LayoutHeaderTitlePortal>
-      <NavigateBackButton className='self-start' />
-      <SectionHeader>
-        <DisciplineSwitcher
-          disciplines={contest.disciplines}
-          initialDiscipline={discipline}
-        />
-      </SectionHeader>
-      <Suspense
-        key={discipline}
-        fallback={
-          <SessionListWrapper>
-            {Array.from({ length: 20 }).map((_, idx) => (
-              <li key={idx}>
-                <SessionSkeleton />
-              </li>
-            ))}
-          </SessionListWrapper>
-        }
-      >
-        <PageContent contestSlug={contestSlug} discipline={discipline} />
-      </Suspense>
-    </HydrateClient>
+  const { data: contest, error } = await tryCatchTRPC(
+    api.contest.getContestMetaData({ contestSlug }),
   )
-}
-
-async function PageContent({
-  contestSlug,
-  discipline,
-}: {
-  contestSlug: string
-  discipline: Discipline
-}) {
-  const { data: sessions, error } = await tryCatchTRPC(
-    api.contest.getContestResults({
-      contestSlug,
-      discipline,
-    }),
-  )
+  const discipline = castDiscipline((await searchParams).discipline)
 
   if (error?.code === 'UNAUTHORIZED')
     return <HintSignInSection description={CONTEST_UNAUTHORIZED_MESSAGE} />
@@ -84,51 +32,25 @@ async function PageContent({
 
   if (error) throw error
 
-  if (sessions.items?.length === 0) {
-    return (
-      <HintSection>
-        <p>It seems no one participated in this round</p>
-      </HintSection>
-    )
+  let title = ''
+  if (contest.isOngoing) {
+    title = 'Check out the preliminary results'
+  } else {
+    title = 'Look through the contest results'
   }
-
   return (
-    <SessionListWrapper>
-      {/* <HydrateClient> */}
-
-      {/* TODO: pagination */}
-      {sessions.items.map((session, idx) => (
-        <Session
-          {...session}
-          contestSlug={contestSlug}
-          discipline={discipline}
-          isFirstOnPage={idx === 0}
-          place={idx + 1}
-          key={session.id}
+    <>
+      <PageTitleMobile>{title}</PageTitleMobile>
+      <LayoutHeaderTitlePortal>{title}</LayoutHeaderTitlePortal>
+      <NavigateBackButton className='self-start' />
+      <LayoutSectionHeader>
+        <DisciplineSwitcher
+          disciplines={contest.disciplines}
+          initialDiscipline={discipline}
         />
-      ))}
+      </LayoutSectionHeader>
 
-      {/* </HydrateClient> */}
-    </SessionListWrapper>
-  )
-}
-
-function SessionListWrapper({ children }: { children: ReactNode }) {
-  return (
-    <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 sm:p-3'>
-      <div className='flex whitespace-nowrap px-2 text-grey-40 md:hidden'>
-        <span className='mr-2 w-11 text-center'>Place</span>
-        <span className='mr-2'>Type</span>
-        <span className='flex-1'>Nickname</span>
-        <span className='mr-4 w-24 text-center'>Average time</span>
-        {Array.from({ length: 5 }, (_, index) => (
-          <span key={index} className='mr-2 w-24 text-center last:mr-0'>
-            Attempt {index + 1}
-          </span>
-        ))}
-      </div>
-
-      <ul className='flex flex-1 flex-col gap-2'>{children}</ul>
-    </div>
+      <SessionList contestSlug={contestSlug} discipline={discipline} />
+    </>
   )
 }

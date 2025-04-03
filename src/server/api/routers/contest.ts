@@ -15,14 +15,11 @@ import { eq, desc, and, lt } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
 import {
   resultDnfish,
-  SCRAMBLE_POSITIONS,
   type Discipline,
   type ContestResultRoundSession,
 } from '@/app/_types'
 import { groupBy } from '@/app/_utils/groupBy'
 import { db } from '@/server/db'
-import dayjs from 'dayjs'
-import { generateScrambles } from '@/server/internal/generate-scrambles'
 import { auth } from '@/server/auth'
 import { sortWithRespectToExtras } from './sort-with-respect-to-extras'
 

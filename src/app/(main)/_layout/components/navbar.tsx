@@ -15,6 +15,7 @@ import {
   AllContestsIcon,
   OngoingContestIcon,
 } from '@/app/_components/ui'
+import { DEFAULT_DISCIPLINE } from '@/app/_types'
 
 type NavbarProps = {
   variant: 'vertical' | 'horizontal'
@@ -41,16 +42,16 @@ export function Navbar({ variant }: NavbarProps) {
   if (variant === 'vertical') {
     return (
       <nav className='flex flex-col gap-4 sm:gap-0'>
-        {navbarLinks.map(({ children, href }) => (
+        {navbarLinks.map(({ children, href, route }) => (
           <Link
-            key={href}
-            href={href as Route}
-            onClick={() => handleRouteChange(href)}
+            key={href ?? route}
+            href={(href ?? route) as Route}
+            onClick={() => handleRouteChange(route)}
             className={cn(
               'title-h3 after-border-bottom transition-base outline-ring flex items-center gap-4 px-4 py-2 text-grey-20 after:origin-[0%_50%] after:bg-primary-80 hover:text-primary-60 active:text-primary-80 sm:gap-3 sm:p-3',
               {
                 'text-primary-80 after:h-[1.5px] after:scale-x-100 hover:text-primary-80':
-                  activeRoute === href,
+                  activeRoute === route,
               },
             )}
           >
@@ -64,14 +65,16 @@ export function Navbar({ variant }: NavbarProps) {
   if (variant === 'horizontal') {
     return (
       <nav className='flex justify-between gap-2 overflow-y-auto px-1 py-2'>
-        {navbarLinks.map(({ children, href }) => (
+        {navbarLinks.map(({ children, route, href }) => (
           <Link
-            key={href}
-            href={href as Route}
-            onClick={() => handleRouteChange(href)}
+            key={href ?? route}
+            href={(href ?? route) as Route}
+            onClick={() => handleRouteChange(route)}
             className={cn(
               'caption-sm transition-base flex min-w-[4.625rem] flex-col items-center gap-1 whitespace-nowrap px-1 text-grey-20 active:text-primary-80',
-              { 'text-primary-80 hover:text-primary-80': activeRoute === href },
+              {
+                'text-primary-80 hover:text-primary-80': activeRoute === route,
+              },
             )}
           >
             {children}
@@ -88,9 +91,11 @@ function parsePathname(
 ): NavbarRoute | undefined {
   if (pathname === '/') return '/'
   if (pathname.startsWith('/leaderboard')) return '/leaderboard'
+
+  if (!ongoingContestSlug) return undefined
   if (pathname.startsWith('/contests')) {
     if (
-      ongoingContestSlug &&
+      pathname === '/contests/ongoing' ||
       removePrefix(pathname, '/contests/').startsWith(ongoingContestSlug)
     ) {
       return '/contests/ongoing'
@@ -108,7 +113,7 @@ const navbarLinks = [
         <span>Dashboard</span>
       </>
     ),
-    href: '/',
+    route: '/',
   },
   {
     children: (
@@ -117,7 +122,7 @@ const navbarLinks = [
         <span>Leaderboard</span>
       </>
     ),
-    href: '/leaderboard',
+    route: '/leaderboard',
   },
   {
     children: (
@@ -126,7 +131,8 @@ const navbarLinks = [
         <span>Past contests</span>
       </>
     ),
-    href: '/contests',
+    route: '/contests',
+    href: `/contests?discipline=${DEFAULT_DISCIPLINE}`,
   },
   {
     children: (
@@ -135,9 +141,9 @@ const navbarLinks = [
         <span>Ongoing contest</span>
       </>
     ),
-    href: `/contests/ongoing`,
+    route: '/contests/ongoing',
   },
-] satisfies { children: ReactNode; href: NavbarRoute }[]
+] satisfies { children: ReactNode; route: NavbarRoute; href?: string }[]
 
 // function useNavbar() {
 //   const { data: ongoing } = useOngoingContest();

@@ -1,6 +1,6 @@
 import { HydrateClient } from '@/trpc/server'
 import { SecondaryButton } from '@/app/_components/ui'
-import { SectionHeader } from '@/app/(main)/_layout/index'
+import { LayoutSectionHeader } from '@/app/(main)/_layout/index'
 import { Suspense, type ReactNode } from 'react'
 import {
   DEFAULT_DISCIPLINE,
@@ -17,9 +17,9 @@ import {
   ContestRowSkeletonDesktop,
   ContestRowSkeletonMobile,
 } from './_components/contest'
-import { DisciplineSwitcher } from '../../_shared/discipline-switcher-client'
+import { DisciplineSwitcher } from '../../../_shared/discipline-switcher-client'
 import ContestList from './_components/contest-list-client'
-import { LayoutHeaderTitlePortal } from '../_layout/layout-header'
+import { LayoutHeaderTitlePortal } from '../../_layout/layout-header'
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>
 export default async function ContestsIndexPage(props: {
@@ -37,12 +37,12 @@ export default async function ContestsIndexPage(props: {
       <LayoutHeaderTitlePortal>{title}</LayoutHeaderTitlePortal>
       <PageTitleMobile>{title}</PageTitleMobile>
       <NavigateBackButton className='self-start' />
-      <SectionHeader>
+      <LayoutSectionHeader>
         <DisciplineSwitcher
           disciplines={DISCIPLINES}
           initialDiscipline={discipline}
         />
-      </SectionHeader>
+      </LayoutSectionHeader>
       <Suspense
         key={discipline}
         fallback={

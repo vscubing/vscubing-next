@@ -9,15 +9,21 @@ const spinnerVariants = cva(
   },
 )
 
-type LoadingSpinnerProps = { isVisible?: boolean } & VariantProps<
-  typeof spinnerVariants
->
+type LoadingSpinnerProps = {
+  isVisible?: boolean
+  className?: string
+} & VariantProps<typeof spinnerVariants>
 export function LoadingSpinner({
   isVisible = true,
   size,
+  className,
 }: LoadingSpinnerProps) {
   return (
-    <div className={cn(spinnerVariants({ size }), { hidden: !isVisible })}>
+    <div
+      className={cn(spinnerVariants({ size, className }), {
+        hidden: !isVisible,
+      })}
+    >
       <span className='absolute h-full w-full animate-[spinner-rotation_2s_ease-in-out_infinite] rounded-lg border-[3px] border-solid border-primary-100'></span>
       <span className='absolute h-full w-full animate-[spinner-rotation_2s_ease-in-out_infinite_1s] rounded-lg border border-solid border-secondary-20'></span>
     </div>

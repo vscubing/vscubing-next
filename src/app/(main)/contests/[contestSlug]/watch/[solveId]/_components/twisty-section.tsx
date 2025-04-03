@@ -16,7 +16,7 @@ import { cn } from '@/app/_utils/cn'
 import type { Discipline } from '@/app/_types'
 import { useMatchesScreen } from '@/app/_utils/tailwind'
 
-export default function TwistySection({
+export function TwistySection({
   scramble,
   solution,
   discipline,

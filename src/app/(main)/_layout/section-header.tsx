@@ -2,7 +2,10 @@ import { type ReactNode } from 'react'
 import { cn } from '@/app/_utils/cn'
 
 type SectionHeaderProps = { children: ReactNode; className?: string }
-export function SectionHeader({ children, className }: SectionHeaderProps) {
+export function LayoutSectionHeader({
+  children,
+  className,
+}: SectionHeaderProps) {
   return (
     <div
       className={cn(

@@ -1,4 +1,4 @@
-import { type Discipline } from '@/app/_types'
+import { DEFAULT_DISCIPLINE, type Discipline } from '@/app/_types'
 import { DisciplineIcon, SecondaryButton } from '@/app/_components/ui'
 import type { contestTable } from '@/server/db/schema'
 import { formatContestDuration } from '@/app/_utils/formatDate'
@@ -41,12 +41,7 @@ export function ContestRowDesktop({
         {formatContestDuration(contest)}
       </span>
       <SecondaryButton asChild className='h-full'>
-        <Link
-          href={{
-            pathname: `/contests/${contest.slug}`,
-            query: { discipline },
-          }}
-        >
+        <Link href={`/contests/${contest.slug}?discipline=${discipline}`}>
           view contest
         </Link>
       </SecondaryButton>

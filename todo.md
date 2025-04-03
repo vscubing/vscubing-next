@@ -52,7 +52,8 @@
 - [x] solve validation
 - [x] only show finished sessions in results
 - [x] move the header to layout
-- [ ] loading.tsx for solve contest page
+- [ ] loading.tsx
+- [ ] unauthorized?? /round-session/state
 
 ci/cd:
 - [ ] reset the droplet and setup docker credentials

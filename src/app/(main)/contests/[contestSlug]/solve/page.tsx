@@ -1,4 +1,4 @@
-import { SectionHeader } from '@/app/(main)/_layout/index'
+import { LayoutSectionHeader } from '@/app/(main)/_layout/index'
 import {
   Dialog,
   DialogOverlay,
@@ -53,13 +53,14 @@ export default async function SolveContestPage(props: {
 
   // TODO: ongoing contest hint
   // TODO: touch devices not supported hint
+  // await new Promise((res) => setTimeout(res, 2000))
 
   return (
     <section className='flex flex-1 flex-col gap-3'>
       <h1 className='title-h2 hidden text-secondary-20 lg:block'>{title}</h1>
       <LayoutHeaderTitlePortal>{title}</LayoutHeaderTitlePortal>
       <NavigateBackButton className='self-start' />
-      <SectionHeader>
+      <LayoutSectionHeader>
         <div className='flex gap-3'>
           <DisciplineSwitcher
             initialDiscipline={discipline}
@@ -73,36 +74,37 @@ export default async function SolveContestPage(props: {
             all scrambles or the round ends
           </p>
         </div>
-      </SectionHeader>
+      </LayoutSectionHeader>
 
-      <div className='relative flex flex-1 flex-col rounded-2xl bg-black-80 pb-8 pt-7 xl-short:pb-6 xl-short:pt-4'>
-        <Dialog>
-          <KeyMapDialogTrigger className='absolute right-4 top-4' />
-          <DialogPortal>
-            <DialogOverlay className='bg-black-1000/40' withCubes={false} />
-            <KeyMapDialogContent />
-          </DialogPortal>
-        </Dialog>
+      <Suspense
+        key={discipline}
+        fallback={
+          <div className='flex flex-1 items-center justify-center rounded-2xl bg-black-80'>
+            <LoadingSpinner size='lg' />
+          </div>
+        }
+      >
+        <div className='relative flex flex-1 flex-col rounded-2xl bg-black-80 pb-8 pt-7 xl-short:pb-6 xl-short:pt-4'>
+          <Dialog>
+            <KeyMapDialogTrigger className='absolute right-4 top-4' />
+            <DialogPortal>
+              <DialogOverlay className='bg-black-1000/40' withCubes={false} />
+              <KeyMapDialogContent />
+            </DialogPortal>
+          </Dialog>
 
-        <p className='title-h2 mb-6 text-center text-secondary-20'>
-          {getSplashText({ contestSlug, discipline })}
-        </p>
-        <Suspense
-          key={discipline}
-          fallback={
-            <div className='flex flex-1 items-center justify-center'>
-              <LoadingSpinner />
-            </div>
-          }
-        >
+          <p className='title-h2 mb-6 text-center text-secondary-20'>
+            {getSplashText({ contestSlug, discipline })}
+          </p>
+
           <SimulatorProvider>
             <SolveContestForm
               contestSlug={contestSlug}
               discipline={discipline}
             />
           </SimulatorProvider>
-        </Suspense>
-      </div>
+        </div>
+      </Suspense>
     </section>
   )
 }

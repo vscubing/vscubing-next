@@ -10,11 +10,12 @@ export function DisciplineSwitcher({
   initialDiscipline,
   disciplines,
 }: {
-  initialDiscipline: Discipline
+  initialDiscipline?: Discipline
   disciplines: Readonly<Discipline[]>
 }) {
-  const [currentDiscipline, setCurrentDiscipline] =
-    useState<Discipline>(initialDiscipline)
+  const [currentDiscipline, setCurrentDiscipline] = useState<
+    Discipline | undefined
+  >(initialDiscipline)
 
   const pathname = usePathname()
   const searchParams = useSearchParams()
