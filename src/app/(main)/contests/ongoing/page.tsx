@@ -2,6 +2,8 @@ import { redirect } from 'next/navigation'
 import { api } from '@/trpc/server'
 import { castDiscipline } from '@/app/_types'
 
+export const runtime = 'edge'
+
 export default async function OngoingContestRedirectPage({
   searchParams,
 }: {

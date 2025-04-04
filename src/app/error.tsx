@@ -28,6 +28,7 @@ export default function Error({
                 Technical glitch detected
               </p>
               <p className='text-large mb-8'>{error.message}</p>
+              <p className='text-large mb-8'>Digest: {error.digest}</p>
               <PrimaryButton
                 className='sm:w-full'
                 size={isSmScreen ? 'sm' : 'lg'}

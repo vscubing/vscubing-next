@@ -39,7 +39,7 @@ export function useTwistySimulator({
     useLocalStorage<TwistySimulatorCameraPosition>('vs-camera-pos', {
       theta: 0,
       phi: 6,
-    }) // TODO: add debounce
+    }) // TODO: add debounce + persist to settings
   const [puzzle, setPuzzle] = useState<TwistySimulatorPuzzle | undefined>()
 
   useEffect(() => {
