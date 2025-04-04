@@ -65,7 +65,12 @@ class Puzzle {
 
 var prevParents = []
 
-export async function init(options, moveListener, cameraPositionListener, parentNativeElem) {
+export async function init(
+  options,
+  moveListener,
+  cameraPositionListener,
+  parentNativeElem,
+) {
   kernel.props.vrcSpeed = options.animationDuration
   var parent = $(parentNativeElem)
   // if (window.twistyjs == undefined) {
@@ -176,15 +181,24 @@ const kernel = {
         col[i] = Math.min(Math.max(col[i], 0), 255)
         col[i] = Math.round(col[i] / 17).toString(16)
       }
-      return '#' + (longFormat ? col[0] + col[0] + col[1] + col[1] + col[2] + col[2] : col[0] + col[1] + col[2])
+      return (
+        '#' +
+        (longFormat
+          ? col[0] + col[0] + col[1] + col[1] + col[2] + col[2]
+          : col[0] + col[1] + col[2])
+      )
     },
   },
 
   parseScramble(scramble, moveMap, addPreScr) {
-    const scrambleReg = /^([\d]+(?:-\d+)?)?([FRUBLDfrubldzxySME])(?:([w])|&sup([\d]);)?([2'])?$/
+    const scrambleReg =
+      /^([\d]+(?:-\d+)?)?([FRUBLDfrubldzxySME])(?:([w])|&sup([\d]);)?([2'])?$/
     scramble = scramble || ''
     if (addPreScr) {
-      scramble = getProp(tools.isCurTrainScramble() ? 'preScrT' : 'preScr') + ' ' + scramble
+      scramble =
+        getProp(tools.isCurTrainScramble() ? 'preScrT' : 'preScr') +
+        ' ' +
+        scramble
     }
     var moveseq = []
     var moves = scramble.split(' ')

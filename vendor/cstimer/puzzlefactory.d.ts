@@ -7,7 +7,11 @@ export function init(
   parent,
 ): Promise<Puzzle>
 
-export type MoveListener = (move: CsMove, mstep: Mstep, timestamp: number) => void
+export type MoveListener = (
+  move: CsMove,
+  mstep: Mstep,
+  timestamp: number,
+) => void
 type CameraPositionListener = (pos: CameraPosition) => void
 type Options = {
   puzzle: 'cube2' | 'cube3'
@@ -20,7 +24,11 @@ export class Puzzle {
   keydown(args): unknown
   resize(): unknown
   addMoves(args): unknown
-  applyMoves(args, timestamp: number | undefined, applyingScramble: boolean): unknown
+  applyMoves(
+    args,
+    timestamp: number | undefined,
+    applyingScramble: boolean,
+  ): unknown
   setCameraPosition(position: CameraPosition): void
   addMoveListener(listener): unknown
   getDomElement(): unknown

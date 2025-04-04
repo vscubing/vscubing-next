@@ -74,7 +74,8 @@ THREE.Color.prototype = {
     this.setRGB(r, g, b)
   },
   updateHex: function () {
-    this.hex = (~~(this.r * 255) << 16) ^ (~~(this.g * 255) << 8) ^ ~~(this.b * 255)
+    this.hex =
+      (~~(this.r * 255) << 16) ^ (~~(this.g * 255) << 8) ^ ~~(this.b * 255)
   },
   updateRGB: function () {
     this.r = ((this.hex >> 16) & 255) / 255
@@ -262,7 +263,11 @@ THREE.Vector3.prototype = {
     return this
   },
   crossSelf: function (v) {
-    return this.set(this.y * v.z - this.z * v.y, this.z * v.x - this.x * v.z, this.x * v.y - this.y * v.x)
+    return this.set(
+      this.y * v.z - this.z * v.y,
+      this.z * v.x - this.x * v.z,
+      this.x * v.y - this.y * v.x,
+    )
   },
   distanceTo: function (v) {
     return Math.sqrt(this.distanceToSquared(v))
@@ -390,7 +395,8 @@ THREE.Ray.prototype = {
       l,
       object,
       intersects = []
-    for (i = 0, l = objects.length; i < l; i++) intersects = intersects.concat(this.intersectObject(objects[i]))
+    for (i = 0, l = objects.length; i < l; i++)
+      intersects = intersects.concat(this.intersectObject(objects[i]))
     intersects.sort(function (a, b) {
       return a.distance - b.distance
     })
@@ -398,7 +404,11 @@ THREE.Ray.prototype = {
   },
   intersectObject: function (object) {
     if (object instanceof THREE.Particle) {
-      var distance = distanceFromIntersection(this.origin, this.direction, object)
+      var distance = distanceFromIntersection(
+        this.origin,
+        this.direction,
+        object,
+      )
       if (!distance || distance > object.scale.x) return []
       return [
         {
@@ -409,11 +419,16 @@ THREE.Ray.prototype = {
         },
       ]
     } else if (object instanceof THREE.Mesh) {
-      var distance = distanceFromIntersection(this.origin, this.direction, object)
+      var distance = distanceFromIntersection(
+        this.origin,
+        this.direction,
+        object,
+      )
       if (
         !distance ||
         distance >
-          object.geometry.boundingSphere.radius * Math.max(object.scale.x, Math.max(object.scale.y, object.scale.z))
+          object.geometry.boundingSphere.radius *
+            Math.max(object.scale.x, Math.max(object.scale.y, object.scale.z))
       )
         return []
       var f,
@@ -442,7 +457,10 @@ THREE.Ray.prototype = {
         a = objMatrix.multiplyVector3(vertices[face.a].position.clone())
         b = objMatrix.multiplyVector3(vertices[face.b].position.clone())
         c = objMatrix.multiplyVector3(vertices[face.c].position.clone())
-        d = face instanceof THREE.Face4 ? objMatrix.multiplyVector3(vertices[face.d].position.clone()) : null
+        d =
+          face instanceof THREE.Face4
+            ? objMatrix.multiplyVector3(vertices[face.d].position.clone())
+            : null
         normal = object.matrixRotationWorld.multiplyVector3(face.normal.clone())
         dot = direction.dot(normal)
         if (object.doubleSided || (object.flipSided ? dot > 0 : dot < 0)) {
@@ -459,7 +477,10 @@ THREE.Ray.prototype = {
               intersects.push(intersect)
             }
           } else if (face instanceof THREE.Face4)
-            if (pointInFace3(intersectPoint, a, b, d) || pointInFace3(intersectPoint, b, c, d)) {
+            if (
+              pointInFace3(intersectPoint, a, b, d) ||
+              pointInFace3(intersectPoint, b, c, d)
+            ) {
               intersect = {
                 distance: this.origin.distanceTo(intersectPoint),
                 point: intersectPoint,
@@ -716,7 +737,24 @@ THREE.Matrix3.prototype = {
     return this
   },
 }
-THREE.Matrix4 = function (n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44) {
+THREE.Matrix4 = function (
+  n11,
+  n12,
+  n13,
+  n14,
+  n21,
+  n22,
+  n23,
+  n24,
+  n31,
+  n32,
+  n33,
+  n34,
+  n41,
+  n42,
+  n43,
+  n44,
+) {
   this.set(
     n11 || 1,
     n12 || 0,
@@ -739,7 +777,24 @@ THREE.Matrix4 = function (n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33,
   this.m33 = new THREE.Matrix3()
 }
 THREE.Matrix4.prototype = {
-  set: function (n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44) {
+  set: function (
+    n11,
+    n12,
+    n13,
+    n14,
+    n21,
+    n22,
+    n23,
+    n24,
+    n31,
+    n32,
+    n33,
+    n34,
+    n41,
+    n42,
+    n43,
+    n44,
+  ) {
     this.n11 = n11
     this.n12 = n12
     this.n13 = n13
@@ -842,7 +897,9 @@ THREE.Matrix4.prototype = {
     v.x = this.n11 * a.x + this.n12 * a.y + this.n13 * a.z + this.n14 * a.w
     v.y = this.n21 * a.x + this.n22 * a.y + this.n23 * a.z + this.n24 * a.w
     v.z = this.n31 * a.x + this.n32 * a.y + this.n33 * a.z + this.n34 * a.w
-    v.w = a.w ? this.n41 * a.x + this.n42 * a.y + this.n43 * a.z + this.n44 * a.w : 1
+    v.w = a.w
+      ? this.n41 * a.x + this.n42 * a.y + this.n43 * a.z + this.n44 * a.w
+      : 1
     return v
   },
   multiply: function (a, b) {
@@ -1270,22 +1327,118 @@ THREE.Matrix4.makeInvert = function (m1, m2) {
     n43 = m1.n43,
     n44 = m1.n44
   if (m2 === undefined) m2 = new THREE.Matrix4()
-  m2.n11 = n23 * n34 * n42 - n24 * n33 * n42 + n24 * n32 * n43 - n22 * n34 * n43 - n23 * n32 * n44 + n22 * n33 * n44
-  m2.n12 = n14 * n33 * n42 - n13 * n34 * n42 - n14 * n32 * n43 + n12 * n34 * n43 + n13 * n32 * n44 - n12 * n33 * n44
-  m2.n13 = n13 * n24 * n42 - n14 * n23 * n42 + n14 * n22 * n43 - n12 * n24 * n43 - n13 * n22 * n44 + n12 * n23 * n44
-  m2.n14 = n14 * n23 * n32 - n13 * n24 * n32 - n14 * n22 * n33 + n12 * n24 * n33 + n13 * n22 * n34 - n12 * n23 * n34
-  m2.n21 = n24 * n33 * n41 - n23 * n34 * n41 - n24 * n31 * n43 + n21 * n34 * n43 + n23 * n31 * n44 - n21 * n33 * n44
-  m2.n22 = n13 * n34 * n41 - n14 * n33 * n41 + n14 * n31 * n43 - n11 * n34 * n43 - n13 * n31 * n44 + n11 * n33 * n44
-  m2.n23 = n14 * n23 * n41 - n13 * n24 * n41 - n14 * n21 * n43 + n11 * n24 * n43 + n13 * n21 * n44 - n11 * n23 * n44
-  m2.n24 = n13 * n24 * n31 - n14 * n23 * n31 + n14 * n21 * n33 - n11 * n24 * n33 - n13 * n21 * n34 + n11 * n23 * n34
-  m2.n31 = n22 * n34 * n41 - n24 * n32 * n41 + n24 * n31 * n42 - n21 * n34 * n42 - n22 * n31 * n44 + n21 * n32 * n44
-  m2.n32 = n14 * n32 * n41 - n12 * n34 * n41 - n14 * n31 * n42 + n11 * n34 * n42 + n12 * n31 * n44 - n11 * n32 * n44
-  m2.n33 = n13 * n24 * n41 - n14 * n22 * n41 + n14 * n21 * n42 - n11 * n24 * n42 - n12 * n21 * n44 + n11 * n22 * n44
-  m2.n34 = n14 * n22 * n31 - n12 * n24 * n31 - n14 * n21 * n32 + n11 * n24 * n32 + n12 * n21 * n34 - n11 * n22 * n34
-  m2.n41 = n23 * n32 * n41 - n22 * n33 * n41 - n23 * n31 * n42 + n21 * n33 * n42 + n22 * n31 * n43 - n21 * n32 * n43
-  m2.n42 = n12 * n33 * n41 - n13 * n32 * n41 + n13 * n31 * n42 - n11 * n33 * n42 - n12 * n31 * n43 + n11 * n32 * n43
-  m2.n43 = n13 * n22 * n41 - n12 * n23 * n41 - n13 * n21 * n42 + n11 * n23 * n42 + n12 * n21 * n43 - n11 * n22 * n43
-  m2.n44 = n12 * n23 * n31 - n13 * n22 * n31 + n13 * n21 * n32 - n11 * n23 * n32 - n12 * n21 * n33 + n11 * n22 * n33
+  m2.n11 =
+    n23 * n34 * n42 -
+    n24 * n33 * n42 +
+    n24 * n32 * n43 -
+    n22 * n34 * n43 -
+    n23 * n32 * n44 +
+    n22 * n33 * n44
+  m2.n12 =
+    n14 * n33 * n42 -
+    n13 * n34 * n42 -
+    n14 * n32 * n43 +
+    n12 * n34 * n43 +
+    n13 * n32 * n44 -
+    n12 * n33 * n44
+  m2.n13 =
+    n13 * n24 * n42 -
+    n14 * n23 * n42 +
+    n14 * n22 * n43 -
+    n12 * n24 * n43 -
+    n13 * n22 * n44 +
+    n12 * n23 * n44
+  m2.n14 =
+    n14 * n23 * n32 -
+    n13 * n24 * n32 -
+    n14 * n22 * n33 +
+    n12 * n24 * n33 +
+    n13 * n22 * n34 -
+    n12 * n23 * n34
+  m2.n21 =
+    n24 * n33 * n41 -
+    n23 * n34 * n41 -
+    n24 * n31 * n43 +
+    n21 * n34 * n43 +
+    n23 * n31 * n44 -
+    n21 * n33 * n44
+  m2.n22 =
+    n13 * n34 * n41 -
+    n14 * n33 * n41 +
+    n14 * n31 * n43 -
+    n11 * n34 * n43 -
+    n13 * n31 * n44 +
+    n11 * n33 * n44
+  m2.n23 =
+    n14 * n23 * n41 -
+    n13 * n24 * n41 -
+    n14 * n21 * n43 +
+    n11 * n24 * n43 +
+    n13 * n21 * n44 -
+    n11 * n23 * n44
+  m2.n24 =
+    n13 * n24 * n31 -
+    n14 * n23 * n31 +
+    n14 * n21 * n33 -
+    n11 * n24 * n33 -
+    n13 * n21 * n34 +
+    n11 * n23 * n34
+  m2.n31 =
+    n22 * n34 * n41 -
+    n24 * n32 * n41 +
+    n24 * n31 * n42 -
+    n21 * n34 * n42 -
+    n22 * n31 * n44 +
+    n21 * n32 * n44
+  m2.n32 =
+    n14 * n32 * n41 -
+    n12 * n34 * n41 -
+    n14 * n31 * n42 +
+    n11 * n34 * n42 +
+    n12 * n31 * n44 -
+    n11 * n32 * n44
+  m2.n33 =
+    n13 * n24 * n41 -
+    n14 * n22 * n41 +
+    n14 * n21 * n42 -
+    n11 * n24 * n42 -
+    n12 * n21 * n44 +
+    n11 * n22 * n44
+  m2.n34 =
+    n14 * n22 * n31 -
+    n12 * n24 * n31 -
+    n14 * n21 * n32 +
+    n11 * n24 * n32 +
+    n12 * n21 * n34 -
+    n11 * n22 * n34
+  m2.n41 =
+    n23 * n32 * n41 -
+    n22 * n33 * n41 -
+    n23 * n31 * n42 +
+    n21 * n33 * n42 +
+    n22 * n31 * n43 -
+    n21 * n32 * n43
+  m2.n42 =
+    n12 * n33 * n41 -
+    n13 * n32 * n41 +
+    n13 * n31 * n42 -
+    n11 * n33 * n42 -
+    n12 * n31 * n43 +
+    n11 * n32 * n43
+  m2.n43 =
+    n13 * n22 * n41 -
+    n12 * n23 * n41 -
+    n13 * n21 * n42 +
+    n11 * n23 * n42 +
+    n12 * n21 * n43 -
+    n11 * n22 * n43
+  m2.n44 =
+    n12 * n23 * n31 -
+    n13 * n22 * n31 +
+    n13 * n21 * n32 -
+    n11 * n23 * n32 -
+    n12 * n21 * n33 +
+    n11 * n22 * n33
   m2.multiplyScalar(1 / m1.determinant())
   return m2
 }
@@ -1303,7 +1456,8 @@ THREE.Matrix4.makeInvert3x3 = function (m1) {
     a33 = m1.n22 * m1.n11 - m1.n21 * m1.n12,
     det = m1.n11 * a11 + m1.n21 * a12 + m1.n31 * a13,
     idet
-  if (det == 0) console.error('THREE.Matrix4.makeInvert3x3: Matrix not invertible.')
+  if (det == 0)
+    console.error('THREE.Matrix4.makeInvert3x3: Matrix not invertible.')
   idet = 1 / det
   m33m[0] = idet * a11
   m33m[1] = idet * a21
@@ -1419,7 +1573,8 @@ THREE.Object3D.prototype = {
   },
   lookAt: function (vector) {
     this.matrix.lookAt(vector, this.position, this.up)
-    if (this.rotationAutoUpdate) this.rotation.setRotationFromMatrix(this.matrix)
+    if (this.rotationAutoUpdate)
+      this.rotation.setRotationFromMatrix(this.matrix)
   },
   addChild: function (child) {
     if (this.children.indexOf(child) === -1) {
@@ -1428,7 +1583,8 @@ THREE.Object3D.prototype = {
       this.children.push(child)
       var scene = this
       while (scene.parent !== undefined) scene = scene.parent
-      if (scene !== undefined && scene instanceof THREE.Scene) scene.addChildRecurse(child)
+      if (scene !== undefined && scene instanceof THREE.Scene)
+        scene.addChildRecurse(child)
     }
   },
   removeChild: function (child) {
@@ -1452,24 +1608,30 @@ THREE.Object3D.prototype = {
   },
   updateMatrix: function () {
     this.matrix.setPosition(this.position)
-    if (this.useQuaternion) this.matrix.setRotationFromQuaternion(this.quaternion)
+    if (this.useQuaternion)
+      this.matrix.setRotationFromQuaternion(this.quaternion)
     else this.matrix.setRotationFromEuler(this.rotation)
     if (this.scale.x !== 1 || this.scale.y !== 1 || this.scale.z !== 1) {
       this.matrix.scale(this.scale)
-      this.boundRadiusScale = Math.max(this.scale.x, Math.max(this.scale.y, this.scale.z))
+      this.boundRadiusScale = Math.max(
+        this.scale.x,
+        Math.max(this.scale.y, this.scale.z),
+      )
     }
     this.matrixWorldNeedsUpdate = true
   },
   update: function (parentMatrixWorld, forceUpdate, camera) {
     this.matrixAutoUpdate && this.updateMatrix()
     if (this.matrixWorldNeedsUpdate || forceUpdate) {
-      if (parentMatrixWorld) this.matrixWorld.multiply(parentMatrixWorld, this.matrix)
+      if (parentMatrixWorld)
+        this.matrixWorld.multiply(parentMatrixWorld, this.matrix)
       else this.matrixWorld.copy(this.matrix)
       this.matrixRotationWorld.extractRotation(this.matrixWorld, this.scale)
       this.matrixWorldNeedsUpdate = false
       forceUpdate = true
     }
-    for (var i = 0, l = this.children.length; i < l; i++) this.children[i].update(this.matrixWorld, forceUpdate, camera)
+    for (var i = 0, l = this.children.length; i < l; i++)
+      this.children[i].update(this.matrixWorld, forceUpdate, camera)
   },
 }
 THREE.Quaternion = function (x, y, z, w) {
@@ -1519,7 +1681,9 @@ THREE.Quaternion.prototype = {
     return this
   },
   calculateW: function () {
-    this.w = -Math.sqrt(Math.abs(1 - this.x * this.x - this.y * this.y - this.z * this.z))
+    this.w = -Math.sqrt(
+      Math.abs(1 - this.x * this.x - this.y * this.y - this.z * this.z),
+    )
     return this
   },
   inverse: function () {
@@ -1529,10 +1693,14 @@ THREE.Quaternion.prototype = {
     return this
   },
   length: function () {
-    return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w)
+    return Math.sqrt(
+      this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w,
+    )
   },
   normalize: function () {
-    var l = Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w)
+    var l = Math.sqrt(
+      this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w,
+    )
     if (l == 0) {
       this.x = 0
       this.y = 0
@@ -1710,7 +1878,8 @@ THREE.Geometry.prototype = {
       face = this.faces[f]
       if (useVertexNormals && face.vertexNormals.length) {
         cb.set(0, 0, 0)
-        for (n = 0, nl = face.vertexNormals.length; n < nl; n++) cb.addSelf(face.vertexNormals[n])
+        for (n = 0, nl = face.vertexNormals.length; n < nl; n++)
+          cb.addSelf(face.vertexNormals[n])
         cb.divideScalar(3)
         if (!cb.isZero()) cb.normalize()
         face.normal.copy(cb)
@@ -1731,17 +1900,28 @@ THREE.Geometry.prototype = {
     if (this.__tmpVertices == undefined) {
       this.__tmpVertices = new Array(this.vertices.length)
       vertices = this.__tmpVertices
-      for (v = 0, vl = this.vertices.length; v < vl; v++) vertices[v] = new THREE.Vector3()
+      for (v = 0, vl = this.vertices.length; v < vl; v++)
+        vertices[v] = new THREE.Vector3()
       for (f = 0, fl = this.faces.length; f < fl; f++) {
         face = this.faces[f]
         if (face instanceof THREE.Face3)
-          face.vertexNormals = [new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]
+          face.vertexNormals = [
+            new THREE.Vector3(),
+            new THREE.Vector3(),
+            new THREE.Vector3(),
+          ]
         else if (face instanceof THREE.Face4)
-          face.vertexNormals = [new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]
+          face.vertexNormals = [
+            new THREE.Vector3(),
+            new THREE.Vector3(),
+            new THREE.Vector3(),
+            new THREE.Vector3(),
+          ]
       }
     } else {
       vertices = this.__tmpVertices
-      for (v = 0, vl = this.vertices.length; v < vl; v++) vertices[v].set(0, 0, 0)
+      for (v = 0, vl = this.vertices.length; v < vl; v++)
+        vertices[v].set(0, 0, 0)
     }
     for (f = 0, fl = this.faces.length; f < fl; f++) {
       face = this.faces[f]
@@ -1831,8 +2011,16 @@ THREE.Geometry.prototype = {
       t1 = uvB.v - uvA.v
       t2 = uvC.v - uvA.v
       r = 1 / (s1 * t2 - s2 * t1)
-      sdir.set((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r, (t2 * z1 - t1 * z2) * r)
-      tdir.set((s1 * x2 - s2 * x1) * r, (s1 * y2 - s2 * y1) * r, (s1 * z2 - s2 * z1) * r)
+      sdir.set(
+        (t2 * x1 - t1 * x2) * r,
+        (t2 * y1 - t1 * y2) * r,
+        (t2 * z1 - t1 * z2) * r,
+      )
+      tdir.set(
+        (s1 * x2 - s2 * x1) * r,
+        (s1 * y2 - s2 * y1) * r,
+        (s1 * z2 - s2 * z1) * r,
+      )
       tan1[a].addSelf(sdir)
       tan1[b].addSelf(sdir)
       tan1[c].addSelf(sdir)
@@ -1843,7 +2031,8 @@ THREE.Geometry.prototype = {
     for (f = 0, fl = this.faces.length; f < fl; f++) {
       face = this.faces[f]
       uv = this.faceVertexUvs[0][f]
-      if (face instanceof THREE.Face3) handleTriangle(this, face.a, face.b, face.c, 0, 1, 2)
+      if (face instanceof THREE.Face3)
+        handleTriangle(this, face.a, face.b, face.c, 0, 1, 2)
       else if (face instanceof THREE.Face4) {
         handleTriangle(this, face.a, face.b, face.c, 0, 1, 2)
         handleTriangle(this, face.a, face.b, face.d, 0, 1, 3)
@@ -1876,12 +2065,18 @@ THREE.Geometry.prototype = {
       }
       for (var v = 1, vl = this.vertices.length; v < vl; v++) {
         vertex = this.vertices[v]
-        if (vertex.position.x < this.boundingBox.x[0]) this.boundingBox.x[0] = vertex.position.x
-        else if (vertex.position.x > this.boundingBox.x[1]) this.boundingBox.x[1] = vertex.position.x
-        if (vertex.position.y < this.boundingBox.y[0]) this.boundingBox.y[0] = vertex.position.y
-        else if (vertex.position.y > this.boundingBox.y[1]) this.boundingBox.y[1] = vertex.position.y
-        if (vertex.position.z < this.boundingBox.z[0]) this.boundingBox.z[0] = vertex.position.z
-        else if (vertex.position.z > this.boundingBox.z[1]) this.boundingBox.z[1] = vertex.position.z
+        if (vertex.position.x < this.boundingBox.x[0])
+          this.boundingBox.x[0] = vertex.position.x
+        else if (vertex.position.x > this.boundingBox.x[1])
+          this.boundingBox.x[1] = vertex.position.x
+        if (vertex.position.y < this.boundingBox.y[0])
+          this.boundingBox.y[0] = vertex.position.y
+        else if (vertex.position.y > this.boundingBox.y[1])
+          this.boundingBox.y[1] = vertex.position.y
+        if (vertex.position.z < this.boundingBox.z[0])
+          this.boundingBox.z[0] = vertex.position.z
+        else if (vertex.position.z > this.boundingBox.z[1])
+          this.boundingBox.z[1] = vertex.position.z
       }
     }
   },
@@ -1979,27 +2174,39 @@ THREE.Camera.prototype.translate = function (distance, axis) {
   this.target.position.addSelf(axis.multiplyScalar(distance))
 }
 THREE.Camera.prototype.updateProjectionMatrix = function () {
-  this.projectionMatrix = THREE.Matrix4.makePerspective(this.fov, this.aspect, this.near, this.far)
+  this.projectionMatrix = THREE.Matrix4.makePerspective(
+    this.fov,
+    this.aspect,
+    this.near,
+    this.far,
+  )
 }
-THREE.Camera.prototype.update = function (parentMatrixWorld, forceUpdate, camera) {
+THREE.Camera.prototype.update = function (
+  parentMatrixWorld,
+  forceUpdate,
+  camera,
+) {
   if (this.useTarget) {
     this.matrix.lookAt(this.position, this.target.position, this.up)
     this.matrix.setPosition(this.position)
-    if (parentMatrixWorld) this.matrixWorld.multiply(parentMatrixWorld, this.matrix)
+    if (parentMatrixWorld)
+      this.matrixWorld.multiply(parentMatrixWorld, this.matrix)
     else this.matrixWorld.copy(this.matrix)
     THREE.Matrix4.makeInvert(this.matrixWorld, this.matrixWorldInverse)
     forceUpdate = true
   } else {
     this.matrixAutoUpdate && this.updateMatrix()
     if (forceUpdate || this.matrixWorldNeedsUpdate) {
-      if (parentMatrixWorld) this.matrixWorld.multiply(parentMatrixWorld, this.matrix)
+      if (parentMatrixWorld)
+        this.matrixWorld.multiply(parentMatrixWorld, this.matrix)
       else this.matrixWorld.copy(this.matrix)
       this.matrixWorldNeedsUpdate = false
       forceUpdate = true
       THREE.Matrix4.makeInvert(this.matrixWorld, this.matrixWorldInverse)
     }
   }
-  for (var i = 0; i < this.children.length; i++) this.children[i].update(this.matrixWorld, forceUpdate, camera)
+  for (var i = 0; i < this.children.length; i++)
+    this.children[i].update(this.matrixWorld, forceUpdate, camera)
 }
 THREE.Light = function (hex) {
   THREE.Object3D.call(this)
@@ -2012,9 +2219,14 @@ THREE.Material = function (parameters) {
   this.id = THREE.MaterialCounter.value++
   parameters = parameters || {}
   this.opacity = parameters.opacity !== undefined ? parameters.opacity : 1
-  this.transparent = parameters.transparent !== undefined ? parameters.transparent : false
-  this.blending = parameters.blending !== undefined ? parameters.blending : THREE.NormalBlending
-  this.depthTest = parameters.depthTest !== undefined ? parameters.depthTest : true
+  this.transparent =
+    parameters.transparent !== undefined ? parameters.transparent : false
+  this.blending =
+    parameters.blending !== undefined
+      ? parameters.blending
+      : THREE.NormalBlending
+  this.depthTest =
+    parameters.depthTest !== undefined ? parameters.depthTest : true
 }
 THREE.NoShading = 0
 THREE.FlatShading = 1
@@ -2033,21 +2245,43 @@ THREE.MaterialCounter = {
 THREE.MeshBasicMaterial = function (parameters) {
   THREE.Material.call(this, parameters)
   parameters = parameters || {}
-  this.color = parameters.color !== undefined ? new THREE.Color(parameters.color) : new THREE.Color(16777215)
+  this.color =
+    parameters.color !== undefined
+      ? new THREE.Color(parameters.color)
+      : new THREE.Color(16777215)
   this.map = parameters.map !== undefined ? parameters.map : null
   this.lightMap = parameters.lightMap !== undefined ? parameters.lightMap : null
   this.envMap = parameters.envMap !== undefined ? parameters.envMap : null
-  this.combine = parameters.combine !== undefined ? parameters.combine : THREE.MultiplyOperation
-  this.reflectivity = parameters.reflectivity !== undefined ? parameters.reflectivity : 1
-  this.refractionRatio = parameters.refractionRatio !== undefined ? parameters.refractionRatio : 0.98
-  this.shading = parameters.shading !== undefined ? parameters.shading : THREE.SmoothShading
-  this.wireframe = parameters.wireframe !== undefined ? parameters.wireframe : false
-  this.wireframeLinewidth = parameters.wireframeLinewidth !== undefined ? parameters.wireframeLinewidth : 1
-  this.wireframeLinecap = parameters.wireframeLinecap !== undefined ? parameters.wireframeLinecap : 'round'
-  this.wireframeLinejoin = parameters.wireframeLinejoin !== undefined ? parameters.wireframeLinejoin : 'round'
-  this.vertexColors = parameters.vertexColors !== undefined ? parameters.vertexColors : false
-  this.skinning = parameters.skinning !== undefined ? parameters.skinning : false
-  this.morphTargets = parameters.morphTargets !== undefined ? parameters.morphTargets : false
+  this.combine =
+    parameters.combine !== undefined
+      ? parameters.combine
+      : THREE.MultiplyOperation
+  this.reflectivity =
+    parameters.reflectivity !== undefined ? parameters.reflectivity : 1
+  this.refractionRatio =
+    parameters.refractionRatio !== undefined ? parameters.refractionRatio : 0.98
+  this.shading =
+    parameters.shading !== undefined ? parameters.shading : THREE.SmoothShading
+  this.wireframe =
+    parameters.wireframe !== undefined ? parameters.wireframe : false
+  this.wireframeLinewidth =
+    parameters.wireframeLinewidth !== undefined
+      ? parameters.wireframeLinewidth
+      : 1
+  this.wireframeLinecap =
+    parameters.wireframeLinecap !== undefined
+      ? parameters.wireframeLinecap
+      : 'round'
+  this.wireframeLinejoin =
+    parameters.wireframeLinejoin !== undefined
+      ? parameters.wireframeLinejoin
+      : 'round'
+  this.vertexColors =
+    parameters.vertexColors !== undefined ? parameters.vertexColors : false
+  this.skinning =
+    parameters.skinning !== undefined ? parameters.skinning : false
+  this.morphTargets =
+    parameters.morphTargets !== undefined ? parameters.morphTargets : false
 }
 THREE.MeshBasicMaterial.prototype = new THREE.Material()
 THREE.MeshBasicMaterial.prototype.constructor = THREE.MeshBasicMaterial
@@ -2094,8 +2328,13 @@ THREE.Mesh.prototype = new THREE.Object3D()
 THREE.Mesh.prototype.constructor = THREE.Mesh
 THREE.Mesh.prototype.supr = THREE.Object3D.prototype
 THREE.Mesh.prototype.getMorphTargetIndexByName = function (name) {
-  if (this.morphTargetDictionary[name] !== undefined) return this.morphTargetDictionary[name]
-  console.log('THREE.Mesh.getMorphTargetIndexByName: morph target ' + name + ' does not exist. Returning 0.')
+  if (this.morphTargetDictionary[name] !== undefined)
+    return this.morphTargetDictionary[name]
+  console.log(
+    'THREE.Mesh.getMorphTargetIndexByName: morph target ' +
+      name +
+      ' does not exist. Returning 0.',
+  )
   return 0
 }
 THREE.Bone = function (belongsToSkin) {
@@ -2110,7 +2349,8 @@ THREE.Bone.prototype.supr = THREE.Object3D.prototype
 THREE.Bone.prototype.update = function (parentSkinMatrix, forceUpdate, camera) {
   if (this.matrixAutoUpdate) forceUpdate |= this.updateMatrix()
   if (forceUpdate || this.matrixWorldNeedsUpdate) {
-    if (parentSkinMatrix) this.skinMatrix.multiply(parentSkinMatrix, this.matrix)
+    if (parentSkinMatrix)
+      this.skinMatrix.multiply(parentSkinMatrix, this.matrix)
     else this.skinMatrix.copy(this.matrix)
     this.matrixWorldNeedsUpdate = false
     forceUpdate = true
@@ -2122,10 +2362,13 @@ THREE.Bone.prototype.update = function (parentSkinMatrix, forceUpdate, camera) {
     this.matrixWorld.multiply(this.skin.matrixWorld, this.skinMatrix)
     for (i = 0; i < l; i++) {
       child = this.children[i]
-      if (!(child instanceof THREE.Bone)) child.update(this.matrixWorld, true, camera)
+      if (!(child instanceof THREE.Bone))
+        child.update(this.matrixWorld, true, camera)
       else child.update(this.skinMatrix, forceUpdate, camera)
     }
-  } else for (i = 0; i < l; i++) this.children[i].update(this.skinMatrix, forceUpdate, camera)
+  } else
+    for (i = 0; i < l; i++)
+      this.children[i].update(this.skinMatrix, forceUpdate, camera)
 }
 THREE.Bone.prototype.addChild = function (child) {
   if (this.children.indexOf(child) === -1) {
@@ -2201,25 +2444,34 @@ THREE.Sound.prototype.stop = function () {
   this.domElement.pause()
   this.domElement.currentTime = 0
 }
-THREE.Sound.prototype.calculateVolumeAndPan = function (cameraRelativePosition) {
+THREE.Sound.prototype.calculateVolumeAndPan = function (
+  cameraRelativePosition,
+) {
   var distance = cameraRelativePosition.length()
-  if (distance <= this.radius) this.domElement.volume = this.volume * (1 - distance / this.radius)
+  if (distance <= this.radius)
+    this.domElement.volume = this.volume * (1 - distance / this.radius)
   else this.domElement.volume = 0
 }
-THREE.Sound.prototype.update = function (parentMatrixWorld, forceUpdate, camera) {
+THREE.Sound.prototype.update = function (
+  parentMatrixWorld,
+  forceUpdate,
+  camera,
+) {
   if (this.matrixAutoUpdate) {
     this.matrix.setPosition(this.position)
     forceUpdate = true
   }
   if (forceUpdate || this.matrixWorldNeedsUpdate) {
-    if (parentMatrixWorld) this.matrixWorld.multiply(parentMatrixWorld, this.matrix)
+    if (parentMatrixWorld)
+      this.matrixWorld.multiply(parentMatrixWorld, this.matrix)
     else this.matrixWorld.copy(this.matrix)
     this.matrixWorldNeedsUpdate = false
     forceUpdate = true
   }
   var i,
     l = this.children.length
-  for (i = 0; i < l; i++) this.children[i].update(this.matrixWorld, forceUpdate, camera)
+  for (i = 0; i < l; i++)
+    this.children[i].update(this.matrixWorld, forceUpdate, camera)
 }
 THREE.Scene = function () {
   THREE.Object3D.call(this)
@@ -2249,7 +2501,8 @@ THREE.Scene.prototype.addChildRecurse = function (child) {
       this.objects.push(child)
       this.__objectsAdded.push(child)
     }
-  for (var c = 0; c < child.children.length; c++) this.addChildRecurse(child.children[c])
+  for (var c = 0; c < child.children.length; c++)
+    this.addChildRecurse(child.children[c])
 }
 THREE.Scene.prototype.removeChild = function (child) {
   this.supr.removeChild.call(this, child)
@@ -2269,7 +2522,8 @@ THREE.Scene.prototype.removeChildRecurse = function (child) {
       this.__objectsRemoved.push(child)
     }
   }
-  for (var c = 0; c < child.children.length; c++) this.removeChildRecurse(child.children[c])
+  for (var c = 0; c < child.children.length; c++)
+    this.removeChildRecurse(child.children[c])
 }
 THREE.Scene.prototype.addObject = THREE.Scene.prototype.addChild
 THREE.Scene.prototype.removeObject = THREE.Scene.prototype.removeChild
@@ -2309,12 +2563,18 @@ THREE.Projector = function () {
     _clippedVertex2PositionScreen = new THREE.Vector4(),
     _face3VertexNormals
   this.projectVector = function (vector, camera) {
-    _projScreenMatrix.multiply(camera.projectionMatrix, camera.matrixWorldInverse)
+    _projScreenMatrix.multiply(
+      camera.projectionMatrix,
+      camera.matrixWorldInverse,
+    )
     _projScreenMatrix.multiplyVector3(vector)
     return vector
   }
   this.unprojectVector = function (vector, camera) {
-    _projScreenMatrix.multiply(camera.matrixWorld, THREE.Matrix4.makeInvert(camera.projectionMatrix))
+    _projScreenMatrix.multiply(
+      camera.matrixWorld,
+      THREE.Matrix4.makeInvert(camera.projectionMatrix),
+    )
     _projScreenMatrix.multiplyVector3(vector)
     return vector
   }
@@ -2329,7 +2589,11 @@ THREE.Projector = function () {
     objects = scene.objects
     for (o = 0, ol = objects.length; o < ol; o++) {
       object = objects[o]
-      if (!object.visible || (object instanceof THREE.Mesh && !isInFrustum(object))) continue
+      if (
+        !object.visible ||
+        (object instanceof THREE.Mesh && !isInFrustum(object))
+      )
+        continue
       _object = getNextObjectInPool()
       _vector3.copy(object.position)
       _projScreenMatrix.multiplyVector3(_vector3)
@@ -2382,7 +2646,10 @@ THREE.Projector = function () {
     _particleCount = 0
     camera.matrixAutoUpdate && camera.update(undefined, true)
     scene.update(undefined, false, camera)
-    _projScreenMatrix.multiply(camera.projectionMatrix, camera.matrixWorldInverse)
+    _projScreenMatrix.multiply(
+      camera.projectionMatrix,
+      camera.matrixWorldInverse,
+    )
     computeFrustum(_projScreenMatrix)
     objects = this.projectObjects(scene, camera, true)
     for (o = 0, ol = objects.length; o < ol; o++) {
@@ -2406,7 +2673,8 @@ THREE.Projector = function () {
           _projScreenMatrix.multiplyVector4(_vertex.positionScreen)
           _vertex.positionScreen.x /= _vertex.positionScreen.w
           _vertex.positionScreen.y /= _vertex.positionScreen.w
-          _vertex.visible = _vertex.positionScreen.z > near && _vertex.positionScreen.z < far
+          _vertex.visible =
+            _vertex.positionScreen.z > near && _vertex.positionScreen.z < far
         }
         for (f = 0, fl = faces.length; f < fl; f++) {
           face = faces[f]
@@ -2420,8 +2688,10 @@ THREE.Projector = function () {
               v3.visible &&
               (object.doubleSided ||
                 object.flipSided !=
-                  (v3.positionScreen.x - v1.positionScreen.x) * (v2.positionScreen.y - v1.positionScreen.y) -
-                    (v3.positionScreen.y - v1.positionScreen.y) * (v2.positionScreen.x - v1.positionScreen.x) <
+                  (v3.positionScreen.x - v1.positionScreen.x) *
+                    (v2.positionScreen.y - v1.positionScreen.y) -
+                    (v3.positionScreen.y - v1.positionScreen.y) *
+                      (v2.positionScreen.x - v1.positionScreen.x) <
                     0)
             ) {
               _face = getNextFace3InPool()
@@ -2441,11 +2711,15 @@ THREE.Projector = function () {
               v4.visible &&
               (object.doubleSided ||
                 object.flipSided !=
-                  ((v4.positionScreen.x - v1.positionScreen.x) * (v2.positionScreen.y - v1.positionScreen.y) -
-                    (v4.positionScreen.y - v1.positionScreen.y) * (v2.positionScreen.x - v1.positionScreen.x) <
+                  ((v4.positionScreen.x - v1.positionScreen.x) *
+                    (v2.positionScreen.y - v1.positionScreen.y) -
+                    (v4.positionScreen.y - v1.positionScreen.y) *
+                      (v2.positionScreen.x - v1.positionScreen.x) <
                     0 ||
-                    (v2.positionScreen.x - v3.positionScreen.x) * (v4.positionScreen.y - v3.positionScreen.y) -
-                      (v2.positionScreen.y - v3.positionScreen.y) * (v4.positionScreen.x - v3.positionScreen.x) <
+                    (v2.positionScreen.x - v3.positionScreen.x) *
+                      (v4.positionScreen.y - v3.positionScreen.y) -
+                      (v2.positionScreen.y - v3.positionScreen.y) *
+                        (v4.positionScreen.x - v3.positionScreen.x) <
                       0))
             ) {
               _face = getNextFace4InPool()
@@ -2491,19 +2765,36 @@ THREE.Projector = function () {
           v2 = _vertexPool[_vertexCount - 2]
           _clippedVertex1PositionScreen.copy(v1.positionScreen)
           _clippedVertex2PositionScreen.copy(v2.positionScreen)
-          if (clipLine(_clippedVertex1PositionScreen, _clippedVertex2PositionScreen)) {
-            _clippedVertex1PositionScreen.multiplyScalar(1 / _clippedVertex1PositionScreen.w)
-            _clippedVertex2PositionScreen.multiplyScalar(1 / _clippedVertex2PositionScreen.w)
+          if (
+            clipLine(
+              _clippedVertex1PositionScreen,
+              _clippedVertex2PositionScreen,
+            )
+          ) {
+            _clippedVertex1PositionScreen.multiplyScalar(
+              1 / _clippedVertex1PositionScreen.w,
+            )
+            _clippedVertex2PositionScreen.multiplyScalar(
+              1 / _clippedVertex2PositionScreen.w,
+            )
             _line = getNextLineInPool()
             _line.v1.positionScreen.copy(_clippedVertex1PositionScreen)
             _line.v2.positionScreen.copy(_clippedVertex2PositionScreen)
-            _line.z = Math.max(_clippedVertex1PositionScreen.z, _clippedVertex2PositionScreen.z)
+            _line.z = Math.max(
+              _clippedVertex1PositionScreen.z,
+              _clippedVertex2PositionScreen.z,
+            )
             _line.materials = object.materials
             renderList.push(_line)
           }
         }
       } else if (object instanceof THREE.Particle) {
-        _vector4.set(object.matrixWorld.n14, object.matrixWorld.n24, object.matrixWorld.n34, 1)
+        _vector4.set(
+          object.matrixWorld.n14,
+          object.matrixWorld.n24,
+          object.matrixWorld.n34,
+          1,
+        )
         _projScreenMatrix.multiplyVector4(_vector4)
         _vector4.z /= _vector4.w
         if (_vector4.z > 0 && _vector4.z < 1) {
@@ -2515,12 +2806,16 @@ THREE.Projector = function () {
           _particle.scale.x =
             object.scale.x *
             Math.abs(
-              _particle.x - (_vector4.x + camera.projectionMatrix.n11) / (_vector4.w + camera.projectionMatrix.n14),
+              _particle.x -
+                (_vector4.x + camera.projectionMatrix.n11) /
+                  (_vector4.w + camera.projectionMatrix.n14),
             )
           _particle.scale.y =
             object.scale.y *
             Math.abs(
-              _particle.y - (_vector4.y + camera.projectionMatrix.n22) / (_vector4.w + camera.projectionMatrix.n24),
+              _particle.y -
+                (_vector4.y + camera.projectionMatrix.n22) /
+                  (_vector4.w + camera.projectionMatrix.n24),
             )
           _particle.materials = object.materials
           renderList.push(_particle)
@@ -2532,37 +2827,43 @@ THREE.Projector = function () {
   }
 
   function getNextObjectInPool() {
-    var object = (_objectPool[_objectCount] = _objectPool[_objectCount] || new THREE.RenderableObject())
+    var object = (_objectPool[_objectCount] =
+      _objectPool[_objectCount] || new THREE.RenderableObject())
     _objectCount++
     return object
   }
 
   function getNextVertexInPool() {
-    var vertex = (_vertexPool[_vertexCount] = _vertexPool[_vertexCount] || new THREE.RenderableVertex())
+    var vertex = (_vertexPool[_vertexCount] =
+      _vertexPool[_vertexCount] || new THREE.RenderableVertex())
     _vertexCount++
     return vertex
   }
 
   function getNextFace3InPool() {
-    var face = (_face3Pool[_face3Count] = _face3Pool[_face3Count] || new THREE.RenderableFace3())
+    var face = (_face3Pool[_face3Count] =
+      _face3Pool[_face3Count] || new THREE.RenderableFace3())
     _face3Count++
     return face
   }
 
   function getNextFace4InPool() {
-    var face = (_face4Pool[_face4Count] = _face4Pool[_face4Count] || new THREE.RenderableFace4())
+    var face = (_face4Pool[_face4Count] =
+      _face4Pool[_face4Count] || new THREE.RenderableFace4())
     _face4Count++
     return face
   }
 
   function getNextLineInPool() {
-    var line = (_linePool[_lineCount] = _linePool[_lineCount] || new THREE.RenderableLine())
+    var line = (_linePool[_lineCount] =
+      _linePool[_lineCount] || new THREE.RenderableLine())
     _lineCount++
     return line
   }
 
   function getNextParticleInPool() {
-    var particle = (_particlePool[_particleCount] = _particlePool[_particleCount] || new THREE.RenderableParticle())
+    var particle = (_particlePool[_particleCount] =
+      _particlePool[_particleCount] || new THREE.RenderableParticle())
     _particleCount++
     return particle
   }
@@ -2580,7 +2881,9 @@ THREE.Projector = function () {
     _frustum[5].set(m.n41 + m.n31, m.n42 + m.n32, m.n43 + m.n33, m.n44 + m.n34)
     for (var i = 0; i < 6; i++) {
       var plane = _frustum[i]
-      plane.divideScalar(Math.sqrt(plane.x * plane.x + plane.y * plane.y + plane.z * plane.z))
+      plane.divideScalar(
+        Math.sqrt(plane.x * plane.x + plane.y * plane.y + plane.z * plane.z),
+      )
     }
   }
 
@@ -2588,9 +2891,14 @@ THREE.Projector = function () {
     var distance,
       matrix = object.matrixWorld,
       radius =
-        -object.geometry.boundingSphere.radius * Math.max(object.scale.x, Math.max(object.scale.y, object.scale.z))
+        -object.geometry.boundingSphere.radius *
+        Math.max(object.scale.x, Math.max(object.scale.y, object.scale.z))
     for (var i = 0; i < 6; i++) {
-      distance = _frustum[i].x * matrix.n14 + _frustum[i].y * matrix.n24 + _frustum[i].z * matrix.n34 + _frustum[i].w
+      distance =
+        _frustum[i].x * matrix.n14 +
+        _frustum[i].y * matrix.n24 +
+        _frustum[i].z * matrix.n34 +
+        _frustum[i].w
       if (distance <= radius) return false
     }
     return true
@@ -2604,10 +2912,12 @@ THREE.Projector = function () {
       bc1far = -s1.z + s1.w,
       bc2far = -s2.z + s2.w
     if (bc1near >= 0 && bc2near >= 0 && bc1far >= 0 && bc2far >= 0) return true
-    else if ((bc1near < 0 && bc2near < 0) || (bc1far < 0 && bc2far < 0)) return false
+    else if ((bc1near < 0 && bc2near < 0) || (bc1far < 0 && bc2far < 0))
+      return false
     else {
       if (bc1near < 0) alpha1 = Math.max(alpha1, bc1near / (bc1near - bc2near))
-      else if (bc2near < 0) alpha2 = Math.min(alpha2, bc1near / (bc1near - bc2near))
+      else if (bc2near < 0)
+        alpha2 = Math.min(alpha2, bc1near / (bc1near - bc2near))
       if (bc1far < 0) alpha1 = Math.max(alpha1, bc1far / (bc1far - bc2far))
       else if (bc2far < 0) alpha2 = Math.min(alpha2, bc1far / (bc1far - bc2far))
       if (alpha2 < alpha1) return false
@@ -2624,7 +2934,10 @@ THREE.CanvasRenderer = function (parameters) {
     _renderList = null,
     _projector = new THREE.Projector(),
     parameters = parameters || {},
-    _canvas = parameters.canvas !== undefined ? parameters.canvas : document.createElement('canvas'),
+    _canvas =
+      parameters.canvas !== undefined
+        ? parameters.canvas
+        : document.createElement('canvas'),
     _canvasWidth,
     _canvasHeight,
     _canvasWidthHalf,
@@ -2699,7 +3012,10 @@ THREE.CanvasRenderer = function (parameters) {
   _gradientMap = document.createElement('canvas')
   _gradientMap.width = _gradientMap.height = _gradientMapQuality
   _gradientMapContext = _gradientMap.getContext('2d')
-  _gradientMapContext.translate(-_gradientMapQuality / 2, -_gradientMapQuality / 2)
+  _gradientMapContext.translate(
+    -_gradientMapQuality / 2,
+    -_gradientMapQuality / 2,
+  )
   _gradientMapContext.scale(_gradientMapQuality, _gradientMapQuality)
   _gradientMapQuality--
   this.domElement = _canvas
@@ -2717,7 +3033,12 @@ THREE.CanvasRenderer = function (parameters) {
     _canvasHeightHalf = _canvasHeight / 2
     _canvas.width = _canvasWidth
     _canvas.height = _canvasHeight
-    _clipRect.set(-_canvasWidthHalf, -_canvasHeightHalf, _canvasWidthHalf, _canvasHeightHalf)
+    _clipRect.set(
+      -_canvasWidthHalf,
+      -_canvasHeightHalf,
+      _canvasWidthHalf,
+      _canvasHeightHalf,
+    )
     _contextGlobalAlpha = 1
     _contextGlobalCompositeOperation = 0
     _contextStrokeStyle = null
@@ -2740,7 +3061,12 @@ THREE.CanvasRenderer = function (parameters) {
       _clearRect.inflate(1)
       _clearRect.minSelf(_clipRect)
       if (_clearColor.hex == 0 && _clearOpacity == 0)
-        _context.clearRect(_clearRect.getX(), _clearRect.getY(), _clearRect.getWidth(), _clearRect.getHeight())
+        _context.clearRect(
+          _clearRect.getX(),
+          _clearRect.getY(),
+          _clearRect.getWidth(),
+          _clearRect.getHeight(),
+        )
       else {
         setBlending(THREE.NormalBlending)
         setOpacity(1)
@@ -2754,14 +3080,21 @@ THREE.CanvasRenderer = function (parameters) {
           ',' +
           _clearOpacity +
           ')'
-        _context.fillRect(_clearRect.getX(), _clearRect.getY(), _clearRect.getWidth(), _clearRect.getHeight())
+        _context.fillRect(
+          _clearRect.getX(),
+          _clearRect.getY(),
+          _clearRect.getWidth(),
+          _clearRect.getHeight(),
+        )
       }
       _clearRect.empty()
     }
   }
   this.render = function (scene, camera) {
     var e, el, element, m, ml, fm, fml, material
-    this.autoClear ? this.clear() : _context.setTransform(1, 0, 0, -1, _canvasWidthHalf, _canvasHeightHalf)
+    this.autoClear
+      ? this.clear()
+      : _context.setTransform(1, 0, 0, -1, _canvasWidthHalf, _canvasHeightHalf)
     _this.data.vertices = 0
     _this.data.faces = 0
     _renderList = _projector.projectScene(scene, camera, this.sortElements)
@@ -2794,7 +3127,8 @@ THREE.CanvasRenderer = function (parameters) {
           ml = element.materials.length
           while (m < ml) {
             material = element.materials[m++]
-            material.opacity != 0 && renderLine(_v1, _v2, element, material, scene)
+            material.opacity != 0 &&
+              renderLine(_v1, _v2, element, material, scene)
           }
         }
       } else if (element instanceof THREE.RenderableFace3) {
@@ -2830,11 +3164,14 @@ THREE.CanvasRenderer = function (parameters) {
               fml = element.faceMaterials.length
               while (fm < fml) {
                 material = element.faceMaterials[fm++]
-                material && material.opacity != 0 && renderFace3(_v1, _v2, _v3, 0, 1, 2, element, material, scene)
+                material &&
+                  material.opacity != 0 &&
+                  renderFace3(_v1, _v2, _v3, 0, 1, 2, element, material, scene)
               }
               continue
             }
-            material.opacity != 0 && renderFace3(_v1, _v2, _v3, 0, 1, 2, element, material, scene)
+            material.opacity != 0 &&
+              renderFace3(_v1, _v2, _v3, 0, 1, 2, element, material, scene)
           }
         }
       } else if (element instanceof THREE.RenderableFace4) {
@@ -2873,11 +3210,34 @@ THREE.CanvasRenderer = function (parameters) {
               fml = element.faceMaterials.length
               while (fm < fml) {
                 material = element.faceMaterials[fm++]
-                material && material.opacity != 0 && renderFace4(_v1, _v2, _v3, _v4, _v5, _v6, element, material, scene)
+                material &&
+                  material.opacity != 0 &&
+                  renderFace4(
+                    _v1,
+                    _v2,
+                    _v3,
+                    _v4,
+                    _v5,
+                    _v6,
+                    element,
+                    material,
+                    scene,
+                  )
               }
               continue
             }
-            material.opacity != 0 && renderFace4(_v1, _v2, _v3, _v4, _v5, _v6, element, material, scene)
+            material.opacity != 0 &&
+              renderFace4(
+                _v1,
+                _v2,
+                _v3,
+                _v4,
+                _v5,
+                _v6,
+                element,
+                material,
+                scene,
+              )
           }
         }
       }
@@ -2931,9 +3291,18 @@ THREE.CanvasRenderer = function (parameters) {
           color.g += lightColor.g * amount
           color.b += lightColor.b * amount
         } else if (light instanceof THREE.PointLight) {
-          amount = normal.dot(_vector3.sub(light.position, position).normalize())
+          amount = normal.dot(
+            _vector3.sub(light.position, position).normalize(),
+          )
           if (amount <= 0) continue
-          amount *= light.distance == 0 ? 1 : 1 - Math.min(position.distanceTo(light.position) / light.distance, 1)
+          amount *=
+            light.distance == 0
+              ? 1
+              : 1 -
+                Math.min(
+                  position.distanceTo(light.position) / light.distance,
+                  1,
+                )
           if (amount == 0) continue
           amount *= light.intensity
           color.r += lightColor.r * amount
@@ -2956,7 +3325,12 @@ THREE.CanvasRenderer = function (parameters) {
           scaleY = element.scale.y * _canvasHeightHalf
           width = scaleX * bitmapWidth
           height = scaleY * bitmapHeight
-          _bboxRect.set(v1.x - width, v1.y - height, v1.x + width, v1.y + height)
+          _bboxRect.set(
+            v1.x - width,
+            v1.y - height,
+            v1.x + width,
+            v1.y + height,
+          )
           if (!_clipRect.instersects(_bboxRect)) return
           _context.save()
           _context.translate(v1.x, v1.y)
@@ -3032,28 +3406,54 @@ THREE.CanvasRenderer = function (parameters) {
             )
           }
         } else if (material.envMap) {
-          if (material.envMap.mapping instanceof THREE.SphericalReflectionMapping) {
+          if (
+            material.envMap.mapping instanceof THREE.SphericalReflectionMapping
+          ) {
             var cameraMatrix = camera.matrixWorldInverse
             _vector3.copy(element.vertexNormalsWorld[0])
             _uv1x =
-              (_vector3.x * cameraMatrix.n11 + _vector3.y * cameraMatrix.n12 + _vector3.z * cameraMatrix.n13) * 0.5 +
+              (_vector3.x * cameraMatrix.n11 +
+                _vector3.y * cameraMatrix.n12 +
+                _vector3.z * cameraMatrix.n13) *
+                0.5 +
               0.5
             _uv1y =
-              -(_vector3.x * cameraMatrix.n21 + _vector3.y * cameraMatrix.n22 + _vector3.z * cameraMatrix.n23) * 0.5 +
+              -(
+                _vector3.x * cameraMatrix.n21 +
+                _vector3.y * cameraMatrix.n22 +
+                _vector3.z * cameraMatrix.n23
+              ) *
+                0.5 +
               0.5
             _vector3.copy(element.vertexNormalsWorld[1])
             _uv2x =
-              (_vector3.x * cameraMatrix.n11 + _vector3.y * cameraMatrix.n12 + _vector3.z * cameraMatrix.n13) * 0.5 +
+              (_vector3.x * cameraMatrix.n11 +
+                _vector3.y * cameraMatrix.n12 +
+                _vector3.z * cameraMatrix.n13) *
+                0.5 +
               0.5
             _uv2y =
-              -(_vector3.x * cameraMatrix.n21 + _vector3.y * cameraMatrix.n22 + _vector3.z * cameraMatrix.n23) * 0.5 +
+              -(
+                _vector3.x * cameraMatrix.n21 +
+                _vector3.y * cameraMatrix.n22 +
+                _vector3.z * cameraMatrix.n23
+              ) *
+                0.5 +
               0.5
             _vector3.copy(element.vertexNormalsWorld[2])
             _uv3x =
-              (_vector3.x * cameraMatrix.n11 + _vector3.y * cameraMatrix.n12 + _vector3.z * cameraMatrix.n13) * 0.5 +
+              (_vector3.x * cameraMatrix.n11 +
+                _vector3.y * cameraMatrix.n12 +
+                _vector3.z * cameraMatrix.n13) *
+                0.5 +
               0.5
             _uv3y =
-              -(_vector3.x * cameraMatrix.n21 + _vector3.y * cameraMatrix.n22 + _vector3.z * cameraMatrix.n23) * 0.5 +
+              -(
+                _vector3.x * cameraMatrix.n21 +
+                _vector3.y * cameraMatrix.n22 +
+                _vector3.z * cameraMatrix.n23
+              ) *
+                0.5 +
               0.5
             texturePath(
               _v1x,
@@ -3111,25 +3511,64 @@ THREE.CanvasRenderer = function (parameters) {
             _color1.r = _color2.r = _color3.r = _ambientLight.r
             _color1.g = _color2.g = _color3.g = _ambientLight.g
             _color1.b = _color2.b = _color3.b = _ambientLight.b
-            calculateLight(scene, element.v1.positionWorld, element.vertexNormalsWorld[0], _color1)
-            calculateLight(scene, element.v2.positionWorld, element.vertexNormalsWorld[1], _color2)
-            calculateLight(scene, element.v3.positionWorld, element.vertexNormalsWorld[2], _color3)
+            calculateLight(
+              scene,
+              element.v1.positionWorld,
+              element.vertexNormalsWorld[0],
+              _color1,
+            )
+            calculateLight(
+              scene,
+              element.v2.positionWorld,
+              element.vertexNormalsWorld[1],
+              _color2,
+            )
+            calculateLight(
+              scene,
+              element.v3.positionWorld,
+              element.vertexNormalsWorld[2],
+              _color3,
+            )
             _color4.r = (_color2.r + _color3.r) * 0.5
             _color4.g = (_color2.g + _color3.g) * 0.5
             _color4.b = (_color2.b + _color3.b) * 0.5
             _bitmap = getGradientTexture(_color1, _color2, _color3, _color4)
-            texturePath(_v1x, _v1y, _v2x, _v2y, _v3x, _v3y, _bitmap, 0, 0, 1, 0, 0, 1)
+            texturePath(
+              _v1x,
+              _v1y,
+              _v2x,
+              _v2y,
+              _v3x,
+              _v3y,
+              _bitmap,
+              0,
+              0,
+              1,
+              0,
+              0,
+              1,
+            )
           } else {
             _light.r = _ambientLight.r
             _light.g = _ambientLight.g
             _light.b = _ambientLight.b
-            calculateLight(scene, element.centroidWorld, element.normalWorld, _light)
+            calculateLight(
+              scene,
+              element.centroidWorld,
+              element.normalWorld,
+              _light,
+            )
             _color.r = Math.max(0, Math.min(material.color.r * _light.r, 1))
             _color.g = Math.max(0, Math.min(material.color.g * _light.g, 1))
             _color.b = Math.max(0, Math.min(material.color.b * _light.b, 1))
             _color.updateHex()
             material.wireframe
-              ? strokePath(_color, material.wireframeLinewidth, material.wireframeLinecap, material.wireframeLinejoin)
+              ? strokePath(
+                  _color,
+                  material.wireframeLinewidth,
+                  material.wireframeLinecap,
+                  material.wireframeLinejoin,
+                )
               : fillPath(_color)
           }
         else
@@ -3144,21 +3583,49 @@ THREE.CanvasRenderer = function (parameters) {
       } else if (material instanceof THREE.MeshDepthMaterial) {
         _near = camera.near
         _far = camera.far
-        _color1.r = _color1.g = _color1.b = 1 - smoothstep(v1.positionScreen.z, _near, _far)
-        _color2.r = _color2.g = _color2.b = 1 - smoothstep(v2.positionScreen.z, _near, _far)
-        _color3.r = _color3.g = _color3.b = 1 - smoothstep(v3.positionScreen.z, _near, _far)
+        _color1.r =
+          _color1.g =
+          _color1.b =
+            1 - smoothstep(v1.positionScreen.z, _near, _far)
+        _color2.r =
+          _color2.g =
+          _color2.b =
+            1 - smoothstep(v2.positionScreen.z, _near, _far)
+        _color3.r =
+          _color3.g =
+          _color3.b =
+            1 - smoothstep(v3.positionScreen.z, _near, _far)
         _color4.r = (_color2.r + _color3.r) * 0.5
         _color4.g = (_color2.g + _color3.g) * 0.5
         _color4.b = (_color2.b + _color3.b) * 0.5
         _bitmap = getGradientTexture(_color1, _color2, _color3, _color4)
-        texturePath(_v1x, _v1y, _v2x, _v2y, _v3x, _v3y, _bitmap, 0, 0, 1, 0, 0, 1)
+        texturePath(
+          _v1x,
+          _v1y,
+          _v2x,
+          _v2y,
+          _v3x,
+          _v3y,
+          _bitmap,
+          0,
+          0,
+          1,
+          0,
+          0,
+          1,
+        )
       } else if (material instanceof THREE.MeshNormalMaterial) {
         _color.r = normalToComponent(element.normalWorld.x)
         _color.g = normalToComponent(element.normalWorld.y)
         _color.b = normalToComponent(element.normalWorld.z)
         _color.updateHex()
         material.wireframe
-          ? strokePath(_color, material.wireframeLinewidth, material.wireframeLinecap, material.wireframeLinejoin)
+          ? strokePath(
+              _color,
+              material.wireframeLinewidth,
+              material.wireframeLinecap,
+              material.wireframeLinejoin,
+            )
           : fillPath(_color)
       }
     }
@@ -3205,27 +3672,85 @@ THREE.CanvasRenderer = function (parameters) {
             _color1.r = _color2.r = _color3.r = _color4.r = _ambientLight.r
             _color1.g = _color2.g = _color3.g = _color4.g = _ambientLight.g
             _color1.b = _color2.b = _color3.b = _color4.b = _ambientLight.b
-            calculateLight(scene, element.v1.positionWorld, element.vertexNormalsWorld[0], _color1)
-            calculateLight(scene, element.v2.positionWorld, element.vertexNormalsWorld[1], _color2)
-            calculateLight(scene, element.v4.positionWorld, element.vertexNormalsWorld[3], _color3)
-            calculateLight(scene, element.v3.positionWorld, element.vertexNormalsWorld[2], _color4)
+            calculateLight(
+              scene,
+              element.v1.positionWorld,
+              element.vertexNormalsWorld[0],
+              _color1,
+            )
+            calculateLight(
+              scene,
+              element.v2.positionWorld,
+              element.vertexNormalsWorld[1],
+              _color2,
+            )
+            calculateLight(
+              scene,
+              element.v4.positionWorld,
+              element.vertexNormalsWorld[3],
+              _color3,
+            )
+            calculateLight(
+              scene,
+              element.v3.positionWorld,
+              element.vertexNormalsWorld[2],
+              _color4,
+            )
             _bitmap = getGradientTexture(_color1, _color2, _color3, _color4)
             drawTriangle(_v1x, _v1y, _v2x, _v2y, _v4x, _v4y)
-            texturePath(_v1x, _v1y, _v2x, _v2y, _v4x, _v4y, _bitmap, 0, 0, 1, 0, 0, 1)
+            texturePath(
+              _v1x,
+              _v1y,
+              _v2x,
+              _v2y,
+              _v4x,
+              _v4y,
+              _bitmap,
+              0,
+              0,
+              1,
+              0,
+              0,
+              1,
+            )
             drawTriangle(_v5x, _v5y, _v3x, _v3y, _v6x, _v6y)
-            texturePath(_v5x, _v5y, _v3x, _v3y, _v6x, _v6y, _bitmap, 1, 0, 1, 1, 0, 1)
+            texturePath(
+              _v5x,
+              _v5y,
+              _v3x,
+              _v3y,
+              _v6x,
+              _v6y,
+              _bitmap,
+              1,
+              0,
+              1,
+              1,
+              0,
+              1,
+            )
           } else {
             _light.r = _ambientLight.r
             _light.g = _ambientLight.g
             _light.b = _ambientLight.b
-            calculateLight(scene, element.centroidWorld, element.normalWorld, _light)
+            calculateLight(
+              scene,
+              element.centroidWorld,
+              element.normalWorld,
+              _light,
+            )
             _color.r = Math.max(0, Math.min(material.color.r * _light.r, 1))
             _color.g = Math.max(0, Math.min(material.color.g * _light.g, 1))
             _color.b = Math.max(0, Math.min(material.color.b * _light.b, 1))
             _color.updateHex()
             drawQuad(_v1x, _v1y, _v2x, _v2y, _v3x, _v3y, _v4x, _v4y)
             material.wireframe
-              ? strokePath(_color, material.wireframeLinewidth, material.wireframeLinecap, material.wireframeLinejoin)
+              ? strokePath(
+                  _color,
+                  material.wireframeLinewidth,
+                  material.wireframeLinecap,
+                  material.wireframeLinejoin,
+                )
               : fillPath(_color)
           }
         else {
@@ -3246,20 +3771,65 @@ THREE.CanvasRenderer = function (parameters) {
         _color.updateHex()
         drawQuad(_v1x, _v1y, _v2x, _v2y, _v3x, _v3y, _v4x, _v4y)
         material.wireframe
-          ? strokePath(_color, material.wireframeLinewidth, material.wireframeLinecap, material.wireframeLinejoin)
+          ? strokePath(
+              _color,
+              material.wireframeLinewidth,
+              material.wireframeLinecap,
+              material.wireframeLinejoin,
+            )
           : fillPath(_color)
       } else if (material instanceof THREE.MeshDepthMaterial) {
         _near = camera.near
         _far = camera.far
-        _color1.r = _color1.g = _color1.b = 1 - smoothstep(v1.positionScreen.z, _near, _far)
-        _color2.r = _color2.g = _color2.b = 1 - smoothstep(v2.positionScreen.z, _near, _far)
-        _color3.r = _color3.g = _color3.b = 1 - smoothstep(v4.positionScreen.z, _near, _far)
-        _color4.r = _color4.g = _color4.b = 1 - smoothstep(v3.positionScreen.z, _near, _far)
+        _color1.r =
+          _color1.g =
+          _color1.b =
+            1 - smoothstep(v1.positionScreen.z, _near, _far)
+        _color2.r =
+          _color2.g =
+          _color2.b =
+            1 - smoothstep(v2.positionScreen.z, _near, _far)
+        _color3.r =
+          _color3.g =
+          _color3.b =
+            1 - smoothstep(v4.positionScreen.z, _near, _far)
+        _color4.r =
+          _color4.g =
+          _color4.b =
+            1 - smoothstep(v3.positionScreen.z, _near, _far)
         _bitmap = getGradientTexture(_color1, _color2, _color3, _color4)
         drawTriangle(_v1x, _v1y, _v2x, _v2y, _v4x, _v4y)
-        texturePath(_v1x, _v1y, _v2x, _v2y, _v4x, _v4y, _bitmap, 0, 0, 1, 0, 0, 1)
+        texturePath(
+          _v1x,
+          _v1y,
+          _v2x,
+          _v2y,
+          _v4x,
+          _v4y,
+          _bitmap,
+          0,
+          0,
+          1,
+          0,
+          0,
+          1,
+        )
         drawTriangle(_v5x, _v5y, _v3x, _v3y, _v6x, _v6y)
-        texturePath(_v5x, _v5y, _v3x, _v3y, _v6x, _v6y, _bitmap, 1, 0, 1, 1, 0, 1)
+        texturePath(
+          _v5x,
+          _v5y,
+          _v3x,
+          _v3y,
+          _v6x,
+          _v6y,
+          _bitmap,
+          1,
+          0,
+          1,
+          1,
+          0,
+          1,
+        )
       }
     }
 
@@ -3296,7 +3866,21 @@ THREE.CanvasRenderer = function (parameters) {
       _context.fill()
     }
 
-    function texturePath(x0, y0, x1, y1, x2, y2, bitmap, u0, v0, u1, v1, u2, v2) {
+    function texturePath(
+      x0,
+      y0,
+      x1,
+      y1,
+      x2,
+      y2,
+      bitmap,
+      u0,
+      v0,
+      u1,
+      v1,
+      u2,
+      v2,
+    ) {
       var a,
         b,
         c,
@@ -3391,7 +3975,8 @@ THREE.CanvasRenderer = function (parameters) {
   }
 
   function setOpacity(value) {
-    if (_contextGlobalAlpha != value) _context.globalAlpha = _contextGlobalAlpha = value
+    if (_contextGlobalAlpha != value)
+      _context.globalAlpha = _contextGlobalAlpha = value
   }
 
   function setBlending(value) {
@@ -3412,7 +3997,8 @@ THREE.CanvasRenderer = function (parameters) {
   }
 
   function setLineWidth(value) {
-    if (_contextLineWidth != value) _context.lineWidth = _contextLineWidth = value
+    if (_contextLineWidth != value)
+      _context.lineWidth = _contextLineWidth = value
   }
 
   function setLineCap(value) {
@@ -3458,7 +4044,11 @@ THREE.RenderableFace3 = function () {
   this.centroidWorld = new THREE.Vector3()
   this.centroidScreen = new THREE.Vector3()
   this.normalWorld = new THREE.Vector3()
-  this.vertexNormalsWorld = [new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]
+  this.vertexNormalsWorld = [
+    new THREE.Vector3(),
+    new THREE.Vector3(),
+    new THREE.Vector3(),
+  ]
   this.meshMaterials = null
   this.faceMaterials = null
   this.overdraw = false
@@ -3473,7 +4063,12 @@ THREE.RenderableFace4 = function () {
   this.centroidWorld = new THREE.Vector3()
   this.centroidScreen = new THREE.Vector3()
   this.normalWorld = new THREE.Vector3()
-  this.vertexNormalsWorld = [new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]
+  this.vertexNormalsWorld = [
+    new THREE.Vector3(),
+    new THREE.Vector3(),
+    new THREE.Vector3(),
+    new THREE.Vector3(),
+  ]
   this.meshMaterials = null
   this.faceMaterials = null
   this.overdraw = false
