@@ -25,7 +25,7 @@
     "build": "next build",
     "pages:build": "pnpx @cloudflare/next-on-pages",
     "preview": "cp .env .dev.vars && pnpm run pages:build && wrangler pages dev --port 3000",
-    "deploy": "pnpm run pages:build && wrangler pages deploy"
+    "deploy": "pnpm run pages:build && pnpx wrangler pages deploy"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.7.2",
