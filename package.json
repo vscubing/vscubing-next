@@ -5,7 +5,6 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
     "start": "next start",
     "db:migrate": "drizzle-kit migrate",
     "db:generate": "drizzle-kit generate",
@@ -22,9 +21,8 @@
     "type:check": "tsc --noEmit",
     "test": "bun test",
     "vendor": "./install-vendor.sh",
-    "pages:build": "npx @cloudflare/next-on-pages",
-    "preview": "npm run pages:build && wrangler pages dev",
-    "deploy": "npm run pages:build && wrangler pages deploy"
+    "build": "pnpx @cloudflare/next-on-pages",
+    "preview": "cp .env .dev.vars && pnpm run build && wrangler pages dev --port 3000"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.7.2",
@@ -91,5 +89,6 @@
   },
   "ct3aMetadata": {
     "initVersion": "7.39.0"
-  }
+  },
+  "packageManager": "pnpm@10.3.0"
 }
