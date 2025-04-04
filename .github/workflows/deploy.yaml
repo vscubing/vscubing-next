@@ -1,4 +1,4 @@
-name: Deploy to Coolify with Nixpacks
+name: CD
 on:
   push:
     branches:
@@ -45,6 +45,6 @@ jobs:
           # tags: |
           #   ghrc.io/${{ github.repository_owner }}/${{ github.repository }}:latest
 
-      - name: Deploy to Coolify
+      - name: Deploy to Dokploy
         run: | 
-          curl --request GET '${{ secrets.COOLIFY_WEBHOOK }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
+          curl --request GET '${{ secrets.DOKPLOY_WEBHOOK }}'
