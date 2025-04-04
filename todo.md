@@ -59,7 +59,7 @@
     - [x] ui
     - [x] fix 2by2
     - [x] fix accordions and matchMedia
-- [ ] deploy
+- [x] deploy
 
 ci/cd:
 - [ ] reset the droplet and setup docker credentials
@@ -74,7 +74,7 @@ nicities:
 - [ ] use page based pagination for contestindexpage
 - [ ] make contest link based on capabilities
 - [ ] pinned items
-- [ ] jump to the pinned item
+- [ ] jump to the pinned item => scroll and highlight
 - [ ] loading.ts for everything
 - [ ] use unstable_cache a bunch
 - [ ] expandContestLink
@@ -94,3 +94,5 @@ nicities:
 - [ ] rename roundsession to average
 - [ ] restructure server: add queries directory
 - [ ] dev tools
+- [ ] pin header?
+- [ ] leaderboard: on tie => sort by single result

@@ -90,16 +90,21 @@ function PageShell({
   username: string
   children: ReactNode
 }) {
+  const contestHref =
+    `/contests/${contestSlug}?discipline=${discipline}` as const
+
   return (
     <section className='flex flex-1 flex-col gap-3'>
       <NavigateBackButton className='self-start' />
       <LayoutHeaderTitlePortal>Watch the solve replay</LayoutHeaderTitlePortal>
       <div className='grid flex-1 grid-cols-[1.22fr_1fr] grid-rows-[min-content,1fr] gap-3 lg:grid-cols-2 sm:grid-cols-1 sm:grid-rows-[min-content,min-content,1fr]'>
         <LayoutSectionHeader className='gap-4'>
-          <DisciplineBadge discipline={discipline} />
+          <Link href={contestHref}>
+            <DisciplineBadge discipline={discipline} />
+          </Link>
           <div>
             <Link
-              href={`/contests/${contestSlug}?discipline=${discipline}`}
+              href={contestHref}
               className='title-h2 mb-1 text-secondary-20'
             >
               Contest {contestSlug}
