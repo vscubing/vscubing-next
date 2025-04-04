@@ -4,7 +4,7 @@ import {
   SolveTimeLabel,
   SolveTimeLinkOrDnf,
 } from '@/app/_shared/SolveTimeButton'
-import type { ScramblePosition, ResultDnfish } from '@/app/_types'
+import type { ScramblePosition, ResultDnfish, Discipline } from '@/app/_types'
 import { type ReactNode } from 'react'
 
 export function SolvePanel({
@@ -15,6 +15,7 @@ export function SolvePanel({
   result,
   ActionComponent,
   contestSlug,
+  discipline,
 }: {
   number: number
   solveId: number | null
@@ -23,6 +24,7 @@ export function SolvePanel({
   scramble: string
   ActionComponent?: ReactNode
   contestSlug: string
+  discipline: Discipline
 }) {
   return (
     <div className='flex h-11 items-center gap-8 rounded-xl bg-grey-100 pl-4'>
@@ -33,7 +35,12 @@ export function SolvePanel({
           className='absolute right-0 top-0'
         />
       </span>
-      <TimeSection result={result} id={solveId} contestSlug={contestSlug} />
+      <TimeSection
+        result={result}
+        id={solveId}
+        contestSlug={contestSlug}
+        discipline={discipline}
+      />
       {!!result ? (
         <Ellipsis className='vertical-alignment-fix flex-1'>
           {scramble}
@@ -52,10 +59,16 @@ export function SolvePanel({
 
 type TimeSectionProps = {
   contestSlug: string
+  discipline: Discipline
   id: number | null
   result: ResultDnfish | null
 }
-function TimeSection({ result, id, contestSlug }: TimeSectionProps) {
+function TimeSection({
+  result,
+  id,
+  contestSlug,
+  discipline,
+}: TimeSectionProps) {
   if (!result || !id) {
     return <SolveTimeLabel isPlaceholder />
   }
@@ -68,6 +81,7 @@ function TimeSection({ result, id, contestSlug }: TimeSectionProps) {
       contestSlug={contestSlug}
       solveId={id}
       result={result}
+      discipline={discipline}
     />
   )
 }

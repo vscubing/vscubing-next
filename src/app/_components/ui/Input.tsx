@@ -1,5 +1,5 @@
 import { cn } from '@/app/_utils/cn'
-import { type ComponentProps } from 'react'
+import { type ComponentProps, type RefCallback } from 'react'
 
 export type InputProps = ComponentProps<'input'> & {
   error?: boolean
@@ -11,7 +11,7 @@ function Input({
   error = false,
   ...props
 }: InputProps & {
-  ref?: React.RefObject<HTMLInputElement>
+  ref?: RefCallback<HTMLInputElement> | React.RefObject<HTMLInputElement>
 }) {
   return (
     <input
@@ -36,7 +36,7 @@ function TextArea({
   error = false,
   ...props
 }: TextAreaProps & {
-  ref?: React.RefObject<HTMLTextAreaElement>
+  ref?: RefCallback<HTMLInputElement> | React.RefObject<HTMLInputElement>
 }) {
   return (
     <textarea

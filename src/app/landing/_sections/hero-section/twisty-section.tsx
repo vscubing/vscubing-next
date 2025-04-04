@@ -31,4 +31,4 @@ const VALK_474_WR = {
   solution:
     "z r' D R2 R U' R' U' L' U' L U' U' R U R' d' U' R U R' d' U' R U' R' L U' L' y' U' U' R' U2 R U' U' R' U R' F R F' U R U",
   discipline: '3by3',
-}
+} as const

@@ -20,6 +20,7 @@ export async function validateSolve({
         ignoreCenterOrientation: true,
         ignorePuzzleOrientation: false,
       })
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (_error) {
     return false
   }

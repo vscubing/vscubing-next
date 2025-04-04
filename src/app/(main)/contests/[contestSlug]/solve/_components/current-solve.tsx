@@ -19,7 +19,7 @@ import {
   DialogClose,
 } from '@/app/_components/ui'
 import { BaseDialogButton } from '@/app/_components/ui/popovers/BaseDialog'
-import type { ScramblePosition, ResultDnfish } from '@/app/_types'
+import type { ScramblePosition, ResultDnfish, Discipline } from '@/app/_types'
 
 export function CurrentSolve({
   areActionsDisabled,
@@ -33,6 +33,7 @@ export function CurrentSolve({
   onSolveInit,
   onSolveSubmit,
   contestSlug,
+  discipline,
 }: {
   areActionsDisabled: boolean
   number: number
@@ -45,10 +46,12 @@ export function CurrentSolve({
   onSolveInit: () => void
   onSolveSubmit: () => void
   contestSlug: string
+  discipline: Discipline
 }) {
   return (
     <SolvePanel
       contestSlug={contestSlug}
+      discipline={discipline}
       number={number}
       scramble={scramble}
       position={position}

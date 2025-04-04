@@ -33,7 +33,7 @@ export function ParallaxCubes({
   mainImgSrc,
   mainImgAlt,
 }: {
-  mainImgSrc: StaticImageData
+  mainImgSrc: StaticImageData | string
   mainImgAlt: string
 }) {
   return (

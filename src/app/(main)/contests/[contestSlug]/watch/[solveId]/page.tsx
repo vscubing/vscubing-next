@@ -2,14 +2,9 @@ import { z } from 'zod'
 import { TwistySection } from './_components/twisty-section'
 import { api } from '@/trpc/server'
 import { tryCatchTRPC } from '@/app/_utils/try-catch'
-import { notFound, redirect } from 'next/navigation'
+import { notFound } from 'next/navigation'
 import { DisciplineBadge, LoadingSpinner } from '@/app/_components/ui'
-import {
-  isDiscipline,
-  DEFAULT_DISCIPLINE,
-  type Discipline,
-  castDiscipline,
-} from '@/app/_types'
+import { type Discipline, castDiscipline } from '@/app/_types'
 import { Suspense, type ReactNode } from 'react'
 import { LayoutSectionHeader } from '@/app/(main)/_layout'
 import { LayoutHeaderTitlePortal } from '@/app/(main)/_layout/layout-header'

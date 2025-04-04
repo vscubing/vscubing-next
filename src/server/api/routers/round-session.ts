@@ -254,10 +254,5 @@ export const roundSessionRouter = createTRPCRouter({
     ),
 })
 
-const DISCIPLINE_TO_KPUZZLE: Record<Discipline, string> = {
-  '3by3': '3x3x3',
-  '2by2': '2x2x2',
-}
-
 const EXTRAS_PER_ROUND = 2
 const ROUND_ATTEMPTS_QTY = 5
