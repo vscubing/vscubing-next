@@ -4,6 +4,7 @@
   "private": false,
   "type": "module",
   "scripts": {
+    "vercel-build": "next build",
     "dev": "next dev",
     "start": "next start",
     "db:migrate": "drizzle-kit migrate",
@@ -21,8 +22,10 @@
     "type:check": "tsc --noEmit",
     "test": "bun test",
     "vendor": "./install-vendor.sh",
-    "build": "pnpx @cloudflare/next-on-pages",
-    "preview": "cp .env .dev.vars && pnpm run build && wrangler pages dev --port 3000"
+    "build": "next build",
+    "pages:build": "pnpx @cloudflare/next-on-pages",
+    "preview": "cp .env .dev.vars && pnpm run pages:build && wrangler pages dev --port 3000",
+    "deploy": "pnpm run pages:build && wrangler pages deploy"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.7.2",
@@ -92,3 +95,4 @@
   },
   "packageManager": "pnpm@10.3.0"
 }
+
