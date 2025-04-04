@@ -1,4 +1,4 @@
-import { drizzle } from 'drizzle-orm/postgres-js'
+import { drizzle } from 'drizzle-orm/neon-serverless'
 import postgres from 'postgres'
 import * as schema from './schema'
 
