@@ -1,7 +1,7 @@
 'use client'
 
 import { UnderlineButton } from '@/app/_components/ui'
-import { useFittingCount } from '@/app/_shared/autofillHeight/useAutofillHeight'
+import { useFittingCount } from '@/app/_shared/autofillHeight/use-fitting-count'
 import { Contest, ContestSkeleton } from '@/app/_shared/contests/Contest'
 import { DEFAULT_DISCIPLINE } from '@/app/_types'
 import { cn } from '@/app/_utils/cn'
