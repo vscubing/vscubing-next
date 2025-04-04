@@ -96,3 +96,4 @@ nicities:
 - [ ] dev tools
 - [ ] pin header?
 - [ ] leaderboard: on tie => sort by single result
+- [ ] rename disciplines 3by3 => 3x3

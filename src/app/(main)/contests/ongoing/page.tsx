@@ -1,8 +1,14 @@
 import { redirect } from 'next/navigation'
 import { api } from '@/trpc/server'
-import { DEFAULT_DISCIPLINE } from '@/app/_types'
+import { castDiscipline } from '@/app/_types'
 
-export default async function Page() {
+export default async function OngoingContestRedirectPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>
+}) {
+  const { discipline } = await searchParams
   const ongoing = await api.contest.getOngoing()
-  redirect(`/contests/${ongoing.slug}?discipline=${DEFAULT_DISCIPLINE}`)
+  if (!ongoing) throw new Error('no ongoing contest!') // TODO: no ongoing contest "on maintenance" page
+  redirect(`/contests/${ongoing.slug}?discipline=${castDiscipline(discipline)}`)
 }

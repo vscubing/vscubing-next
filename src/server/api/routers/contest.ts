@@ -58,18 +58,24 @@ export const contestRouter = createTRPCRouter({
     }),
 
   getOngoing: publicProcedure.query(async ({ ctx }) => {
-    const [ongoing] = await ctx.db
-      .select()
+    const rows = await ctx.db
+      .select() // TODO: can we do better than `select *` ?
       .from(contestTable)
+      .innerJoin(
+        contestDisciplineTable,
+        eq(contestDisciplineTable.contestSlug, contestTable.slug),
+      )
       .where(eq(contestTable.isOngoing, true))
 
-    if (!ongoing)
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'No ongoing contest!',
-      })
+    const ongoing = rows[0]?.contest
+    if (!ongoing) return null
 
-    return ongoing
+    return {
+      ...ongoing,
+      disciplines: rows.map(
+        ({ contest_discipline }) => contest_discipline.disciplineSlug,
+      ),
+    }
   }),
 
   getContestMetaData: publicProcedure
