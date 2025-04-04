@@ -1,7 +1,9 @@
 'use client'
 
 import { UnderlineButton } from '@/app/_components/ui'
+import { List, ListWrapper } from '@/app/_shared/autofillHeight/List'
 import { useFittingCount } from '@/app/_shared/autofillHeight/useAutofillHeight'
+import { Contest, ContestSkeleton } from '@/app/_shared/contests/Contest'
 import { DEFAULT_DISCIPLINE } from '@/app/_types'
 import { cn } from '@/app/_utils/cn'
 import type { RouterOutputs } from '@/trpc/react'
@@ -49,20 +51,25 @@ export function LatestContests({
           </Link>
         </UnderlineButton>
       </div>
-      {/* <ListWrapper
+      <ListWrapper
         className='gap-3'
         renderFakeElement={() => <ContestSkeleton />}
         containerRef={containerRef}
         fakeElementRef={fakeElementRef}
       >
         <List
-          renderItem={({ item: contest }) => <Contest contest={contest} />}
+          renderItem={({ item: contest }) => (
+            <Contest
+              contest={contest.contest}
+              discipline={DEFAULT_DISCIPLINE}
+            />
+          )}
           renderSkeleton={() => <ContestSkeleton />}
           pageSize={countToDisplay}
-          getItemKey={(contest) => contest.id}
+          getItemKey={(contest) => contest.contest.slug}
           list={contests?.slice(0, countToDisplay)}
         />
-      </ListWrapper> */}
+      </ListWrapper>
     </section>
   )
 }

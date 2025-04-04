@@ -60,6 +60,10 @@
     - [x] fix 2by2
     - [x] fix accordions and matchMedia
 - [x] deploy
+- [ ] dashboard
+    - [x] scaffold the page
+    - [x] latest contests
+    - [ ] best solves
 
 ci/cd:
 - [ ] reset the droplet and setup docker credentials

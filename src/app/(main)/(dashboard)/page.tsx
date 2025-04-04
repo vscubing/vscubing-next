@@ -4,7 +4,7 @@ import Image from 'next/image'
 import dashboardEmptyImg from '@/../public/images/dashboard-empty.svg'
 import { BestSolves, LatestContests, OngoingContestBanner } from './_components'
 
-export default async function DashboardPag() {
+export default async function DashboardPage() {
   const session = await auth()
 
   const title = session
@@ -29,7 +29,7 @@ export default async function DashboardPag() {
 async function Lists() {
   const latestContests = await api.contest.getPastContests({
     discipline: '3by3',
-    limit: 5,
+    limit: 10,
   })
   const bestSolves = []
   // const { data: bestSolves } = useQuery({
