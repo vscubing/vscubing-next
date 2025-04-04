@@ -186,6 +186,9 @@ importers:
       typescript-eslint:
         specifier: ^8.27.0
         version: 8.29.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.2)
+      wrangler:
+        specifier: ^4.7.1
+        version: 4.7.1
 
 packages:
 
@@ -3845,7 +3848,6 @@ packages:
 
   bun@1.2.8:
     resolution: {integrity: sha512-X8r9UuXAruvpE37u/JVfvJI8KRdFf9hUdTLw00DMScnBe7Xerawd/VvmFVT9Y/NrmXDAdDp0Dm6N6bulZYTGvA==}
-    cpu: [arm64, x64, aarch64]
     os: [darwin, linux, win32]
     hasBin: true
 
