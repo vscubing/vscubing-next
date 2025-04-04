@@ -1,16 +1,15 @@
 'use client'
 
 import { UnderlineButton } from '@/app/_components/ui'
-import { List, ListWrapper } from '@/app/_shared/autofillHeight/List'
 import { useFittingCount } from '@/app/_shared/autofillHeight/useAutofillHeight'
 import { Contest, ContestSkeleton } from '@/app/_shared/contests/Contest'
 import { DEFAULT_DISCIPLINE } from '@/app/_types'
 import { cn } from '@/app/_utils/cn'
+import { useMatchesScreen } from '@/app/_utils/tailwind'
 import type { RouterOutputs } from '@/trpc/react'
 import Link from 'next/link'
 
-const MIN_ITEMS_IF_OVERFLOW = 2
-const MOBILE_ITEMS = 2
+const MOBILE_ITEM_COUNT = 2
 export function LatestContests({
   className,
   contests,
@@ -19,13 +18,11 @@ export function LatestContests({
   contests?: RouterOutputs['contest']['getPastContests']['items']
 }) {
   const { fittingCount, containerRef, fakeElementRef } = useFittingCount()
+  const isMd = useMatchesScreen('md')
 
-  let countToDisplay = fittingCount ?? 0
-  // if (matchesQuery('md')) {
-  //   countToDisplay = MOBILE_ITEMS
-  // } else if (countToDisplay) {
-  countToDisplay = Math.max(countToDisplay, MIN_ITEMS_IF_OVERFLOW)
-  // }
+  const countToDisplay = isMd
+    ? MOBILE_ITEM_COUNT
+    : (fittingCount ?? MOBILE_ITEM_COUNT)
 
   let allDisplayed = undefined
   if (!!countToDisplay && contests?.length) {
@@ -51,25 +48,22 @@ export function LatestContests({
           </Link>
         </UnderlineButton>
       </div>
-      <ListWrapper
-        className='gap-3'
-        renderFakeElement={() => <ContestSkeleton />}
-        containerRef={containerRef}
-        fakeElementRef={fakeElementRef}
-      >
-        <List
-          renderItem={({ item: contest }) => (
-            <Contest
-              contest={contest.contest}
-              discipline={DEFAULT_DISCIPLINE}
-            />
-          )}
-          renderSkeleton={() => <ContestSkeleton />}
-          pageSize={countToDisplay}
-          getItemKey={(contest) => contest.contest.slug}
-          list={contests?.slice(0, countToDisplay)}
-        />
-      </ListWrapper>
+      <ul className='flex flex-1 flex-col gap-3' ref={containerRef}>
+        <li aria-hidden className='invisible fixed' ref={fakeElementRef}>
+          <ContestSkeleton />
+        </li>
+        {contests
+          ? contests.slice(0, countToDisplay ?? 0).map(({ contest }) => (
+              <li key={contest.slug}>
+                <Contest contest={contest} discipline={DEFAULT_DISCIPLINE} />
+              </li>
+            ))
+          : Array.from({ length: countToDisplay ?? 0 }).map((_, idx) => (
+              <li key={idx}>
+                <ContestSkeleton />
+              </li>
+            ))}
+      </ul>
     </section>
   )
 }
