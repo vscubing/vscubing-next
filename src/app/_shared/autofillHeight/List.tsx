@@ -8,8 +8,8 @@ type ListWrapperProps = {
   children: ReactNode
   className?: string
   renderFakeElement: () => ReactElement
-  fakeElementRef: React.RefObject<HTMLLIElement>
-  containerRef: React.RefObject<HTMLUListElement>
+  fakeElementRef: React.RefObject<HTMLLIElement | null>
+  containerRef: React.RefObject<HTMLUListElement | null>
 }
 function ListWrapper({
   children,

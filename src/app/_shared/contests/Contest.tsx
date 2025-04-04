@@ -28,7 +28,7 @@ export function Contest({ contest, discipline, className }: ContestProps) {
       <SecondaryButton size='iconLg' asChild className='sm:h-16 sm:w-16'>
         <Link
           href={{
-            pathname: `/contests/${contest.slug}`,
+            pathname: `/contests/${contest.slug}/results`,
             query: { discipline },
           }}
         >

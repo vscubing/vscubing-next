@@ -4,7 +4,12 @@ import { api } from '@/trpc/server'
 import { tryCatchTRPC } from '@/app/_utils/try-catch'
 import { notFound, redirect } from 'next/navigation'
 import { DisciplineBadge, LoadingSpinner } from '@/app/_components/ui'
-import { isDiscipline, DEFAULT_DISCIPLINE, type Discipline } from '@/app/_types'
+import {
+  isDiscipline,
+  DEFAULT_DISCIPLINE,
+  type Discipline,
+  castDiscipline,
+} from '@/app/_types'
 import { Suspense, type ReactNode } from 'react'
 import { LayoutSectionHeader } from '@/app/(main)/_layout'
 import { LayoutHeaderTitlePortal } from '@/app/(main)/_layout/layout-header'
@@ -23,16 +28,12 @@ export default async function WatchSolvePage({
 }) {
   const { contestSlug, solveId } = await params
   const { discipline } = await searchParams
-  if (!isDiscipline(discipline))
-    redirect(
-      `/contests/${contestSlug}/watch/${solveId}?discipline=${DEFAULT_DISCIPLINE}`,
-    )
 
   return (
     <Suspense
       fallback={
         <PageShell
-          discipline={discipline}
+          discipline={castDiscipline(discipline)}
           contestSlug={contestSlug}
           username='...'
           timeMs={0}
@@ -96,10 +97,12 @@ function PageShell({
       <LayoutHeaderTitlePortal>Watch the solve replay</LayoutHeaderTitlePortal>
       <div className='grid flex-1 grid-cols-[1.22fr_1fr] grid-rows-[min-content,1fr] gap-3 lg:grid-cols-2 sm:grid-cols-1 sm:grid-rows-[min-content,min-content,1fr]'>
         <LayoutSectionHeader className='gap-4'>
-          <DisciplineBadge discipline={discipline} />
+          <Link href={`/leaderboard?discipline=${discipline}?type=single`}>
+            <DisciplineBadge discipline={discipline} />
+          </Link>
           <div>
             <Link
-              href={`/contests/${contestSlug}?discipline=${discipline}`}
+              href={`/contests/${contestSlug}/results?discipline=${discipline}`}
               className='title-h2 mb-1 text-secondary-20'
             >
               Contest {contestSlug}
