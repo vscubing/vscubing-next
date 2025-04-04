@@ -12,6 +12,7 @@ import '../threemin'
  * Made classy by Jeremy Fleischman, October 7, 2011 during the flight to worlds
  *
  */
+;
 ;('use strict')
 
 THREE.Ploy = function (points) {
