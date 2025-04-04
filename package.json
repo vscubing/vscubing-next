@@ -22,10 +22,14 @@
     "lint:write": "next lint --fix",
     "type:check": "tsc --noEmit",
     "test": "bun test",
-    "vendor": "./install-vendor.sh"
+    "vendor": "./install-vendor.sh",
+    "pages:build": "bunx @cloudflare/next-on-pages",
+    "preview": "bun pages:build && wrangler pages dev",
+    "deploy": "bun pages:build && wrangler pages deploy"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.7.2",
+    "@cloudflare/next-on-pages": "^1.13.12",
     "@hookform/resolvers": "^3.3.4",
     "@opennextjs/cloudflare": "^1.0.0-beta.0",
     "@radix-ui/react-accordion": "^1.1.2",
