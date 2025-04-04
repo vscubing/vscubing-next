@@ -31,16 +31,16 @@ export default async function ContestPage(props: {
         `/contests/${contestSlug}/results?discipline=${discipline}`,
         RedirectType.replace,
       )
+    case 'SOLVE':
+      redirect(
+        `/contests/${contestSlug}/solve?discipline=${discipline}`,
+        RedirectType.replace,
+      )
     case 'UNAUTHORIZED':
       return (
         <section className='flex flex-1 flex-col gap-3 sm:gap-2'>
           <HintSignInSection description={CONTEST_UNAUTHORIZED_MESSAGE} />
         </section>
-      )
-    case 'SOLVE':
-      redirect(
-        `/contests/${contestSlug}/solve?discipline=${discipline}`,
-        RedirectType.replace,
       )
     default:
       assertUnreachable(userCapabilities)
