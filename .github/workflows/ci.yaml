@@ -23,9 +23,10 @@ jobs:
         run: echo -e '/// <reference types="next" />\n/// <reference types="next/image-types/global" />' > src/next-env.d.ts
 
       - name: Typecheck
-        run: bun typecheck
+        run: bun run type:check
 
-      - name: Lint
+      - name: Format check
+        run: bun run format:check
 
-      - name: Test
-        run: bun run test
+      - name: Lint check
+        run: bun run lint:check
