@@ -5,6 +5,8 @@ import { getContestUserCapabilities } from '@/server/internal/get-contest-user-c
 import { CONTEST_UNAUTHORIZED_MESSAGE } from '@/shared'
 import { notFound, redirect, RedirectType } from 'next/navigation'
 
+export const runtime = 'edge'
+
 export default async function ContestPage(props: {
   params: Promise<{ contestSlug: string }>
   searchParams: Promise<Record<string, string | string[] | undefined>>

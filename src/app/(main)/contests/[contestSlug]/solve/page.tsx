@@ -25,6 +25,8 @@ import { LayoutHeaderTitlePortal } from '@/app/(main)/_layout/layout-header'
 import { DisciplineSwitcher } from '@/app/_shared/discipline-switcher-client'
 import { NavigateBackButton } from '@/app/_shared/NavigateBackButton'
 
+export const runtime = 'edge'
+
 export default async function SolveContestPage({
   searchParams,
   params,

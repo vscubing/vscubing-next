@@ -2,6 +2,8 @@ import { auth } from '@/server/auth'
 import { OngoingContestBanner } from './_components'
 import { DashboardLists } from './_components/dashboard-lists'
 
+export const runtime = 'edge'
+
 export default async function DashboardPage() {
   const session = await auth()
 

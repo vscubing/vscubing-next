@@ -22,6 +22,8 @@ import {
   SingleResultSkeleton,
 } from './_components/single-result'
 
+export const runtime = 'edge'
+
 export default async function LeaderboardPage({
   searchParams,
 }: {

@@ -20,6 +20,8 @@ import { DisciplineSwitcher } from '../../../_shared/discipline-switcher-client'
 import ContestList from './_components/contest-list-client'
 import { LayoutHeaderTitlePortal } from '../../_layout/layout-header'
 
+export const runtime = 'edge'
+
 type SearchParams = Promise<Record<string, string | string[] | undefined>>
 export default async function ContestsIndexPage(props: {
   searchParams: SearchParams

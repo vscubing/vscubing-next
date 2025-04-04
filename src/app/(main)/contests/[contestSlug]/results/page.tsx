@@ -13,6 +13,8 @@ import { LayoutSectionHeader } from '@/app/(main)/_layout'
 import { Suspense } from 'react'
 import { SessionSkeleton } from './_components/session'
 
+export const runtime = 'edge'
+
 export default async function ContestResultsPage({
   params,
   searchParams,
