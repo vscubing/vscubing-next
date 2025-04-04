@@ -3,6 +3,11 @@
  * for Docker builds.
  */
 import './src/env.js'
+import { setupDevPlatform } from '@cloudflare/next-on-pages/next-dev'
+
+if (process.env.NODE_ENV === 'development') {
+  await setupDevPlatform()
+}
 
 // NOTE: resourceQueries in rules don't work in turbopack yet :(
 
