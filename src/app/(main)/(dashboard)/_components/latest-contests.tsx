@@ -9,7 +9,7 @@ import { useMatchesScreen } from '@/app/_utils/tailwind'
 import type { RouterOutputs } from '@/trpc/react'
 import Link from 'next/link'
 
-const MOBILE_ITEM_COUNT = 2
+const MIN_ITEM_COUNT = 2
 export function LatestContests({
   className,
   contests,
@@ -21,8 +21,8 @@ export function LatestContests({
   const isMd = useMatchesScreen('md')
 
   const countToDisplay = isMd
-    ? MOBILE_ITEM_COUNT
-    : (fittingCount ?? MOBILE_ITEM_COUNT)
+    ? MIN_ITEM_COUNT
+    : Math.max(fittingCount ?? MIN_ITEM_COUNT, MIN_ITEM_COUNT)
 
   let allDisplayed = undefined
   if (!!countToDisplay && contests?.length) {
@@ -53,12 +53,12 @@ export function LatestContests({
           <ContestSkeleton />
         </li>
         {contests
-          ? contests.slice(0, countToDisplay ?? 0).map(({ contest }) => (
+          ? contests.slice(0, countToDisplay).map(({ contest }) => (
               <li key={contest.slug}>
                 <Contest contest={contest} discipline={DEFAULT_DISCIPLINE} />
               </li>
             ))
-          : Array.from({ length: countToDisplay ?? 0 }).map((_, idx) => (
+          : Array.from({ length: countToDisplay }).map((_, idx) => (
               <li key={idx}>
                 <ContestSkeleton />
               </li>

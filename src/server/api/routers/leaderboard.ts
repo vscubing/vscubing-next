@@ -9,7 +9,6 @@ import {
   userTable,
 } from '@/server/db/schema'
 import { and, eq, isNotNull } from 'drizzle-orm'
-import { db } from '@/server/db'
 import { DEFAULT_DISCIPLINE } from '@/app/_types'
 
 export const leaderboardRouter = createTRPCRouter({

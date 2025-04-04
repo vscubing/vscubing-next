@@ -15,11 +15,7 @@ export function DashboardLists() {
       limit: 10,
     }),
   )
-  const bestSolves = []
-  // const { data: bestSolves } = useQuery({
-  //   queryKey: ['bestSolves'],
-  //   queryFn: contestsSolvesBestInEveryDisciplineList,
-  // })
+  const bestSolves = useBestSolvesQuery()
 
   if (latestContests?.items.length === 0 && bestSolves?.length === 0) {
     return (
@@ -45,7 +41,26 @@ export function DashboardLists() {
         className='h-full basis-[calc(40%-0.75rem/2)]'
         contests={latestContests?.items}
       />
-      <BestSolves className='h-full basis-[calc(60%-0.75rem/2)]' solves={[]} />
+      <BestSolves
+        className='h-full basis-[calc(60%-0.75rem/2)]'
+        solves={bestSolves}
+      />
     </div>
   )
+}
+
+function useBestSolvesQuery() {
+  const trpc = useTRPC()
+  const { data: best3by3 } = useQuery(
+    trpc.leaderboard.bySingle.queryOptions({ limit: 1, discipline: '3by3' }),
+  )
+  const { data: best2by2 } = useQuery(
+    trpc.leaderboard.bySingle.queryOptions({ limit: 1, discipline: '2by2' }),
+  )
+
+  if (!best3by3 || !best2by2) return
+  return [
+    { ...best3by3[0]!, discipline: '3by3' as const },
+    { ...best2by2[0]!, discipline: '2by2' as const },
+  ]
 }
