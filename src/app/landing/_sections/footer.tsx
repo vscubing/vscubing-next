@@ -199,7 +199,7 @@ function AnimatedCube({
   className,
   toTranslateY,
 }: {
-  src: StaticImageData
+  src: StaticImageData | string
   className: string
   toTranslateY: string
 }) {

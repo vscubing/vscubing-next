@@ -139,6 +139,7 @@ export function SolveContestForm({
             {state?.submittedSolves?.map((solve, index) => (
               <SolvePanel
                 contestSlug={contestSlug}
+                discipline={discipline}
                 number={index + 1}
                 result={solve.result}
                 solveId={solve.id}
@@ -150,6 +151,7 @@ export function SolveContestForm({
 
             <CurrentSolve
               contestSlug={contestSlug}
+              discipline={discipline}
               areActionsDisabled={isFormPending}
               canChangeToExtra={state.canChangeToExtra}
               position={state.currentScramble.position}
