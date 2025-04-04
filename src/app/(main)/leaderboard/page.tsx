@@ -23,17 +23,14 @@ import {
 } from './_components/single-result'
 
 export default async function LeaderboardPage({
-  params,
   searchParams,
 }: {
-  params: Promise<{ discipline: string }>
   searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
-  const { discipline } = await params
-  const { type } = await searchParams
+  const { discipline, type } = await searchParams
   if (!isDiscipline(discipline) || !isLeaderboardType(type))
     redirect(
-      `/leaderboard/${castDiscipline(discipline)}?type=${castLeaderboardType(type)}`,
+      `/leaderboard?discipline=${castDiscipline(discipline)}&type=${castLeaderboardType(type)}`,
     )
 
   const session = await auth()

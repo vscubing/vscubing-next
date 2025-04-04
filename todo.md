@@ -57,7 +57,7 @@
 - [ ] single-leaderboard
     - [x] server route
     - [x] ui
-    - [ ] fix 2by2
+    - [x] fix 2by2
     - [ ] fix accordions and matchMedia
 
 ci/cd:
@@ -91,3 +91,5 @@ nicities:
 - [ ] "you have X unapplied migrations"
 - [ ] pagination everywhere
 - [ ] rename roundsession to average
+- [ ] restructure server: add queries directory
+- [ ] dev tools
