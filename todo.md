@@ -54,11 +54,12 @@
 - [x] move the header to layout
 - [x] loading.tsx
 - [x] unauthorized?? /round-session/state
-- [ ] single-leaderboard
+- [x] single-leaderboard
     - [x] server route
     - [x] ui
     - [x] fix 2by2
-    - [ ] fix accordions and matchMedia
+    - [x] fix accordions and matchMedia
+- [ ] deploy
 
 ci/cd:
 - [ ] reset the droplet and setup docker credentials
