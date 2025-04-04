@@ -73,11 +73,15 @@ export const leaderboardRouter = createTRPCRouter({
         .innerJoin(userTable, eq(userTable.id, roundSessionTable.contestantId))
         .orderBy(solveTable.timeMs)
 
-      return rows.map((row) => ({
-        ...row,
-        timeMs: row.timeMs!, // manually cast timeMs as non nullable because drizzle doesn't pick up on `isNotNull` in the query
-        isOwn: ctx.session?.user?.id === row.userId,
-      }))
+      return rows.map((row) => {
+        if (!row.timeMs)
+          throw new Error(`[leaderboard] no time_ms for solveId ${row.id}`)
+        return {
+          ...row,
+          timeMs: row.timeMs, // infers timeMs as non-nullable
+          isOwn: ctx.session?.user?.id === row.userId,
+        }
+      })
     }),
 })
 

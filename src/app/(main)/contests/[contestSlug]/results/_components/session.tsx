@@ -49,7 +49,7 @@ function SessionTablet({
       <Accordion.Item
         value='result'
         className={cn(
-          'flex min-h-[4.5rem] flex-wrap items-center rounded-xl px-4 py-2 sm:min-h-28 sm:p-4',
+          'flex min-h-[4.5rem] flex-wrap items-center rounded-xl px-4 pb-2 pt-3 sm:min-h-28 sm:p-4',
           isOwn ? 'bg-secondary-80' : 'bg-grey-100',
         )}
       >
@@ -85,6 +85,7 @@ function SessionTablet({
                     canShowHint={isFirstOnPage && index === 0}
                     contestSlug={contestSlug}
                     solveId={solve.id}
+                    discipline={discipline}
                     result={solve.result}
                     variant={
                       solve.id === bestId
@@ -157,6 +158,7 @@ function SessionDesktop({
                 <SolveTimeLinkOrDnf
                   canShowHint={isFirstOnPage && index === 0}
                   contestSlug={contestSlug}
+                  discipline={discipline}
                   solveId={solve.id}
                   result={solve.result}
                   variant={
