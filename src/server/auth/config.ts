@@ -24,14 +24,13 @@ declare module 'next-auth' {
       id: string
       finishedRegistration?: boolean
       // ...other properties
-      // role: UserRole;
     } & DefaultSession['user']
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User {
+    // ...other properties
+    finishedRegistration?: boolean
+  }
 }
 
 function customCreateUser(adapter: ReturnType<typeof DrizzleAdapter>): Adapter {
@@ -91,8 +90,7 @@ export const authConfig = {
       user: {
         ...session.user,
         id: user.id,
-        finishedRegistration: (user as typeof userTable.$inferSelect)
-          .finishedRegistration,
+        finishedRegistration: user.finishedRegistration,
       },
     }),
   },

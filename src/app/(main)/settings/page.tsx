@@ -11,7 +11,9 @@ export default async function SettingsPage() {
     <>
       <NavigateBackButton />
       <LayoutHeaderTitlePortal>Simulator settings</LayoutHeaderTitlePortal>
-      <PageContent />
+      <div className='h-full rounded-2xl bg-black-80 p-6 sm:p-3'>
+        <PageContent />
+      </div>
     </>
   )
 }

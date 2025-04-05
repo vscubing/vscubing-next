@@ -3,16 +3,36 @@
 import { ChevronDownIcon } from '@/app/_components/ui'
 import { cn } from '@/app/_utils/cn'
 import { useTRPC } from '@/trpc/react'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { ReactNode, ComponentPropsWithoutRef, ComponentRef } from 'react'
 import * as SelectPrimitive from '@radix-ui/react-select'
 
 export function PageContent() {
   const trpc = useTRPC()
-  const { data: settings } = useQuery(
-    trpc.settings.simulatorSettings.queryOptions(),
+  const queryClient = useQueryClient()
+  const settingsQuery = trpc.settings.simulatorSettings.queryOptions()
+
+  const { data: settings } = useQuery(settingsQuery)
+  const { mutate: mutateSettings } = useMutation(
+    trpc.settings.setSimulatorSettings.mutationOptions({
+      onMutate: async (newSettings) => {
+        await queryClient.cancelQueries(settingsQuery)
+        const oldSettings = queryClient.getQueryData(settingsQuery.queryKey)
+        queryClient.setQueryData(
+          settingsQuery.queryKey,
+          (old) => old && { ...old, ...newSettings },
+        )
+        return { oldSettings }
+      },
+      onError: (_, _1, context) => {
+        queryClient.setQueryData(settingsQuery.queryKey, context?.oldSettings)
+      },
+      onSettled: () => {
+        void queryClient.invalidateQueries(settingsQuery)
+      },
+    }),
   )
-  // const { mutate: mutateSettings } = useMutateSettings()
+
   if (!settings)
     return (
       <ul className='space-y-2'>
@@ -22,7 +42,7 @@ export function PageContent() {
     )
 
   return (
-    <ul className='flex flex-1 flex-col gap-2 rounded-2xl bg-black-80 p-6 sm:p-3'>
+    <ul className='space-y-2'>
       {settings ? (
         <>
           <li className='flex items-center justify-between rounded-xl bg-grey-100 p-4'>
@@ -30,9 +50,9 @@ export function PageContent() {
             <Select
               options={CS_ANIMATION_DURATION_OPTIONS}
               value={String(settings.animationDuration)}
-              // onValueChange={(val) =>
-              //   mutateSettings({ animationDuration: Number(val) })
-              // }
+              onValueChange={(val) =>
+                mutateSettings({ animationDuration: Number(val) })
+              }
             />
           </li>
           <li className='flex items-center justify-between gap-2 rounded-xl bg-grey-100 p-4'>
@@ -40,9 +60,12 @@ export function PageContent() {
             <Select
               options={CS_INSPECTION_VOICE_ALERT_OPTIONS}
               value={settings.inspectionVoiceAlert}
-              // onValueChange={(inspectionVoiceAlert) =>
-              //   mutateSettings({ inspectionVoiceAlert })
-              // }
+              onValueChange={(inspectionVoiceAlert) =>
+                mutateSettings({
+                  inspectionVoiceAlert:
+                    inspectionVoiceAlert as typeof settings.inspectionVoiceAlert,
+                })
+              }
               className='min-w-[9rem]'
             />
           </li>
