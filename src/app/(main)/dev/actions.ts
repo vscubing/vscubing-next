@@ -1,7 +1,9 @@
 'use server'
 
+import type { Discipline } from '@/app/_types'
 import { db } from '@/server/db'
 import { contestTable, disciplineTable } from '@/server/db/schema'
+import { validateSolve } from '@/server/internal/validate-solve'
 import dayjs from 'dayjs'
 import { revalidatePath } from 'next/cache'
 
@@ -25,4 +27,15 @@ export async function createSystemInitialContest() {
 
     revalidatePath('/dev')
   })
+}
+
+export type Solve = {
+  scramble: string
+  solution: string
+  discipline: Discipline
+}
+export async function validateSolveAction(solve: Solve) {
+  const { isValid, error } = await validateSolve(solve)
+  if (isValid) return 'valid'
+  else return `invalid. error: ${JSON.stringify(error)}`
 }

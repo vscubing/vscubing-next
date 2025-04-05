@@ -15,6 +15,7 @@ import { calculateAvg } from './calculate-avg'
 import { validateSolve } from '@/server/internal/validate-solve'
 import { getContestUserCapabilities } from '../../internal/get-contest-user-capabilities'
 import { removeSolutionComments } from '@/app/_utils/remove-solution-comments'
+import { tryCatch } from '@/app/_utils/try-catch'
 
 const submittedSolvesInvariant = z.array(
   z.object(
@@ -190,12 +191,18 @@ export const roundSessionRouter = createTRPCRouter({
       let isValid = true
 
       if (!isDnf) {
-        isValid = await validateSolve({
+        const { isValid: _isValid, error } = await validateSolve({
           discipline: scramble.discipline,
           scramble: scramble.moves,
           solution: removeSolutionComments(input.solution),
         })
-        if (!isValid) isDnf = true
+        if (error || !_isValid) {
+          console.log(
+            `[SOLVE] invalid solve: ${JSON.stringify(scramble)}\n ${JSON.stringify(input.solution)}\n ${JSON.stringify(error)}`,
+          )
+          isValid = false
+          isDnf = true
+        }
       }
 
       await ctx.db.insert(solveTable).values({

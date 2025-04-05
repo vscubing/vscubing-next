@@ -12,17 +12,17 @@ export async function validateSolve({
 }) {
   try {
     const kpuzzle = await puzzles[DISCIPLINE_TO_KPUZZLE[discipline]]!.kpuzzle()
-    return kpuzzle
+    const isValid = kpuzzle
       .defaultPattern()
       .applyAlg(scramble)
       .applyAlg(solution)
       .experimentalIsSolved({
         ignoreCenterOrientation: true,
-        ignorePuzzleOrientation: false,
+        ignorePuzzleOrientation: true,
       })
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (_error) {
-    return false
+    return { isValid, error: null }
+  } catch (error) {
+    return { isValid: false, error }
   }
 }
 
