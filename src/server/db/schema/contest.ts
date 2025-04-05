@@ -2,8 +2,8 @@ import { SCRAMBLE_POSITIONS, SOLVE_STATES, type Discipline } from '@/app/_types'
 import { DISCIPLINES } from '@/shared'
 import { sql } from 'drizzle-orm'
 import { pgTable, pgEnum, unique } from 'drizzle-orm/pg-core'
-import { userTable } from './account'
 import { createdUpdatedAtColumns } from './core'
+import { userTable } from './user'
 
 export const disciplineTable = pgTable('discipline', (d) => ({
   ...createdUpdatedAtColumns,

@@ -60,44 +60,36 @@
     - [x] fix 2by2
     - [x] fix accordions and matchMedia
 - [x] deploy
-- [ ] dashboard
+- [x] dashboard
     - [x] scaffold the page
     - [x] latest contests
-    - [ ] best solves
-
-ci/cd:
-- [ ] reset the droplet and setup docker credentials
-- [ ] coolify pull docker images
-- [ ] coolify CI/CD on PRs and on dev/main
-- [ ] don't forget to merge back into dev
-- [ ] rename add auth_ prefix to auth tables
+    - [x] best solves
+- [ ] settings
+- [ ] bottom navbar on mobile make sticky
+- [ ] pagination
+- [ ] pinned items
+- [ ] jump to the pinned item => scroll and highlight
+- [ ] "ongoinghint"
+- [ ] cron job
+- [ ] redo migrations
+    - [ ] correct primary key autoincrementation https://stackoverflow.com/questions/4448340/postgresql-duplicate-key-violates-unique-constraint
+    - [ ] figure out why deployment's initial db migration doesn't work (maybe it will be solved after redoing the migrations from scratch)
+- [ ] "you have X unapplied migrations"
+- [ ] adjust google auth permissions
+- [ ] block external db access
 
 nicities:
 - [ ] rename state to status
 - [ ] rename contestdiscipline to round
 - [ ] use page based pagination for contestindexpage
 - [ ] make contest link based on capabilities
-- [ ] pinned items
-- [ ] jump to the pinned item => scroll and highlight
-- [ ] loading.ts for everything
 - [ ] use unstable_cache a bunch
 - [ ] expandContestLink
-- [ ] tailored 404 pages
 - [ ] skip inspection by default
-- [ ] cron job
-- [ ] redo migrations
-    - [ ] correct primary key autoincrementation https://stackoverflow.com/questions/4448340/postgresql-duplicate-key-violates-unique-constraint
-    - [ ] figure out why deployment's initial db migration doesn't work (maybe it will be solved after redoing the migrations from scratch)
 - [ ] no ongoing contest handling
-- [ ] unify contest header
-- [ ] "ongoinghint"
-- [ ] cleanup (posts)
 - [ ] refactor file structure (shared/ui/components)
-- [ ] "you have X unapplied migrations"
-- [ ] pagination everywhere
-- [ ] rename roundsession to average
 - [ ] restructure server: add queries directory
 - [ ] dev tools
-- [ ] pin header?
 - [ ] leaderboard: on tie => sort by single result
 - [ ] rename disciplines 3by3 => 3x3
+- [ ] rename add auth_ prefix to auth tables

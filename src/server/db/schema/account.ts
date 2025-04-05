@@ -1,28 +1,7 @@
 import { relations } from 'drizzle-orm'
 import { index, pgTable, primaryKey } from 'drizzle-orm/pg-core'
 import { type AdapterAccount } from 'next-auth/adapters'
-import { createdUpdatedAtColumns } from './core'
-
-export const userTable = pgTable('user', (d) => ({
-  ...createdUpdatedAtColumns,
-  id: d
-    .varchar('id', { length: 255 })
-    .notNull()
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()), // NOTE: legacy userId's are just integers
-  name: d.varchar('name', { length: 255 }).notNull(),
-  email: d.varchar('email', { length: 255 }).notNull(),
-  emailVerified: d.timestamp('email_verified', { mode: 'date' }),
-  image: d.text('image'),
-  finishedRegistration: d
-    .boolean('finished_registration')
-    .default(false)
-    .notNull(),
-}))
-
-export const userRelations = relations(userTable, ({ many }) => ({
-  accounts: many(accountTable),
-}))
+import { userTable } from './user'
 
 export const accountTable = pgTable(
   'account',
@@ -52,6 +31,10 @@ export const accountTable = pgTable(
     index('account_user_id_idx').on(t.userId),
   ],
 )
+
+export const userRelations = relations(userTable, ({ many }) => ({
+  accounts: many(accountTable),
+}))
 
 export const accountRelations = relations(accountTable, ({ one }) => ({
   user: one(userTable, {

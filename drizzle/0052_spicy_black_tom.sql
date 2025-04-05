@@ -1,0 +1,1 @@
+ALTER TABLE "user" ALTER COLUMN "simulator_settings_id" SET NOT NULL;
