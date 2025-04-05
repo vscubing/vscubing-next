@@ -1,6 +1,6 @@
 import { env } from '@/env'
 
-export function removeComments(moves: string): string {
+export function removeSolutionComments(moves: string): string {
   if (moves.includes('  ') && env.NEXT_PUBLIC_NODE_ENV !== 'production') {
     alert(
       '[TWISTY] double space in reconstruction with timestamps, see console error',

@@ -1,3 +1,4 @@
+import type { userSimulatorSettingsTable } from '@/server/db/schema'
 import { z } from 'zod'
 
 export const SCRAMBLE_POSITIONS = ['1', '2', '3', '4', '5', 'E1', 'E2'] as const
@@ -59,3 +60,8 @@ export type ContestResultRoundSession = {
   nickname: string
   isOwn: boolean
 }
+
+export type SimulatorSettings = Omit<
+  typeof userSimulatorSettingsTable.$inferSelect,
+  'id' | 'createdAt' | 'updatedAt' | 'userId'
+>

@@ -2,36 +2,13 @@
 
 import { ChevronDownIcon } from '@/app/_components/ui'
 import { cn } from '@/app/_utils/cn'
-import { useTRPC } from '@/trpc/react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { ReactNode, ComponentPropsWithoutRef, ComponentRef } from 'react'
 import * as SelectPrimitive from '@radix-ui/react-select'
+import { useSimulatorSettings, useSimulatorSettingsMutation } from './queries'
 
 export function PageContent() {
-  const trpc = useTRPC()
-  const queryClient = useQueryClient()
-  const settingsQuery = trpc.settings.simulatorSettings.queryOptions()
-
-  const { data: settings } = useQuery(settingsQuery)
-  const { mutate: mutateSettings } = useMutation(
-    trpc.settings.setSimulatorSettings.mutationOptions({
-      onMutate: async (newSettings) => {
-        await queryClient.cancelQueries(settingsQuery)
-        const oldSettings = queryClient.getQueryData(settingsQuery.queryKey)
-        queryClient.setQueryData(
-          settingsQuery.queryKey,
-          (old) => old && { ...old, ...newSettings },
-        )
-        return { oldSettings }
-      },
-      onError: (_, _1, context) => {
-        queryClient.setQueryData(settingsQuery.queryKey, context?.oldSettings)
-      },
-      onSettled: () => {
-        void queryClient.invalidateQueries(settingsQuery)
-      },
-    }),
-  )
+  const { data: settings } = useSimulatorSettings()
+  const { mutate: mutateSettings } = useSimulatorSettingsMutation()
 
   if (!settings)
     return (

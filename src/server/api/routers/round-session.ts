@@ -13,8 +13,8 @@ import { resultDnfish, SCRAMBLE_POSITIONS, SOLVE_STATES } from '@/app/_types'
 import { sortWithRespectToExtras } from './sort-with-respect-to-extras'
 import { calculateAvg } from './calculate-avg'
 import { validateSolve } from '@/server/internal/validate-solve'
-import { removeComments } from '@/app/_utils/remove-solve-comments'
 import { getContestUserCapabilities } from '../../internal/get-contest-user-capabilities'
+import { removeSolutionComments } from '@/app/_utils/remove-solution-comments'
 
 const submittedSolvesInvariant = z.array(
   z.object(
@@ -193,7 +193,7 @@ export const roundSessionRouter = createTRPCRouter({
         isValid = await validateSolve({
           discipline: scramble.discipline,
           scramble: scramble.moves,
-          solution: removeComments(input.solution),
+          solution: removeSolutionComments(input.solution),
         })
         if (!isValid) isDnf = true
       }

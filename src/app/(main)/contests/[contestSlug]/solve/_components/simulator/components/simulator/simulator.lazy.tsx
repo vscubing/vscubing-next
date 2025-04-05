@@ -11,6 +11,8 @@ import {
   INSPECTION_PLUS_TWO_THRESHHOLD_MS,
 } from './constants'
 import type { ResultDnfish } from '@/app/_types'
+import type { userSimulatorSettingsTable } from '@/server/db/schema'
+import type { SimulatorCameraPosition } from 'vendor/cstimer'
 
 export type InitSolveData = { scramble: string; discipline: string }
 
@@ -20,21 +22,22 @@ export type SimulatorSolve = {
 }
 export type SimulatorSolveFinishCallback = (solve: SimulatorSolve) => void
 
-type SimulatorSettings = {
-  animationDuration: number
-  inspectionVoiceAlert: 'Male' | 'Female' | 'None'
-}
 type SimulatorProps = {
   initSolveData: InitSolveData
   onInspectionStart: () => void
   onSolveFinish: SimulatorSolveFinishCallback
-  settings: SimulatorSettings
+  settings: Omit<
+    typeof userSimulatorSettingsTable.$inferSelect,
+    'id' | 'createdAt' | 'updatedAt' | 'userId'
+  >
+  setCameraPosition: (pos: SimulatorCameraPosition) => void
 }
 export default function Simulator({
   initSolveData,
   onSolveFinish,
   onInspectionStart,
   settings,
+  setCameraPosition,
 }: SimulatorProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [status, setStatus] = useState<
@@ -203,7 +206,8 @@ export default function Simulator({
     onMove: moveHandler,
     scramble: hasRevealedScramble ? initSolveData.scramble : undefined,
     discipline: initSolveData.discipline,
-    animationDuration: settings.animationDuration,
+    settings,
+    setCameraPosition,
   })
 
   return (

@@ -1,12 +1,11 @@
-import { isDiscipline } from '@/app/_types'
+import { isDiscipline, type SimulatorSettings } from '@/app/_types'
 import {
-  type TwistySimulatorCameraPosition,
+  type SimulatorCameraPosition,
   type TwistySimulatorMoveListener,
   type TwistySimulatorPuzzle,
   initTwistySimulator,
 } from '@/../vendor/cstimer'
 import { type RefObject, useEffect, useState } from 'react'
-import { useLocalStorage } from 'usehooks-ts'
 
 export type Move = (typeof MOVES)[number]
 export type SimulatorMoveListener = ({
@@ -24,22 +23,19 @@ export function useTwistySimulator({
   onMove,
   scramble,
   discipline,
-  animationDuration,
+  settings,
+  setCameraPosition,
 }: {
   containerRef: RefObject<HTMLElement | null>
   onMove: SimulatorMoveListener
   scramble: string | undefined
   discipline: string
-  animationDuration: number
+  settings: SimulatorSettings
+  setCameraPosition: (pos: SimulatorCameraPosition) => void
 }) {
   if (!isDiscipline(discipline))
     throw new Error(`[SIMULATOR] unsupported discipline: ${discipline}`)
 
-  const [cameraPosition, setCameraPosition] =
-    useLocalStorage<TwistySimulatorCameraPosition>('vs-camera-pos', {
-      theta: 0,
-      phi: 6,
-    }) // TODO: add debounce
   const [puzzle, setPuzzle] = useState<TwistySimulatorPuzzle | undefined>()
 
   useEffect(() => {
@@ -61,7 +57,7 @@ export function useTwistySimulator({
     void initTwistySimulator(
       {
         puzzle: SIMULATOR_DISCIPLINES_MAP[discipline].puzzle,
-        animationDuration,
+        animationDuration: settings.animationDuration,
       },
       moveListener,
       (pos) => setCameraPosition(pos),
@@ -71,7 +67,13 @@ export function useTwistySimulator({
       _puzzle = pzl
       setPuzzle(pzl)
     })
-  }, [animationDuration, containerRef, discipline, onMove, setCameraPosition])
+  }, [
+    settings.animationDuration,
+    containerRef,
+    discipline,
+    onMove,
+    setCameraPosition,
+  ])
 
   useEffect(() => {
     const abortSignal = new AbortController()
@@ -98,11 +100,16 @@ export function useTwistySimulator({
     if (puzzle)
       setTimeout(() =>
         puzzle.setCameraPosition({
-          theta: cameraPosition.theta,
-          phi: cameraPosition.phi,
+          theta: settings.cameraPositionTheta,
+          phi: settings.cameraPositionPhi,
         }),
       )
-  }, [cameraPosition.theta, cameraPosition.phi, puzzle, scramble])
+  }, [
+    settings.cameraPositionTheta,
+    settings.cameraPositionPhi,
+    puzzle,
+    scramble,
+  ])
 }
 
 const SIMULATOR_DISCIPLINES_MAP = {

@@ -174,7 +174,8 @@ export function SolveContestForm({
 
 const SOLVE_REJECTED_TOAST = {
   title: 'Uh-oh! Solve rejected by the server',
-  description: "Under normal circumstances this shouldn't happen.",
+  description:
+    "Under normal circumstances this shouldn't happen, but the solution didn't match the scramble for some reason. Feel free to take an extra.",
   duration: 'infinite',
   contactUsButton: true,
 } satisfies Toast

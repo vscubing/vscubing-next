@@ -7,7 +7,7 @@ import {
 } from '@vscubing/cubing/twisty'
 import { Alg, LineComment } from '@vscubing/cubing/alg'
 import type { Discipline } from '@/app/_types'
-import { removeComments } from '@/app/_utils/remove-solve-comments'
+import { removeSolutionComments } from '@/app/_utils/remove-solution-comments'
 
 // TODO: simultaneous moves???
 // TODO: realtime animation speed
@@ -18,7 +18,7 @@ export async function doEverything(
 ): Promise<{ solution: Alg; animLeaves?: AnimationTimelineLeaf[] }> {
   const timestamps = parseTimestamps(solutionWithTimings)
 
-  let solution = new Alg(removeComments(solutionWithTimings))
+  let solution = new Alg(removeSolutionComments(solutionWithTimings))
   const rawSignatures = await ANALYZER_MAP[discipline](scramble, solution)
   const signaturesWithDurations = embedDurations(rawSignatures, timestamps)
   solution = annotateMoves(solution, signaturesWithDurations)

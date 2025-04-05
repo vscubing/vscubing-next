@@ -65,10 +65,12 @@
     - [x] latest contests
     - [x] best solves
 - [ ] settings
-    - [ ] api
-    - [ ] ui
-    - [ ] connect to the simulator
+    - [x] api
+    - [x] ui
+    - [x] connect to the simulator
     - [ ] import migration
+    - [ ] convenient link on the contest page
+- [ ] why did the solve get rejected
 - [ ] bottom navbar on mobile make sticky
 - [ ] pagination
 - [ ] pinned items

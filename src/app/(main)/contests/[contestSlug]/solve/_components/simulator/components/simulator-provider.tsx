@@ -5,6 +5,7 @@ import {
   lazy,
   Suspense,
   useCallback,
+  useEffect,
   useMemo,
   useState,
 } from 'react'
@@ -27,11 +28,39 @@ import {
   KeyMapDialogTrigger,
   KeyMapDialogContent,
 } from '@/app/_shared/KeyMapDialog'
-import { z } from 'zod'
+import type { SimulatorCameraPosition } from 'vendor/cstimer'
+import {
+  useSimulatorSettings,
+  useSimulatorSettingsMutation,
+} from '@/app/(main)/settings'
 const Simulator = lazy(() => import('./simulator/simulator.lazy'))
 
 export function SimulatorProvider({ children }: { children: React.ReactNode }) {
-  // const { data: settings } = useSettings() // TODO:
+  const { data: settings } = useSimulatorSettings()
+  const { mutate: mutateSettings } = useSimulatorSettingsMutation()
+
+  // debounce cameraPosition
+  const [queuedCameraPosition, setQueuedCameraPosition] =
+    useState<SimulatorCameraPosition>()
+  useEffect(() => {
+    if (!queuedCameraPosition) return
+    const timeout = setTimeout(
+      () =>
+        mutateSettings({
+          cameraPositionTheta: queuedCameraPosition.theta,
+          cameraPositionPhi: queuedCameraPosition.phi,
+        }),
+      500,
+    )
+    return () => clearTimeout(timeout)
+  }, [queuedCameraPosition, mutateSettings])
+  const cameraPosition = {
+    cameraPositionTheta:
+      queuedCameraPosition?.theta ?? settings?.cameraPositionTheta ?? 0,
+    cameraPositionPhi:
+      queuedCameraPosition?.phi ?? settings?.cameraPositionPhi ?? 6,
+  }
+
   const [solveState, setSolveState] = useState<{
     initSolveData: InitSolveData
     solveCallback: SimulatorSolveFinishCallback
@@ -134,12 +163,12 @@ export function SimulatorProvider({ children }: { children: React.ReactNode }) {
                     onSolveFinish={handleSolveFinish}
                     onInspectionStart={handleInspectionStart}
                     settings={{
-                      animationDuration: 100,
-                      inspectionVoiceAlert: z
-                        .enum(['Male', 'Female', 'None'])
-                        .catch('Male')
-                        .parse('Male'),
+                      animationDuration: settings?.animationDuration ?? 100,
+                      ...cameraPosition,
+                      inspectionVoiceAlert:
+                        settings?.inspectionVoiceAlert ?? 'Male',
                     }}
+                    setCameraPosition={setQueuedCameraPosition}
                   />
                 )}
               </Suspense>
