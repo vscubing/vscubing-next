@@ -1,5 +1,6 @@
 'use client'
 
+import { env } from '@/env'
 import { Layout } from './(main)/_layout'
 import { PrimaryButton } from './_components/ui'
 import { ParallaxCubes, ParallaxCubesWrapper } from './_parallax-cubes'
@@ -14,6 +15,19 @@ export default function Error({
   reset: () => void
 }) {
   const isSmScreen = useMatchesScreen('sm')
+
+  if (env.NEXT_PUBLIC_NODE_ENV === 'development') {
+    if (
+      error.message ===
+      'An error occurred in the Server Components render but no message was provided'
+    )
+      error.message =
+        'You probably forgot to start the database. To start a local database, run `bun run db:local` or `./start-database`'
+
+    if (error.message.includes('relation'))
+      error.message +=
+        '. You probably have unapplied migrations. To apply them, run `bun run db:migrate`'
+  }
 
   return (
     <ParallaxCubesWrapper>

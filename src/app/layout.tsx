@@ -1,12 +1,15 @@
 import '@/styles/globals.css'
 import { type Metadata } from 'next'
 import { headers } from 'next/headers'
-import { env } from 'process'
 import type { ReactNode } from 'react'
 import { Hind, Kanit } from 'next/font/google'
 import { cn } from './_utils/cn'
 import { TRPCReactProvider } from '@/trpc/react'
 import { Toaster } from './_components/ui'
+import { api } from '@/trpc/server'
+import { DevTools } from './(main)/dev'
+import { env } from '@/env'
+import { tryCatchTRPC } from './_utils/try-catch'
 
 export const metadata: Metadata = {
   title: 'vscubing',
@@ -42,6 +45,7 @@ export default async function RootLayout({
       <body>
         <TRPCReactProvider>
           {children}
+          {env.NEXT_PUBLIC_NODE_ENV === 'development' && <DevTools />}
           <Toaster />
         </TRPCReactProvider>
       </body>

@@ -97,3 +97,4 @@ nicities:
 - [ ] leaderboard: on tie => sort by single result
 - [ ] rename disciplines 3by3 => 3x3
 - [ ] rename add auth_ prefix to auth tables
+- [ ] delete contests with no results

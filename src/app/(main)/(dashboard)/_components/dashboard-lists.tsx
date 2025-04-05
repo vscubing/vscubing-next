@@ -6,6 +6,7 @@ import dashboardEmptyImg from '@/../public/images/dashboard-empty.svg'
 import { useTRPC } from '@/trpc/react'
 import { useQuery } from '@tanstack/react-query'
 import { LatestContests } from './latest-contests'
+import type { Discipline } from '@/app/_types'
 
 export function DashboardLists() {
   const trpc = useTRPC()
@@ -17,7 +18,7 @@ export function DashboardLists() {
   )
   const bestSolves = useBestSolvesQuery()
 
-  if (latestContests?.items.length === 0 && bestSolves?.length === 0) {
+  if (latestContests?.items.length === 0 || bestSolves?.length === 0) {
     return (
       <div className='flex flex-1 flex-col gap-6 rounded-2xl bg-black-80 px-6 pb-4 pt-10'>
         <h2 className='title-h3 text-center'>
@@ -58,9 +59,12 @@ function useBestSolvesQuery() {
     trpc.leaderboard.bySingle.queryOptions({ limit: 1, discipline: '2by2' }),
   )
 
-  if (!best3by3 || !best2by2) return
-  return [
-    { ...best3by3[0]!, discipline: '3by3' as const },
-    { ...best2by2[0]!, discipline: '2by2' as const },
-  ]
+  const res: (NonNullable<typeof best3by3>[number] & {
+    discipline: Discipline
+  })[] = []
+
+  if (best3by3?.[0]) res.push({ ...best3by3[0], discipline: '3by3' as const })
+  if (best2by2?.[0]) res.push({ ...best2by2[0], discipline: '2by2' as const })
+
+  return res
 }
