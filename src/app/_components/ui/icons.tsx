@@ -32,6 +32,7 @@ import EllipsisIcon from '@/../public/icons/ellipsis.svg?inline'
 import PlusIcon from '@/../public/icons/plus.svg?inline'
 import MinusIcon from '@/../public/icons/minus.svg?inline'
 import SettingIcon from '@/../public/icons/setting.svg?inline'
+import CodeIcon from '@/../public/icons/code.svg?inline'
 
 import { isDiscipline } from '@/app/_types'
 import { cn } from '@/app/_utils/cn'
@@ -70,6 +71,7 @@ export {
   PlusIcon,
   MinusIcon,
   SettingIcon,
+  CodeIcon,
 }
 
 type DisciplineIconProps = HTMLAttributes<SVGSVGElement> & {

@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import * as Sonner from 'sonner'
 
 export function Toaster() {
@@ -44,8 +45,8 @@ const durations = {
 
 export type Toast = {
   dedupId?: string
-  title: string
-  description: string
+  title: ReactNode
+  description: ReactNode
   contactUsButton?: boolean
   contactUsButtonLabel?: string
   duration?: keyof typeof durations

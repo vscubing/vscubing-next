@@ -57,6 +57,15 @@ export const contestRouter = createTRPCRouter({
       return { items, nextCursor }
     }),
 
+  // this contest is initial and has no disciplines, so it won't be visible anywhere, but is necessary because the app expects an ongoing contest the previous contest's slug to compute the next
+  getInitialSystemContest: publicProcedure.query(async ({ ctx }) => {
+    const [initialContest] = await ctx.db
+      .select()
+      .from(contestTable)
+      .where(eq(contestTable.systemInitial, true))
+    return initialContest ?? null
+  }),
+
   getOngoing: publicProcedure.query(async ({ ctx }) => {
     const rows = await ctx.db
       .select() // TODO: can we do better than `select *` ?

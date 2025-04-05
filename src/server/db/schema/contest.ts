@@ -3,7 +3,7 @@ import { DISCIPLINES } from '@/shared'
 import { sql } from 'drizzle-orm'
 import { pgTable, pgEnum, unique } from 'drizzle-orm/pg-core'
 import { createdUpdatedAtColumns } from './core'
-import { userTable } from './user'
+import { userTable } from './account'
 
 export const disciplineTable = pgTable('discipline', (d) => ({
   ...createdUpdatedAtColumns,
@@ -27,6 +27,7 @@ export const contestTable = pgTable('contest', (d) => ({
     .notNull(),
   endDate: d.timestamp('end_date', { withTimezone: true, mode: 'string' }),
   isOngoing: d.boolean('is_ongoing').notNull(),
+  systemInitial: d.boolean('system_initial').notNull().default(false),
 }))
 
 export const contestDisciplineTable = pgTable('contest_discipline', (d) => ({

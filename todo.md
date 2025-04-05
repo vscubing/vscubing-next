@@ -65,6 +65,10 @@
     - [x] latest contests
     - [x] best solves
 - [ ] settings
+    - [ ] api
+    - [ ] ui
+    - [ ] connect to the simulator
+    - [ ] import migration
 - [ ] bottom navbar on mobile make sticky
 - [ ] pagination
 - [ ] pinned items

@@ -1,0 +1,1 @@
+ALTER TABLE "contest" ADD COLUMN "system_initial" boolean DEFAULT false NOT NULL;

@@ -14,8 +14,10 @@ import {
   LeaderboardIcon,
   AllContestsIcon,
   OngoingContestIcon,
+  CodeIcon,
 } from '@/app/_components/ui'
 import { DEFAULT_DISCIPLINE } from '@/app/_types'
+import { env } from '@/env'
 
 type NavbarProps = {
   variant: 'vertical' | 'horizontal'
@@ -42,7 +44,7 @@ export function Navbar({ variant }: NavbarProps) {
   if (variant === 'vertical') {
     return (
       <nav className='flex flex-col gap-4 sm:gap-0'>
-        {navbarLinks.map(({ children, href, route }) => (
+        {getNavbarLinks().map(({ children, href, route }) => (
           <Link
             key={href ?? route}
             href={(href ?? route) as Route}
@@ -65,7 +67,7 @@ export function Navbar({ variant }: NavbarProps) {
   if (variant === 'horizontal') {
     return (
       <nav className='flex justify-between gap-2 overflow-y-auto px-1 py-2'>
-        {navbarLinks.map(({ children, route, href }) => (
+        {getNavbarLinks().map(({ children, route, href }) => (
           <Link
             key={href ?? route}
             href={(href ?? route) as Route}
@@ -89,7 +91,7 @@ function parsePathname(
   pathname: string,
   ongoingContestSlug?: string,
 ): NavbarRoute | undefined {
-  if (pathname === '/') return '/'
+  if (isStaticNavbarRoute(pathname)) return pathname
   if (pathname.startsWith('/leaderboard')) return '/leaderboard'
 
   if (!ongoingContestSlug) return undefined
@@ -104,122 +106,72 @@ function parsePathname(
   }
 }
 
-type NavbarRoute = '/' | '/leaderboard' | '/contests' | '/contests/ongoing'
-const navbarLinks = [
-  {
-    children: (
-      <>
-        <DashboardIcon />
-        <span>Dashboard</span>
-      </>
-    ),
-    route: '/',
-  },
-  {
-    children: (
-      <>
-        <LeaderboardIcon />
-        <span>Leaderboard</span>
-      </>
-    ),
-    route: '/leaderboard',
-  },
-  {
-    children: (
-      <>
-        <AllContestsIcon />
-        <span>Past contests</span>
-      </>
-    ),
-    route: '/contests',
-    href: `/contests?discipline=${DEFAULT_DISCIPLINE}`,
-  },
-  {
-    children: (
-      <>
-        <OngoingContestIcon />
-        <span>Ongoing contest</span>
-      </>
-    ),
-    route: '/contests/ongoing',
-  },
-] satisfies { children: ReactNode; route: NavbarRoute; href?: string }[]
+type NavbarRoute =
+  | '/'
+  | '/leaderboard'
+  | '/contests'
+  | '/contests/ongoing'
+  | '/settings'
+  | '/dev'
 
-// function useNavbar() {
-//   const { data: ongoing } = useOngoingContest();
-//   const matchRoute = useMatchRoute();
-//
-//   const isOnContests = !!matchRoute({
-//     to: "/contests",
-//     fuzzy: true,
-//   });
-//   const isOnOngoingContest =
-//     !!matchRoute({
-//       to: "/contests/$contestSlug",
-//       fuzzy: true,
-//       params: { contestSlug: ongoing?.data?.slug },
-//     }) || !!matchRoute({ to: "/contests/ongoing" });
-//
-//   let customActive: "all-contests" | "ongoing-contest" | undefined = undefined;
-//   if (isOnOngoingContest) {
-//     customActive = "ongoing-contest";
-//   } else if (isOnContests) {
-//     customActive = "all-contests";
-//   }
-//
-//   return getLinks(customActive);
-// }
-//
-// function getLinks(
-//   patchedActive?: "all-contests" | "ongoing-contest",
-// ): (LinkProps & { children: ReactNode } & {
-//   customActiveCondition?: boolean;
-// })[] {
-//   return [
-//     {
-//       children: (
-//         <>
-//           <DashboardIcon />
-//           <span>Dashboard</span>
-//         </>
-//       ),
-//       to: "/",
-//     },
-//     {
-//       children: (
-//         <>
-//           <LeaderboardIcon />
-//           <span>Leaderboard</span>
-//         </>
-//       ),
-//       to: "/leaderboard",
-//     },
-//     {
-//       children: (
-//         <>
-//           <AllContestsIcon />
-//           <span>Past contests</span>
-//         </>
-//       ),
-//       to: "/contests",
-//       search: { discipline: DEFAULT_DISCIPLINE, page: 1 },
-//       activeOptions: {
-//         includeSearch: false,
-//       },
-//       customActiveCondition: patchedActive === "all-contests",
-//     },
-//     {
-//       children: (
-//         <>
-//           <OngoingContestIcon />
-//           <span>Ongoing contest</span>
-//         </>
-//       ),
-//       to: `/contests/ongoing`,
-//       customActiveCondition: patchedActive === "ongoing-contest",
-//     },
-//   ];
-// }
+function isStaticNavbarRoute(pathname: string): pathname is NavbarRoute {
+  return ['/', '/contests', '/dev'].includes(pathname)
+}
+function getNavbarLinks() {
+  const links: { children: ReactNode; route: NavbarRoute; href?: string }[] = [
+    {
+      children: (
+        <>
+          <DashboardIcon />
+          <span>Dashboard</span>
+        </>
+      ),
+      route: '/',
+    },
+    {
+      children: (
+        <>
+          <LeaderboardIcon />
+          <span>Leaderboard</span>
+        </>
+      ),
+      route: '/leaderboard',
+    },
+    {
+      children: (
+        <>
+          <AllContestsIcon />
+          <span>Past contests</span>
+        </>
+      ),
+      route: '/contests',
+      href: `/contests?discipline=${DEFAULT_DISCIPLINE}`,
+    },
+    {
+      children: (
+        <>
+          <OngoingContestIcon />
+          <span>Ongoing contest</span>
+        </>
+      ),
+      route: '/contests/ongoing',
+    },
+  ]
+
+  if (env.NEXT_PUBLIC_NODE_ENV === 'development') {
+    links.push({
+      children: (
+        <>
+          <CodeIcon />
+          <span>Developer tools</span>
+        </>
+      ),
+      route: '/dev',
+    })
+  }
+
+  return links
+}
 
 function removePrefix(value: string, prefix: string) {
   return value.startsWith(prefix) ? value.slice(prefix.length) : value

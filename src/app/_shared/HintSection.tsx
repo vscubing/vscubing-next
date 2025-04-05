@@ -12,7 +12,7 @@ export function HintSection({ children }: { children: React.ReactNode }) {
 }
 
 export function HintSignInSection({
-  description = 'You need to be signed in to view this page',
+  description = 'You have to be signed in to view this page',
 }: {
   description?: string
 }) {
