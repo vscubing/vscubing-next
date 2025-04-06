@@ -1,6 +1,5 @@
 FROM oven/bun:slim 
 
-RUN apk add --no-cache bash curl
 WORKDIR /app
 COPY . .
 
