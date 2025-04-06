@@ -344,6 +344,20 @@
       "when": 1743858621997,
       "tag": "0052_naive_dark_beast",
       "breakpoints": true
+    },
+    {
+      "idx": 53,
+      "version": "7",
+      "when": 1743951274875,
+      "tag": "0053_material_radioactive_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 54,
+      "version": "7",
+      "when": 1743951280974,
+      "tag": "0054_legacy-import-account-settings",
+      "breakpoints": true
     }
   ]
 }

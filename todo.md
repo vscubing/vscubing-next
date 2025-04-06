@@ -75,7 +75,7 @@
     - [x] api
     - [x] ui
     - [x] connect to the simulator
-    - [ ] import migration
+    - [x] import migration
     - [ ] convenient link on the contest page
 - [ ] add missing visual elements
 - [ ] bottom navbar on mobile make sticky
@@ -110,4 +110,5 @@ nicities:
 - [ ] delete contests with no results
 - [ ] fancy white glowing outline effect on own result / after jumping to a solve
 - [ ] staging/prod env
+- [ ] reimport fresh db backup
 - [ ] db backups
