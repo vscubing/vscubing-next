@@ -1,4 +1,5 @@
 FROM oven/bun:alpine AS base
+RUN apk add --no-cache bash curl
 
 # Stage 1: Install dependencies
 FROM base AS deps

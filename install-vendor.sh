@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 # This script installs tnoodle-cli@1.1.1 into the vendor directory.
 # NOTE: only tested on MacOS
 # NOTE: requitements: curl, unzip
