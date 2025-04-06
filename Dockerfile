@@ -5,7 +5,8 @@ FROM base AS deps
 RUN apk add --no-cache bash curl
 WORKDIR /app
 COPY package.json bun.lock install-vendor.sh ./
-COPY drizzle.config.ts drizzle ./
+COPY drizzle.config.ts ./
+COPY drizzle ./drizzle
 
 RUN bun install --no-save --frozen-lockfile \
   && ./install-vendor.sh
@@ -28,7 +29,7 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=deps /app/node_modules/drizzle-kit ./node_modules/drizzle-kit
 COPY --from=deps /app/drizzle.config.ts ./
-COPY --from=deps /app/drizzle ./
+COPY --from=deps /app/drizzle ./drizzle
 
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
