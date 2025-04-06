@@ -137,6 +137,14 @@ export default {
             transform: 'translateY(var(--toTranslateY))',
           },
         },
+        'spinning-border': {
+          from: {
+            transform: 'translate(-50%, -50%) scale(1, 0.08) rotate(56deg)',
+          },
+          to: {
+            transform: 'translate(-50%, -50%) scale(1, 0.08) rotate(-304deg)',
+          },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -157,6 +165,8 @@ export default {
         'landing-features-sharing-img':
           'landing-features-sharing-img linear 1s forwards 3.3s',
         'landing-footer-cubes': 'landing-footer-cubes linear 10s infinite',
+        'spinning-border':
+          'spinning-border 2s linear(0, 0.32 40%, 0.48 50%, 0.83 90%, 1) infinite',
       },
       spacing: {
         15: '3.75rem',

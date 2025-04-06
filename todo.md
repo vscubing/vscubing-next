@@ -70,7 +70,8 @@
     - [x] connect to the simulator
     - [ ] import migration
     - [ ] convenient link on the contest page
-- [ ] why did the solve get rejected
+- [x] why did the solve get rejected
+- [ ] try out the glowing border
 - [ ] bottom navbar on mobile make sticky
 - [ ] pagination
 - [ ] pinned items
@@ -96,7 +97,8 @@ nicities:
 - [ ] refactor file structure (shared/ui/components)
 - [ ] restructure server: add queries directory
 - [ ] dev tools
-- [ ] leaderboard: on tie => sort by single result
+- [ ] leaderboard: on tie => sort by single result (+ unit test it)
 - [ ] rename disciplines 3by3 => 3x3
 - [ ] rename add auth_ prefix to auth tables
 - [ ] delete contests with no results
+- [ ] fancy white glowing outline effect on own result / after jumping to a solve

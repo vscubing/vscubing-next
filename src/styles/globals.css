@@ -129,3 +129,23 @@
     visibility: hidden;
   }
 }
+
+@layer utilities {
+  .spinning-border-wrapper {
+    @apply relative overflow-hidden bg-secondary-80;
+  }
+
+  .spinning-border-wrapper:before {
+    @apply animate-spinning-border absolute left-1/2 top-1/2 aspect-square w-[150%] content-[''];
+    /* TODO: we probably can and should apply this directly in the template and remove this _secondary class with Tailwind v4 */
+    background: conic-gradient(
+      theme('colors.secondary.60'),
+      100deg,
+      transparent
+    );
+  }
+
+  .spinning-border {
+    @apply absolute left-[2px] top-[2px] h-[calc(100%-4px)] w-[calc(100%-4px)];
+  }
+}

@@ -126,60 +126,71 @@ function SessionDesktop({
   const { bestId, worstId } = getBestAndWorstIds(solves)
 
   return (
-    <div
-      className={cn(
-        'flex h-15 items-center rounded-xl px-2',
-        isOwn ? 'bg-secondary-80' : 'bg-grey-100',
-        className,
-      )}
-    >
-      <div className='flex flex-1 items-center'>
-        <PlaceLabel className='mr-3'>{place}</PlaceLabel>
-        <DisciplineIcon className='mr-3' discipline={discipline} />
-        <Ellipsis className='vertical-alignment-fix flex-1'>{`${nickname}${currentUserLabel}`}</Ellipsis>
+    <>
+      <div
+        className={cn(
+          'h-15 w-full rounded-xl',
+          {
+            'spinning-border-wrapper': isOwn,
+          },
+          className,
+        )}
+      >
+        <div
+          className={cn(
+            'flex h-15 w-full items-center rounded-xl px-2',
+            isOwn ? 'spinning-border bg-secondary-80' : 'bg-grey-100',
+          )}
+        >
+          <div className='flex flex-1 items-center'>
+            <PlaceLabel className='mr-3'>{place}</PlaceLabel>
+            <DisciplineIcon className='mr-3' discipline={discipline} />
+            <Ellipsis className='vertical-alignment-fix flex-1'>{`${nickname}${currentUserLabel}`}</Ellipsis>
 
-        <span className='mr-4'>
-          <SolveTimeLabel
-            timeMs={avgMs ?? undefined}
-            isDnf={avgMs === null}
-            isAverage
-            className='relative after:absolute after:-right-2 after:top-1/2 after:h-6 after:w-px after:-translate-y-1/2 after:bg-grey-60'
-          />
-        </span>
-      </div>
-      <div className='data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down'>
-        <ul className='grid grid-cols-[repeat(5,min-content)] gap-x-2'>
-          {solves.map((solve, index) => (
-            <li key={solve.id} className='contents'>
-              <span className='hidden text-center text-grey-40'>
-                Attempt {index + 1}
-              </span>
-              <span className='relative'>
-                <SolveTimeLinkOrDnf
-                  canShowHint={isFirstOnPage && index === 0}
-                  contestSlug={contestSlug}
-                  discipline={discipline}
-                  solveId={solve.id}
-                  result={solve.result}
-                  variant={
-                    solve.id === bestId
-                      ? 'best'
-                      : solve.id === worstId
-                        ? 'worst'
-                        : undefined
-                  }
-                />
+            <span className='mr-4'>
+              <SolveTimeLabel
+                timeMs={avgMs ?? undefined}
+                isDnf={avgMs === null}
+                isAverage
+                className='relative after:absolute after:-right-2 after:top-1/2 after:h-6 after:w-px after:-translate-y-1/2 after:bg-grey-60'
+              />
+            </span>
+          </div>
+          <div className='data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down'>
+            <ul className='grid grid-cols-[repeat(5,min-content)] gap-x-2'>
+              {solves.map((solve, index) => (
+                <li key={solve.id} className='contents'>
+                  <span className='hidden text-center text-grey-40'>
+                    Attempt {index + 1}
+                  </span>
+                  <span className='relative'>
+                    <SolveTimeLinkOrDnf
+                      canShowHint={isFirstOnPage && index === 0}
+                      contestSlug={contestSlug}
+                      discipline={discipline}
+                      solveId={solve.id}
+                      result={solve.result}
+                      variant={
+                        solve.id === bestId
+                          ? 'best'
+                          : solve.id === worstId
+                            ? 'worst'
+                            : undefined
+                      }
+                    />
 
-                <ExtraLabel
-                  scramblePosition={solve.position}
-                  className='absolute -top-2 right-[1.1rem]'
-                />
-              </span>
-            </li>
-          ))}
-        </ul>
+                    <ExtraLabel
+                      scramblePosition={solve.position}
+                      className='absolute -top-2 right-[1.1rem]'
+                    />
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 
