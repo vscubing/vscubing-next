@@ -9,7 +9,7 @@ concurrency:
   group: cd-${{ github.ref }}
   cancel-in-progress: true
 
-.env:
+env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
