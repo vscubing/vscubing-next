@@ -139,10 +139,12 @@ export default {
         },
         'spinning-border': {
           from: {
-            transform: 'translate(-50%, -50%) scale(1, 0.08) rotate(56deg)',
+            transform:
+              'translate(-50%, -50%) scale(1, var(--tw-scale-x)) rotate(56deg)',
           },
           to: {
-            transform: 'translate(-50%, -50%) scale(1, 0.08) rotate(-304deg)',
+            transform:
+              'translate(-50%, -50%) scale(1, var(--tw-scale-x)) rotate(-304deg)',
           },
         },
       },

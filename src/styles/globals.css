@@ -130,9 +130,9 @@
   }
 }
 
-@layer utilities {
+@layer components {
   .spinning-border-wrapper {
-    @apply relative overflow-hidden bg-secondary-80;
+    @apply relative overflow-hidden;
   }
 
   .spinning-border-wrapper:before {
@@ -146,6 +146,6 @@
   }
 
   .spinning-border {
-    @apply absolute left-[2px] top-[2px] h-[calc(100%-4px)] w-[calc(100%-4px)];
+    @apply relative border-2 border-transparent bg-clip-padding;
   }
 }
