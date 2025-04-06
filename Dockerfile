@@ -24,8 +24,8 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
-ENV PORT 3000
-ENV HOSTNAME "localhost"
+# ENV PORT 3000
+# ENV HOSTNAME "localhost"
 
-EXPOSE 3000
+# EXPOSE 3000
 CMD ["bun", "run", "server.js"]
