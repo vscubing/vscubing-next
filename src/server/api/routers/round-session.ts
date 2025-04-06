@@ -15,7 +15,6 @@ import { calculateAvg } from './calculate-avg'
 import { validateSolve } from '@/server/internal/validate-solve'
 import { getContestUserCapabilities } from '../../internal/get-contest-user-capabilities'
 import { removeSolutionComments } from '@/app/_utils/remove-solution-comments'
-import { tryCatch } from '@/app/_utils/try-catch'
 
 const submittedSolvesInvariant = z.array(
   z.object(
@@ -79,7 +78,7 @@ export const roundSessionAuthProcedure = protectedProcedure
       )
       .where(eq(roundSessionTable.contestantId, ctx.session.user.id))
 
-    if (roundSession) return next({ ctx: { roundSession: roundSession } })
+    if (roundSession) return next({ ctx: { roundSession } })
 
     const [createdRoundSession] = await ctx.db
       .with(contestDisciplineSubquery)
@@ -113,17 +112,23 @@ export const roundSessionRouter = createTRPCRouter({
         id: solveTable.id,
         state: solveTable.state,
       })
-      .from(contestDisciplineTable)
+      .from(roundSessionTable)
+      .innerJoin(
+        contestDisciplineTable,
+        eq(contestDisciplineTable.id, roundSessionTable.contestDisciplineId),
+      )
       .innerJoin(
         scrambleTable,
         eq(scrambleTable.contestDisciplineId, contestDisciplineTable.id),
       )
-      .innerJoin(
-        roundSessionTable,
-        eq(roundSessionTable.contestDisciplineId, contestDisciplineTable.id),
+      .leftJoin(
+        solveTable,
+        and(
+          eq(solveTable.roundSessionId, roundSessionTable.id),
+          eq(solveTable.scrambleId, scrambleTable.id),
+        ),
       )
-      .leftJoin(solveTable, eq(solveTable.scrambleId, scrambleTable.id))
-      .where(eq(roundSessionTable.id, ctx.roundSession.id))
+      .where(and(eq(roundSessionTable.id, ctx.roundSession.id)))
 
     const extrasUsed = allRows.filter(
       ({ state }) => state === 'changed_to_extra',
