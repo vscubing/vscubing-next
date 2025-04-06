@@ -57,7 +57,7 @@ jobs:
           # cache-from: type=gha
           # cache-to: type=gha,mode=max
           # tags: latest
-          tags: ghrc.io/${{ github.repository_owner }}/${{ github.repository }}:latest
+          tags: ghrc.io/${{ github.repository }}:latest
 
       - name: Deploy to Dokploy
         run: | 
