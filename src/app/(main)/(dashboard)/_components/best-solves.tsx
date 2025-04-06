@@ -85,26 +85,37 @@ type SolveProps = {
 }
 function SolveRow({ solve, isFirstOnPage }: SolveProps) {
   return (
-    <div className='flex min-h-15 items-center rounded-xl bg-grey-100 pl-3'>
-      <span className='relative mr-3 flex flex-1 items-center pr-2 after:absolute after:right-0 after:top-1/2 after:block after:h-6 after:w-px after:-translate-y-1/2 after:bg-grey-60 sm:mr-0 sm:flex-col sm:items-start'>
-        <DisciplineIcon className='mr-3' discipline={solve.discipline} />
-        <span className='flex w-full'>
-          <Ellipsis className='flex-1'>{solve.nickname}</Ellipsis>
+    <div
+      className={cn(
+        'rounded-xl before:scale-x-[0.2] md:before:scale-x-[0.1] sm:before:scale-x-[0.2]',
+        solve.isOwn ? 'spinning-border-wrapper bg-secondary-80' : 'bg-grey-100',
+      )}
+    >
+      <div
+        className={cn('spinning-border flex items-center rounded-xl pl-3', {
+          'bg-secondary-80': solve.isOwn,
+        })}
+      >
+        <span className='relative mr-3 flex flex-1 items-center pr-2 after:absolute after:right-0 after:top-1/2 after:block after:h-6 after:w-px after:-translate-y-1/2 after:bg-grey-60 sm:mr-0 sm:flex-col sm:items-start'>
+          <DisciplineIcon className='mr-3' discipline={solve.discipline} />
+          <span className='flex w-full'>
+            <Ellipsis className='flex-1'>{solve.nickname}</Ellipsis>
+          </span>
         </span>
-      </span>
-      <span className='mr-4 sm:mr-0'>
-        <SolveTimeLinkOrDnf
-          canShowHint={isFirstOnPage}
-          result={{
-            timeMs: solve.timeMs,
-            isDnf: false,
-          }}
-          solveId={solve.id}
-          discipline={solve.discipline}
-          contestSlug={solve.contestSlug}
-        />
-      </span>
-      <OpenLeaderboardButton discipline={solve.discipline} />
+        <span className='mr-4 sm:mr-0'>
+          <SolveTimeLinkOrDnf
+            canShowHint={isFirstOnPage}
+            result={{
+              timeMs: solve.timeMs,
+              isDnf: false,
+            }}
+            solveId={solve.id}
+            discipline={solve.discipline}
+            contestSlug={solve.contestSlug}
+          />
+        </span>
+        <OpenLeaderboardButton discipline={solve.discipline} />
+      </div>
     </div>
   )
 }
@@ -138,5 +149,21 @@ function OpenLeaderboardButton({ discipline }: { discipline: string }) {
 }
 
 function SolveRowSkeleton() {
-  return <div className='h-15 animate-pulse rounded-xl bg-grey-100'></div>
+  return (
+    <div className='animate-pulse rounded-xl bg-grey-100'>
+      <div className='opacity-0'>
+        <SolveRow
+          isFirstOnPage={false}
+          solve={{
+            contestSlug: '',
+            discipline: '2by2',
+            id: -1,
+            isOwn: false,
+            nickname: '',
+            timeMs: 0,
+          }}
+        />
+      </div>
+    </div>
+  )
 }

@@ -52,12 +52,13 @@ export function DashboardLists() {
 
 function useBestSolvesQuery() {
   const trpc = useTRPC()
-  const { data: best3by3 } = useQuery(
+  const { data: best3by3, isLoading: isLoading3by3 } = useQuery(
     trpc.leaderboard.bySingle.queryOptions({ limit: 1, discipline: '3by3' }),
   )
-  const { data: best2by2 } = useQuery(
+  const { data: best2by2, isLoading: isLoading2by2 } = useQuery(
     trpc.leaderboard.bySingle.queryOptions({ limit: 1, discipline: '2by2' }),
   )
+  if (isLoading2by2 || isLoading3by3) return undefined
 
   const res: (NonNullable<typeof best3by3>[number] & {
     discipline: Discipline

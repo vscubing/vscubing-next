@@ -71,7 +71,9 @@
     - [ ] import migration
     - [ ] convenient link on the contest page
 - [x] why did the solve get rejected
-- [ ] try out the glowing border
+- [x] try out the glowing border
+    - [x] best solves ever: add isOwn
+    - [ ] add everywhere
 - [ ] bottom navbar on mobile make sticky
 - [ ] pagination
 - [ ] pinned items
