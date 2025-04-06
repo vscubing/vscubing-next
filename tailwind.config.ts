@@ -138,11 +138,11 @@ export default {
           },
         },
         'spinning-border': {
-          from: {
+          '0%,30%': {
             transform:
               'translate(-50%, -50%) scale(1, var(--spinning-border-ratio)) rotate(56deg)',
           },
-          to: {
+          '70%,100%': {
             transform:
               'translate(-50%, -50%) scale(1, var(--spinning-border-ratio)) rotate(-304deg)',
           },
@@ -168,7 +168,7 @@ export default {
           'landing-features-sharing-img linear 1s forwards 3.3s',
         'landing-footer-cubes': 'landing-footer-cubes linear 10s infinite',
         'spinning-border':
-          'spinning-border 2s linear(0, 0.32 40%, 0.48 50%, 0.83 90%, 1) infinite',
+          'spinning-border 6s linear(0, 0.32 40%, 0.48 50%, 0.83 90%, 1) infinite',
       },
       spacing: {
         15: '3.75rem',
