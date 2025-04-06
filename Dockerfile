@@ -27,7 +27,7 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=deps /app/node_modules/drizzle-kit ./node_modules/drizzle-kit
-COPY --from=deps /app/drizzle.config.ts app/drizzle ./
+COPY --from=deps /app/drizzle.config.ts /app/drizzle ./
 
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
