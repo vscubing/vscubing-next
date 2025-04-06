@@ -77,7 +77,9 @@
     - [x] connect to the simulator
     - [x] import migration
     - [x] convenient link on the contest page
-- [ ] add missing visual elements
+- [x] keymap dialog
+- [ ] touch devices ongoing
+- [ ] contest header in contest results
 - [ ] currently down for maintenance
 - [ ] bottom navbar on mobile make sticky
 - [ ] remove pagination except for contests list
@@ -92,6 +94,7 @@
 - [ ] adjust google auth permissions
 - [ ] block external db access
 - [ ] dnf on page reload
+- [ ] todos
 
 nicities:
 - [ ] rename state to status
