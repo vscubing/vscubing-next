@@ -106,3 +106,5 @@ nicities:
 - [ ] rename add auth_ prefix to auth tables
 - [ ] delete contests with no results
 - [ ] fancy white glowing outline effect on own result / after jumping to a solve
+- [ ] staging/prod env
+- [ ] db backups

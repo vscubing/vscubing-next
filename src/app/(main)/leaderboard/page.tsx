@@ -9,8 +9,14 @@ import {
 import { api } from '@/trpc/server'
 import { DisciplineSwitcher } from '@/app/_shared/discipline-switcher-client'
 import { NavigateBackButton } from '@/app/_shared/NavigateBackButton'
-import { PageTitleMobile } from '@/app/_shared/PageTitleMobile'
-import { LayoutHeaderTitlePortal } from '@/app/(main)/_layout/layout-header'
+import {
+  LayoutPageTitleMobile,
+  LayoutPageTitleMobileFallback,
+} from '@/app/_shared/layout-page-title-mobile'
+import {
+  LayoutHeaderTitlePortal,
+  LayoutHeaderTitlePortalFallback,
+} from '@/app/(main)/_layout/layout-header'
 import { redirect } from 'next/navigation'
 import { DISCIPLINES } from '@/shared'
 import { SingleResultList } from './_components/single-result-list'
@@ -27,24 +33,17 @@ export default async function LeaderboardPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
-  const { discipline, type } = await searchParams
+  const { discipline, type: type } = await searchParams
   if (!isDiscipline(discipline) || !isLeaderboardType(type))
     redirect(
       `/leaderboard?discipline=${castDiscipline(discipline)}&type=${castLeaderboardType(type)}`,
     )
 
-  const session = await auth()
-  let title = ''
-  if (session) {
-    title = `${session.user.name}, check out our best ${LEADERBOARD_TYPE_MAP[type]}`
-  } else {
-    title = `Check out our best ${LEADERBOARD_TYPE_MAP[type]}`
-  }
-
   return (
     <>
-      <PageTitleMobile>{title}</PageTitleMobile>
-      <LayoutHeaderTitlePortal>{title}</LayoutHeaderTitlePortal>
+      <Suspense fallback={<PageTitleFallback />}>
+        <PageTitle type={type} />
+      </Suspense>
       <NavigateBackButton />
       <LayoutSectionHeader>
         <DisciplineSwitcher
@@ -67,6 +66,31 @@ export default async function LeaderboardPage({
       >
         <PageContent discipline={discipline} />
       </Suspense>
+    </>
+  )
+}
+
+async function PageTitle({ type }: { type: LeaderboardType }) {
+  const session = await auth()
+  let title = ''
+  if (session) {
+    title = `${session.user.name}, check out our best ${LEADERBOARD_TYPE_MAP[type]}`
+  } else {
+    title = `Check out our best ${LEADERBOARD_TYPE_MAP[type]}`
+  }
+  return (
+    <>
+      <LayoutPageTitleMobile>{title}</LayoutPageTitleMobile>
+      <LayoutHeaderTitlePortal>{title}</LayoutHeaderTitlePortal>
+    </>
+  )
+}
+
+function PageTitleFallback() {
+  return (
+    <>
+      <LayoutPageTitleMobileFallback />
+      <LayoutHeaderTitlePortalFallback />
     </>
   )
 }

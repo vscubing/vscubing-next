@@ -2,7 +2,7 @@ import { DEFAULT_DISCIPLINE, isDiscipline, type Discipline } from '@/app/_types'
 import { api } from '@/trpc/server'
 import { DisciplineSwitcher } from '@/app/_shared/discipline-switcher-client'
 import { NavigateBackButton } from '@/app/_shared/NavigateBackButton'
-import { PageTitleMobile } from '@/app/_shared/PageTitleMobile'
+import { LayoutPageTitleMobile } from '@/app/_shared/layout-page-title-mobile'
 import { LayoutHeaderTitlePortal } from '@/app/(main)/_layout/layout-header'
 import { tryCatchTRPC } from '@/app/_utils/try-catch'
 import { redirect } from 'next/navigation'
@@ -37,7 +37,7 @@ export default async function ContestResultsPage({
   }
   return (
     <>
-      <PageTitleMobile>{title}</PageTitleMobile>
+      <LayoutPageTitleMobile>{title}</LayoutPageTitleMobile>
       <LayoutHeaderTitlePortal>{title}</LayoutHeaderTitlePortal>
       <NavigateBackButton />
       <LayoutSectionHeader>

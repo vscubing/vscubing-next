@@ -5,6 +5,7 @@ import { cn } from '@/app/_utils/cn'
 import { LogoWithLinkToLanding } from './components/logo'
 import { UserDropdownOrSignIn } from './components/user-dropdown-or-sign-in'
 import ClientOnlyPortal from '@/app/_components/client-only-portal'
+import { LoadingDots } from '@/app/_components/ui/loading-dots'
 
 const HEADER_TITLE_ID = 'header-title'
 
@@ -32,6 +33,14 @@ export function LayoutHeaderTitlePortal({ children }: { children: ReactNode }) {
   return (
     <ClientOnlyPortal selector={`#${HEADER_TITLE_ID}`}>
       {children}
+    </ClientOnlyPortal>
+  )
+}
+
+export function LayoutHeaderTitlePortalFallback() {
+  return (
+    <ClientOnlyPortal selector={`#${HEADER_TITLE_ID}`}>
+      <LoadingDots />
     </ClientOnlyPortal>
   )
 }

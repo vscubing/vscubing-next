@@ -68,7 +68,7 @@ export function Navbar({ variant }: NavbarProps) {
   if (variant === 'horizontal') {
     return (
       <nav className='flex justify-between gap-2 overflow-y-auto px-1 py-2'>
-        {getNavbarLinks().map(({ children, route, href }) => (
+        {getNavbarLinks(devToolsEnabled).map(({ children, route, href }) => (
           <Link
             key={href ?? route}
             href={(href ?? route) as Route}
@@ -137,6 +137,7 @@ function getNavbarLinks(devToolsEnabled: boolean) {
         </>
       ),
       route: '/leaderboard',
+      href: `/leaderboard?discipline=${DEFAULT_DISCIPLINE}&type=single`,
     },
     {
       children: (

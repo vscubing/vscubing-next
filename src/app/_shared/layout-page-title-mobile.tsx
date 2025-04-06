@@ -1,7 +1,8 @@
 import { cn } from '@/app/_utils/cn'
 import { type ReactNode } from 'react'
+import { LoadingDots } from '../_components/ui/loading-dots'
 
-export function PageTitleMobile({
+export function LayoutPageTitleMobile({
   children,
   className,
 }: {
@@ -17,5 +18,13 @@ export function PageTitleMobile({
     >
       {children}
     </h1>
+  )
+}
+
+export function LayoutPageTitleMobileFallback() {
+  return (
+    <div className='sr-only flex min-h-10 items-center lg:not-sr-only'>
+      <LoadingDots />
+    </div>
   )
 }

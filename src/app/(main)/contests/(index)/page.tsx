@@ -7,7 +7,7 @@ import {
   isDiscipline,
   type Discipline,
 } from '@/app/_types'
-import { PageTitleMobile } from '@/app/_shared/PageTitleMobile'
+import { LayoutPageTitleMobile } from '@/app/_shared/layout-page-title-mobile'
 import { NavigateBackButton } from '@/app/_shared/NavigateBackButton'
 import { redirect } from 'next/navigation'
 import { api } from '@/trpc/server'
@@ -34,7 +34,7 @@ export default async function ContestsIndexPage(props: {
   return (
     <>
       <LayoutHeaderTitlePortal>{title}</LayoutHeaderTitlePortal>
-      <PageTitleMobile>{title}</PageTitleMobile>
+      <LayoutPageTitleMobile>{title}</LayoutPageTitleMobile>
       <NavigateBackButton className='self-start' />
       <LayoutSectionHeader>
         <DisciplineSwitcher
