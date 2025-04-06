@@ -61,14 +61,13 @@ export function BestSolves({
         </div>
 
         <ul className='flex flex-1 flex-col gap-3'>
-          <li aria-hidden className='invisible fixed'>
-            <SolveRowSkeleton />
-          </li>
           {solves
             ? solves.map((solve, idx) => (
-                <li key={solve.id}>
-                  <SolveRow solve={solve} isFirstOnPage={idx === 0} />
-                </li>
+                <SolveRow
+                  key={solve.id}
+                  solve={solve}
+                  isFirstOnPage={idx === 0}
+                />
               ))
             : Array.from({ length: DISCIPLINES.length }).map((_, idx) => (
                 <li key={idx}>
@@ -159,20 +158,6 @@ function OpenLeaderboardButton({ discipline }: { discipline: string }) {
 
 function SolveRowSkeleton() {
   return (
-    <div className='animate-pulse rounded-xl bg-grey-100'>
-      <div className='opacity-0'>
-        <SolveRow
-          isFirstOnPage={false}
-          solve={{
-            contestSlug: '',
-            discipline: '2by2',
-            id: -1,
-            isOwn: false,
-            nickname: '',
-            timeMs: 0,
-          }}
-        />
-      </div>
-    </div>
+    <div className='h-16 animate-pulse overflow-clip rounded-xl bg-grey-100'></div>
   )
 }
