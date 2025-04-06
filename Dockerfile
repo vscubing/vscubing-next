@@ -19,14 +19,14 @@ RUN bun run build
 # Stage 3: Production server
 FROM base AS runner
 WORKDIR /app
-ENV NODE_ENV=staging
+ENV NODE_ENV=production
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next 
-COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 
-ENV PORT 3001
-ENV HOSTNAME "localhost"
+ENV PORT 3000
+ENV HOSTNAME "0.0.0.0"
 
-EXPOSE 3001
+EXPOSE 3000
 
 CMD ["bun", "run", "server.js"]
