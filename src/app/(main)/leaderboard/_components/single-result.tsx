@@ -6,11 +6,13 @@ import {
   DisciplineIcon,
   ArrowRightIcon,
 } from '@/app/_components/ui'
+import { SpinningBorder } from '@/app/_components/ui/spinning-border'
 import { PlaceLabel } from '@/app/_shared/PlaceLabel'
 import { SolveTimeLinkOrDnf } from '@/app/_shared/SolveTimeButton'
 import type { Discipline } from '@/app/_types'
 import { cn } from '@/app/_utils/cn'
 import { formatDate } from '@/app/_utils/formatDate'
+import { tailwindConfig } from '@/app/_utils/tailwind'
 import type { RouterOutputs } from '@/trpc/react'
 import * as Accordion from '@radix-ui/react-accordion'
 import Link from 'next/link'
@@ -46,55 +48,61 @@ function SingleResultDesktop({
   }
 
   return (
-    <li
-      className={cn(
-        'flex min-h-15 items-center rounded-xl pl-2',
-        isOwn ? 'bg-secondary-80' : 'bg-grey-100',
-        className,
-      )}
+    <SpinningBorder
+      wrapper='li'
+      color={tailwindConfig.theme.colors.secondary[60]}
+      enabled={isOwn}
+      className={cn('rounded-xl', className)}
     >
-      <div className='flex flex-1 items-center'>
-        <PlaceLabel className='mr-3'>{place}</PlaceLabel>
-        <DisciplineIcon className='mr-3' discipline={discipline} />
-        <Ellipsis className='vertical-alignment-fix flex-1'>
-          {displayedNickname}
-        </Ellipsis>
-        <span className='mr-6'>
-          <span className='sm:vertical-alignment-fix mb-1 hidden text-center text-grey-40'>
-            Single time
-          </span>
-          <SolveTimeLinkOrDnf
-            canShowHint={place === 1}
-            result={{ isDnf: false, timeMs }}
-            solveId={id}
-            contestSlug={contestSlug}
-            discipline={discipline}
-          />
-        </span>
-      </div>
-      <div className='overflow-y-clip data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down'>
-        <span className='flex items-center'>
-          <span className='vertical-alignment-fix w-36 border-l border-grey-60 text-center'>
-            <span className='mb-2 hidden text-center text-grey-40'>
-              Solve date
+      <div
+        className={cn(
+          'flex min-h-15 items-center rounded-xl pl-2',
+          isOwn ? 'bg-secondary-80' : 'bg-grey-100',
+        )}
+      >
+        <div className='flex flex-1 items-center'>
+          <PlaceLabel className='mr-3'>{place}</PlaceLabel>
+          <DisciplineIcon className='mr-3' discipline={discipline} />
+          <Ellipsis className='vertical-alignment-fix flex-1'>
+            {displayedNickname}
+          </Ellipsis>
+          <span className='mr-6'>
+            <span className='sm:vertical-alignment-fix mb-1 hidden text-center text-grey-40'>
+              Single time
             </span>
-            {formatDate(createdAt)}
+            <SolveTimeLinkOrDnf
+              canShowHint={place === 1}
+              result={{ isDnf: false, timeMs }}
+              solveId={id}
+              contestSlug={contestSlug}
+              discipline={discipline}
+            />
           </span>
-          <SecondaryButton
-            asChild
-            size='lg'
-            className='w-[9.25rem] justify-between px-[1.3rem]'
-          >
-            <Link
-              href={`/contests/${contestSlug}/results?discipline=${discipline}`}
+        </div>
+        <div className='overflow-y-clip data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down'>
+          <span className='flex items-center'>
+            <span className='vertical-alignment-fix w-36 border-l border-grey-60 text-center'>
+              <span className='mb-2 hidden text-center text-grey-40'>
+                Solve date
+              </span>
+              {formatDate(createdAt)}
+            </span>
+            <SecondaryButton
+              asChild
+              size='lg'
+              className='w-[9.25rem] justify-between px-[1.3rem]'
             >
-              <span>Contest {contestSlug}</span>
-              <ArrowRightIcon className='inline-block' />
-            </Link>
-          </SecondaryButton>
-        </span>
+              <Link
+                href={`/contests/${contestSlug}/results?discipline=${discipline}`}
+              >
+                <span>Contest {contestSlug}</span>
+                <ArrowRightIcon className='inline-block' />
+              </Link>
+            </SecondaryButton>
+          </span>
+        </div>
       </div>
-    </li>
+    </SpinningBorder>
   )
 }
 
@@ -115,59 +123,70 @@ function SingleResultTablet({
   }
 
   return (
-    <Accordion.Root type='single' collapsible className={className}>
-      <Accordion.Item
-        value='result'
-        className={cn(
-          'flex min-h-[4.75rem] flex-wrap items-center rounded-xl px-4 pb-2 pt-3 sm:min-h-28 sm:p-4',
-          isOwn ? 'bg-secondary-80' : 'bg-grey-100',
-        )}
-      >
-        <Accordion.Header className='flex w-full flex-1 items-center sm:grid sm:grid-flow-col sm:grid-cols-[min-content_1fr_min-content] sm:grid-rows-[min-content_min-content] sm:gap-x-3 sm:gap-y-1'>
-          <PlaceLabel className='mr-3 sm:mr-0'>{place}</PlaceLabel>
-          <DisciplineIcon className='mr-3 sm:mr-0' discipline={discipline} />
-          <Ellipsis className='vertical-alignment-fix flex-1 sm:col-span-2 sm:w-auto'>
-            {displayedNickname}
-          </Ellipsis>
-          <span className='mr-10 sm:mr-0 sm:flex sm:items-center'>
-            <span className='sm:vertical-alignment-fix mb-1 block text-center text-grey-40 sm:mb-0'>
-              Single time
-            </span>
-            <SolveTimeLinkOrDnf
-              canShowHint={place === 1}
-              result={{ isDnf: false, timeMs }}
-              solveId={id}
-              contestSlug={contestSlug}
-              discipline={discipline}
-            />
-          </span>
-          <Accordion.Trigger className='outline-ring group sm:py-2'>
-            <PlusIcon className='block group-data-[state=open]:hidden' />
-            <MinusIcon className='hidden group-data-[state=open]:block' />
-          </Accordion.Trigger>
-        </Accordion.Header>
-        <Accordion.Content className='w-full overflow-y-clip data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down sm:mt-3'>
-          <span className='flex items-center justify-between border-t border-grey-60 pt-4'>
-            <span className='vertical-alignment-fix min-w-24 border-l border-none border-grey-60 pt-0 text-center sm:min-w-0'>
-              <span className='mb-2 block text-center text-grey-40'>
-                Solve date
+    <Accordion.Root type='single' collapsible asChild>
+      <Accordion.Item value='result' asChild>
+        <SpinningBorder
+          wrapper='li'
+          enabled={isOwn}
+          color={tailwindConfig.theme.colors.secondary[60]}
+          className={cn('rounded-xl', className)}
+        >
+          <div
+            className={cn(
+              'min-h-[4.75rem] flex-wrap items-center rounded-xl px-4 pb-2 pt-3 sm:min-h-28 sm:p-4',
+              isOwn ? 'spinning-border bg-secondary-80' : 'bg-grey-100',
+            )}
+          >
+            <Accordion.Header className='flex w-full flex-1 items-center sm:grid sm:grid-flow-col sm:grid-cols-[min-content_1fr_min-content] sm:grid-rows-[min-content_min-content] sm:gap-x-3 sm:gap-y-1'>
+              <PlaceLabel className='mr-3 sm:mr-0'>{place}</PlaceLabel>
+              <DisciplineIcon
+                className='mr-3 sm:mr-0'
+                discipline={discipline}
+              />
+              <Ellipsis className='vertical-alignment-fix flex-1 sm:col-span-2 sm:w-auto'>
+                {displayedNickname}
+              </Ellipsis>
+              <span className='mr-10 sm:mr-0 sm:flex sm:items-center'>
+                <span className='sm:vertical-alignment-fix mb-1 block text-center text-grey-40 sm:mb-0'>
+                  Single time
+                </span>
+                <SolveTimeLinkOrDnf
+                  canShowHint={place === 1}
+                  result={{ isDnf: false, timeMs }}
+                  solveId={id}
+                  contestSlug={contestSlug}
+                  discipline={discipline}
+                />
               </span>
-              {formatDate(createdAt)}
-            </span>
-            <SecondaryButton
-              asChild
-              size='sm'
-              className='h-[3.25rem] w-[9.25rem] justify-between px-[1.3rem] sm:h-11'
-            >
-              <Link
-                href={`/contests/${contestSlug}/results?discipline=${discipline}`}
-              >
-                <span>Contest {contestSlug}</span>
-                <ArrowRightIcon className='inline-block' />
-              </Link>
-            </SecondaryButton>
-          </span>
-        </Accordion.Content>
+              <Accordion.Trigger className='outline-ring group sm:py-2'>
+                <PlusIcon className='block group-data-[state=open]:hidden' />
+                <MinusIcon className='hidden group-data-[state=open]:block' />
+              </Accordion.Trigger>
+            </Accordion.Header>
+            <Accordion.Content className='w-full overflow-y-clip data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down sm:mt-3'>
+              <span className='flex items-center justify-between border-t border-grey-60 pt-4'>
+                <span className='vertical-alignment-fix min-w-24 border-l border-none border-grey-60 pt-0 text-center sm:min-w-0'>
+                  <span className='mb-2 block text-center text-grey-40'>
+                    Solve date
+                  </span>
+                  {formatDate(createdAt)}
+                </span>
+                <SecondaryButton
+                  asChild
+                  size='sm'
+                  className='h-[3.25rem] w-[9.25rem] justify-between px-[1.3rem] sm:h-11'
+                >
+                  <Link
+                    href={`/contests/${contestSlug}/results?discipline=${discipline}`}
+                  >
+                    <span>Contest {contestSlug}</span>
+                    <ArrowRightIcon className='inline-block' />
+                  </Link>
+                </SecondaryButton>
+              </span>
+            </Accordion.Content>
+          </div>
+        </SpinningBorder>
       </Accordion.Item>
     </Accordion.Root>
   )

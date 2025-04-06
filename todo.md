@@ -76,8 +76,9 @@
     - [x] add to contest results
     - [x] add to best solves
     - [ ] add to leaderboard
+- [ ] add missing visual elements
 - [ ] bottom navbar on mobile make sticky
-- [ ] pagination
+- [ ] remove pagination except for contests list
 - [ ] pinned items
 - [ ] jump to the pinned item => scroll and highlight
 - [ ] "ongoinghint"

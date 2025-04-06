@@ -131,21 +131,12 @@
 }
 
 @layer components {
-  .spinning-border-wrapper {
-    @apply relative overflow-hidden;
-  }
-
-  .spinning-border-wrapper:before {
-    @apply animate-spinning-border absolute left-1/2 top-1/2 aspect-square w-[150%] content-[''];
+  .spinning-border:before {
     /* TODO: we probably can and should apply this directly in the template and remove this _secondary class with Tailwind v4 */
     background: conic-gradient(
-      theme('colors.secondary.60'),
+      var(--spinning-border-color),
       100deg,
       transparent
     );
-  }
-
-  .spinning-border {
-    @apply relative border-2 border-transparent bg-clip-padding;
   }
 }
