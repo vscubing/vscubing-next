@@ -64,6 +64,7 @@
     "tailwindcss-animate": "^1.0.7",
     "usehooks-ts": "^3.0.1",
     "vaul": "^0.9.0",
+    "drizzle-kit": "^0.30.5",
     "zod": "^3.24.2"
   },
   "devDependencies": {
@@ -73,7 +74,6 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "autoprefixer": "^10.4.21",
-    "drizzle-kit": "^0.30.5",
     "eslint": "^9.23.0",
     "eslint-config-next": "^15.2.3",
     "eslint-plugin-drizzle": "^0.2.3",
