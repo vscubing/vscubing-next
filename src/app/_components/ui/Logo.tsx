@@ -24,11 +24,11 @@ export function Logo({
         className='h-full w-full'
         alt='vscubing - Virtual Speedcubing'
       />
-      {env.NEXT_PUBLIC_NODE_ENV === 'development' && (
+      {env.NEXT_PUBLIC_APP_ENV === 'development' && (
         <span className='title-h1 absolute top-0 text-white-100'>DEV</span>
       )}
-      {env.NEXT_PUBLIC_NODE_ENV === 'test' && (
-        <span className='title-h1 absolute top-0 text-white-100'>TEST</span>
+      {env.NEXT_PUBLIC_APP_ENV === 'staging' && (
+        <span className='title-h1 absolute top-0 text-white-100'>STAGING</span>
       )}
     </span>
   )

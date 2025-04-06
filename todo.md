@@ -71,9 +71,11 @@
     - [ ] import migration
     - [ ] convenient link on the contest page
 - [x] why did the solve get rejected
+- [x] best solves ever: add isOwn
 - [x] try out the glowing border
-    - [x] best solves ever: add isOwn
-    - [ ] add everywhere
+    - [x] add to contest results
+    - [x] add to best solves
+    - [ ] add to leaderboard
 - [ ] bottom navbar on mobile make sticky
 - [ ] pagination
 - [ ] pinned items

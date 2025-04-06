@@ -6,10 +6,8 @@ import { Hind, Kanit } from 'next/font/google'
 import { cn } from './_utils/cn'
 import { TRPCReactProvider } from '@/trpc/react'
 import { Toaster } from './_components/ui'
-import { api } from '@/trpc/server'
 import { DevTools } from './(main)/dev'
 import { env } from '@/env'
-import { tryCatchTRPC } from './_utils/try-catch'
 
 export const metadata: Metadata = {
   title: 'vscubing',
@@ -36,7 +34,7 @@ export default async function RootLayout({
 }) {
   if (env.NODE_ENV === 'development') {
     const headersList = await headers()
-    if (headersList.get('host') !== 'localhost:3000')
+    if (headersList.get('host') === '127.0.0.1:3000')
       throw new Error("use localhost:3000, auth won't work otherwise")
   }
 
@@ -45,7 +43,7 @@ export default async function RootLayout({
       <body>
         <TRPCReactProvider>
           {children}
-          {env.NEXT_PUBLIC_NODE_ENV === 'development' && <DevTools />}
+          {env.NEXT_PUBLIC_APP_ENV !== 'production' && <DevTools />}
           <Toaster />
         </TRPCReactProvider>
       </body>

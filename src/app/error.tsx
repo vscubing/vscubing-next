@@ -16,7 +16,7 @@ export default function Error({
 }) {
   const isSmScreen = useMatchesScreen('sm')
 
-  if (env.NEXT_PUBLIC_NODE_ENV === 'development') {
+  if (env.NEXT_PUBLIC_APP_ENV === 'development') {
     if (
       error.message ===
       'An error occurred in the Server Components render but no message was provided'

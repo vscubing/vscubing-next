@@ -7,9 +7,7 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
-    NODE_ENV: z
-      .enum(['development', 'test', 'production'])
-      .default('development'),
+    NODE_ENV: z.enum(['development', 'production']).default('development'),
     DATABASE_URL: z.string().url(),
     AUTH_SECRET: z.string(),
     AUTH_GOOGLE_CLIENT_ID: z.string(),
@@ -24,9 +22,7 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    NEXT_PUBLIC_NODE_ENV: z
-      .enum(['development', 'test', 'production'])
-      .default('development'),
+    NEXT_PUBLIC_APP_ENV: z.enum(['development', 'staging', 'production']),
   },
 
   /**
@@ -41,7 +37,7 @@ export const env = createEnv({
     AUTH_GOOGLE_CLIENT_SECRET: process.env.AUTH_GOOGLE_CLIENT_SECRET,
     AUTH_TRUST_HOST: process.env.AUTH_TRUST_HOST,
     AUTH_URL: process.env.AUTH_URL,
-    NEXT_PUBLIC_NODE_ENV: process.env.NODE_ENV,
+    NEXT_PUBLIC_APP_ENV: process.env.NEXT_PUBLIC_APP_ENV,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

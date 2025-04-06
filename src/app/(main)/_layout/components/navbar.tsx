@@ -41,10 +41,11 @@ export function Navbar({ variant }: NavbarProps) {
     setOpenOnMobile(false)
   }
 
+  const devToolsEnabled = env.NEXT_PUBLIC_APP_ENV !== 'production'
   if (variant === 'vertical') {
     return (
       <nav className='flex flex-col gap-4 sm:gap-0'>
-        {getNavbarLinks().map(({ children, href, route }) => (
+        {getNavbarLinks(devToolsEnabled).map(({ children, href, route }) => (
           <Link
             key={href ?? route}
             href={(href ?? route) as Route}
@@ -117,7 +118,7 @@ type NavbarRoute =
 function isStaticNavbarRoute(pathname: string): pathname is NavbarRoute {
   return ['/', '/contests', '/dev'].includes(pathname)
 }
-function getNavbarLinks() {
+function getNavbarLinks(devToolsEnabled: boolean) {
   const links: { children: ReactNode; route: NavbarRoute; href?: string }[] = [
     {
       children: (
@@ -158,7 +159,7 @@ function getNavbarLinks() {
     },
   ]
 
-  if (env.NEXT_PUBLIC_NODE_ENV === 'development') {
+  if (devToolsEnabled) {
     links.push({
       children: (
         <>

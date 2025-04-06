@@ -11,7 +11,7 @@ import { createSystemInitialContest } from './actions'
 import { SolveValidator } from './_components/solve-validator'
 
 export default function DevPage() {
-  if (!(env.NEXT_PUBLIC_NODE_ENV === 'development')) notFound()
+  if (env.NEXT_PUBLIC_APP_ENV === 'production') notFound()
 
   return (
     <div className='flex flex-1 flex-wrap gap-8 rounded-2xl bg-black-80 p-6 sm:p-3'>
