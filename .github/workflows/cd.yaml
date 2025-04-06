@@ -45,20 +45,20 @@ jobs:
       #     context: .
       #     cache-from: type=local,src=/tmp/.buildx-cache
       #     cache-to: type=local,dest=/tmp/.buildx-cache
-      - name: 'Build and push Docker image'
-        run: |
-          docker build . --tag ghrc.io/${{ github.repository_owner }}/${{ github.repository }}:latest
-          docker push ghrc.io/${{ github.repository_owner }}/${{ github.repository }}:latest
+      # - name: 'Build and push Docker image'
+      #   run: |
+      #     docker build . --tag ghrc.io/${{ github.repository_owner }}/${{ github.repository }}:latest
+      #     docker push ghrc.io/${{ github.repository_owner }}/${{ github.repository }}:latest
 
-      # - name: Build and push Docker images
-      #   uses: docker/build-push-action@v6
-      #   with:
-      #     context: .
-      #     push: true
-      #     # cache-from: type=gha
-      #     # cache-to: type=gha,mode=max
-      #     # tags: latest
-      #     tags: ghrc.io/${{ github.repository }}:latest
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          # cache-from: type=gha
+          # cache-to: type=gha,mode=max
+          # tags: latest
+          tags: ghrc.io/${{ github.repository }}:latest
 
       - name: Deploy to Dokploy
         run: | 
