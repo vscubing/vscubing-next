@@ -1,6 +1,6 @@
 FROM oven/bun:slim 
 
-RUN apt-get update && apt-get install -y bash curl
+RUN apt-get update && apt-get install -y bash curl unzip
 WORKDIR /app
 COPY . .
 
