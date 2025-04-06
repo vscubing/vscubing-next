@@ -34,7 +34,7 @@ export function SpinningBorder({
       ref={ref}
       className={cn(
         {
-          "spinning-border before:animate-spinning-border relative overflow-clip before:absolute before:left-1/2 before:top-1/2 before:aspect-square before:w-[150%] before:content-['']":
+          "spinning-border relative overflow-clip before:absolute before:left-1/2 before:top-1/2 before:aspect-square before:w-[150%] before:animate-spinning-border before:content-['']":
             enabled,
         },
         className,
