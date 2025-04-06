@@ -1,5 +1,6 @@
 FROM oven/bun:slim 
 
+RUN apt-get update && apt-get install -y bash curl
 WORKDIR /app
 COPY . .
 
