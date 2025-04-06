@@ -9,6 +9,9 @@ import { env } from '@/env'
 import { notFound } from 'next/navigation'
 import { createSystemInitialContest } from './actions'
 import { SolveValidator } from './_components/solve-validator'
+import { db } from '@/server/db'
+import { contestDisciplineTable, scrambleTable } from '@/server/db/schema'
+import { and, eq, or } from 'drizzle-orm'
 
 export default function DevPage() {
   if (env.NEXT_PUBLIC_APP_ENV === 'production') notFound()
@@ -40,15 +43,43 @@ export async function OngoingContestInfo() {
     return (
       <section>
         No ongoing contest. But you can create a
-        <NewContestButton />
+        <NewContestButton /> one
       </section>
+    )
+
+  const scrambles = await db
+    .select()
+    .from(scrambleTable)
+    .innerJoin(
+      contestDisciplineTable,
+      eq(contestDisciplineTable.id, scrambleTable.contestDisciplineId),
+    )
+    .where(
+      and(
+        or(
+          ...ongoingContest.disciplines.map((d) =>
+            eq(contestDisciplineTable.disciplineSlug, d),
+          ),
+        ),
+        eq(contestDisciplineTable.contestSlug, ongoingContest.slug),
+      ),
     )
 
   return (
     <section>
-      <h2 className='title-h2'>Ongoing contest</h2>
+      <div>
+        <h2 className='title-h2 inline-block'>Ongoing contest</h2>
+        <NewContestButton />
+      </div>
       <pre>{JSON.stringify(ongoingContest, null, 2)}</pre>
-      <NewContestButton />
+      <h3 className='title-h3'>Scrambles</h3>
+      <pre>
+        {JSON.stringify(
+          scrambles.map((s) => s.scramble.moves),
+          null,
+          2,
+        )}
+      </pre>
     </section>
   )
 }
@@ -56,16 +87,21 @@ export async function OngoingContestInfo() {
 function NewContestButton() {
   return (
     <form
-      className='inline-block'
-      action={async () => {
+      className='inline-flex items-center gap-2'
+      action={async (formData: FormData) => {
         'use server'
-        await closeOngoingAndCreateNewContest(['3by3', '2by2'])
+        const easyScrambles = formData.get('easy-scrambles') === 'on'
+        await closeOngoingAndCreateNewContest(['3by3', '2by2'], easyScrambles)
         revalidatePath('/')
       }}
     >
       <SecondaryButtonWithFormStatus size='sm' className='ml-2'>
-        New contest
+        New
       </SecondaryButtonWithFormStatus>
+      <label>
+        <input type='checkbox' name='easy-scrambles' />
+        Easy scrambles
+      </label>
     </form>
   )
 }

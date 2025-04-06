@@ -64,18 +64,19 @@
     - [x] scaffold the page
     - [x] latest contests
     - [x] best solves
+- [x] why did the solve get rejected
+- [x] best solves ever: add isOwn
+- [x] try out the glowing border
+    - [x] add to contest results
+    - [x] add to best solves
+    - [x] add to leaderboard
+- [x] easy scrambles switcher
 - [ ] settings
     - [x] api
     - [x] ui
     - [x] connect to the simulator
     - [ ] import migration
     - [ ] convenient link on the contest page
-- [x] why did the solve get rejected
-- [x] best solves ever: add isOwn
-- [x] try out the glowing border
-    - [x] add to contest results
-    - [x] add to best solves
-    - [ ] add to leaderboard
 - [ ] add missing visual elements
 - [ ] bottom navbar on mobile make sticky
 - [ ] remove pagination except for contests list
@@ -89,6 +90,7 @@
 - [ ] "you have X unapplied migrations"
 - [ ] adjust google auth permissions
 - [ ] block external db access
+- [ ] dnf on page reload
 
 nicities:
 - [ ] rename state to status
