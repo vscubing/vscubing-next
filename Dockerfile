@@ -25,7 +25,7 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
 ENV PORT 3000
-ENV HOSTNAME "0.0.0.0"
+ENV HOSTNAME "localhost"
 
 EXPOSE 3000
 
