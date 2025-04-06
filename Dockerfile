@@ -9,9 +9,9 @@ RUN bun install \
 RUN bun run build
 
 # Remove devDependencies from package.json manually because --prune devDependencies doesn't work
-RUN bunx jq 'del(.devDependencies)' package.json > package.json.tmp && \
-    mv package.json.tmp package.json && rm package.json.tml
-RUN bun install 
+# RUN bunx jq 'del(.devDependencies)' package.json > package.json.tmp && \
+#     mv package.json.tmp package.json && rm package.json.tml
+# RUN bun install 
 
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
