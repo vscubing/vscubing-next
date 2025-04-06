@@ -2,7 +2,6 @@
 
 import { cn } from '@/app/_utils/cn'
 import { Slot } from '@radix-ui/react-slot'
-import React, { type ElementType } from 'react'
 import {
   type ComponentPropsWithoutRef,
   type CSSProperties,
@@ -16,15 +15,15 @@ export function SpinningBorder({
   children,
   className,
   enabled,
-  wrapper: Wrapper = 'div',
 }: ComponentPropsWithoutRef<'div'> & {
   color: string
   enabled: boolean
-  wrapper?: ElementType
 }) {
   const { ref, ratio } = useSpinningBorderRatio()
+
+  if (!enabled) return children
   return (
-    <Wrapper
+    <div
       style={
         {
           '--spinning-border-color': color,
@@ -33,17 +32,14 @@ export function SpinningBorder({
       }
       ref={ref}
       className={cn(
-        {
-          "spinning-border before:animate-spinning-border relative overflow-clip before:absolute before:left-1/2 before:top-1/2 before:aspect-square before:w-[150%] before:content-['']":
-            enabled,
-        },
+        "spinning-border before:animate-spinning-border relative overflow-clip before:absolute before:left-1/2 before:top-1/2 before:aspect-square before:w-[150%] before:content-['']",
         className,
       )}
     >
       <Slot className='relative border-2 border-transparent bg-clip-padding'>
         {children}
       </Slot>
-    </Wrapper>
+    </div>
   )
 }
 

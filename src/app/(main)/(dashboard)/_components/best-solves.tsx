@@ -86,45 +86,46 @@ type SolveProps = {
 }
 function SolveRow({ solve, isFirstOnPage }: SolveProps) {
   return (
-    <SpinningBorder
-      wrapper='li'
-      color={tailwindConfig.theme.colors.secondary[60]}
-      enabled={solve.isOwn}
-      className='rounded-xl'
-    >
-      <div
-        className={cn(
-          'rounded-xl',
-          solve.isOwn ? 'bg-secondary-80' : 'bg-grey-100',
-        )}
+    <li>
+      <SpinningBorder
+        color={tailwindConfig.theme.colors.secondary[60]}
+        enabled={solve.isOwn}
+        className='rounded-xl'
       >
         <div
-          className={cn('spinning-border flex items-center rounded-xl pl-3', {
-            'bg-secondary-80': solve.isOwn,
-          })}
+          className={cn(
+            'rounded-xl',
+            solve.isOwn ? 'bg-secondary-80' : 'bg-grey-100',
+          )}
         >
-          <span className='relative mr-3 flex flex-1 items-center pr-2 after:absolute after:right-0 after:top-1/2 after:block after:h-6 after:w-px after:-translate-y-1/2 after:bg-grey-60 sm:mr-0 sm:flex-col sm:items-start'>
-            <DisciplineIcon className='mr-3' discipline={solve.discipline} />
-            <span className='flex w-full'>
-              <Ellipsis className='flex-1'>{solve.nickname}</Ellipsis>
+          <div
+            className={cn('flex items-center rounded-xl pl-3', {
+              'bg-secondary-80': solve.isOwn,
+            })}
+          >
+            <span className='relative mr-3 flex flex-1 items-center pr-2 after:absolute after:right-0 after:top-1/2 after:block after:h-6 after:w-px after:-translate-y-1/2 after:bg-grey-60 sm:mr-0 sm:flex-col sm:items-start'>
+              <DisciplineIcon className='mr-3' discipline={solve.discipline} />
+              <span className='flex w-full'>
+                <Ellipsis className='flex-1'>{solve.nickname}</Ellipsis>
+              </span>
             </span>
-          </span>
-          <span className='mr-4 sm:mr-0'>
-            <SolveTimeLinkOrDnf
-              canShowHint={isFirstOnPage}
-              result={{
-                timeMs: solve.timeMs,
-                isDnf: false,
-              }}
-              solveId={solve.id}
-              discipline={solve.discipline}
-              contestSlug={solve.contestSlug}
-            />
-          </span>
-          <OpenLeaderboardButton discipline={solve.discipline} />
+            <span className='mr-4 sm:mr-0'>
+              <SolveTimeLinkOrDnf
+                canShowHint={isFirstOnPage}
+                result={{
+                  timeMs: solve.timeMs,
+                  isDnf: false,
+                }}
+                solveId={solve.id}
+                discipline={solve.discipline}
+                contestSlug={solve.contestSlug}
+              />
+            </span>
+            <OpenLeaderboardButton discipline={solve.discipline} />
+          </div>
         </div>
-      </div>
-    </SpinningBorder>
+      </SpinningBorder>
+    </li>
   )
 }
 

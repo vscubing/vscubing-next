@@ -57,9 +57,7 @@ export default async function LeaderboardPage({
         fallback={
           <SingleResultListShell>
             {Array.from({ length: 20 }).map((_, idx) => (
-              <li key={idx}>
-                <SingleResultSkeleton />
-              </li>
+              <SingleResultSkeleton key={idx} />
             ))}
           </SingleResultListShell>
         }

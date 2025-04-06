@@ -2,7 +2,7 @@ import { useTRPC, type RouterOutputs } from '@/trpc/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 export function useSimulatorSettings(
-  initialData: RouterOutputs['settings']['simulatorSettings'],
+  initialData?: RouterOutputs['settings']['simulatorSettings'],
 ) {
   const trpc = useTRPC()
   const settingsQuery = trpc.settings.simulatorSettings.queryOptions()

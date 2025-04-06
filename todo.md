@@ -71,13 +71,14 @@
     - [x] add to best solves
     - [x] add to leaderboard
 - [x] easy scrambles switcher
-- [ ] settings
+- [x] settings
     - [x] api
     - [x] ui
     - [x] connect to the simulator
     - [x] import migration
-    - [ ] convenient link on the contest page
+    - [x] convenient link on the contest page
 - [ ] add missing visual elements
+- [ ] currently down for maintenance
 - [ ] bottom navbar on mobile make sticky
 - [ ] remove pagination except for contests list
 - [ ] pinned items
@@ -112,3 +113,4 @@ nicities:
 - [ ] staging/prod env
 - [ ] reimport fresh db backup
 - [ ] db backups
+- [ ] make dashboard non blocking

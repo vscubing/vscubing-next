@@ -50,75 +50,76 @@ function SessionTablet({
   return (
     <Accordion.Root type='single' collapsible asChild>
       <Accordion.Item value='result' asChild>
-        <SpinningBorder
-          wrapper='li'
-          enabled={isOwn}
-          color={tailwindConfig.theme.colors.secondary[60]}
-          className={cn('rounded-xl', className)}
-        >
-          <div
-            className={cn(
-              'flex min-h-[5.1rem] flex-wrap items-center rounded-xl px-4 py-3 sm:min-h-28 sm:p-4',
-              isOwn ? 'spinning-border bg-secondary-80' : 'bg-grey-100',
-            )}
+        <li className={className}>
+          <SpinningBorder
+            enabled={isOwn}
+            color={tailwindConfig.theme.colors.secondary[60]}
+            className='rounded-xl'
           >
-            <Accordion.Header className='flex w-full flex-1 items-center sm:grid sm:grid-flow-col sm:grid-cols-[min-content_1fr_min-content] sm:grid-rows-[repeat(2,min-content)] sm:gap-x-3 sm:gap-y-1'>
-              <PlaceLabel className='mr-3 sm:mr-0'>{place}</PlaceLabel>
-              <DisciplineIcon
-                className='mr-3 sm:mr-0'
-                discipline={discipline}
-              />
-              <Ellipsis className='vertical-alignment-fix flex-1 sm:col-span-2 sm:w-auto'>{`${nickname}${currentUserLabel}`}</Ellipsis>
-
-              <span className='mr-10 sm:mr-0 sm:flex sm:items-center'>
-                <span className='sm:vertical-alignment-fix block text-center text-grey-40'>
-                  Average time
-                </span>
-                <SolveTimeLabel
-                  timeMs={avgMs ?? undefined}
-                  isDnf={avgMs === null}
-                  isAverage
+            <div
+              className={cn(
+                'flex min-h-[5.1rem] flex-wrap items-center rounded-xl px-4 py-3 sm:min-h-28 sm:p-4',
+                isOwn ? 'bg-secondary-80' : 'bg-grey-100',
+              )}
+            >
+              <Accordion.Header className='flex w-full flex-1 items-center sm:grid sm:grid-flow-col sm:grid-cols-[min-content_1fr_min-content] sm:grid-rows-[repeat(2,min-content)] sm:gap-x-3 sm:gap-y-1'>
+                <PlaceLabel className='mr-3 sm:mr-0'>{place}</PlaceLabel>
+                <DisciplineIcon
+                  className='mr-3 sm:mr-0'
+                  discipline={discipline}
                 />
-              </span>
-              <Accordion.Trigger className='outline-ring group sm:py-2'>
-                <PlusIcon className='block group-data-[state=open]:hidden' />
-                <MinusIcon className='hidden group-data-[state=open]:block' />
-              </Accordion.Trigger>
-            </Accordion.Header>
-            <Accordion.Content className='w-full overflow-y-clip data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down'>
-              <ul className='grid grid-flow-col grid-cols-[repeat(5,min-content)] grid-rows-2 justify-end gap-x-2 border-t border-grey-60 pt-4 sm:grid-flow-row sm:grid-cols-2 sm:grid-rows-none sm:items-center sm:pl-2 sm:pt-3'>
-                {solves.map((solve, index) => (
-                  <li key={solve.id} className='contents'>
-                    <span className='text-center text-grey-40 sm:text-left'>
-                      Attempt {index + 1}
-                    </span>
-                    <span className='relative sm:ml-auto sm:text-right'>
-                      <SolveTimeLinkOrDnf
-                        canShowHint={isFirstOnPage && index === 0}
-                        contestSlug={contestSlug}
-                        solveId={solve.id}
-                        discipline={discipline}
-                        result={solve.result}
-                        variant={
-                          solve.id === bestId
-                            ? 'best'
-                            : solve.id === worstId
-                              ? 'worst'
-                              : undefined
-                        }
-                      />
+                <Ellipsis className='vertical-alignment-fix flex-1 sm:col-span-2 sm:w-auto'>{`${nickname}${currentUserLabel}`}</Ellipsis>
 
-                      <ExtraLabel
-                        scramblePosition={solve.position}
-                        className='absolute -top-2 right-[1.1rem] sm:-top-1'
-                      />
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </Accordion.Content>
-          </div>
-        </SpinningBorder>
+                <span className='mr-10 sm:mr-0 sm:flex sm:items-center'>
+                  <span className='sm:vertical-alignment-fix block text-center text-grey-40'>
+                    Average time
+                  </span>
+                  <SolveTimeLabel
+                    timeMs={avgMs ?? undefined}
+                    isDnf={avgMs === null}
+                    isAverage
+                  />
+                </span>
+                <Accordion.Trigger className='outline-ring group sm:py-2'>
+                  <PlusIcon className='block group-data-[state=open]:hidden' />
+                  <MinusIcon className='hidden group-data-[state=open]:block' />
+                </Accordion.Trigger>
+              </Accordion.Header>
+              <Accordion.Content className='w-full overflow-y-clip data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down'>
+                <ul className='grid grid-flow-col grid-cols-[repeat(5,min-content)] grid-rows-2 justify-end gap-x-2 border-t border-grey-60 pt-4 sm:grid-flow-row sm:grid-cols-2 sm:grid-rows-none sm:items-center sm:pl-2 sm:pt-3'>
+                  {solves.map((solve, index) => (
+                    <li key={solve.id} className='contents'>
+                      <span className='text-center text-grey-40 sm:text-left'>
+                        Attempt {index + 1}
+                      </span>
+                      <span className='relative sm:ml-auto sm:text-right'>
+                        <SolveTimeLinkOrDnf
+                          canShowHint={isFirstOnPage && index === 0}
+                          contestSlug={contestSlug}
+                          solveId={solve.id}
+                          discipline={discipline}
+                          result={solve.result}
+                          variant={
+                            solve.id === bestId
+                              ? 'best'
+                              : solve.id === worstId
+                                ? 'worst'
+                                : undefined
+                          }
+                        />
+
+                        <ExtraLabel
+                          scramblePosition={solve.position}
+                          className='absolute -top-2 right-[1.1rem] sm:-top-1'
+                        />
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </Accordion.Content>
+            </div>
+          </SpinningBorder>
+        </li>
       </Accordion.Item>
     </Accordion.Root>
   )
@@ -140,66 +141,67 @@ function SessionDesktop({
   const { bestId, worstId } = getBestAndWorstIds(solves)
 
   return (
-    <SpinningBorder
-      wrapper='li'
-      color={tailwindConfig.theme.colors.secondary[60]}
-      enabled={isOwn}
-      className={cn('rounded-xl', className)}
-    >
-      <div
-        className={cn(
-          'flex h-15 w-full items-center rounded-xl px-2',
-          isOwn ? 'bg-secondary-80' : 'bg-grey-100',
-        )}
+    <li className={className}>
+      <SpinningBorder
+        color={tailwindConfig.theme.colors.secondary[60]}
+        enabled={isOwn}
+        className='rounded-xl'
       >
-        <div className='flex flex-1 items-center'>
-          <PlaceLabel className='mr-3'>{place}</PlaceLabel>
-          <DisciplineIcon className='mr-3' discipline={discipline} />
-          <Ellipsis className='vertical-alignment-fix flex-1'>{`${nickname}${currentUserLabel}`}</Ellipsis>
+        <div
+          className={cn(
+            'flex h-15 w-full items-center rounded-xl px-2',
+            isOwn ? 'bg-secondary-80' : 'bg-grey-100',
+          )}
+        >
+          <div className='flex flex-1 items-center'>
+            <PlaceLabel className='mr-3'>{place}</PlaceLabel>
+            <DisciplineIcon className='mr-3' discipline={discipline} />
+            <Ellipsis className='vertical-alignment-fix flex-1'>{`${nickname}${currentUserLabel}`}</Ellipsis>
 
-          <span className='mr-4'>
-            <SolveTimeLabel
-              timeMs={avgMs ?? undefined}
-              isDnf={avgMs === null}
-              isAverage
-              className='relative after:absolute after:-right-2 after:top-1/2 after:h-6 after:w-px after:-translate-y-1/2 after:bg-grey-60'
-            />
-          </span>
-        </div>
-        <div className='data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down'>
-          <ul className='grid grid-cols-[repeat(5,min-content)] gap-x-2'>
-            {solves.map((solve, index) => (
-              <li key={solve.id} className='contents'>
-                <span className='hidden text-center text-grey-40'>
-                  Attempt {index + 1}
-                </span>
-                <span className='relative'>
-                  <SolveTimeLinkOrDnf
-                    canShowHint={isFirstOnPage && index === 0}
-                    contestSlug={contestSlug}
-                    discipline={discipline}
-                    solveId={solve.id}
-                    result={solve.result}
-                    variant={
-                      solve.id === bestId
-                        ? 'best'
-                        : solve.id === worstId
-                          ? 'worst'
-                          : undefined
-                    }
-                  />
+            <span className='mr-4'>
+              <SolveTimeLabel
+                timeMs={avgMs ?? undefined}
+                isDnf={avgMs === null}
+                isAverage
+                className='relative after:absolute after:-right-2 after:top-1/2 after:h-6 after:w-px after:-translate-y-1/2 after:bg-grey-60'
+              />
+            </span>
+          </div>
+          <div className='data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down'>
+            <ul className='grid grid-cols-[repeat(5,min-content)] gap-x-2'>
+              {solves.map((solve, index) => (
+                <li key={solve.id} className='contents'>
+                  <span className='hidden text-center text-grey-40'>
+                    Attempt {index + 1}
+                  </span>
+                  <span className='relative'>
+                    <SolveTimeLinkOrDnf
+                      canShowHint={isFirstOnPage && index === 0}
+                      contestSlug={contestSlug}
+                      discipline={discipline}
+                      solveId={solve.id}
+                      result={solve.result}
+                      variant={
+                        solve.id === bestId
+                          ? 'best'
+                          : solve.id === worstId
+                            ? 'worst'
+                            : undefined
+                      }
+                    />
 
-                  <ExtraLabel
-                    scramblePosition={solve.position}
-                    className='absolute -top-2 right-[1.1rem]'
-                  />
-                </span>
-              </li>
-            ))}
-          </ul>
+                    <ExtraLabel
+                      scramblePosition={solve.position}
+                      className='absolute -top-2 right-[1.1rem]'
+                    />
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-      </div>
-    </SpinningBorder>
+      </SpinningBorder>
+    </li>
   )
 }
 

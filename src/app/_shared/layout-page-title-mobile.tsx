@@ -12,7 +12,7 @@ export function LayoutPageTitleMobile({
   return (
     <h1
       className={cn(
-        'title-h2 sr-only min-h-10 text-secondary-20 lg:not-sr-only',
+        'title-h2 sr-only min-h-10 text-secondary-20 lg:not-sr-only sm:min-h-[1.875rem]',
         className,
       )}
     >
