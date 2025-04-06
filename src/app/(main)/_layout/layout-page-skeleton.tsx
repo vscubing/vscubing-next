@@ -1,6 +1,5 @@
 import { LoadingSpinner } from '@/app/_components/ui'
 import { NavigateBackButton } from '@/app/_shared/NavigateBackButton'
-import { title } from 'process'
 import { LayoutSectionHeader } from './section-header'
 
 export function LayoutPageShellSkeleton({
@@ -10,7 +9,7 @@ export function LayoutPageShellSkeleton({
 }) {
   return (
     <section className='flex flex-1 flex-col gap-3'>
-      <h1 className='title-h2 hidden text-secondary-20 lg:block'>{title}</h1>
+      <h1 className='title-h2 hidden text-secondary-20 lg:block'></h1>
       <NavigateBackButton className='self-start' />
       <LayoutSectionHeader> </LayoutSectionHeader>
 

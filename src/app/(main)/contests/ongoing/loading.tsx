@@ -1,5 +1,5 @@
-import { LayoutPageSkeleton } from '../../_layout'
+import { LayoutPageShellSkeleton } from '../../_layout'
 
 export default function Loading() {
-  return <LayoutPageSkeleton />
+  return <LayoutPageShellSkeleton />
 }

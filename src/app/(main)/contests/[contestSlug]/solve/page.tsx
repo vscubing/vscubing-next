@@ -4,6 +4,8 @@ import {
   DialogPortal,
   ExclamationCircleIcon,
   LoadingSpinner,
+  SecondaryButton,
+  SettingIcon,
 } from '@/app/_components/ui'
 import { HintSignInSection } from '@/app/_shared/HintSection'
 import {
@@ -109,13 +111,20 @@ async function PageContent({
 
   return (
     <div className='relative flex h-full flex-col pb-8 pt-7 xl-short:pb-6 xl-short:pt-4'>
-      <Dialog>
-        <KeyMapDialogTrigger className='absolute right-4 top-4' />
-        <DialogPortal>
-          <DialogOverlay className='bg-black-1000/40' withCubes={false} />
-          <KeyMapDialogContent />
-        </DialogPortal>
-      </Dialog>
+      <div className='absolute right-4 top-4 flex items-center gap-4'>
+        <Dialog>
+          <KeyMapDialogTrigger />
+          <DialogPortal>
+            <DialogOverlay className='bg-black-1000/40' withCubes={false} />
+            <KeyMapDialogContent />
+          </DialogPortal>
+        </Dialog>
+        <SecondaryButton asChild className='h-11 w-11 p-0'>
+          <Link href='/settings'>
+            <SettingIcon />
+          </Link>
+        </SecondaryButton>
+      </div>
 
       <p className='title-h2 mb-6 text-center text-secondary-20'>
         {getSplashText({ contestSlug, discipline })}

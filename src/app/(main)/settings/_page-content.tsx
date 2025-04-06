@@ -5,18 +5,15 @@ import { cn } from '@/app/_utils/cn'
 import type { ReactNode, ComponentPropsWithoutRef, ComponentRef } from 'react'
 import * as SelectPrimitive from '@radix-ui/react-select'
 import { useSimulatorSettings, useSimulatorSettingsMutation } from './queries'
+import type { RouterOutputs } from '@/trpc/react'
 
-export function PageContent() {
-  const { data: settings } = useSimulatorSettings()
+export function SettingsList({
+  initialData,
+}: {
+  initialData: RouterOutputs['settings']['simulatorSettings']
+}) {
+  const { data: settings } = useSimulatorSettings(initialData)
   const { mutate: mutateSettings } = useSimulatorSettingsMutation()
-
-  if (!settings)
-    return (
-      <ul className='space-y-2'>
-        <li className='h-20 animate-pulse rounded-xl bg-grey-100'></li>
-        <li className='h-20 animate-pulse rounded-xl bg-grey-100'></li>
-      </ul>
-    )
 
   return (
     <ul className='space-y-2'>
