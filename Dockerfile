@@ -15,6 +15,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/vendor ./vendor
 COPY . .
 RUN bun run build
+RUN sed -i 's/process.env.HOSTNAME/"localhost"/g' ./.next/standalone/server.js
 
 # Stage 3: Production server
 FROM base AS runner
@@ -29,5 +30,4 @@ ENV HOSTNAME "0.0.0.0"
 
 EXPOSE 3000
 
-RUN HOSTNAME="localhost"
 CMD ["bun", "run", "server.js"]
