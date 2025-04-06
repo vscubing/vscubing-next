@@ -29,4 +29,5 @@ ENV HOSTNAME "0.0.0.0"
 
 EXPOSE 3000
 
+CMD ["HOSTNAME=localhost"]
 CMD ["bun", "run", "server.js"]
