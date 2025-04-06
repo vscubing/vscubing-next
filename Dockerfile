@@ -21,7 +21,7 @@ FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV=staging
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next  # Copy the entire .next folder for non-standalone
+COPY --from=builder /app/.next ./.next 
 COPY --from=builder /app/node_modules ./node_modules
 
 ENV PORT 3000
