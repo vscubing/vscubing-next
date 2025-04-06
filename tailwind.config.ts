@@ -138,13 +138,16 @@ export default {
           },
         },
         'spinning-border': {
-          '0%,30%': {
+          '0%': {
             transform:
               'translate(-50%, -50%) scale(1, var(--spinning-border-ratio)) rotate(56deg)',
           },
-          '70%,100%': {
+          '50%,100%': {
             transform:
               'translate(-50%, -50%) scale(1, var(--spinning-border-ratio)) rotate(-304deg)',
+          },
+          '60%,95%': {
+            opacity: '0',
           },
         },
       },
