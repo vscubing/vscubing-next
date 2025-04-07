@@ -18,8 +18,8 @@ export function DevTools() {
   if (!isLoading && !initialContest)
     alertToast(
       <>
-        You don&apos;t have an initial system contest. You might want to create
-        one in the{' '}
+        You don't have an initial system contest. You might want to create one
+        in the{' '}
         <Link href='/dev' className='text-secondary-20 underline'>
           developer tools
         </Link>

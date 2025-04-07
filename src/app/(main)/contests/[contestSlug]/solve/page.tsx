@@ -26,6 +26,7 @@ import { LayoutSectionHeader } from '@/app/(main)/_layout'
 import { LayoutHeaderTitlePortal } from '@/app/(main)/_layout/layout-header'
 import { DisciplineSwitcher } from '@/app/_shared/discipline-switcher-client'
 import { NavigateBackButton } from '@/app/_shared/NavigateBackButton'
+import { TouchNotSupportedWrapper } from './_components/touch-not-supported-wrapper'
 
 export default async function SolveContestPage({
   searchParams,
@@ -39,30 +40,8 @@ export default async function SolveContestPage({
   const { contestSlug } = await params
   if (!isDiscipline(discipline)) redirect(`/contests/${contestSlug}`)
 
-  return (
-    <PageShell discipline={discipline}>
-      <Suspense
-        key={discipline}
-        fallback={
-          <div className='flex h-full items-center justify-center'>
-            <LoadingSpinner size='lg' />
-          </div>
-        }
-      >
-        <PageContent contestSlug={contestSlug} discipline={discipline} />
-      </Suspense>
-    </PageShell>
-  )
-}
-
-function PageShell({
-  discipline,
-  children,
-}: {
-  discipline: Discipline
-  children: ReactNode
-}) {
   const title = 'Solve the ongoing contest'
+
   return (
     <section className='flex flex-1 flex-col gap-3'>
       <h1 className='title-h2 hidden text-secondary-20 lg:block'>{title}</h1>
@@ -78,13 +57,24 @@ function PageShell({
         <div className='ml-10 flex flex-1 items-center gap-4'>
           <ExclamationCircleIcon />
           <p>
-            You can&apos;t see the results of an ongoing round until you solve
-            all scrambles or the round ends
+            You can't see the results of an ongoing round until you solve all
+            scrambles or the round ends
           </p>
         </div>
       </LayoutSectionHeader>
 
-      <div className='flex-1 rounded-2xl bg-black-80'>{children}</div>
+      <Suspense
+        key={discipline}
+        fallback={
+          <div className='flex-1 rounded-2xl bg-black-80'>
+            <div className='flex h-full items-center justify-center'>
+              <LoadingSpinner size='lg' />
+            </div>
+          </div>
+        }
+      >
+        <PageContent contestSlug={contestSlug} discipline={discipline} />
+      </Suspense>
     </section>
   )
 }
@@ -110,34 +100,38 @@ async function PageContent({
   // TODO: touch devices not supported hint
 
   return (
-    <div className='relative flex h-full flex-col pb-8 pt-7 xl-short:pb-6 xl-short:pt-4'>
-      <div className='absolute right-4 top-4 flex items-center gap-4'>
-        <Dialog>
-          <KeyMapDialogTrigger />
-          <DialogPortal>
-            <DialogOverlay className='bg-black-1000/40' withCubes={false} />
-            <KeyMapDialogContent />
-          </DialogPortal>
-        </Dialog>
-        <SecondaryButton asChild className='h-11 w-11 p-0'>
-          <Link href='/settings'>
-            <SettingIcon />
-          </Link>
-        </SecondaryButton>
+    <TouchNotSupportedWrapper>
+      <div className='flex-1 rounded-2xl bg-black-80'>
+        <div className='relative flex h-full flex-col pb-8 pt-7 xl-short:pb-6 xl-short:pt-4'>
+          <div className='absolute right-4 top-4 flex items-center gap-4'>
+            <Dialog>
+              <KeyMapDialogTrigger />
+              <DialogPortal>
+                <DialogOverlay className='bg-black-1000/40' withCubes={false} />
+                <KeyMapDialogContent />
+              </DialogPortal>
+            </Dialog>
+            <SecondaryButton asChild className='h-11 w-11 p-0'>
+              <Link href='/settings'>
+                <SettingIcon />
+              </Link>
+            </SecondaryButton>
+          </div>
+
+          <p className='title-h2 mb-6 text-center text-secondary-20'>
+            {getSplashText({ contestSlug, discipline })}
+          </p>
+
+          <SimulatorProvider>
+            <SolveContestForm
+              initialData={roundSessionState}
+              contestSlug={contestSlug}
+              discipline={discipline}
+            />
+          </SimulatorProvider>
+        </div>
       </div>
-
-      <p className='title-h2 mb-6 text-center text-secondary-20'>
-        {getSplashText({ contestSlug, discipline })}
-      </p>
-
-      <SimulatorProvider>
-        <SolveContestForm
-          initialData={roundSessionState}
-          contestSlug={contestSlug}
-          discipline={discipline}
-        />
-      </SimulatorProvider>
-    </div>
+    </TouchNotSupportedWrapper>
   )
 }
 

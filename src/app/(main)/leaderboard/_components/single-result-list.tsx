@@ -26,7 +26,7 @@ export function SingleResultList({
   if (results.length === 0) {
     return (
       <HintSection>
-        While this page may be empty now, it&apos;s brimming with potential for
+        While this page may be empty now, it's brimming with potential for
         thrilling contests that will soon fill this
       </HintSection>
     )

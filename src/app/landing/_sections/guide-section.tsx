@@ -24,10 +24,10 @@ export function GuideSection({ id }: { id: string }) {
               title='Master the basics'
               text={
                 <>
-                  If you don&apos;t know how to solve Rubik&apos;s Cube, start
-                  by watching{' '}
+                  If you don't know how to solve Rubik&apos;s Cube, start by
+                  watching{' '}
                   <a className='text-primary-60 hover:underline'>
-                    the Rubik&apos;s Cube tutorial
+                    the Rubik's Cube tutorial
                   </a>{' '}
                   to brush up on your skills
                 </>

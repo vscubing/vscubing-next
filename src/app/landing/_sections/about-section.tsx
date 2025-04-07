@@ -19,7 +19,7 @@ export function AboutSection({
           <div className='flex items-center gap-2 sm:flex-col sm:items-start'>
             <CubeIcon className='flex-shrink-0' />
             <p>
-              Speedcubing is an art of solving a Rubik&apos;s Cube as fast as
+              Speedcubing is an art of solving a Rubik's Cube as fast as
               possible. It’s a thrilling sport that challenges your mind and
               dexterity
             </p>

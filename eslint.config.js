@@ -47,6 +47,7 @@ export default tseslint.config(
         'error',
         { drizzleObjectName: ['db', 'ctx.db'] },
       ],
+      'react/no-unescaped-entities': 'off',
     },
   },
   {
