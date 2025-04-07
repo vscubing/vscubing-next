@@ -43,7 +43,7 @@ export default async function SolveContestPage({
   const title = 'Solve the ongoing contest'
 
   return (
-    <section className='flex flex-1 flex-col gap-3'>
+    <>
       <h1 className='title-h2 hidden text-secondary-20 lg:block'>{title}</h1>
       <LayoutHeaderTitlePortal>{title}</LayoutHeaderTitlePortal>
       <NavigateBackButton className='self-start' />
@@ -75,7 +75,7 @@ export default async function SolveContestPage({
       >
         <PageContent contestSlug={contestSlug} discipline={discipline} />
       </Suspense>
-    </section>
+    </>
   )
 }
 

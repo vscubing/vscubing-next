@@ -10,14 +10,18 @@ import { notFound } from 'next/navigation'
 import { createSystemInitialContest } from './actions'
 import { SolveValidator } from './_components/solve-validator'
 import { db } from '@/server/db'
-import { contestDisciplineTable, scrambleTable } from '@/server/db/schema'
+import {
+  contestDisciplineTable,
+  contestTable,
+  scrambleTable,
+} from '@/server/db/schema'
 import { and, eq, or } from 'drizzle-orm'
 
 export default function DevPage() {
   if (env.NEXT_PUBLIC_APP_ENV === 'production') notFound()
 
   return (
-    <div className='flex flex-1 flex-wrap gap-8 rounded-2xl bg-black-80 p-6 sm:p-3'>
+    <div className='flex flex-1 flex-wrap justify-between gap-8 rounded-2xl bg-black-80 p-6 sm:p-3'>
       <OngoingContestInfo />
       <SolveValidator />
     </div>
@@ -42,8 +46,7 @@ export async function OngoingContestInfo() {
   if (!ongoingContest)
     return (
       <section>
-        No ongoing contest. But you can create a
-        <NewContestButton /> one
+        No ongoing contest. But you can create a <NewContestButton /> one
       </section>
     )
 
@@ -69,7 +72,7 @@ export async function OngoingContestInfo() {
     <section>
       <div>
         <h2 className='title-h2 inline-block'>Ongoing contest</h2>
-        <NewContestButton />
+        Create a <NewContestButton /> contest or <JustCloseContestButton />
       </div>
       <pre>{JSON.stringify(ongoingContest, null, 2)}</pre>
       <h3 className='title-h3'>Scrambles</h3>
@@ -84,10 +87,30 @@ export async function OngoingContestInfo() {
   )
 }
 
-function NewContestButton() {
+function JustCloseContestButton() {
   return (
     <form
       className='inline-flex items-center gap-2'
+      action={async () => {
+        'use server'
+        await db
+          .update(contestTable)
+          .set({ isOngoing: false })
+          .where(eq(contestTable.isOngoing, true))
+        revalidatePath('/')
+      }}
+    >
+      <SecondaryButtonWithFormStatus size='sm' className='ml-2'>
+        just close the onging contest
+      </SecondaryButtonWithFormStatus>
+    </form>
+  )
+}
+
+function NewContestButton() {
+  return (
+    <form
+      className='inline-flex flex-col gap-2'
       action={async (formData: FormData) => {
         'use server'
         const easyScrambles = formData.get('easy-scrambles') === 'on'

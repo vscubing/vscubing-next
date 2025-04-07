@@ -31,7 +31,10 @@ export function SolveValidator() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-2'>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className='flex w-[30rem] flex-col gap-2'
+    >
       <h2 className='title-h2'>Solve validator</h2>
       <Input placeholder='Scramble' required {...register('scramble')} />
       <Input placeholder='Solution' required {...register('solution')} />

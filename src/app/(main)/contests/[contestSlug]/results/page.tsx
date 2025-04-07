@@ -12,6 +12,8 @@ import { SessionList, SessionListShell } from './_components/session-list'
 import { LayoutSectionHeader } from '@/app/(main)/_layout'
 import { Suspense } from 'react'
 import { SessionSkeleton } from './_components/session'
+import { cn } from '@/app/_utils/cn'
+import { formatContestDuration } from '@/app/_utils/formatDate'
 
 export default async function ContestResultsPage({
   params,
@@ -40,11 +42,17 @@ export default async function ContestResultsPage({
       <LayoutPageTitleMobile>{title}</LayoutPageTitleMobile>
       <LayoutHeaderTitlePortal>{title}</LayoutHeaderTitlePortal>
       <NavigateBackButton />
-      <LayoutSectionHeader>
+      <LayoutSectionHeader className='gap-4 sm:gap-2'>
         <DisciplineSwitcher
           disciplines={contest.disciplines}
           initialDiscipline={discipline}
         />
+        <div>
+          <h2 className='title-h2 mb-1'>Contest {contestSlug}</h2>
+          <p className='min-w-1 text-grey-40'>
+            {formatContestDuration(contest)}
+          </p>
+        </div>
       </LayoutSectionHeader>
 
       <Suspense

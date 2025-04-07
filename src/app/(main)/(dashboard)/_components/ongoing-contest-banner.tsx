@@ -9,26 +9,30 @@ import {
 } from '@/app/_components/ui'
 import { cn } from '@/app/_utils/cn'
 import { formatContestDuration } from '@/app/_utils/formatDate'
+import { withSuspense } from '@/app/_utils/with-suspense'
 import type { RouterOutputs } from '@/trpc/react'
 import { api } from '@/trpc/server'
 import Link from 'next/link'
 
-export async function OngoingContestBanner() {
-  const ongoing = await api.contest.getOngoing()
+export const OngoingContestBanner = withSuspense(
+  async () => {
+    const ongoing = await api.contest.getOngoing()
 
-  return (
-    <section className={cn('bg-card-gradient overflow-clip rounded-2xl')}>
-      {ongoing ? (
-        <>
-          <BannerContent className='lg:hidden' ongoing={ongoing} />
-          <BannerContentMobile className='hidden lg:flex' ongoing={ongoing} />
-        </>
-      ) : (
-        <BannerOnMaintenance />
-      )}
-    </section>
-  )
-}
+    return (
+      <section className={cn('bg-card-gradient overflow-clip rounded-2xl')}>
+        {ongoing ? (
+          <>
+            <BannerContent className='lg:hidden' ongoing={ongoing} />
+            <BannerContentMobile className='hidden lg:flex' ongoing={ongoing} />
+          </>
+        ) : (
+          <BannerOnMaintenance />
+        )}
+      </section>
+    )
+  },
+  <div className='bg-card-gradient h-44 rounded-2xl sm:h-32'></div>,
+)
 
 function BannerContent({
   ongoing,
@@ -38,7 +42,7 @@ function BannerContent({
   className?: string
 }) {
   return (
-    <div className={cn('flex', className)}>
+    <div className={cn('flex h-44', className)}>
       <div className='relative mr-32'>
         <div
           className={cn(
@@ -80,7 +84,9 @@ function BannerContentMobile({
   className?: string
 }) {
   return (
-    <div className={cn('flex sm:flex-col sm:px-3 sm:py-4', className)}>
+    <div
+      className={cn('flex h-44 sm:h-32 sm:flex-col sm:px-3 sm:py-4', className)}
+    >
       <div className='relative z-10 py-4 pl-4 sm:flex sm:items-center sm:gap-4 sm:p-0'>
         <Title />
 
@@ -99,7 +105,7 @@ function BannerContentMobile({
       <div className='relative flex-1 sm:hidden'>
         <Divider className='absolute -right-6 bottom-0 top-0 w-[calc(100%+2.5rem)] min-w-32 max-w-64' />
       </div>
-      <div className='flex flex-col items-end gap-6 py-4 pr-4 text-right sm:flex-row-reverse sm:items-center sm:justify-end sm:gap-2 sm:p-0 sm:text-left'>
+      <div className='flex flex-col items-end justify-center gap-6 pr-4 text-right sm:flex-row-reverse sm:items-center sm:justify-end sm:gap-2 sm:p-0 sm:text-left'>
         <div className='space-y-3 sm:space-y-1'>
           <p className='title-h3'>Duration</p>
           <Duration ongoing={ongoing} />
@@ -112,11 +118,11 @@ function BannerContentMobile({
 
 function BannerOnMaintenance() {
   return (
-    <div className='flex gap-60'>
+    <div className='flex h-44 gap-60 sm:h-32'>
       <div className='relative py-6 pl-4 sm:px-3 sm:py-4'>
         <div>
-          <Title className='mb-3 sm:mb-0' />
-          <p className='text-large'>Currently down for maintenance</p>
+          <Title className='mb-3 sm:mb-2' />
+          <p className='title-h3'>Currently down for maintenance</p>
         </div>
         <Divider className='absolute -right-28 top-0 h-full w-28 sm:hidden' />
       </div>

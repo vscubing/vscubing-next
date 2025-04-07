@@ -78,8 +78,8 @@
     - [x] import migration
     - [x] convenient link on the contest page
 - [x] keymap dialog
-- [ ] touch devices ongoing
-- [ ] contest header in contest results
+- [x] touch devices ongoing
+- [x] contest header in contest results
 - [ ] currently down for maintenance
 - [ ] bottom navbar on mobile make sticky
 - [ ] remove pagination except for contests list

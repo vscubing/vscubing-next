@@ -1,6 +1,6 @@
 import { type Discipline, SCRAMBLE_POSITIONS } from '@/app/_types'
 import dayjs from 'dayjs'
-import { eq } from 'drizzle-orm'
+import { desc, eq } from 'drizzle-orm'
 import { db } from '../db'
 import {
   contestTable,
@@ -15,16 +15,29 @@ export async function closeOngoingAndCreateNewContest(
   easyScrambles = false,
 ) {
   await db.transaction(async (tx) => {
+    console.log('[CONTEST CREATION] creating an ongoing contest')
+
+    const [lastContest] = await tx
+      .select({ slug: contestTable.slug, isOngoing: contestTable.isOngoing })
+      .from(contestTable)
+      .orderBy(desc(contestTable.expectedEndDate))
+      .limit(1)
+
+    if (!lastContest)
+      throw new Error(
+        '[CONTEST CREATION] no contests found, neither a system one or a real one',
+      )
+
     const now = dayjs()
-    const [oldOngoing] = await tx
-      .update(contestTable)
-      .set({ isOngoing: false, endDate: now.toISOString() })
-      .where(eq(contestTable.isOngoing, true))
-      .returning({ slug: contestTable.slug })
+    if (lastContest?.isOngoing) {
+      await tx
+        .update(contestTable)
+        .set({ isOngoing: false, endDate: now.toISOString() })
+        .where(eq(contestTable.slug, lastContest.slug))
+      console.log(`[CONTEST CREATION] closed Contest ${lastContest.slug}`)
+    }
 
-    if (!oldOngoing) throw new Error('No ongoing contest!')
-
-    const nextContestNumber = Number(oldOngoing.slug) + 1
+    const nextContestNumber = Number(lastContest.slug) + 1
     const newContestSlug = String(nextContestNumber)
 
     await tx.insert(contestTable).values({
@@ -33,6 +46,7 @@ export async function closeOngoingAndCreateNewContest(
       startDate: now.toISOString(),
       expectedEndDate: now.add(7, 'day').toISOString(),
     })
+    console.log(`[CONTEST CREATION] created Contest ${newContestSlug}`)
 
     const createdContestDisciplines = await tx
       .insert(contestDisciplineTable)
@@ -46,6 +60,9 @@ export async function closeOngoingAndCreateNewContest(
         id: contestDisciplineTable.id,
         discipline: contestDisciplineTable.disciplineSlug,
       })
+    console.log(
+      `[CONTEST CREATION] inserted disciplines ${createdContestDisciplines.map((d) => d.discipline).join(', ')} into Contest ${newContestSlug}`,
+    )
 
     const scrambleRows: (typeof scrambleTable.$inferInsert)[] = []
     for (const { id, discipline } of createdContestDisciplines) {
@@ -60,6 +77,9 @@ export async function closeOngoingAndCreateNewContest(
         })
       }
     }
+    console.log(
+      `[CONTEST CREATION] generated ${easyScrambles ? 'easy ' : ''}scrambles`,
+    )
 
     await tx.insert(scrambleTable).values(scrambleRows)
   })
