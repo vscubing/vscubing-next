@@ -82,8 +82,8 @@
 - [x] contest header in contest results
 - [x] currently down for maintenance
 - [x] bottom navbar on mobile make sticky
-- [ ] remove pagination except for contests list
-- [ ] pinned items
+- [x] remove pagination except for contests list
+- [x] pinned items
 - [ ] jump to the pinned item => scroll and highlight
 - [ ] "ongoinghint"
 - [ ] cron job

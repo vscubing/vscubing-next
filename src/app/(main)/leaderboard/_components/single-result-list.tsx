@@ -36,23 +36,27 @@ export function SingleResultList({
 
   return (
     <SingleResultListShell>
-      {pinnedItemIdx !== -1 && (
-        <div className='sticky top-[var(--section-header-height)] z-10 rounded-b-2xl bg-gradient-to-b from-black-80 to-transparent'>
+      {results.map((result, idx) =>
+        idx === pinnedItemIdx ? (
+          <div
+            className='sticky bottom-[-2px] top-[var(--section-header-height)] z-10'
+            key={result.id}
+          >
+            <SingleResult
+              result={results[pinnedItemIdx]!}
+              discipline={discipline}
+              place={pinnedItemIdx + 1}
+            />
+          </div>
+        ) : (
           <SingleResult
-            result={results[pinnedItemIdx]!}
+            result={result}
             discipline={discipline}
-            place={pinnedItemIdx + 1}
+            place={idx + 1}
+            key={result.id}
           />
-        </div>
+        ),
       )}
-      {results.map((result, idx) => (
-        <SingleResult
-          result={result}
-          discipline={discipline}
-          place={idx + 1}
-          key={result.id}
-        />
-      ))}
     </SingleResultListShell>
   )
 }

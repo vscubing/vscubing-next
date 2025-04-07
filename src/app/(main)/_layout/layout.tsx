@@ -37,12 +37,7 @@ export function Layout({
 
 function BottomNavbar({ className }: { className: string }) {
   return (
-    <div
-      className={cn(
-        'sticky bottom-0 h-[var(--mobile-bottom-nav-height)] bg-black-100',
-        className,
-      )}
-    >
+    <div className={cn('sticky bottom-0 bg-black-100 pb-1', className)}>
       <div className='rounded-b-xl border-b border-grey-20'>
         <Navbar variant='horizontal' />
       </div>

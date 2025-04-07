@@ -37,16 +37,3 @@ export function LoadingSpinnerPage() {
     </div>
   )
 }
-
-export function OverlaySpinner({ isVisible = true }: { isVisible?: boolean }) {
-  return (
-    <div
-      className={cn(
-        'transition-base pointer-events-none fixed bottom-[var(--mobile-bottom-nav-height)] z-50 flex w-full items-center justify-center bg-black-100/75 p-4 transition-opacity',
-        { 'opacity-0': !isVisible },
-      )}
-    >
-      <LoadingSpinner size='sm' />
-    </div>
-  )
-}

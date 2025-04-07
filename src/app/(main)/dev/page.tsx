@@ -35,15 +35,16 @@ export async function OngoingContestInfo() {
     .orderBy(desc(contestTable.expectedEndDate))
     .limit(1)
 
-  if (!lastContest?.isOngoing)
+  if (lastContest?.isOngoing === false)
     return (
       <section>
         No ongoing contest. But you can create a <NewContestButton /> one
       </section>
     )
-
+  const ongoingContest = (await api.contest.getOngoing())!
   const initialContest = await api.contest.getInitialSystemContest()
-  if (!initialContest)
+
+  if (!ongoingContest && !initialContest)
     return (
       <section>
         <span>No initial contest. Please</span>
@@ -55,7 +56,6 @@ export async function OngoingContestInfo() {
       </section>
     )
 
-  const ongoingContest = (await api.contest.getOngoing())!
   const scrambles = await db
     .select()
     .from(scrambleTable)

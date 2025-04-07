@@ -15,7 +15,7 @@ export async function closeOngoingAndCreateNewContest(
   easyScrambles = false,
 ) {
   await db.transaction(async (tx) => {
-    console.log('[CONTEST CREATION] creating an ongoing contest')
+    console.log('[CONTEST CREATION] creating a new ongoing contest')
 
     const [lastContest] = await tx
       .select({ slug: contestTable.slug, isOngoing: contestTable.isOngoing })

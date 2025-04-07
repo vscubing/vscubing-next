@@ -3,7 +3,7 @@ import { HintSection } from '@/app/_shared/HintSection'
 import { type Discipline } from '@/app/_types'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { useTRPC, type RouterOutputs } from '@/trpc/react'
-import type { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import { Session } from './session'
 
 export function SessionList({
@@ -38,27 +38,31 @@ export function SessionList({
 
   return (
     <SessionListShell>
-      {pinnedItemIdx !== -1 && (
-        <div className='sticky top-[var(--section-header-height)] z-10 rounded-b-2xl bg-gradient-to-b from-black-80 to-transparent'>
+      {sessions.map((session, idx) =>
+        idx === pinnedItemIdx ? (
+          <div
+            className='sticky bottom-[-2px] top-[var(--section-header-height)] z-10'
+            key={session.id}
+          >
+            <Session
+              session={sessions[pinnedItemIdx]!}
+              place={pinnedItemIdx + 1}
+              contestSlug={contestSlug}
+              discipline={discipline}
+              isFirstOnPage={false}
+            />
+          </div>
+        ) : (
           <Session
-            session={sessions[pinnedItemIdx]!}
-            place={pinnedItemIdx + 1}
+            session={session}
             contestSlug={contestSlug}
             discipline={discipline}
-            isFirstOnPage={false}
+            isFirstOnPage={idx === 0}
+            place={idx + 1}
+            key={session.id}
           />
-        </div>
+        ),
       )}
-      {sessions.map((session, idx) => (
-        <Session
-          session={session}
-          contestSlug={contestSlug}
-          discipline={discipline}
-          isFirstOnPage={idx === 0}
-          place={idx + 1}
-          key={session.id}
-        />
-      ))}
     </SessionListShell>
   )
 }
