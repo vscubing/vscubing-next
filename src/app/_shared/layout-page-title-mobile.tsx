@@ -12,7 +12,7 @@ export function LayoutPageTitleMobile({
   return (
     <h1
       className={cn(
-        'title-h2 sr-only min-h-10 text-secondary-20 lg:not-sr-only sm:min-h-[1.875rem]',
+        'title-h2 hidden min-h-10 text-secondary-20 lg:block sm:min-h-[1.875rem]',
         className,
       )}
     >
@@ -23,7 +23,7 @@ export function LayoutPageTitleMobile({
 
 export function LayoutPageTitleMobileFallback() {
   return (
-    <div className='sr-only flex min-h-10 items-center lg:not-sr-only'>
+    <div className='hidden h-10 items-center lg:flex sm:h-[1.875rem]'>
       <LoadingDots />
     </div>
   )
