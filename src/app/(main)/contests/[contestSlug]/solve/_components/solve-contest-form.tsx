@@ -130,7 +130,7 @@ export function SolveContestForm({
           <span className='w-24 text-center text-grey-40'>Single time</span>
           <span className='text-grey-40'>Scramble</span>
         </div>
-        <div className='scrollbar flex flex-1 basis-0 items-start justify-center gap-12 overflow-y-auto pr-4 xl-short:gap-6'>
+        <div className='scrollbar flex flex-1 basis-0 items-start justify-center gap-12 pr-4 xl-short:gap-6'>
           <Progress
             className='gap-12 xl-short:gap-6'
             currentSolveNumber={currentSolveNumber}

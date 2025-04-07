@@ -6,7 +6,6 @@ import { Hind, Kanit } from 'next/font/google'
 import { cn } from './_utils/cn'
 import { TRPCReactProvider } from '@/trpc/react'
 import { Toaster } from './_components/ui'
-import { DevTools } from './(main)/dev'
 import { env } from '@/env'
 
 export const metadata: Metadata = {
@@ -43,7 +42,6 @@ export default async function RootLayout({
       <body>
         <TRPCReactProvider>
           {children}
-          {env.NEXT_PUBLIC_APP_ENV !== 'production' && <DevTools />}
           <Toaster />
         </TRPCReactProvider>
       </body>

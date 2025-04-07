@@ -18,26 +18,38 @@ import Link from 'next/link'
 import type { ReactNode } from 'react'
 import tailwindConfig from 'tailwind.config'
 
-type SingleResultProps = RouterOutputs['leaderboard']['bySingle'][number] & {
+type SingleResultProps = {
+  result: RouterOutputs['leaderboard']['bySingle'][number]
   discipline: Discipline
   place: number
+  className?: string
 }
-export function SingleResult(props: SingleResultProps) {
+export function SingleResult({
+  className,
+  discipline,
+  place,
+  result,
+}: SingleResultProps) {
   return (
     <>
-      <SingleResultDesktop className='md:hidden' {...props} />
-      <SingleResultTablet className='hidden md:block' {...props} />
+      <SingleResultDesktop
+        className={cn('md:hidden', className)}
+        discipline={discipline}
+        place={place}
+        result={result}
+      />
+      <SingleResultTablet
+        className={cn('hidden md:block', className)}
+        discipline={discipline}
+        place={place}
+        result={result}
+      />
     </>
   )
 }
 
 function SingleResultDesktop({
-  timeMs,
-  id,
-  createdAt,
-  contestSlug,
-  nickname,
-  isOwn,
+  result: { timeMs, id, createdAt, contestSlug, nickname, isOwn },
   discipline,
   place,
   className,
@@ -108,12 +120,7 @@ function SingleResultDesktop({
 }
 
 function SingleResultTablet({
-  timeMs,
-  id,
-  createdAt,
-  contestSlug,
-  nickname,
-  isOwn,
+  result: { timeMs, id, createdAt, contestSlug, nickname, isOwn },
   discipline,
   place,
   className,

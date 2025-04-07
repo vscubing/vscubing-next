@@ -32,12 +32,22 @@ export function SingleResultList({
     )
   }
 
+  const pinnedResultIdx = results.findIndex((result) => result.isOwn)
+
   return (
     <SingleResultListShell>
-      {/* TODO: pagination */}
+      {pinnedResultIdx !== -1 && (
+        <div className='sticky top-[var(--section-header-height)] z-10 rounded-b-2xl bg-gradient-to-b from-black-80 to-transparent'>
+          <SingleResult
+            result={results[pinnedResultIdx]!}
+            discipline={discipline}
+            place={pinnedResultIdx + 1}
+          />
+        </div>
+      )}
       {results.map((result, idx) => (
         <SingleResult
-          {...result}
+          result={result}
           discipline={discipline}
           place={idx + 1}
           key={result.id}

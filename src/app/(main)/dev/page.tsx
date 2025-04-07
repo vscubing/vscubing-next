@@ -15,7 +15,7 @@ import {
   contestTable,
   scrambleTable,
 } from '@/server/db/schema'
-import { and, eq, or } from 'drizzle-orm'
+import { desc, and, eq, or } from 'drizzle-orm'
 
 export default function DevPage() {
   if (env.NEXT_PUBLIC_APP_ENV === 'production') notFound()
@@ -29,6 +29,19 @@ export default function DevPage() {
 }
 
 export async function OngoingContestInfo() {
+  const [lastContest] = await db
+    .select({ slug: contestTable.slug, isOngoing: contestTable.isOngoing })
+    .from(contestTable)
+    .orderBy(desc(contestTable.expectedEndDate))
+    .limit(1)
+
+  if (!lastContest?.isOngoing)
+    return (
+      <section>
+        No ongoing contest. But you can create a <NewContestButton /> one
+      </section>
+    )
+
   const initialContest = await api.contest.getInitialSystemContest()
   if (!initialContest)
     return (
@@ -42,14 +55,7 @@ export async function OngoingContestInfo() {
       </section>
     )
 
-  const ongoingContest = await api.contest.getOngoing()
-  if (!ongoingContest)
-    return (
-      <section>
-        No ongoing contest. But you can create a <NewContestButton /> one
-      </section>
-    )
-
+  const ongoingContest = (await api.contest.getOngoing())!
   const scrambles = await db
     .select()
     .from(scrambleTable)

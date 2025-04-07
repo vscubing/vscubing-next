@@ -45,7 +45,7 @@ export default async function LeaderboardPage({
         <PageTitle type={type} />
       </Suspense>
       <NavigateBackButton />
-      <LayoutSectionHeader>
+      <LayoutSectionHeader className='sticky top-0 z-10'>
         <DisciplineSwitcher
           disciplines={DISCIPLINES}
           initialDiscipline={discipline}

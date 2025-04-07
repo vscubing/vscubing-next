@@ -16,8 +16,6 @@ export const leaderboardRouter = createTRPCRouter({
     .input(
       z.object({
         discipline: z.enum(DISCIPLINES).default(DEFAULT_DISCIPLINE),
-        cursor: z.string().optional(),
-        limit: z.number().min(1).default(30),
       }),
     )
     .query(async ({ ctx, input }) => {

@@ -78,17 +78,14 @@ function TwistySectionContent({
       </div>
       <div className='flex flex-col gap-3 md:col-span-full md:flex-col-reverse'>
         <Accordion.Root
-          className='flex flex-1 flex-col gap-3 md:grid md:grid-cols-2 sm:flex'
+          className='flex flex-1 flex-col gap-3 md:grid md:grid-cols-2 sm:flex sm:flex-col-reverse'
           ref={movesWrapperRef}
           type='multiple'
           defaultValue={isSmScreen ? [] : ['Scramble', 'Solve']}
         >
           <AccordionItem title='Scramble'>
             <div className='flex flex-col border-t border-grey-60 pt-2'>
-              <div
-                className='scrollbar basis-0 overflow-y-auto pr-2 md:overflow-y-visible'
-                ref={scrambleWrapperRef}
-              >
+              <div className='scrollbar basis-0 pr-2' ref={scrambleWrapperRef}>
                 <span ref={scrambleRef}>{scramble}</span>
               </div>
             </div>

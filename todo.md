@@ -94,7 +94,9 @@
 - [ ] adjust google auth permissions
 - [ ] block external db access
 - [ ] dnf on page reload
+- [ ] merge root layout files
 - [ ] todos
+- [ ] settings one open => open another
 
 nicities:
 - [ ] rename state to status

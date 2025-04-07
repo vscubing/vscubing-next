@@ -14,11 +14,15 @@
     @screen sm {
       --header-height: 3.5rem;
     }
+    --section-header-height: 5.75rem;
+    @screen sm {
+      --section-header-height: 4.25rem;
+    }
     --mobile-bottom-nav-height: 5rem;
   }
   body {
-    @apply font-hind text-[0.875rem] leading-[1.5] text-white-100;
-    @apply !pointer-events-auto; /* to make toasts accessible with opened Radix Dialog (and Vaul) */
+    @apply !bg-black-80 font-hind text-[0.875rem] leading-[1.5] text-white-100;
+    @apply !pointer-events-auto h-svh; /* to make toasts accessible with opened Radix Dialog (and Vaul) */
   }
   svg {
     @apply text-[1rem];
