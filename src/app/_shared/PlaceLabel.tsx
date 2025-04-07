@@ -1,10 +1,11 @@
 import { cn } from '@/app/_utils/cn'
+import type { ComponentPropsWithRef } from 'react'
 
-type PlaceLabelProps = {
-  children: number
-  className?: string
-}
-export function PlaceLabel({ children: place, className }: PlaceLabelProps) {
+export function PlaceLabel({
+  children: place,
+  className,
+  ...props
+}: ComponentPropsWithRef<'span'> & { children: number }) {
   return (
     <span
       className={cn(
@@ -15,6 +16,7 @@ export function PlaceLabel({ children: place, className }: PlaceLabelProps) {
         },
         className,
       )}
+      {...props}
     >
       {place}
     </span>

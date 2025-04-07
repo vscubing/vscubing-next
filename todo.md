@@ -84,7 +84,7 @@
 - [x] bottom navbar on mobile make sticky
 - [x] remove pagination except for contests list
 - [x] pinned items
-- [ ] jump to the pinned item => scroll and highlight
+- [x] jump to the pinned item => scroll and highlight
 - [ ] "ongoinghint"
 - [ ] cron job
 - [ ] redo migrations

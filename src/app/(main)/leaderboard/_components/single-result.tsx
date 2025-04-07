@@ -1,3 +1,5 @@
+'use client'
+
 import {
   Ellipsis,
   PlusIcon,
@@ -12,10 +14,11 @@ import { SolveTimeLinkOrDnf } from '@/app/_shared/SolveTimeButton'
 import type { Discipline } from '@/app/_types'
 import { cn } from '@/app/_utils/cn'
 import { formatDate } from '@/app/_utils/formatDate'
+import { useMatchesScreen } from '@/app/_utils/tailwind'
 import type { RouterOutputs } from '@/trpc/react'
 import * as Accordion from '@radix-ui/react-accordion'
 import Link from 'next/link'
-import type { ReactNode } from 'react'
+import { type ReactNode, type RefObject } from 'react'
 import tailwindConfig from 'tailwind.config'
 
 type SingleResultProps = {
@@ -23,26 +26,38 @@ type SingleResultProps = {
   discipline: Discipline
   place: number
   className?: string
+  onPlaceClick?: () => void
+  ref?: RefObject<HTMLLIElement | null>
 }
 export function SingleResult({
   className,
   discipline,
   place,
   result,
+  ref,
+  onPlaceClick,
 }: SingleResultProps) {
+  const isTablet = useMatchesScreen('md')
+
   return (
     <>
+      {/* we can't just use useMatchesScreen because then it won't be SSRed properly */}
       <SingleResultDesktop
         className={cn('md:hidden', className)}
         discipline={discipline}
         place={place}
         result={result}
+        onPlaceClick={onPlaceClick}
+        ref={isTablet === false ? ref : undefined}
+        // we need castom handling for refs because you can't set one ref to 2 elements at the same time
       />
       <SingleResultTablet
         className={cn('hidden md:block', className)}
         discipline={discipline}
         place={place}
         result={result}
+        ref={isTablet === true ? ref : undefined}
+        onPlaceClick={onPlaceClick}
       />
     </>
   )
@@ -53,6 +68,8 @@ function SingleResultDesktop({
   discipline,
   place,
   className,
+  ref,
+  onPlaceClick,
 }: SingleResultProps & { className: string }) {
   let displayedNickname = nickname
   if (isOwn) {
@@ -60,7 +77,7 @@ function SingleResultDesktop({
   }
 
   return (
-    <li className={className}>
+    <li className={className} ref={ref}>
       <SpinningBorder
         color={tailwindConfig.theme.colors.secondary[60]}
         enabled={isOwn}
@@ -73,7 +90,12 @@ function SingleResultDesktop({
           )}
         >
           <div className='flex flex-1 items-center'>
-            <PlaceLabel className='mr-3'>{place}</PlaceLabel>
+            <PlaceLabel
+              onClick={onPlaceClick}
+              className={cn('mr-3', { 'cursor-pointer': onPlaceClick })}
+            >
+              {place}
+            </PlaceLabel>
             <DisciplineIcon className='mr-3' discipline={discipline} />
             <Ellipsis className='vertical-alignment-fix flex-1'>
               {displayedNickname}
@@ -124,6 +146,8 @@ function SingleResultTablet({
   discipline,
   place,
   className,
+  ref,
+  onPlaceClick,
 }: SingleResultProps & { className: string }) {
   let displayedNickname = nickname
   if (isOwn) {
@@ -133,7 +157,7 @@ function SingleResultTablet({
   return (
     <Accordion.Root type='single' collapsible asChild>
       <Accordion.Item value='result' asChild>
-        <li className={className}>
+        <li className={className} ref={ref}>
           <SpinningBorder
             enabled={isOwn}
             color={tailwindConfig.theme.colors.secondary[60]}
@@ -146,7 +170,14 @@ function SingleResultTablet({
               )}
             >
               <Accordion.Header className='flex w-full flex-1 items-center sm:grid sm:grid-flow-col sm:grid-cols-[min-content_1fr_min-content] sm:grid-rows-[min-content_min-content] sm:gap-x-3 sm:gap-y-1'>
-                <PlaceLabel className='mr-3 sm:mr-0'>{place}</PlaceLabel>
+                <PlaceLabel
+                  onClick={onPlaceClick}
+                  className={cn('mr-3 sm:mr-0', {
+                    'cursor-pointer': onPlaceClick,
+                  })}
+                >
+                  {place}
+                </PlaceLabel>
                 <DisciplineIcon
                   className='mr-3 sm:mr-0'
                   discipline={discipline}

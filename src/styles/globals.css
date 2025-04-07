@@ -122,6 +122,7 @@
   }
 
   .landing-offset-anchor::before {
+    /* TODO: use scroll-padding-top */
     /* offset the anchoring point to account for the fixed header */
     content: '';
     display: block;

@@ -14,8 +14,8 @@ import {
 } from '@/app/_shared/SolveTimeButton'
 import type { Discipline, ContestResultRoundSession } from '@/app/_types'
 import { SpinningBorder } from '@/app/_components/ui/spinning-border'
-import React from 'react'
-import { tailwindConfig } from '@/app/_utils/tailwind'
+import { tailwindConfig, useMatchesScreen } from '@/app/_utils/tailwind'
+import type { RefObject } from 'react'
 
 type SessionProps = {
   session: ContestResultRoundSession
@@ -23,6 +23,9 @@ type SessionProps = {
   discipline: Discipline
   isFirstOnPage: boolean
   place: number
+  className?: string
+  ref?: RefObject<HTMLLIElement | null>
+  onPlaceClick?: () => void
 }
 export function Session({
   contestSlug,
@@ -30,24 +33,33 @@ export function Session({
   isFirstOnPage,
   place,
   session,
+  ref,
+  className,
+  onPlaceClick,
 }: SessionProps) {
+  const isTablet = useMatchesScreen('md')
+
   return (
     <>
       <SessionDesktop
-        className='md:hidden'
+        className={cn('md:hidden', className)}
         contestSlug={contestSlug}
         discipline={discipline}
         isFirstOnPage={isFirstOnPage}
         place={place}
         session={session}
+        ref={isTablet === false ? ref : undefined}
+        onPlaceClick={onPlaceClick}
       />
       <SessionTablet
-        className='hidden md:block'
+        className={cn('hidden md:block', className)}
         contestSlug={contestSlug}
         discipline={discipline}
         isFirstOnPage={isFirstOnPage}
         place={place}
         session={session}
+        ref={isTablet === true ? ref : undefined}
+        onPlaceClick={onPlaceClick}
       />
     </>
   )
@@ -60,6 +72,8 @@ function SessionTablet({
   discipline,
   isFirstOnPage,
   className,
+  ref,
+  onPlaceClick,
 }: SessionProps & { className: string }) {
   const currentUserLabel = isOwn ? ' (you)' : ''
 
@@ -68,7 +82,7 @@ function SessionTablet({
   return (
     <Accordion.Root type='single' collapsible asChild>
       <Accordion.Item value='result' asChild>
-        <li className={className}>
+        <li className={className} ref={ref}>
           <SpinningBorder
             enabled={isOwn}
             color={tailwindConfig.theme.colors.secondary[60]}
@@ -81,7 +95,14 @@ function SessionTablet({
               )}
             >
               <Accordion.Header className='flex w-full flex-1 items-center sm:grid sm:grid-flow-col sm:grid-cols-[min-content_1fr_min-content] sm:grid-rows-[repeat(2,min-content)] sm:gap-x-3 sm:gap-y-1'>
-                <PlaceLabel className='mr-3 sm:mr-0'>{place}</PlaceLabel>
+                <PlaceLabel
+                  onClick={onPlaceClick}
+                  className={cn('mr-3 sm:mr-0', {
+                    'cursor-pointer': onPlaceClick,
+                  })}
+                >
+                  {place}
+                </PlaceLabel>
                 <DisciplineIcon
                   className='mr-3 sm:mr-0'
                   discipline={discipline}
@@ -150,13 +171,15 @@ function SessionDesktop({
   contestSlug,
   discipline,
   className,
+  ref,
+  onPlaceClick,
 }: SessionProps & { className: string }) {
   const currentUserLabel = isOwn ? ' (you)' : ''
 
   const { bestId, worstId } = getBestAndWorstIds(solves)
 
   return (
-    <li className={className}>
+    <li className={className} ref={ref}>
       <SpinningBorder
         color={tailwindConfig.theme.colors.secondary[60]}
         enabled={isOwn}
@@ -169,7 +192,12 @@ function SessionDesktop({
           )}
         >
           <div className='flex flex-1 items-center'>
-            <PlaceLabel className='mr-3'>{place}</PlaceLabel>
+            <PlaceLabel
+              onClick={onPlaceClick}
+              className={cn('mr-3', { 'cursor-pointer': onPlaceClick })}
+            >
+              {place}
+            </PlaceLabel>
             <DisciplineIcon className='mr-3' discipline={discipline} />
             <Ellipsis className='vertical-alignment-fix flex-1'>{`${nickname}${currentUserLabel}`}</Ellipsis>
 

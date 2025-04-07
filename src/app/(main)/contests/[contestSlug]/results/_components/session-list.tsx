@@ -3,7 +3,7 @@ import { HintSection } from '@/app/_shared/HintSection'
 import { type Discipline } from '@/app/_types'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { useTRPC, type RouterOutputs } from '@/trpc/react'
-import { type ReactNode } from 'react'
+import { useRef, type ReactNode, type RefObject } from 'react'
 import { Session } from './session'
 
 export function SessionList({
@@ -26,6 +26,20 @@ export function SessionList({
     ),
   )
 
+  const stickyItemIdx = sessions.findIndex((result) => result.isOwn)
+
+  const beforeStickyItemRef = useRef<HTMLLIElement | null>(null)
+  const afterStickyItemRef = useRef<HTMLLIElement | null>(null)
+  function scrollToSticky() {
+    const afterItem = afterStickyItemRef.current
+    const beforeItem = beforeStickyItemRef.current
+    const scrollTo = afterItem ?? beforeItem!
+    scrollTo.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    })
+  }
+
   if (sessions.length === 0) {
     return (
       <HintSection>
@@ -34,24 +48,27 @@ export function SessionList({
     )
   }
 
-  const pinnedItemIdx = sessions.findIndex((result) => result.isOwn)
-
   return (
     <SessionListShell>
-      {sessions.map((session, idx) =>
-        idx === pinnedItemIdx ? (
-          <div
-            className='sticky bottom-[-2px] top-[var(--section-header-height)] z-10'
+      {sessions.map((session, idx) => {
+        let ref: RefObject<HTMLLIElement | null> | undefined = undefined
+        if (idx === stickyItemIdx + 1) {
+          ref = afterStickyItemRef
+        } else if (idx === stickyItemIdx - 1) {
+          ref = beforeStickyItemRef
+        }
+
+        return idx === stickyItemIdx ? (
+          <Session
+            session={sessions[stickyItemIdx]!}
+            place={stickyItemIdx + 1}
+            contestSlug={contestSlug}
+            discipline={discipline}
+            isFirstOnPage={false}
+            className='sticky bottom-[-2px] top-[calc(var(--section-header-height)-2px)] z-10'
             key={session.id}
-          >
-            <Session
-              session={sessions[pinnedItemIdx]!}
-              place={pinnedItemIdx + 1}
-              contestSlug={contestSlug}
-              discipline={discipline}
-              isFirstOnPage={false}
-            />
-          </div>
+            onPlaceClick={scrollToSticky}
+          />
         ) : (
           <Session
             session={session}
@@ -60,9 +77,10 @@ export function SessionList({
             isFirstOnPage={idx === 0}
             place={idx + 1}
             key={session.id}
+            ref={ref}
           />
-        ),
-      )}
+        )
+      })}
     </SessionListShell>
   )
 }
