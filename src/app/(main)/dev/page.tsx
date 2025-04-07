@@ -6,12 +6,12 @@ import {
 } from './_components/buttons-with-form-status'
 import { revalidatePath } from 'next/cache'
 import { env } from '@/env'
-import { notFound } from 'next/navigation'
 import { createSystemInitialContest } from './actions'
 import { SolveValidator } from './_components/solve-validator'
 import { db } from '@/server/db'
 import { contestDisciplineTable, scrambleTable } from '@/server/db/schema'
-import { and, eq, or } from 'drizzle-orm'
+import { eq, and, or } from 'drizzle-orm'
+import { notFound } from 'next/navigation'
 
 export default function DevPage() {
   if (env.NEXT_PUBLIC_APP_ENV === 'production') notFound()
