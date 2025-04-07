@@ -96,7 +96,8 @@ export function Navbar({ variant }: NavbarProps) {
                 {
                   'text-primary-80 hover:text-primary-80':
                     activeRoute === route,
-                  'cursor-not-allowed text-primary-100': disabled,
+                  'cursor-not-allowed text-grey-80 hover:text-grey-80 active:text-grey-80':
+                    disabled,
                 },
               )}
               aria-disabled={disabled}

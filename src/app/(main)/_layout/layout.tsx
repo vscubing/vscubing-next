@@ -20,7 +20,7 @@ export function Layout({
       <div className='bg-black-100'>
         <div
           vaul-drawer-wrapper='vaul-drawer-wrapper'
-          className='flex h-svh gap-3 bg-black-100 p-[1.625rem] sm:flex-col sm:gap-0 sm:px-3 sm:py-0'
+          className='flex min-h-svh gap-3 bg-black-100 p-[1.625rem] sm:flex-col sm:gap-0 sm:px-3 sm:py-0'
         >
           {/* TODO: display grid */}
           <Sidebar className='w-[clamp(16rem,20vw,21rem)] xl-short:min-w-[19rem] lg:sr-only' />
@@ -43,7 +43,7 @@ function BottomNavbar({ className }: { className: string }) {
   return (
     <div
       className={cn(
-        'h-[var(--mobile-bottom-nav-height)] bg-black-100',
+        'sticky bottom-0 h-[var(--mobile-bottom-nav-height)] bg-black-100',
         className,
       )}
     >

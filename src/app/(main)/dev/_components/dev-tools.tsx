@@ -8,14 +8,16 @@ import type { ReactNode } from 'react'
 
 export function DevTools() {
   const trpc = useTRPC()
-  const { data: initialContest, isLoading } = useQuery(
+  const { data: initialContest, isLoading: isInitialContestLoading } = useQuery(
     trpc.contest.getInitialSystemContest.queryOptions(),
   )
-  const { data: ongoingContest } = useQuery(
+  const { data: ongoingContest, isLoading: isOngoingContestLoading } = useQuery(
     trpc.contest.getOngoing.queryOptions(),
   )
 
-  if (!isLoading && !initialContest)
+  if (isInitialContestLoading || isOngoingContestLoading) return
+
+  if (!ongoingContest && !initialContest)
     alertToast(
       <>
         You don't have an initial system contest. You might want to create one
@@ -25,16 +27,7 @@ export function DevTools() {
         </Link>
       </>,
     )
-  else if (ongoingContest === null)
-    alertToast(
-      <>
-        There is no real (non-system) ongoing contest You might want to create
-        one in the{' '}
-        <Link href='/dev' className='text-secondary-20 underline'>
-          developer tools
-        </Link>{' '}
-      </>,
-    )
+
   return null
 }
 

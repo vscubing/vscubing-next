@@ -4,8 +4,7 @@
 
 @layer base {
   html {
-    overscroll-behavior: none;
-    scroll-behavior: smooth;
+    @apply overscroll-none scroll-smooth bg-black-100;
   }
 
   :root {
@@ -20,7 +19,6 @@
   body {
     @apply font-hind text-[0.875rem] leading-[1.5] text-white-100;
     @apply !pointer-events-auto; /* to make toasts accessible with opened Radix Dialog (and Vaul) */
-    @apply bg-black-120;
   }
   svg {
     @apply text-[1rem];

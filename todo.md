@@ -80,8 +80,8 @@
 - [x] keymap dialog
 - [x] touch devices ongoing
 - [x] contest header in contest results
-- [ ] currently down for maintenance
-- [ ] bottom navbar on mobile make sticky
+- [x] currently down for maintenance
+- [x] bottom navbar on mobile make sticky
 - [ ] remove pagination except for contests list
 - [ ] pinned items
 - [ ] jump to the pinned item => scroll and highlight
