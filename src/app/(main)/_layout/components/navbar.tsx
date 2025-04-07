@@ -7,7 +7,7 @@ import { type ReactNode, useEffect, useState } from 'react'
 import { useSetAtom } from 'jotai'
 import { mobileMenuOpenAtom } from '../store/mobileMenuOpenAtom'
 import type { Route } from 'next'
-import { useTRPC } from '@/trpc/react'
+import { useTRPC, type RouterOutputs } from '@/trpc/react'
 import { useQuery } from '@tanstack/react-query'
 import {
   DashboardIcon,
@@ -45,22 +45,33 @@ export function Navbar({ variant }: NavbarProps) {
   if (variant === 'vertical') {
     return (
       <nav className='flex flex-col gap-4 sm:gap-0'>
-        {getNavbarLinks(devToolsEnabled).map(({ children, href, route }) => (
-          <Link
-            key={href ?? route}
-            href={(href ?? route) as Route}
-            onClick={() => handleRouteChange(route)}
-            className={cn(
-              'title-h3 after-border-bottom transition-base outline-ring flex items-center gap-4 px-4 py-2 text-grey-20 after:origin-[0%_50%] after:bg-primary-80 hover:text-primary-60 active:text-primary-80 sm:gap-3 sm:p-3',
-              {
-                'text-primary-80 after:h-[1.5px] after:scale-x-100 hover:text-primary-80':
-                  activeRoute === route,
-              },
-            )}
-          >
-            {children}
-          </Link>
-        ))}
+        {getNavbarLinks(ongoingContest, devToolsEnabled).map(
+          ({ children, href, route, disabled }) => (
+            <Link
+              key={href ?? route}
+              href={(href ?? route) as Route}
+              onClick={(e) => {
+                if (!disabled) {
+                  handleRouteChange(route)
+                } else {
+                  e.preventDefault()
+                }
+              }}
+              className={cn(
+                'title-h3 after-border-bottom transition-base outline-ring flex items-center gap-4 px-4 py-2 text-grey-20 after:origin-[0%_50%] after:bg-primary-80 hover:text-primary-60 active:text-primary-80 sm:gap-3 sm:p-3',
+                {
+                  'text-primary-80 after:h-[1.5px] after:scale-x-100 hover:text-primary-80':
+                    activeRoute === route,
+                  'cursor-not-allowed text-grey-80 hover:text-grey-80 active:text-grey-80':
+                    disabled,
+                },
+              )}
+              aria-disabled={disabled}
+            >
+              {children}
+            </Link>
+          ),
+        )}
       </nav>
     )
   }
@@ -68,21 +79,32 @@ export function Navbar({ variant }: NavbarProps) {
   if (variant === 'horizontal') {
     return (
       <nav className='flex justify-between gap-2 overflow-y-auto px-1 py-2'>
-        {getNavbarLinks(devToolsEnabled).map(({ children, route, href }) => (
-          <Link
-            key={href ?? route}
-            href={(href ?? route) as Route}
-            onClick={() => handleRouteChange(route)}
-            className={cn(
-              'caption-sm transition-base flex min-w-[4.625rem] flex-col items-center gap-1 whitespace-nowrap px-1 text-grey-20 active:text-primary-80',
-              {
-                'text-primary-80 hover:text-primary-80': activeRoute === route,
-              },
-            )}
-          >
-            {children}
-          </Link>
-        ))}
+        {getNavbarLinks(ongoingContest, devToolsEnabled).map(
+          ({ children, route, href, disabled }) => (
+            <Link
+              key={href ?? route}
+              href={(href ?? route) as Route}
+              onClick={(e) => {
+                if (!disabled) {
+                  handleRouteChange(route)
+                } else {
+                  e.preventDefault()
+                }
+              }}
+              className={cn(
+                'caption-sm transition-base flex min-w-[4.625rem] flex-col items-center gap-1 whitespace-nowrap px-1 text-grey-20 active:text-primary-80',
+                {
+                  'text-primary-80 hover:text-primary-80':
+                    activeRoute === route,
+                  'cursor-not-allowed text-primary-100': disabled,
+                },
+              )}
+              aria-disabled={disabled}
+            >
+              {children}
+            </Link>
+          ),
+        )}
       </nav>
     )
   }
@@ -118,8 +140,16 @@ type NavbarRoute =
 function isStaticNavbarRoute(pathname: string): pathname is NavbarRoute {
   return ['/', '/contests', '/dev'].includes(pathname)
 }
-function getNavbarLinks(devToolsEnabled: boolean) {
-  const links: { children: ReactNode; route: NavbarRoute; href?: string }[] = [
+function getNavbarLinks(
+  ongoingContest: RouterOutputs['contest']['getOngoing'] | undefined,
+  devToolsEnabled: boolean,
+) {
+  const links: {
+    children: ReactNode
+    route: NavbarRoute
+    href?: string
+    disabled?: boolean
+  }[] = [
     {
       children: (
         <>
@@ -157,6 +187,10 @@ function getNavbarLinks(devToolsEnabled: boolean) {
         </>
       ),
       route: '/contests/ongoing',
+      href: ongoingContest?.slug
+        ? `contests/${ongoingContest.slug}`
+        : undefined,
+      disabled: ongoingContest === null,
     },
   ]
 

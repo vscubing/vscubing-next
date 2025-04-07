@@ -9,6 +9,6 @@ export default async function OngoingContestRedirectPage({
 }) {
   const { discipline } = await searchParams
   const ongoing = await api.contest.getOngoing()
-  if (!ongoing) throw new Error('no ongoing contest!') // TODO: no ongoing contest "on maintenance" page
+  if (!ongoing) throw new Error('no ongoing contest!')
   redirect(`/contests/${ongoing.slug}?discipline=${castDiscipline(discipline)}`)
 }
