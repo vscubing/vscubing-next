@@ -26,7 +26,7 @@ export function SessionList({
     ),
   )
 
-  if (sessions.items.length === 0) {
+  if (sessions.length === 0) {
     return (
       <HintSection>
         <p>It seems no one participated in this round</p>
@@ -34,12 +34,24 @@ export function SessionList({
     )
   }
 
+  const pinnedItemIdx = sessions.findIndex((result) => result.isOwn)
+
   return (
     <SessionListShell>
-      {/* TODO: pagination */}
-      {sessions.items.map((session, idx) => (
+      {pinnedItemIdx !== -1 && (
+        <div className='sticky top-[var(--section-header-height)] z-10 rounded-b-2xl bg-gradient-to-b from-black-80 to-transparent'>
+          <Session
+            session={sessions[pinnedItemIdx]!}
+            place={pinnedItemIdx + 1}
+            contestSlug={contestSlug}
+            discipline={discipline}
+            isFirstOnPage={false}
+          />
+        </div>
+      )}
+      {sessions.map((session, idx) => (
         <Session
-          {...session}
+          session={session}
           contestSlug={contestSlug}
           discipline={discipline}
           isFirstOnPage={idx === 0}

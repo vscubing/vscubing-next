@@ -17,27 +17,45 @@ import { SpinningBorder } from '@/app/_components/ui/spinning-border'
 import React from 'react'
 import { tailwindConfig } from '@/app/_utils/tailwind'
 
-type SessionProps = ContestResultRoundSession & {
+type SessionProps = {
+  session: ContestResultRoundSession
   contestSlug: string
   discipline: Discipline
   isFirstOnPage: boolean
   place: number
 }
-export function Session(props: SessionProps) {
+export function Session({
+  contestSlug,
+  discipline,
+  isFirstOnPage,
+  place,
+  session,
+}: SessionProps) {
   return (
     <>
-      <SessionDesktop className='md:hidden' {...props} />
-      <SessionTablet className='hidden md:block' {...props} />
+      <SessionDesktop
+        className='md:hidden'
+        contestSlug={contestSlug}
+        discipline={discipline}
+        isFirstOnPage={isFirstOnPage}
+        place={place}
+        session={session}
+      />
+      <SessionTablet
+        className='hidden md:block'
+        contestSlug={contestSlug}
+        discipline={discipline}
+        isFirstOnPage={isFirstOnPage}
+        place={place}
+        session={session}
+      />
     </>
   )
 }
 
 function SessionTablet({
-  solves,
+  session: { solves, nickname, isOwn, avgMs },
   place,
-  nickname,
-  isOwn,
-  avgMs,
   contestSlug,
   discipline,
   isFirstOnPage,
@@ -126,14 +144,11 @@ function SessionTablet({
 }
 
 function SessionDesktop({
-  solves,
+  session: { solves, nickname, isOwn, avgMs },
   place,
-  nickname,
-  isOwn,
-  avgMs,
+  isFirstOnPage,
   contestSlug,
   discipline,
-  isFirstOnPage,
   className,
 }: SessionProps & { className: string }) {
   const currentUserLabel = isOwn ? ' (you)' : ''
@@ -211,7 +226,7 @@ export function SessionSkeleton() {
   )
 }
 
-function getBestAndWorstIds(solves: SessionProps['solves']) {
+function getBestAndWorstIds(solves: SessionProps['session']['solves']) {
   const dnfSolve = solves.find(({ result: { isDnf } }) => isDnf)
   const successful = solves
     .filter(({ result: { timeMs, isDnf } }) => timeMs !== null && !isDnf)

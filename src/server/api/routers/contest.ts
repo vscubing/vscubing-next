@@ -133,8 +133,6 @@ export const contestRouter = createTRPCRouter({
       z.object({
         contestSlug: z.string(),
         discipline: z.enum(DISCIPLINES),
-        offset: z.number().optional().default(0),
-        limit: z.number().min(1).default(30),
       }),
     )
     .query(async ({ ctx, input }) => {
@@ -157,10 +155,6 @@ export const contestRouter = createTRPCRouter({
           message:
             "You can't see the results of an ongoing contest round before finishing it",
         })
-
-      // `input.limit` and `input.offset` correspond to the amount of sessions, and we query for solve rows, which map 5 to 1 to sessions
-      const rowLimit = input.limit * 5
-      const rowOffset = input.offset * 5
 
       const queryRes = await ctx.db
         .select({
@@ -193,17 +187,13 @@ export const contestRouter = createTRPCRouter({
           ),
         )
         .orderBy(roundSessionTable.avgMs)
-        .limit(rowLimit + 5)
-        .offset(rowOffset)
 
       const solvesBySessionId = groupBy(
         queryRes,
         ({ roundSessionId }) => roundSessionId,
       )
 
-      const items: ContestResultRoundSession[] = Array.from(
-        solvesBySessionId.values(),
-      )
+      return Array.from(solvesBySessionId.values())
         .sort((a, b) => (a[0]!.avgMs ?? -Infinity) - (b[0]!.avgMs ?? -Infinity))
         .map((session) => ({
           avgMs: session[0]!.avgMs,
@@ -217,15 +207,7 @@ export const contestRouter = createTRPCRouter({
             })),
           ),
           nickname: session[0]!.nickname,
-        }))
-
-      let nextOffset: number | undefined = undefined
-      if (items.length > input.limit) {
-        items.pop()
-        nextOffset = input.offset + input.limit
-      }
-
-      return { items, nextOffset }
+        })) satisfies ContestResultRoundSession[]
     }),
 
   getSolve: publicProcedure
