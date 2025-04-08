@@ -14,6 +14,7 @@ export const env = createEnv({
     AUTH_GOOGLE_CLIENT_SECRET: z.string(),
     AUTH_TRUST_HOST: z.literal('TRUE'),
     AUTH_URL: z.string().url(),
+    CONTEST_CREATION_WEBHOOK_SECRET: z.string(),
   },
 
   /**
@@ -38,6 +39,8 @@ export const env = createEnv({
     AUTH_TRUST_HOST: process.env.AUTH_TRUST_HOST,
     AUTH_URL: process.env.AUTH_URL,
     NEXT_PUBLIC_APP_ENV: process.env.NEXT_PUBLIC_APP_ENV,
+    CONTEST_CREATION_WEBHOOK_SECRET:
+      process.env.CONTEST_CREATION_WEBHOOK_SECRET,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

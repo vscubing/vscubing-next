@@ -86,8 +86,8 @@
 - [x] pinned items
 - [x] jump to the pinned item => scroll and highlight
 - [ ] automatic contests
-    - [ ] api endpoint
-    - [ ] authorization token
+    - [x] api endpoint
+    - [x] authorization token
     - [ ] cron job github action
 - [ ] redo migrations
     - [ ] correct primary key autoincrementation https://stackoverflow.com/questions/4448340/postgresql-duplicate-key-violates-unique-constraint
@@ -121,3 +121,4 @@ nicities:
 - [ ] reimport fresh db backup
 - [ ] db backups
 - [ ] make dashboard non blocking
+- [ ] pagespeed homepage and landing 
