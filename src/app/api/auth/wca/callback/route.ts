@@ -78,41 +78,41 @@ export async function GET(request: Request): Promise<Response> {
   })
 }
 
-const countrySchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  continentId: z.string(),
-  iso2: z.string(),
-})
+// const countrySchema = z.object({
+//   id: z.string(),
+//   name: z.string(),
+//   continentId: z.string(),
+//   iso2: z.string(),
+// })
 
-const avatarSchema = z.object({
-  id: z.number(),
-  status: z.string(),
-  thumbnail_crop_x: z.number().nullable(),
-  thumbnail_crop_y: z.number().nullable(),
-  thumbnail_crop_w: z.number().nullable(),
-  thumbnail_crop_h: z.number().nullable(),
-  url: z.string().url(),
-  thumb_url: z.string().url(),
-  is_default: z.boolean(),
-  can_edit_thumbnail: z.boolean(),
-})
+// const avatarSchema = z.object({
+//   id: z.number(),
+//   status: z.string(),
+//   thumbnail_crop_x: z.number().nullable(),
+//   thumbnail_crop_y: z.number().nullable(),
+//   thumbnail_crop_w: z.number().nullable(),
+//   thumbnail_crop_h: z.number().nullable(),
+//   url: z.string().url(),
+//   thumb_url: z.string().url(),
+//   is_default: z.boolean(),
+//   can_edit_thumbnail: z.boolean(),
+// })
 
 const meSchema = z.object({
   me: z.object({
-    id: z.number(),
-    created_at: z.string().datetime(),
-    updated_at: z.string().datetime(),
-    name: z.string(),
+    // id: z.number(),
+    // created_at: z.string().datetime(),
+    // updated_at: z.string().datetime(),
+    // name: z.string(),
     wca_id: z.string(),
-    gender: z.string(),
-    country_iso2: z.string(),
-    url: z.string().url(),
-    country: countrySchema,
-    delegate_status: z.string().nullable(),
-    class: z.string(),
-    teams: z.array(z.any()), // Can be replaced with a stricter type if teams structure is known
-    avatar: avatarSchema,
+    // gender: z.string(),
+    // // country_iso2: z.string(),
+    // url: z.string().url(),
+    // country: countrySchema,
+    // delegate_status: z.string().nullable(),
+    // class: z.string(),
+    // teams: z.array(z.any()), // Can be replaced with a stricter type if teams structure is known
+    // avatar: avatarSchema,
   }),
 })
 
