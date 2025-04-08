@@ -85,13 +85,10 @@
 - [x] remove pagination except for contests list
 - [x] pinned items
 - [x] jump to the pinned item => scroll and highlight
-- [ ] automatic contests
+- [x] automatic contests
     - [x] api endpoint
     - [x] authorization token
-    - [ ] cron job github action
-- [ ] redo migrations
-    - [ ] correct primary key autoincrementation https://stackoverflow.com/questions/4448340/postgresql-duplicate-key-violates-unique-constraint
-    - [ ] figure out why deployment's initial db migration doesn't work (maybe it will be solved after redoing the migrations from scratch)
+    - [x] cron job github action
 - [ ] adjust google auth permissions
 - [ ] block external db access
 - [ ] dnf on page reload
@@ -99,6 +96,9 @@
 - [ ] todos
 - [ ] settings one opened => close currently opened
 - [ ] hidden contest disciplines
+- [ ] redo migrations
+    - [ ] correct primary key autoincrementation https://stackoverflow.com/questions/4448340/postgresql-duplicate-key-violates-unique-constraint
+    - [ ] figure out why deployment's initial db migration doesn't work (maybe it will be solved after redoing the migrations from scratch)
 
 nicities:
 - [ ] rename state to status
