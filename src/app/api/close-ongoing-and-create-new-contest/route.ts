@@ -7,7 +7,9 @@ import {
 import type { NextRequest } from 'next/server'
 
 export async function POST(request: NextRequest) {
-  const token = new Headers(request.headers).get('Authorization')
+  const token = new Headers(request.headers)
+    .get('Authorization')
+    ?.slice('Bearer '.length)
   if (!token) {
     console.log('[CONTEST MANAGEMENT] Webhook secret required')
     return new Response('Webhook secret required', { status: 401 })
