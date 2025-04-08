@@ -12,7 +12,9 @@ jobs:
     environment: production
 
     steps:
-      - name: Make POST request with Bearer token
-        run: |
-          curl -X POST ${{ vars.GH_CONTEST_CREATION_WEBHOOK_URL }} \
-            -H "Authorization: Bearer ${{ secrets.CONTEST_CREATION_WEBHOOK_SECRET }}" \
+    - name: curl
+      uses: sozo-design/curl@v1.0.2
+      with:
+        args: |
+          -X POST ${{ vars.GH_CONTEST_CREATION_WEBHOOK_URL }} \
+          -H "Authorization: Bearer ${{ secrets.CONTEST_CREATION_WEBHOOK_SECRET }}" \
