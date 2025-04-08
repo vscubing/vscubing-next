@@ -10,7 +10,6 @@ import type { Discipline } from '@/app/_types'
 import { removeSolutionComments } from '@/app/_utils/remove-solution-comments'
 
 // TODO: simultaneous moves???
-// TODO: realtime animation speed
 export async function doEverything(
   scramble: string,
   solutionWithTimings: string,

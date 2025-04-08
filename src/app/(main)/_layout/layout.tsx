@@ -21,7 +21,6 @@ export function Layout({
         vaul-drawer-wrapper='vaul-drawer-wrapper'
         className='flex h-full gap-3 bg-black-100 p-[1.625rem] sm:flex-col sm:gap-0 sm:px-3 sm:py-0'
       >
-        {/* TODO: display grid */}
         <Sidebar className='w-[clamp(16rem,20vw,21rem)] xl-short:min-w-[19rem] lg:sr-only' />
         <main className='flex h-[calc(100svh-3.25rem)] flex-1 flex-col overflow-y-scroll rounded-2xl'>
           {withoutHeader ? null : <LayoutHeader className='mb-3 sm:mb-2' />}

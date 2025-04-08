@@ -65,7 +65,7 @@ function BannerContent({
               <Duration ongoing={ongoing} />
             </div>
             <PrimaryButton asChild>
-              <Link href='/contests/ongoing'>Solve now</Link>
+              <Link href={`/contests/${ongoing.slug}`}>Solve now</Link>
             </PrimaryButton>
           </div>
         </div>

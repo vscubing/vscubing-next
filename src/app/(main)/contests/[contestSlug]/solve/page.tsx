@@ -96,9 +96,6 @@ async function PageContent({
     redirect(`/contests/${contestSlug}/results?discipline=${discipline}`)
   if (error) throw error
 
-  // TODO: ongoing contest hint
-  // TODO: touch devices not supported hint
-
   return (
     <TouchNotSupportedWrapper>
       <div className='flex-1 rounded-2xl bg-black-80'>
