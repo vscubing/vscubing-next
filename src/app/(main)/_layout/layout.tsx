@@ -3,7 +3,6 @@ import { PopupSidebar } from './components/popup-sidebar'
 import { Sidebar } from './components/sidebar'
 import { Navbar } from './components/navbar'
 import { PickUsernameDialog } from './components/pick-username-dialog'
-import { SessionProvider } from 'next-auth/react'
 import { LayoutHeader } from './layout-header'
 
 export function Layout({
@@ -14,7 +13,7 @@ export function Layout({
   withoutHeader?: boolean
 }) {
   return (
-    <SessionProvider>
+    <>
       <PickUsernameDialog />
       <PopupSidebar />
       <div
@@ -30,7 +29,7 @@ export function Layout({
         </main>
         <BottomNavbar className='hidden sm:block' />
       </div>
-    </SessionProvider>
+    </>
   )
 }
 

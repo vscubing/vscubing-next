@@ -12,6 +12,7 @@ export const createdUpdatedAtColumns = {
     withTimezone: true,
     mode: 'string',
   })
+    .defaultNow()
     .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
     .notNull(),
 }

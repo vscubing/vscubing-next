@@ -13,18 +13,14 @@ import {
 } from '@/app/_components/ui'
 import { useForm } from 'react-hook-form'
 import { Input } from '@/app/_components/ui'
-import { signOut, useSession } from 'next-auth/react'
 import { useTRPC } from '@/trpc/react'
 import { useMutation } from '@tanstack/react-query'
+import { useUser } from '@/app/_shared/use-user'
 
 export function PickUsernameDialog() {
-  const {
-    data: session,
-    status: sessionStatus,
-    update: updateSession,
-  } = useSession()
+  const { user, isLoading: isUserLoading } = useUser()
 
-  const isVisible = session?.user?.finishedRegistration === false
+  const isVisible = user?.finishedRegistration === false
 
   const {
     register,
@@ -38,14 +34,14 @@ export function PickUsernameDialog() {
     trpc.user.setUsername.mutationOptions(),
   )
 
-  const isPending = isMutationPending || sessionStatus === 'loading'
+  const isPending = isMutationPending || isUserLoading
 
   async function onSubmit({ username }: { username: string }) {
     mutate(
       { username },
       {
         onSuccess: () => {
-          void updateSession()
+          location.reload()
         },
         onError: (error) => {
           if (error.data?.zodError) {

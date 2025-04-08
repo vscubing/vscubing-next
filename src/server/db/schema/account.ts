@@ -1,6 +1,5 @@
-import { relations } from 'drizzle-orm'
+import { relations, type InferSelectModel } from 'drizzle-orm'
 import { index, pgTable, primaryKey } from 'drizzle-orm/pg-core'
-import { type AdapterAccount } from 'next-auth/adapters'
 import { createdUpdatedAtColumns } from './core'
 
 export const userTable = pgTable('user', (d) => ({
@@ -10,7 +9,7 @@ export const userTable = pgTable('user', (d) => ({
     .notNull()
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()), // NOTE: legacy userId's are just integers
-  name: d.varchar('name', { length: 255 }).notNull(),
+  name: d.varchar('name', { length: 255 }).notNull().default(''),
   email: d.varchar('email', { length: 255 }).notNull(),
   finishedRegistration: d
     .boolean('finished_registration')
@@ -25,15 +24,15 @@ export const userRelations = relations(userTable, ({ many }) => ({
 export const accountTable = pgTable(
   'account',
   (d) => ({
+    ...createdUpdatedAtColumns,
     userId: d
       .varchar('user_id', { length: 255 })
       .notNull()
       .references(() => userTable.id),
-    type: d
-      .varchar('type', { length: 255 })
-      .$type<AdapterAccount['type']>()
-      .notNull(),
-    provider: d.varchar('provider', { length: 255 }).notNull(),
+    provider: d
+      .varchar('provider', { length: 255 })
+      .notNull()
+      .$type<'google'>(),
     providerAccountId: d
       .varchar('provider_account_id', { length: 255 })
       .notNull(),
@@ -41,9 +40,6 @@ export const accountTable = pgTable(
     access_token: d.text('access_token'),
     expires_at: d.integer('expires_at'),
     token_type: d.varchar('token_type', { length: 255 }),
-    scope: d.varchar('scope', { length: 255 }),
-    id_token: d.text('id_token'),
-    session_state: d.varchar('session_state', { length: 255 }),
   }),
   (t) => [
     primaryKey({ columns: [t.provider, t.providerAccountId] }),
@@ -61,16 +57,13 @@ export const accountRelations = relations(accountTable, ({ one }) => ({
 export const sessionTable = pgTable(
   'session',
   (d) => ({
-    sessionToken: d
-      .varchar('session_token', { length: 255 })
-      .notNull()
-      .primaryKey(),
+    id: d.varchar('id', { length: 255 }).primaryKey(),
     userId: d
       .varchar('user_id', { length: 255 })
       .notNull()
       .references(() => userTable.id),
-    expires: d
-      .timestamp('expires', { mode: 'date', withTimezone: true })
+    expiresAt: d
+      .timestamp('expires_at', { mode: 'date', withTimezone: true })
       .notNull(),
   }),
   (t) => [index('t_user_id_idx').on(t.userId)],
@@ -83,14 +76,5 @@ export const sessionRelations = relations(sessionTable, ({ one }) => ({
   }),
 }))
 
-export const verificationTokenTable = pgTable(
-  'verification_token',
-  (d) => ({
-    identifier: d.varchar('identifier', { length: 255 }).notNull(),
-    token: d.varchar('token', { length: 255 }).notNull(),
-    expires: d
-      .timestamp('expires', { mode: 'date', withTimezone: true })
-      .notNull(),
-  }),
-  (t) => [primaryKey({ columns: [t.identifier, t.token] })],
-)
+export type User = InferSelectModel<typeof userTable>
+export type Session = InferSelectModel<typeof sessionTable>

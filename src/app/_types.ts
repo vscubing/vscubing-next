@@ -1,6 +1,7 @@
-import type { userSimulatorSettingsTable } from '@/server/db/schema'
+import type { User, userSimulatorSettingsTable } from '@/server/db/schema'
 import { z } from 'zod'
 
+export type { User }
 export const SCRAMBLE_POSITIONS = ['1', '2', '3', '4', '5', 'E1', 'E2'] as const
 export type ScramblePosition = (typeof SCRAMBLE_POSITIONS)[number]
 export function isExtra(position: ScramblePosition) {

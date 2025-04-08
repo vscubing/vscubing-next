@@ -89,7 +89,7 @@
     - [x] api endpoint
     - [x] authorization token
     - [x] cron job github action
-- [ ] adjust google auth permissions
+- [x] adjust google auth permissions
 - [ ] block external db access
 - [ ] dnf on page reload
 - [ ] merge root layout files

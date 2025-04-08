@@ -3,8 +3,9 @@ import { cache } from 'react'
 
 import { authConfig } from './config'
 import { env } from '@/env'
+import { getCurrentSession } from './session'
 
-const { auth: uncachedAuth, handlers, signIn, signOut } = NextAuth(authConfig)
+// const { auth: uncachedAuth, handlers, signIn, signOut } = NextAuth(authConfig)
 
 const auth = cache(async () => {
   if (env.NODE_ENV === 'development') {
@@ -12,7 +13,7 @@ const auth = cache(async () => {
     const waitMs = Math.floor(Math.random() * 400) + 100
     await new Promise((resolve) => setTimeout(resolve, waitMs))
   }
-  return uncachedAuth()
+  return getCurrentSession()
 })
 
-export { auth, handlers, signIn, signOut }
+export { auth }

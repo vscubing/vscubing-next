@@ -1,12 +1,25 @@
 import { z } from 'zod'
 
-import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from '@/server/api/trpc'
 import { userTable } from '@/server/db/schema'
 import { eq } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
+import {
+  deleteSessionTokenCookie,
+  invalidateSession,
+} from '@/server/auth/session'
 
 const USERNAME_LENGTH = { MIN: 3, MAX: 24 }
 export const userRouter = createTRPCRouter({
+  user: publicProcedure.query(({ ctx }) => ctx.session?.user ?? null),
+  logout: protectedProcedure.mutation(async ({ ctx: { session } }) => {
+    await invalidateSession(session.id)
+    await deleteSessionTokenCookie()
+  }),
   setUsername: protectedProcedure
     .input(
       z.object({

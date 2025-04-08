@@ -26,6 +26,8 @@
   "dependencies": {
     "@auth/drizzle-adapter": "^1.7.2",
     "@hookform/resolvers": "^3.3.4",
+    "@oslojs/crypto": "^1.0.1",
+    "@oslojs/encoding": "^1.1.0",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-alert-dialog": "^1.0.5",
     "@radix-ui/react-dropdown-menu": "^2.1.2",
@@ -43,6 +45,7 @@
     "@trpc/tanstack-react-query": "^11.0.1",
     "@types/bun": "^1.2.8",
     "@vscubing/cubing": "0.55.0-vscubing.11",
+    "arctic": "^3.6.0",
     "bun": "^1.2.7",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",

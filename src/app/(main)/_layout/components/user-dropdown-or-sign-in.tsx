@@ -1,14 +1,17 @@
 'use client'
 
 import { cn } from '@/app/_utils/cn'
-import type { User } from 'next-auth'
 import Link from 'next/link'
-import { useState, type ReactNode } from 'react'
+import {
+  useState,
+  useTransition,
+  type ReactNode,
+  type TransitionStartFunction,
+} from 'react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { useSetAtom } from 'jotai'
 import { mobileMenuOpenAtom } from '../store/mobileMenuOpenAtom'
 import { Slot } from '@radix-ui/react-slot'
-import { signOut, useSession } from 'next-auth/react'
 import { SignInButton } from '@/app/_shared/SignInButton'
 import {
   AvatarIcon,
@@ -25,16 +28,33 @@ import {
   DialogClose,
 } from '@/app/_components/ui'
 import { LoadingDots } from '@/app/_components/ui/loading-dots'
+import type { User } from '@/app/_types'
+import { useLogout, useUser } from '@/app/_shared/use-user'
 
 export function UserDropdownOrSignIn() {
-  const { data, status } = useSession()
+  const { user, isLoading } = useUser()
+  const [isLogoutPending, startTransition] = useTransition()
 
-  if (status === 'loading') return <LoadingDots className='pr-4' />
-  if (data === null) return <SignInButton variant='ghost' />
-  return <UserDropdown user={data.user} className='md:-mr-2 sm:mr-0' />
+  if (isLoading || isLogoutPending) return <LoadingDots className='pr-4' />
+  if (!user) return <SignInButton variant='ghost' />
+  return (
+    <UserDropdown
+      user={user}
+      logoutTransition={startTransition}
+      className='md:-mr-2 sm:mr-0'
+    />
+  )
 }
 
-function UserDropdown({ user, className }: { user: User; className?: string }) {
+function UserDropdown({
+  user,
+  className,
+  logoutTransition,
+}: {
+  user: User
+  className?: string
+  logoutTransition: TransitionStartFunction
+}) {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
@@ -77,6 +97,7 @@ function UserDropdown({ user, className }: { user: User; className?: string }) {
             <LogoutButton
               className='w-full'
               onDialogClose={() => setIsOpen(false)}
+              logoutTransition={logoutTransition}
             />
           </DropdownMenu.Item>
         </DropdownMenu.Group>
@@ -88,11 +109,14 @@ function UserDropdown({ user, className }: { user: User; className?: string }) {
 function LogoutButton({
   className,
   onDialogClose,
+  logoutTransition,
 }: {
   className?: string
   onDialogClose: () => void
+  logoutTransition: TransitionStartFunction
 }) {
   const setMobileMenuOpen = useSetAtom(mobileMenuOpenAtom)
+  const { logoutAsync } = useLogout()
 
   return (
     <Dialog
@@ -115,8 +139,11 @@ function LogoutButton({
             <DialogClose
               version='primary'
               onClick={() => {
-                setMobileMenuOpen(false)
-                void signOut()
+                logoutTransition(async () => {
+                  setMobileMenuOpen(false)
+                  await logoutAsync()
+                  location.reload()
+                })
               }}
             >
               Log out
