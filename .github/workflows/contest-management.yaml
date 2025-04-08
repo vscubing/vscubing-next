@@ -13,8 +13,7 @@ jobs:
 
     steps:
     - name: curl
-      uses: sozo-design/curl@v1.0.2
-      with:
-        args: |
-          -X POST ${{ vars.GH_CONTEST_CREATION_WEBHOOK_URL }} \
+      run: |
+        curl --fail -X POST \
           -H "Authorization: Bearer ${{ secrets.CONTEST_CREATION_WEBHOOK_SECRET }}" \
+          ${{ vars.GH_CONTEST_CREATION_WEBHOOK_URL }}
