@@ -30,6 +30,8 @@ jobs:
           AUTH_TRUST_HOST=${{ vars.AUTH_TRUST_HOST }}
           AUTH_URL=${{ vars.AUTH_URL }}
           NEXT_PUBLIC_APP_ENV=${{ vars.NEXT_PUBLIC_APP_ENV }}
+          CONTEST_CREATION_WEBHOOK_SECRET=${{ secrets.CONTEST_CREATION_WEBHOOK_SECRET }}
+          GH_CONTEST_CREATION_WEBHOOK_URL=${{ vars.GH_CONTEST_CREATION_WEBHOOK_URL }}
           EOF
 
       # # create a unique tag for each build for debugging

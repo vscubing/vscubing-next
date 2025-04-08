@@ -1,0 +1,18 @@
+name: Close the ongoing contest and publish a new one
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+
+jobs:
+  post-request:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Make POST request with Bearer token
+        run: |
+          curl -X POST ${{ vars.GH_CONTEST_CREATION_WEBHOOK_URL }} \
+            -H "Authorization: Bearer ${{ secrets.CONTEST_CREATION_WEBHOOK_SECRET }}" \
