@@ -13,7 +13,9 @@ export async function POST(request: NextRequest) {
     return new Response('Webhook secret required', { status: 401 })
   }
   if (token !== env.CONTEST_CREATION_WEBHOOK_SECRET) {
-    console.log('[CONTEST MANAGEMENT] Incorrect webhook secret')
+    console.log(
+      `[CONTEST MANAGEMENT] Incorrect webhook secret. Expected: \n"${env.CONTEST_CREATION_WEBHOOK_SECRET}" (${env.CONTEST_CREATION_WEBHOOK_SECRET.length}) \n Received:\n"${token}" (${token.length})`,
+    )
     return new Response('Incorrect webhook secret', { status: 403 })
   }
 

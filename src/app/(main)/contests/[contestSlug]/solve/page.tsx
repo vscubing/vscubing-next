@@ -40,7 +40,7 @@ export default async function SolveContestPage({
   const { contestSlug } = await params
   if (!isDiscipline(discipline)) redirect(`/contests/${contestSlug}`)
 
-  const title = 'Solve the ongoing contest'
+  const title = 'Solve the ongoing contest' // TODO: add contest date
 
   return (
     <>
