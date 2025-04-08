@@ -193,7 +193,7 @@ export const contestRouter = createTRPCRouter({
         ({ roundSessionId }) => roundSessionId,
       )
 
-      return Array.from(solvesBySessionId.values())
+      const res = Array.from(solvesBySessionId.values())
         .sort((a, b) => (a[0]!.avgMs ?? -Infinity) - (b[0]!.avgMs ?? -Infinity))
         .map((session) => ({
           avgMs: session[0]!.avgMs,
@@ -208,6 +208,20 @@ export const contestRouter = createTRPCRouter({
           ),
           nickname: session[0]!.nickname,
         })) satisfies ContestResultRoundSession[]
+
+      return [
+        ...res.filter((s) => !s.isOwn),
+        ...res
+          .map((s) => ({ ...s, id: Math.random() }))
+          .filter((s) => !s.isOwn),
+        ...res.map((s) => ({ ...s, id: Math.random() })),
+        ...res
+          .map((s) => ({ ...s, id: Math.random() }))
+          .filter((s) => !s.isOwn),
+        ...res
+          .map((s) => ({ ...s, id: Math.random() }))
+          .filter((s) => !s.isOwn),
+      ]
     }),
 
   getSolve: publicProcedure

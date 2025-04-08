@@ -85,18 +85,20 @@
 - [x] remove pagination except for contests list
 - [x] pinned items
 - [x] jump to the pinned item => scroll and highlight
-- [ ] "ongoinghint"
-- [ ] cron job
+- [ ] automatic contests
+    - [ ] api endpoint
+    - [ ] authorization token
+    - [ ] cron job github action
 - [ ] redo migrations
     - [ ] correct primary key autoincrementation https://stackoverflow.com/questions/4448340/postgresql-duplicate-key-violates-unique-constraint
     - [ ] figure out why deployment's initial db migration doesn't work (maybe it will be solved after redoing the migrations from scratch)
-- [ ] "you have X unapplied migrations"
 - [ ] adjust google auth permissions
 - [ ] block external db access
 - [ ] dnf on page reload
 - [ ] merge root layout files
 - [ ] todos
-- [ ] settings one open => open another
+- [ ] settings one opened => close currently opened
+- [ ] hidden contest disciplines
 
 nicities:
 - [ ] rename state to status

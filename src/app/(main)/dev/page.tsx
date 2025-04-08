@@ -1,4 +1,10 @@
-import { closeOngoingAndCreateNewContest } from '@/server/internal/close-ongoing-and-create-new-contest'
+import {
+  closeOngoingAndCreateNewContest,
+  closeOngoingContest,
+  createNewContest,
+  getLatestContest,
+  getNextContestSlug,
+} from '@/server/internal/ongoing-contest-admin'
 import { api } from '@/trpc/server'
 import {
   PrimaryButtonWithFormStatus,
@@ -16,6 +22,7 @@ import {
   scrambleTable,
 } from '@/server/db/schema'
 import { desc, and, eq, or } from 'drizzle-orm'
+import type { ReactNode } from 'react'
 
 export default function DevPage() {
   if (env.NEXT_PUBLIC_APP_ENV === 'production') notFound()
@@ -29,22 +36,9 @@ export default function DevPage() {
 }
 
 export async function OngoingContestInfo() {
-  const [lastContest] = await db
-    .select({ slug: contestTable.slug, isOngoing: contestTable.isOngoing })
-    .from(contestTable)
-    .orderBy(desc(contestTable.expectedEndDate))
-    .limit(1)
+  const latestContest = await getLatestContest()
 
-  if (lastContest?.isOngoing === false)
-    return (
-      <section>
-        No ongoing contest. But you can create a <NewContestButton /> one
-      </section>
-    )
-  const ongoingContest = (await api.contest.getOngoing())!
-  const initialContest = await api.contest.getInitialSystemContest()
-
-  if (!ongoingContest && !initialContest)
+  if (!latestContest)
     return (
       <section>
         <span>No initial contest. Please</span>
@@ -55,6 +49,17 @@ export async function OngoingContestInfo() {
         </form>
       </section>
     )
+
+  if (latestContest?.isOngoing === false)
+    return (
+      <section>
+        No ongoing contest. But you can create a{' '}
+        <CreateNewContestButton>new</CreateNewContestButton> one
+      </section>
+    )
+
+  const ongoingContest = await api.contest.getOngoing()
+  if (!ongoingContest) throw new Error('bad ongoing contest invariant')
 
   const scrambles = await db
     .select()
@@ -77,8 +82,13 @@ export async function OngoingContestInfo() {
   return (
     <section>
       <div>
-        <h2 className='title-h2 inline-block'>Ongoing contest</h2>
-        Create a <NewContestButton /> contest or <JustCloseContestButton />
+        <h2 className='title-h2'>Ongoing contest</h2>
+        Create a{' '}
+        <CloseOngoingAndCreateNewContestButton>
+          new
+        </CloseOngoingAndCreateNewContestButton>{' '}
+        one or just
+        <CloseContestButton>close</CloseContestButton> the ongoing one
       </div>
       <pre>{JSON.stringify(ongoingContest, null, 2)}</pre>
       <h3 className='title-h3'>Scrambles</h3>
@@ -93,39 +103,73 @@ export async function OngoingContestInfo() {
   )
 }
 
-function JustCloseContestButton() {
+function CloseContestButton({ children }: { children: ReactNode }) {
   return (
     <form
       className='inline-flex items-center gap-2'
       action={async () => {
         'use server'
-        await db
-          .update(contestTable)
-          .set({ isOngoing: false })
-          .where(eq(contestTable.isOngoing, true))
+        await closeOngoingContest()
         revalidatePath('/')
       }}
     >
       <SecondaryButtonWithFormStatus size='sm' className='ml-2'>
-        just close the onging contest
+        {children}
       </SecondaryButtonWithFormStatus>
     </form>
   )
 }
 
-function NewContestButton() {
+function CreateNewContestButton({ children }: { children: ReactNode }) {
+  return (
+    <form
+      className='inline-flex flex-col gap-2'
+      action={async (formData: FormData) => {
+        'use server'
+        const latestContest = await getLatestContest()
+
+        if (!latestContest) throw new Error('no latest contest found')
+        if (latestContest.isOngoing)
+          throw new Error(
+            'there is an ongoing contest, please call another method that would close it and create a new one in one transaction',
+          )
+
+        const easyScrambles = formData.get('easy-scrambles') === 'on'
+        await createNewContest({
+          easyScrambles,
+          slug: getNextContestSlug(latestContest.slug),
+        })
+        revalidatePath('/')
+      }}
+    >
+      <SecondaryButtonWithFormStatus size='sm' className='ml-2'>
+        {children}
+      </SecondaryButtonWithFormStatus>
+      <label>
+        <input type='checkbox' name='easy-scrambles' />
+        Easy scrambles
+      </label>
+    </form>
+  )
+}
+
+function CloseOngoingAndCreateNewContestButton({
+  children,
+}: {
+  children: ReactNode
+}) {
   return (
     <form
       className='inline-flex flex-col gap-2'
       action={async (formData: FormData) => {
         'use server'
         const easyScrambles = formData.get('easy-scrambles') === 'on'
-        await closeOngoingAndCreateNewContest(['3by3', '2by2'], easyScrambles)
+        await closeOngoingAndCreateNewContest(easyScrambles)
         revalidatePath('/')
       }}
     >
       <SecondaryButtonWithFormStatus size='sm' className='ml-2'>
-        New
+        {children}
       </SecondaryButtonWithFormStatus>
       <label>
         <input type='checkbox' name='easy-scrambles' />
