@@ -3,16 +3,23 @@
 import { cn } from '@/app/_utils/cn'
 import { GhostButton, GoogleIcon, PrimaryButton } from '@/app/_components/ui'
 import Link from 'next/link'
+import { type MouseEventHandler } from 'react'
 
 type SignInButtonProps = { variant: 'primary' | 'ghost'; className?: string }
 export function SignInButton({ variant, className }: SignInButtonProps) {
+  const href = '/api/auth/google'
+  const signIn: MouseEventHandler = (e) => {
+    e.preventDefault()
+    location.href = `${href}?redirectTo=${window.location.toString()}`
+  }
+
   if (variant === 'primary') {
     return (
       <PrimaryButton
         className={cn('h-12 gap-3 px-4 text-[1.125rem] sm:h-12', className)}
         asChild
       >
-        <Link href='/api/auth/google'>
+        <Link href={href} onClick={signIn}>
           <GoogleIcon />
           Sign in with Google
         </Link>
@@ -28,7 +35,7 @@ export function SignInButton({ variant, className }: SignInButtonProps) {
       )}
       asChild
     >
-      <Link href='/api/auth/google'>
+      <Link href={href} onClick={signIn}>
         <span className='contents sm:hidden'>
           <GoogleIcon />
           <span>Sign in with Google</span>

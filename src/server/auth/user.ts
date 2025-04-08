@@ -37,14 +37,17 @@ export async function getUserAccount(user: User, provider: 'google') {
   return account ?? null
 }
 
-export async function createUserAccount(
-  user: User,
-  provider: 'google',
-  providerAccountId: string,
-) {
+export async function createUserAccount(params: {
+  provider: 'google' | 'wca'
+  providerAccountId: string
+  userId: string
+  refresh_token: string
+  access_token: string
+  expires_at: number
+}) {
   const [account] = await db
     .insert(accountTable)
-    .values({ provider, providerAccountId, userId: user.id })
+    .values([params])
     .returning(getTableColumns(accountTable))
 
   return account

@@ -1,5 +1,5 @@
 import { env } from '@/env'
-import { googleOauthClient } from '@/server/auth/oauth'
+import { wcaOauthClient } from '@/server/auth/oauth'
 import { generateState, generateCodeVerifier } from 'arctic'
 import { cookies } from 'next/headers'
 import type { NextRequest } from 'next/server'
@@ -7,20 +7,21 @@ import type { NextRequest } from 'next/server'
 export async function GET(request: NextRequest): Promise<Response> {
   const state = generateState()
   const codeVerifier = generateCodeVerifier()
-  const url = googleOauthClient.createAuthorizationURL(state, codeVerifier, [
-    'openid',
-    'email',
-  ])
+  const url = await wcaOauthClient.createAuthorizationURL({
+    state,
+    codeVerifier,
+    scopes: ['public'],
+  })
 
   const cookieStore = await cookies()
-  cookieStore.set('google_oauth_state', state, {
+  cookieStore.set('wca_oauth_state', state, {
     path: '/',
     httpOnly: true,
     secure: env.NODE_ENV === 'production',
     maxAge: 60 * 10, // 10 minutes
     sameSite: 'lax',
   })
-  cookieStore.set('google_code_verifier', codeVerifier, {
+  cookieStore.set('wca_code_verifier', codeVerifier, {
     path: '/',
     httpOnly: true,
     secure: env.NODE_ENV === 'production',
@@ -30,7 +31,7 @@ export async function GET(request: NextRequest): Promise<Response> {
 
   const redirectTo = request.nextUrl.searchParams.get('redirectTo')
   if (redirectTo)
-    cookieStore.set('google_redirect_to', redirectTo, {
+    cookieStore.set('wca_redirect_to', redirectTo, {
       path: '/',
       maxAge: 60 * 10,
       sameSite: 'lax',

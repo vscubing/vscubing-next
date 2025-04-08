@@ -32,7 +32,7 @@ export const accountTable = pgTable(
     provider: d
       .varchar('provider', { length: 255 })
       .notNull()
-      .$type<'google'>(),
+      .$type<'google' | 'wca'>(),
     providerAccountId: d
       .varchar('provider_account_id', { length: 255 })
       .notNull(),

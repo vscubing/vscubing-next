@@ -1,8 +1,7 @@
 import { cookies } from 'next/headers'
 import { decodeIdToken } from 'arctic'
 
-import type { OAuth2Tokens } from 'arctic'
-import { google } from '@/server/auth/oauth'
+import { googleOauthClient } from '@/server/auth/oauth'
 import {
   createSession,
   generateSessionToken,
@@ -14,7 +13,9 @@ import {
   getUserAccount,
   getUserFromEmail,
 } from '@/server/auth/user'
+import { tryCatch } from '@/app/_utils/try-catch'
 
+// TODO: redirect back on error
 export async function GET(request: Request): Promise<Response> {
   const url = new URL(request.url)
   const code = url.searchParams.get('code')
@@ -22,6 +23,7 @@ export async function GET(request: Request): Promise<Response> {
   const cookieStore = await cookies()
   const storedState = cookieStore.get('google_oauth_state')?.value ?? null
   const codeVerifier = cookieStore.get('google_code_verifier')?.value ?? null
+  const redirectTo = cookieStore.get('google_redirect_to')?.value ?? '/'
   if (
     code === null ||
     state === null ||
@@ -38,52 +40,44 @@ export async function GET(request: Request): Promise<Response> {
     })
   }
 
-  let tokens: OAuth2Tokens
-  try {
-    tokens = await google.validateAuthorizationCode(code, codeVerifier)
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (_e) {
-    // Invalid code or client credentials
+  const { data: tokens, error } = await tryCatch(
+    googleOauthClient.validateAuthorizationCode(code, codeVerifier),
+  )
+  if (error)
     return new Response(null, {
       status: 400,
     })
-  }
+
   const claims = decodeIdToken(tokens.idToken()) as {
     email: string
     sub: string
   }
   const { email, sub: googleUserId } = claims
-  // TODO: store and refresh access token
 
   const existingUser = await getUserFromEmail(email)
 
-  if (existingUser !== null) {
-    const existingAccount = await getUserAccount(existingUser, 'google')
-    if (existingAccount === null) {
-      await createUserAccount(existingUser, 'google', googleUserId)
-    }
+  const user = existingUser ?? (await createUser(email))
 
-    const sessionToken = generateSessionToken()
-    const session = await createSession(sessionToken, existingUser.id)
-    await setSessionTokenCookie(sessionToken, session.expiresAt)
-    return new Response(null, {
-      status: 302,
-      headers: {
-        Location: '/',
-      },
+  const existingAccount = await getUserAccount(user, 'google')
+  if (existingAccount === null) {
+    await createUserAccount({
+      userId: user.id,
+      provider: 'google',
+      providerAccountId: googleUserId,
+      access_token: tokens.accessToken(),
+      refresh_token: tokens.refreshToken(),
+      expires_at: tokens.accessTokenExpiresAt().getTime(),
     })
   }
-
-  const user = await createUser(email)
-  await createUserAccount(user, 'google', googleUserId)
 
   const sessionToken = generateSessionToken()
   const session = await createSession(sessionToken, user.id)
   await setSessionTokenCookie(sessionToken, session.expiresAt)
+
   return new Response(null, {
     status: 302,
     headers: {
-      Location: '/',
+      Location: redirectTo,
     },
   })
 }

@@ -24,10 +24,10 @@
     "vendor": "./install-vendor.sh"
   },
   "dependencies": {
-    "@auth/drizzle-adapter": "^1.7.2",
     "@hookform/resolvers": "^3.3.4",
     "@oslojs/crypto": "^1.0.1",
     "@oslojs/encoding": "^1.1.0",
+    "@oslojs/oauth2": "^0.5.0",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-alert-dialog": "^1.0.5",
     "@radix-ui/react-dropdown-menu": "^2.1.2",
@@ -53,7 +53,7 @@
     "drizzle-orm": "^0.41.0",
     "jotai": "^2.7.0",
     "next": "^15.2.4",
-    "next-auth": "5.0.0-beta.25",
+    "oslo": "^1.2.1",
     "postgres": "^3.4.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
