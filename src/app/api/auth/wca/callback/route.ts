@@ -7,6 +7,7 @@ import { tryCatch } from '@/app/_utils/try-catch'
 import { env } from '@/env'
 
 // TODO: redirect back on error
+// TODO: conflict handling
 export async function GET(request: Request): Promise<Response> {
   const session = await auth()
   if (!session)
@@ -42,14 +43,14 @@ export async function GET(request: Request): Promise<Response> {
       credentials: env.AUTH_WCA_CLIENT_SECRET,
     }) as Promise<unknown>,
   )
-  const token = tokenSchema.parse(tokenRaw)
-
   if (tokenError) {
     console.log('[WCA] invalid token schema: ', tokenError)
     return new Response(null, {
       status: 400,
     })
   }
+
+  const token = tokenSchema.parse(tokenRaw)
 
   const { me: claims } = await fetch(
     'https://www.worldcubeassociation.org/api/v0/me',
