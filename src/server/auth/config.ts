@@ -35,18 +35,18 @@ declare module 'next-auth' {
 
 function customCreateUser(adapter: ReturnType<typeof DrizzleAdapter>): Adapter {
   // Overwrite createUser method on adapter
-  adapter.createUser = async (data): Promise<AdapterUser> => {
+  adapter.createUser = async ({ email }): Promise<AdapterUser> => {
     const dataEntered = await db
       .insert(userTable)
-      .values({ ...data, name: '' })
+      .values({ email, name: '' })
       .returning()
       .then((res) => res[0] ?? null)
 
     if (!dataEntered) {
-      throw new Error('User Creation Failed')
+      throw new Error('[AUTH] user creation failed')
     }
 
-    return dataEntered
+    return { ...dataEntered, emailVerified: null } as AdapterUser
   }
 
   return {
@@ -66,18 +66,10 @@ export const authConfig = {
       clientSecret: env.AUTH_GOOGLE_CLIENT_SECRET,
       allowDangerousEmailAccountLinking: true,
     }),
-    /**
-     * ...add more providers here.
-     *
-     * Most other providers require a bit more work than the Discord provider. For example, the
-     * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-     * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-     *
-     * @see https://next-auth.js.org/providers/github
-     */
   ],
   adapter: customCreateUser(
     DrizzleAdapter(db, {
+      // @ts-expect-error there is no other way to limit the scope of auth tables because the columns are hardcoded
       usersTable: userTable,
       accountsTable: accountTable,
       sessionsTable: sessionTable,
@@ -96,7 +88,7 @@ export const authConfig = {
   },
   events: {
     async createUser(user) {
-      console.log('user registered', user)
+      console.log('[AUTH] user registered: ', user.user.email)
     },
   },
 } satisfies NextAuthConfig

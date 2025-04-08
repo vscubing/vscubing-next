@@ -12,7 +12,6 @@ export const env = createEnv({
     AUTH_SECRET: z.string(),
     AUTH_GOOGLE_CLIENT_ID: z.string(),
     AUTH_GOOGLE_CLIENT_SECRET: z.string(),
-    AUTH_TRUST_HOST: z.literal('TRUE'),
     AUTH_URL: z.string().url(),
     CONTEST_CREATION_WEBHOOK_SECRET: z.string(),
     GH_CONTEST_CREATION_WEBHOOK_URL: z.string().url(),
@@ -37,7 +36,6 @@ export const env = createEnv({
     AUTH_SECRET: process.env.AUTH_SECRET,
     AUTH_GOOGLE_CLIENT_ID: process.env.AUTH_GOOGLE_CLIENT_ID,
     AUTH_GOOGLE_CLIENT_SECRET: process.env.AUTH_GOOGLE_CLIENT_SECRET,
-    AUTH_TRUST_HOST: process.env.AUTH_TRUST_HOST,
     AUTH_URL: process.env.AUTH_URL,
     NEXT_PUBLIC_APP_ENV: process.env.NEXT_PUBLIC_APP_ENV,
     CONTEST_CREATION_WEBHOOK_SECRET:

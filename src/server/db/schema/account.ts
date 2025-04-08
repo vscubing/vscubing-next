@@ -12,8 +12,6 @@ export const userTable = pgTable('user', (d) => ({
     .$defaultFn(() => crypto.randomUUID()), // NOTE: legacy userId's are just integers
   name: d.varchar('name', { length: 255 }).notNull(),
   email: d.varchar('email', { length: 255 }).notNull(),
-  emailVerified: d.timestamp('email_verified', { mode: 'date' }), // TODO: remove
-  image: d.text('image'), // TODO: remove
   finishedRegistration: d
     .boolean('finished_registration')
     .default(false)
