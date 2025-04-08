@@ -189,7 +189,7 @@ function getNavbarLinks(
       ),
       route: '/contests/ongoing',
       href: ongoingContest?.slug
-        ? `contests/${ongoingContest.slug}`
+        ? `/contests/${ongoingContest.slug}`
         : undefined,
       disabled: ongoingContest === null,
     },
