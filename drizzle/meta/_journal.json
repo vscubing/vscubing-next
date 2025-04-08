@@ -400,6 +400,13 @@
       "when": 1744140818367,
       "tag": "0060_harsh_amphibian",
       "breakpoints": true
+    },
+    {
+      "idx": 61,
+      "version": "7",
+      "when": 1744152138356,
+      "tag": "0061_fat_inhumans",
+      "breakpoints": true
     }
   ]
 }

@@ -65,7 +65,6 @@ export async function GET(request: Request): Promise<Response> {
       provider: 'google',
       providerAccountId: googleUserId,
       access_token: tokens.accessToken(),
-      refresh_token: tokens.refreshToken(),
       expires_at: tokens.accessTokenExpiresAt().getTime(),
     })
   }

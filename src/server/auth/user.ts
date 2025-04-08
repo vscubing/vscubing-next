@@ -41,7 +41,7 @@ export async function createUserAccount(params: {
   provider: 'google' | 'wca'
   providerAccountId: string
   userId: string
-  refresh_token: string
+  refresh_token?: string
   access_token: string
   expires_at: number
 }) {

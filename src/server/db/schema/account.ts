@@ -38,7 +38,7 @@ export const accountTable = pgTable(
       .notNull(),
     refresh_token: d.text('refresh_token'),
     access_token: d.text('access_token'),
-    expires_at: d.integer('expires_at'),
+    expires_at: d.bigint('expires_at', { mode: 'bigint' }),
     token_type: d.varchar('token_type', { length: 255 }),
   }),
   (t) => [
