@@ -23,10 +23,19 @@ import Link from 'next/link'
 import { api } from '@/trpc/server'
 import { tryCatchTRPC } from '@/app/_utils/try-catch'
 import { LayoutSectionHeader } from '@/app/(main)/_layout'
-import { LayoutHeaderTitlePortal } from '@/app/(main)/_layout/layout-header'
+import {
+  LayoutHeaderTitlePortal,
+  LayoutHeaderTitlePortalFallback,
+} from '@/app/(main)/_layout/layout-header'
 import { DisciplineSwitcher } from '@/app/_shared/discipline-switcher-client'
-import { NavigateBackButton } from '@/app/_shared/NavigateBackButton'
 import { TouchNotSupportedWrapper } from './_components/touch-not-supported-wrapper'
+import { withSuspense } from '@/app/_utils/with-suspense'
+import {
+  LayoutPageTitleMobile,
+  LayoutPageTitleMobileFallback,
+} from '@/app/_shared/layout-page-title-mobile'
+import { formatContestDuration } from '@/app/_utils/formatDate'
+import { NavigateBackButton } from '@/app/_shared/NavigateBackButton'
 
 export default async function SolveContestPage({
   searchParams,
@@ -40,12 +49,9 @@ export default async function SolveContestPage({
   const { contestSlug } = await params
   if (!isDiscipline(discipline)) redirect(`/contests/${contestSlug}`)
 
-  const title = 'Solve the ongoing contest' // TODO: add contest date
-
   return (
     <>
-      <h1 className='title-h2 hidden text-secondary-20 lg:block'>{title}</h1>
-      <LayoutHeaderTitlePortal>{title}</LayoutHeaderTitlePortal>
+      <PageTitle />
       <NavigateBackButton className='self-start' />
       <LayoutSectionHeader>
         <div className='flex gap-3'>
@@ -79,6 +85,24 @@ export default async function SolveContestPage({
   )
 }
 
+const PageTitle = withSuspense(
+  async () => {
+    const ongoing = await api.contest.getOngoing()
+    if (!ongoing) return
+    const title = `Ongoing contest ${ongoing?.slug} (${formatContestDuration(ongoing)})`
+    return (
+      <>
+        <LayoutPageTitleMobile>{title}</LayoutPageTitleMobile>
+        <LayoutHeaderTitlePortal>{title}</LayoutHeaderTitlePortal>
+      </>
+    )
+  },
+  <>
+    <LayoutPageTitleMobileFallback />
+    <LayoutHeaderTitlePortalFallback />
+  </>,
+)
+
 async function PageContent({
   contestSlug,
   discipline,
@@ -95,9 +119,6 @@ async function PageContent({
   if (error?.code === 'FORBIDDEN')
     redirect(`/contests/${contestSlug}/results?discipline=${discipline}`)
   if (error) throw error
-
-  // TODO: ongoing contest hint
-  // TODO: touch devices not supported hint
 
   return (
     <TouchNotSupportedWrapper>

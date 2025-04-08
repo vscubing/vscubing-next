@@ -18,8 +18,7 @@ export type ResultDnfish = ResultSuccess | ResultDnf
 type ResultSuccess = { timeMs: number; isDnf: false }
 type ResultDnf = { timeMs: null | number; isDnf: true }
 
-export const resultDnfish = z.custom<// TODO: check if this works
-ResultDnfish>(
+export const resultDnfish = z.custom<ResultDnfish>(
   ({ isDnf, timeMs }: { isDnf: boolean; timeMs: number | null }) => {
     if ((isDnf === false && timeMs !== null) || isDnf === true) return true
     return false
