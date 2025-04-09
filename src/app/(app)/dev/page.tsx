@@ -4,7 +4,7 @@ import {
   createNewContest,
   getLatestContest,
   getNextContestSlug,
-} from '@/backend/shared/ongoing-contest-admin'
+} from '@/backend/shared/contest-management'
 import { api } from '@/trpc/server'
 import {
   PrimaryButtonWithFormStatus,

@@ -1,7 +1,7 @@
 import { cn } from '@/frontend/utils/cn'
 import {
-    type TwistyPlayer as Player,
-    type TwistyPlayerConfig,
+  type TwistyPlayer as Player,
+  type TwistyPlayerConfig,
 } from '@vscubing/cubing/twisty'
 import { useRef, useEffect } from 'react'
 

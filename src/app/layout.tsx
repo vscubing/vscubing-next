@@ -4,8 +4,6 @@ import { headers } from 'next/headers'
 import type { ReactNode } from 'react'
 import { Hind, Kanit } from 'next/font/google'
 import { cn } from '../frontend/utils/cn'
-import { TRPCReactProvider } from '@/trpc/react'
-import { Toaster } from '../frontend/ui'
 import { env } from '@/env'
 
 export const metadata: Metadata = {
