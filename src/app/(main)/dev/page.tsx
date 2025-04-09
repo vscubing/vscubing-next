@@ -16,21 +16,21 @@ import { notFound } from 'next/navigation'
 import { createSystemInitialContest } from './actions'
 import { SolveValidator } from './_components/solve-validator'
 import { db } from '@/server/db'
-import {
-  contestDisciplineTable,
-  contestTable,
-  scrambleTable,
-} from '@/server/db/schema'
-import { desc, and, eq, or } from 'drizzle-orm'
-import type { ReactNode } from 'react'
+import { contestDisciplineTable, scrambleTable } from '@/server/db/schema'
+import { and, eq, or } from 'drizzle-orm'
+import { Suspense, type ReactNode } from 'react'
+
+export const ssg = false
 
 export default function DevPage() {
   if (env.NEXT_PUBLIC_APP_ENV === 'production') notFound()
 
   return (
     <div className='flex flex-1 flex-wrap justify-between gap-8 rounded-2xl bg-black-80 p-6 sm:p-3'>
-      <OngoingContestInfo />
-      <SolveValidator />
+      <Suspense>
+        <OngoingContestInfo />
+        <SolveValidator />
+      </Suspense>
     </div>
   )
 }

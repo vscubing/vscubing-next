@@ -91,7 +91,6 @@
     - [x] cron job github action
 - [x] adjust google auth permissions
 - [x] block external db access
-- [ ] dnf on page reload
 - [ ] merge root layout files
 - [ ] todos
 - [ ] settings one opened => close currently opened

@@ -1,30 +1,28 @@
 import { useTRPC } from '@/trpc/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useRouter } from 'next/navigation'
 
 export function useLogout() {
   const trpc = useTRPC()
-  const router = useRouter()
   const queryClient = useQueryClient()
-  const { mutateAsync, ...logoutMutation } = useMutation(
+  const { mutateAsync, ...mutation } = useMutation(
     trpc.user.logout.mutationOptions({
       onSettled: () => {
-        void queryClient.invalidateQueries(trpc.user.user.queryOptions())
+        void queryClient.invalidateQueries(trpc.user.me.queryOptions())
       },
     }),
   )
   return {
-    ...logoutMutation,
+    ...mutation,
     logout: async () => {
       await mutateAsync()
-      await queryClient.invalidateQueries(trpc.user.user.queryOptions())
-      router.refresh()
+      await queryClient.invalidateQueries(trpc.user.me.queryOptions())
+      location.reload()
     },
   }
 }
 
 export function useUser() {
   const trpc = useTRPC()
-  const { data: user, ...res } = useQuery(trpc.user.user.queryOptions())
+  const { data: user, ...res } = useQuery(trpc.user.me.queryOptions())
   return { ...res, user }
 }
