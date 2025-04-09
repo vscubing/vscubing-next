@@ -90,7 +90,7 @@
     - [x] authorization token
     - [x] cron job github action
 - [x] adjust google auth permissions
-- [ ] block external db access
+- [x] block external db access
 - [ ] dnf on page reload
 - [ ] merge root layout files
 - [ ] todos

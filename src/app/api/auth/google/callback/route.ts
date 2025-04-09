@@ -30,6 +30,13 @@ export async function GET(request: Request): Promise<Response> {
     storedState === null ||
     codeVerifier === null
   ) {
+    console.log(
+      '[GOOGLE AUTH] no code/state/storedState/codeVerifier: ',
+      code,
+      state,
+      storedState,
+      codeVerifier,
+    )
     return new Response(null, {
       status: 400,
     })
@@ -43,11 +50,12 @@ export async function GET(request: Request): Promise<Response> {
   const { data: tokens, error } = await tryCatch(
     googleOauthClient.validateAuthorizationCode(code, codeVerifier),
   )
-  if (error)
+  if (error) {
+    console.log(error)
     return new Response(null, {
       status: 400,
     })
-
+  }
   const claims = decodeIdToken(tokens.idToken()) as {
     email: string
     sub: string
@@ -65,7 +73,7 @@ export async function GET(request: Request): Promise<Response> {
       provider: 'google',
       providerAccountId: googleUserId,
       access_token: tokens.accessToken(),
-      expires_at: tokens.accessTokenExpiresAt().getTime(),
+      expires_at: BigInt(tokens.accessTokenExpiresAt().getTime()),
     })
   }
 

@@ -43,7 +43,7 @@ export async function createUserAccount(params: {
   userId: string
   refresh_token?: string
   access_token: string
-  expires_at: number
+  expires_at: bigint
 }) {
   const [account] = await db
     .insert(accountTable)
