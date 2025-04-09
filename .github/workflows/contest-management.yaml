@@ -2,7 +2,7 @@ name: Close the ongoing contest and publish a new one
 
 on:
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: "0 22 * * *"
   workflow_dispatch:
 
 
