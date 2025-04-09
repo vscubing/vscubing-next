@@ -9,6 +9,7 @@ import {
 } from '../db/schema'
 import { generateScrambles } from './generate-scrambles'
 import { env } from '@/env'
+import { sendTelegramMessage } from './telegram'
 
 const PREFIX = '[ONGOING CONTEST ADMIN]'
 export const NO_ONGOING_CONTEST_ERROR_MESSAGE = `${PREFIX} no ongoing contest. Please create one manually from the developer tools`

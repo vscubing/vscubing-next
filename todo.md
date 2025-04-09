@@ -98,20 +98,25 @@
 - [x] refactor file structure (shared/ui/components)
 - [x] make dashboard non blocking
 - [x] pagination spinner
-- [ ] hide contests with no results
-- [ ] rename contestdiscipline to round
-- [ ] rename state to status
-- [ ] rename add auth_ prefix to auth tables
-- [ ] rename reconstruction to solution
+- [x] hide contests with no results
+- [ ] telegram notification for contest creation
+- [ ] db refactor
+    - [ ] rename contestdiscipline to round
+    - [ ] rename state to status
+    - [ ] rename add auth_ prefix to auth tables
+    - [ ] rename reconstruction to solution
 - [ ] redo migrations
     - [ ] correct primary key autoincrementation https://stackoverflow.com/questions/4448340/postgresql-duplicate-key-violates-unique-constraint
     - [ ] figure out why deployment's initial db migration doesn't work (maybe it will be solved after redoing the migrations from scratch)
+- [ ] staging/prod env
 
 nicities:
 - [ ] expandContestLink
 - [ ] skip inspection by default
 - [ ] leaderboard: on tie => sort by single result (+ unit test it)
 - [ ] fancy white glowing outline effect on own result / after jumping to a solve
-- [ ] staging/prod env
 - [ ] reimport fresh db backup
 - [ ] db backups
+- [ ] delete round sessions with no results & dnf round sessions with too little results
+    - [ ] on contest close
+    - [ ] migration

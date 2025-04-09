@@ -3,8 +3,9 @@ import { env } from '@/env'
 import {
   closeOngoingAndCreateNewContest,
   NO_ONGOING_CONTEST_ERROR_MESSAGE,
-} from '@/backend/shared/ongoing-contest-admin'
+} from '@/backend/shared/contest-management'
 import type { NextRequest } from 'next/server'
+import { sendTelegramMessage } from '@/backend/shared/telegram'
 
 export async function POST(request: NextRequest) {
   const token = new Headers(request.headers)
@@ -31,7 +32,11 @@ export async function POST(request: NextRequest) {
   const { newContestSlug } = data
 
   console.log(
-    `[CONTEST MANAGEMENT] Successfully created Contest ${newContestSlug}`,
+    `[CONTEST MANAGEMENT] Closed ongoing and published Contest ${newContestSlug} (cause: webhook)`,
   )
-  return new Response(`Successfully created Contest ${newContestSlug}`)
+  await sendTelegramMessage(
+    `Closed ongoing and published Contest ${newContestSlug} (cause: webhook)`,
+    'contest-management',
+  )
+  return new Response(`Successfully published Contest ${newContestSlug}`)
 }

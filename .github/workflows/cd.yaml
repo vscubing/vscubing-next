@@ -34,6 +34,9 @@ jobs:
           NEXT_PUBLIC_APP_ENV=${{ vars.NEXT_PUBLIC_APP_ENV }}
           CONTEST_CREATION_WEBHOOK_SECRET=${{ secrets.CONTEST_CREATION_WEBHOOK_SECRET }}
           GH_CONTEST_CREATION_WEBHOOK_URL=${{ vars.GH_CONTEST_CREATION_WEBHOOK_URL }}
+          TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_CONTEST_MANAGEMENT_THREAD_ID=${{ secrets.TELEGRAM_CONTEST_MANAGEMENT_THREAD_ID }}
           EOF
 
       # # create a unique tag for each build for debugging
