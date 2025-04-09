@@ -1,9 +1,9 @@
 'use client'
-import { cn } from '@/app/_utils/cn'
+import { cn } from '@/frontend/utils/cn'
 import { useState, useEffect } from 'react'
-import { Container } from '../_shared/Container'
-import { CloseIcon, Logo, MenuIcon } from '@/app/_components/ui'
-import { DynamicLinkToApp } from '../_shared/LinkToApp'
+import { Container } from '../_shared/container'
+import { CloseIcon, Logo, MenuIcon } from '@/frontend/ui'
+import { DynamicLinkToApp } from '../_shared/link-to-app'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 
 export function LandingHeader({

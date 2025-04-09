@@ -1,5 +1,5 @@
 import { env } from '@/env'
-import { wcaOauthClient } from '@/server/auth/oauth'
+import { wcaOauthClient } from '@/backend/auth/oauth'
 import { generateState, generateCodeVerifier } from 'arctic'
 import { cookies } from 'next/headers'
 import type { NextRequest } from 'next/server'

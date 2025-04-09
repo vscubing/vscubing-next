@@ -1,9 +1,9 @@
 import { cookies } from 'next/headers'
-import { wcaOauthClient } from '@/server/auth/oauth'
+import { wcaOauthClient } from '@/backend/auth/oauth'
 import { z } from 'zod'
-import { createUserAccount } from '@/server/auth/user'
-import { auth } from '@/server/auth'
-import { tryCatch } from '@/app/_utils/try-catch'
+import { createUserAccount } from '@/backend/auth/user'
+import { auth } from '@/backend/auth'
+import { tryCatch } from '@/utils/try-catch'
 import { env } from '@/env'
 
 // TODO: redirect back on error

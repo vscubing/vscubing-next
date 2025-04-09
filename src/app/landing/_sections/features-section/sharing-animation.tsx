@@ -1,4 +1,4 @@
-import { SecondaryButton, ShareIcon } from '@/app/_components/ui'
+import { SecondaryButton, ShareIcon } from '@/frontend/ui'
 import smileyArrowImg from '@/../public/landing/features-sharing-img.svg'
 import cursorIcon from '@/../public/landing/features-sharing-cursor.svg'
 import { AnimationItem } from './animations'

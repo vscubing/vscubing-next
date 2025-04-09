@@ -1,4 +1,4 @@
-import { cn } from '@/app/_utils/cn'
+import { cn } from '@/frontend/utils/cn'
 import { type CSSProperties } from 'react'
 import { AnimationItem } from './animations'
 

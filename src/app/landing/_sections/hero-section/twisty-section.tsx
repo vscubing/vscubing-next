@@ -5,7 +5,7 @@ import {
   TwistyCube,
   TwistyControls,
   TwistyScrubber,
-} from '@/app/_shared/twisty'
+} from '@/frontend/shared/twisty'
 import { useEffect } from 'react'
 
 export default function TwistySection() {

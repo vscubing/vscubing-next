@@ -1,4 +1,4 @@
-import type { User, userSimulatorSettingsTable } from '@/server/db/schema'
+import type { User, userSimulatorSettingsTable } from '@/backend/db/schema'
 import { z } from 'zod'
 
 export type { User }

@@ -3,9 +3,9 @@ import { type Metadata } from 'next'
 import { headers } from 'next/headers'
 import type { ReactNode } from 'react'
 import { Hind, Kanit } from 'next/font/google'
-import { cn } from './_utils/cn'
+import { cn } from '../frontend/utils/cn'
 import { TRPCReactProvider } from '@/trpc/react'
-import { Toaster } from './_components/ui'
+import { Toaster } from '../frontend/ui'
 import { env } from '@/env'
 
 export const metadata: Metadata = {
@@ -39,12 +39,7 @@ export default async function RootLayout({
 
   return (
     <html lang='en' className={cn(hind.className, kanit.className)}>
-      <body>
-        <TRPCReactProvider>
-          {children}
-          <Toaster />
-        </TRPCReactProvider>
-      </body>
+      <body>{children}</body>
     </html>
   )
 }

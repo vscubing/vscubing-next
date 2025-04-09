@@ -1,6 +1,6 @@
 'use client'
 
-import { cn } from '@/app/_utils/cn'
+import { cn } from '@/frontend/utils/cn'
 import {
   createContext,
   type ReactNode,

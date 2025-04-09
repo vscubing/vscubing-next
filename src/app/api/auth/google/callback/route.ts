@@ -1,19 +1,19 @@
 import { cookies } from 'next/headers'
 import { decodeIdToken } from 'arctic'
 
-import { googleOauthClient } from '@/server/auth/oauth'
+import { googleOauthClient } from '@/backend/auth/oauth'
 import {
   createSession,
   generateSessionToken,
   setSessionTokenCookie,
-} from '@/server/auth/session'
+} from '@/backend/auth/session'
 import {
   createUser,
   createUserAccount,
   getUserAccount,
   getUserFromEmail,
-} from '@/server/auth/user'
-import { tryCatch } from '@/app/_utils/try-catch'
+} from '@/backend/auth/user'
+import { tryCatch } from '@/utils/try-catch'
 import { GOOGLE_AUTH_ERROR_SEARCH_PARAM } from '../error-search-param'
 
 // TODO: redirect back on error

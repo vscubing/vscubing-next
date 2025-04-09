@@ -1,4 +1,4 @@
-import { Container } from '../../_shared/Container'
+import { Container } from '../../_shared/container'
 import {
   LeaderboardIcon,
   ResultIcon,

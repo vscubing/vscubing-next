@@ -1,9 +1,9 @@
-import { tryCatch } from '@/app/_utils/try-catch'
+import { tryCatch } from '@/utils/try-catch'
 import { env } from '@/env'
 import {
   closeOngoingAndCreateNewContest,
   NO_ONGOING_CONTEST_ERROR_MESSAGE,
-} from '@/server/internal/ongoing-contest-admin'
+} from '@/backend/internal/ongoing-contest-admin'
 import type { NextRequest } from 'next/server'
 
 export async function POST(request: NextRequest) {

@@ -1,14 +1,14 @@
 import { type ReactNode } from 'react'
-import { Container } from '../_shared/Container'
+import { Container } from '../_shared/container'
 import {
   Dialog,
   DialogOverlay,
   DialogPortal,
   DialogTrigger,
-} from '@/app/_components/ui'
-import { KeyMapDialogContent } from '@/app/_shared/KeyMapDialog'
-import { StaticLinkToApp } from '../_shared/LinkToApp'
-import { LazyAutoplayVideo } from '../_shared/LazyAutoplayVideo'
+} from '@/frontend/ui'
+import { KeyMapDialogContent } from '@/frontend/shared/key-map-dialog'
+import { StaticLinkToApp } from '../_shared/link-to-app'
+import { LazyAutoplayVideo } from '../_shared/lazy-autoplay-video'
 
 export function GuideSection({ id }: { id: string }) {
   return (

@@ -5,9 +5,9 @@ import {
   LinkedinIcon,
   Logo,
   SecondaryButton,
-} from '@/app/_components/ui'
-import { Container } from '../_shared/Container'
-import { cn } from '@/app/_utils/cn'
+} from '@/frontend/ui'
+import { Container } from '../_shared/container'
+import { cn } from '@/frontend/utils/cn'
 import footerBgCubes from '@/../public/landing/footer/footer-bg-cubes.svg'
 import animatedCube1 from '@/../public/landing/footer/animated-cube-1.svg'
 import animatedCube2 from '@/../public/landing/footer/animated-cube-2.svg'

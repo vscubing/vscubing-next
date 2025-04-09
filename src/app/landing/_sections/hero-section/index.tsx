@@ -1,13 +1,13 @@
 'use client'
 
-import { LoadingSpinner } from '@/app/_components/ui'
+import { LoadingSpinner } from '@/frontend/ui'
 import { StopwatchIcon } from '../../_shared/icons'
-import { KEY_MAP, KeyMapTile } from '@/app/_shared/KeyMapDialog'
-import { Container } from '../../_shared/Container'
-import { AnimatedBlob } from '../../_shared/AnimatedBlob'
-import { StaticLinkToApp } from '../../_shared/LinkToApp'
+import { KEY_MAP, KeyMapTile } from '@/frontend/shared/key-map-dialog'
+import { Container } from '../../_shared/container'
+import { AnimatedBlob } from '../../_shared/animated-blob'
+import { StaticLinkToApp } from '../../_shared/link-to-app'
 import { Suspense, lazy } from 'react'
-import { useMatchesScreen } from '@/app/_utils/tailwind'
+import { useMatchesScreen } from '@/frontend/utils/tailwind'
 const TwistySection = lazy(() => import('./twisty-section'))
 
 export function HeroSection() {

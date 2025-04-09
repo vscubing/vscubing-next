@@ -1,4 +1,4 @@
-import { cn } from '@/app/_utils/cn'
+import { cn } from '@/frontend/utils/cn'
 import type { ReactNode } from 'react'
 
 export function Container({

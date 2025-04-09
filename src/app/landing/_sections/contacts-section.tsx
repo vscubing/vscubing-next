@@ -1,11 +1,11 @@
 'use client'
 
-import { DiscordIcon, PrimaryButton } from '@/app/_components/ui'
-import { Container } from '../_shared/Container'
+import { DiscordIcon, PrimaryButton } from '@/frontend/ui'
+import { Container } from '../_shared/container'
 import contactsPeopleImg from '@/../public/landing/contacts-people.svg'
-import { AnimatedBlob } from '../_shared/AnimatedBlob'
+import { AnimatedBlob } from '../_shared/animated-blob'
 import Image from 'next/image'
-import { useMatchesScreen } from '@/app/_utils/tailwind'
+import { useMatchesScreen } from '@/frontend/utils/tailwind'
 
 export function ContactsSection({ id }: { id: string }) {
   const isSmScreen = useMatchesScreen('sm')
