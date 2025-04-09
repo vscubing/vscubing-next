@@ -15,8 +15,8 @@ import { eq, desc, and, lt } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
 import { resultDnfish, type ContestResultRoundSession } from '@/types'
 import { groupBy } from '@/utils/group-by'
-import { sortWithRespectToExtras } from './sort-with-respect-to-extras'
-import { getContestUserCapabilities } from '../../internal/get-contest-user-capabilities'
+import { sortWithRespectToExtras } from '../../shared/sort-with-respect-to-extras'
+import { getContestUserCapabilities } from '../../shared/get-contest-user-capabilities'
 
 export const contestRouter = createTRPCRouter({
   getPastContests: publicProcedure
@@ -195,7 +195,7 @@ export const contestRouter = createTRPCRouter({
         ({ roundSessionId }) => roundSessionId,
       )
 
-      const res = Array.from(solvesBySessionId.values())
+      return Array.from(solvesBySessionId.values())
         .sort((a, b) => (a[0]!.avgMs ?? -Infinity) - (b[0]!.avgMs ?? -Infinity))
         .map((session) => ({
           avgMs: session[0]!.avgMs,
@@ -210,20 +210,6 @@ export const contestRouter = createTRPCRouter({
           ),
           nickname: session[0]!.nickname,
         })) satisfies ContestResultRoundSession[]
-
-      return [
-        ...res.filter((s) => !s.isOwn),
-        ...res
-          .map((s) => ({ ...s, id: Math.random() }))
-          .filter((s) => !s.isOwn),
-        ...res.map((s) => ({ ...s, id: Math.random() })),
-        ...res
-          .map((s) => ({ ...s, id: Math.random() }))
-          .filter((s) => !s.isOwn),
-        ...res
-          .map((s) => ({ ...s, id: Math.random() }))
-          .filter((s) => !s.isOwn),
-      ]
     }),
 
   getSolve: publicProcedure

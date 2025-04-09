@@ -1,7 +1,12 @@
-import type { User, userSimulatorSettingsTable } from '@/backend/db/schema'
+import type {
+  contestTable,
+  User,
+  userSimulatorSettingsTable,
+} from '@/backend/db/schema'
 import { z } from 'zod'
 
 export type { User }
+
 export const SCRAMBLE_POSITIONS = ['1', '2', '3', '4', '5', 'E1', 'E2'] as const
 export type ScramblePosition = (typeof SCRAMBLE_POSITIONS)[number]
 export function isExtra(position: ScramblePosition) {
@@ -48,6 +53,11 @@ export function isLeaderboardType(str: unknown): str is LeaderboardType {
 export function castLeaderboardType(str: unknown): LeaderboardType {
   return z.enum(LEADERBOARD_TYPES).catch(DEFAULT_LEADERBOARD_TYPE).parse(str)
 }
+
+export type ContestMetadata = Pick<
+  typeof contestTable.$inferSelect,
+  'startDate' | 'endDate' | 'expectedEndDate' | 'slug'
+>
 
 export type ContestResultRoundSession = {
   solves: {

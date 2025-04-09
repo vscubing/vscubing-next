@@ -94,8 +94,6 @@
 - [x] merge root layout files
 - [x] remove select *
 - [x] redirect back on sign in error
-- [ ] settings one opened => close currently opened
-- [ ] remove user dropdown outline
 - [ ] hidden contest disciplines
 - [ ] redo migrations
     - [ ] correct primary key autoincrementation https://stackoverflow.com/questions/4448340/postgresql-duplicate-key-violates-unique-constraint

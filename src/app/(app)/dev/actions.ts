@@ -3,7 +3,7 @@
 import type { Discipline } from '@/types'
 import { db } from '@/backend/db'
 import { contestTable, disciplineTable } from '@/backend/db/schema'
-import { validateSolve } from '@/backend/internal/validate-solve'
+import { validateSolve } from '@/backend/shared/validate-solve'
 import dayjs from 'dayjs'
 import { revalidatePath } from 'next/cache'
 

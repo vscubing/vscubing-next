@@ -3,7 +3,7 @@ import { env } from '@/env'
 import {
   closeOngoingAndCreateNewContest,
   NO_ONGOING_CONTEST_ERROR_MESSAGE,
-} from '@/backend/internal/ongoing-contest-admin'
+} from '@/backend/shared/ongoing-contest-admin'
 import type { NextRequest } from 'next/server'
 
 export async function POST(request: NextRequest) {

@@ -10,11 +10,14 @@ import {
   solveTable,
 } from '@/backend/db/schema'
 import { resultDnfish, SCRAMBLE_POSITIONS, SOLVE_STATES } from '@/types'
-import { sortWithRespectToExtras } from './sort-with-respect-to-extras'
-import { calculateAvg } from './calculate-avg'
-import { validateSolve } from '@/backend/internal/validate-solve'
-import { getContestUserCapabilities } from '../../internal/get-contest-user-capabilities'
+import { sortWithRespectToExtras } from '../../shared/sort-with-respect-to-extras'
+import { calculateAvg } from '../../shared/calculate-avg'
+import { validateSolve } from '@/backend/shared/validate-solve'
+import { getContestUserCapabilities } from '../../shared/get-contest-user-capabilities'
 import { removeSolutionComments } from '@/utils/remove-solution-comments'
+
+const EXTRAS_PER_ROUND = 2
+const ROUND_ATTEMPTS_QTY = 5
 
 const submittedSolvesInvariant = z.array(
   z.object(
@@ -265,6 +268,3 @@ export const roundSessionRouter = createTRPCRouter({
       }),
     ),
 })
-
-const EXTRAS_PER_ROUND = 2
-const ROUND_ATTEMPTS_QTY = 5

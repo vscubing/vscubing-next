@@ -1,15 +1,11 @@
 import { SecondaryButton, ArrowRightIcon } from '@/frontend/ui'
-import { type Discipline } from '@/types'
-import type { contestTable } from '@/backend/db/schema'
+import { type ContestMetadata, type Discipline } from '@/types'
 import Link from 'next/link'
 import { cn } from '@/frontend/utils/cn'
 import { formatContestDuration } from '@/utils/format-date'
 
 type ContestProps = {
-  contest: Pick<
-    typeof contestTable.$inferSelect,
-    'startDate' | 'endDate' | 'expectedEndDate' | 'slug'
-  >
+  contest: ContestMetadata
   discipline: Discipline
   className?: string
 }
