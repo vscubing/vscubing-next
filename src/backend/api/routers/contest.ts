@@ -29,7 +29,7 @@ export const contestRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const items = await ctx.db
-        .select({
+        .selectDistinctOn([contestTable.startDate, contestDisciplineTable.id], {
           slug: contestTable.slug,
           startDate: contestTable.startDate,
           expectedEndDate: contestTable.expectedEndDate,
@@ -37,13 +37,17 @@ export const contestRouter = createTRPCRouter({
           isOngoing: contestTable.isOngoing,
         })
         .from(contestTable)
-        .leftJoin(
+        .innerJoin(
           contestDisciplineTable,
           eq(contestDisciplineTable.contestSlug, contestTable.slug),
         )
-        .leftJoin(
+        .innerJoin(
           disciplineTable,
           eq(contestDisciplineTable.disciplineSlug, disciplineTable.slug),
+        )
+        .innerJoin(
+          roundSessionTable,
+          eq(roundSessionTable.contestDisciplineId, contestDisciplineTable.id),
         )
         .where(
           and(
@@ -52,7 +56,7 @@ export const contestRouter = createTRPCRouter({
             input.cursor ? lt(contestTable.startDate, input.cursor) : undefined,
           ),
         )
-        .orderBy(desc(contestTable.startDate))
+        .orderBy(desc(contestTable.startDate), contestDisciplineTable.id)
         .limit(input.limit + 1)
 
       let nextCursor: typeof input.cursor | undefined = undefined

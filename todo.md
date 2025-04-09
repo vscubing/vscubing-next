@@ -94,7 +94,7 @@
 - [x] merge root layout files
 - [x] remove select *
 - [x] redirect back on sign in error
-- [ ] hidden contest disciplines
+- [x] hide contests with no results
 - [ ] redo migrations
     - [ ] correct primary key autoincrementation https://stackoverflow.com/questions/4448340/postgresql-duplicate-key-violates-unique-constraint
     - [ ] figure out why deployment's initial db migration doesn't work (maybe it will be solved after redoing the migrations from scratch)
@@ -109,12 +109,8 @@ nicities:
 - [ ] skip inspection by default
 - [ ] no ongoing contest handling
 - [ ] refactor file structure (shared/ui/components)
-- [ ] restructure server: add queries directory
-- [ ] dev tools
 - [ ] leaderboard: on tie => sort by single result (+ unit test it)
-- [ ] rename disciplines 3by3 => 3x3
 - [ ] rename add auth_ prefix to auth tables
-- [ ] delete contests with no results
 - [ ] fancy white glowing outline effect on own result / after jumping to a solve
 - [ ] staging/prod env
 - [ ] reimport fresh db backup
