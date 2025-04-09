@@ -1,4 +1,4 @@
-import '@/styles/globals.css'
+import '@/globals.css'
 import { type Metadata } from 'next'
 import { headers } from 'next/headers'
 import type { ReactNode } from 'react'

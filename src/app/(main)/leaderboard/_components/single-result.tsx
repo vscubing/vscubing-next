@@ -11,7 +11,7 @@ import {
 import { SpinningBorder } from '@/app/_components/ui/spinning-border'
 import { PlaceLabel } from '@/app/_shared/PlaceLabel'
 import { SolveTimeLinkOrDnf } from '@/app/_shared/SolveTimeButton'
-import type { Discipline } from '@/app/_types'
+import type { Discipline } from '@/types'
 import { cn } from '@/app/_utils/cn'
 import { formatDate } from '@/app/_utils/formatDate'
 import { useMatchesScreen } from '@/app/_utils/tailwind'

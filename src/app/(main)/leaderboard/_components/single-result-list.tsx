@@ -1,7 +1,7 @@
 'use client'
 
 import { HintSection } from '@/app/_shared/HintSection'
-import { type Discipline } from '@/app/_types'
+import { type Discipline } from '@/types'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { useTRPC, type RouterOutputs } from '@/trpc/react'
 import { SingleResult, SingleResultListShell } from './single-result'

@@ -19,7 +19,7 @@ import {
   DialogClose,
 } from '@/app/_components/ui'
 import { BaseDialogButton } from '@/app/_components/ui/popovers/BaseDialog'
-import type { ScramblePosition, ResultDnfish, Discipline } from '@/app/_types'
+import type { ScramblePosition, ResultDnfish, Discipline } from '@/types'
 
 export function CurrentSolve({
   areActionsDisabled,

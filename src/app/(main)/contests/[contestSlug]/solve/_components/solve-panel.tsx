@@ -4,7 +4,7 @@ import {
   SolveTimeLabel,
   SolveTimeLinkOrDnf,
 } from '@/app/_shared/SolveTimeButton'
-import type { ScramblePosition, ResultDnfish, Discipline } from '@/app/_types'
+import type { ScramblePosition, ResultDnfish, Discipline } from '@/types'
 import { type ReactNode } from 'react'
 
 export function SolvePanel({

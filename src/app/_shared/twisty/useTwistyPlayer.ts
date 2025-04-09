@@ -1,4 +1,4 @@
-import { type Discipline } from '@/app/_types'
+import { type Discipline } from '@/types'
 import { TwistyPlayer, type PuzzleID } from '@vscubing/cubing/twisty'
 import { useState, useEffect } from 'react'
 import { doEverything } from './solution-transformer'

@@ -1,4 +1,4 @@
-import type { Discipline } from '@/app/_types'
+import type { Discipline } from '@/types'
 import { tryCatch } from '@/app/_utils/try-catch'
 import childProcess from 'child_process'
 import path from 'path'

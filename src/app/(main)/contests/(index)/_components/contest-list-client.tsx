@@ -1,5 +1,5 @@
 'use client'
-import type { Discipline } from '@/app/_types'
+import type { Discipline } from '@/types'
 import { useTRPC, type RouterOutputs } from '@/trpc/react'
 import React, { useEffect } from 'react'
 import { ContestRowDesktop, ContestRowMobile } from './contest'

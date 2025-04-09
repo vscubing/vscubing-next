@@ -1,6 +1,6 @@
 'use client'
 
-import type { Discipline } from '@/app/_types'
+import type { Discipline } from '@/types'
 import { CurrentSolve } from './current-solve'
 import { Progress } from './progress'
 import { SolvePanel } from './solve-panel'

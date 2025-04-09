@@ -1,4 +1,4 @@
-import type { ResultDnfish } from '@/app/_types'
+import type { ResultDnfish } from '@/types'
 
 const COUNTING_RESULTS = 3
 

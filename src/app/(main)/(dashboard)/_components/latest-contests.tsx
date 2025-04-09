@@ -3,7 +3,7 @@
 import { UnderlineButton } from '@/app/_components/ui'
 import { useFittingCount } from '@/app/_shared/autofillHeight/use-fitting-count'
 import { Contest, ContestSkeleton } from '@/app/_shared/contests/Contest'
-import { DEFAULT_DISCIPLINE } from '@/app/_types'
+import { DEFAULT_DISCIPLINE } from '@/types'
 import { cn } from '@/app/_utils/cn'
 import { useMatchesScreen } from '@/app/_utils/tailwind'
 import type { RouterOutputs } from '@/trpc/react'

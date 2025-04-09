@@ -1,7 +1,7 @@
 'use client'
 
 import { DisciplineSwitcherItem } from '@/app/_components/ui'
-import { type Discipline } from '@/app/_types'
+import { type Discipline } from '@/types'
 import Link from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { useCallback, useState } from 'react'

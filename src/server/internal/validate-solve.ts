@@ -1,4 +1,4 @@
-import type { Discipline } from '@/app/_types'
+import type { Discipline } from '@/types'
 import { puzzles } from '@vscubing/cubing/puzzles'
 
 export async function validateSolve({

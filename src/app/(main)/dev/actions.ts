@@ -1,6 +1,6 @@
 'use server'
 
-import type { Discipline } from '@/app/_types'
+import type { Discipline } from '@/types'
 import { db } from '@/server/db'
 import { contestTable, disciplineTable } from '@/server/db/schema'
 import { validateSolve } from '@/server/internal/validate-solve'

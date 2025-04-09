@@ -6,7 +6,7 @@ import {
   DISCIPLINES,
   isDiscipline,
   type Discipline,
-} from '@/app/_types'
+} from '@/types'
 import { LayoutPageTitleMobile } from '@/app/_shared/layout-page-title-mobile'
 import { NavigateBackButton } from '@/app/_shared/NavigateBackButton'
 import { redirect } from 'next/navigation'

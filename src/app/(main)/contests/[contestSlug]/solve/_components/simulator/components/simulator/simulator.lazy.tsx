@@ -10,7 +10,7 @@ import {
   INSPECTION_DNF_THRESHHOLD_MS,
   INSPECTION_PLUS_TWO_THRESHHOLD_MS,
 } from './constants'
-import type { ResultDnfish } from '@/app/_types'
+import type { ResultDnfish } from '@/types'
 import type { userSimulatorSettingsTable } from '@/server/db/schema'
 import type { SimulatorCameraPosition } from 'vendor/cstimer'
 

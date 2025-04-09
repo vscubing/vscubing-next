@@ -12,8 +12,8 @@ import {
   KeyMapDialogTrigger,
   KeyMapDialogContent,
 } from '@/app/_shared/KeyMapDialog'
-import { isDiscipline, type Discipline } from '@/app/_types'
-import { CONTEST_UNAUTHORIZED_MESSAGE, DISCIPLINES } from '@/shared'
+import { isDiscipline, type Discipline } from '@/types'
+import { CONTEST_UNAUTHORIZED_MESSAGE, DISCIPLINES } from '@/types'
 import { notFound } from 'next/navigation'
 import { redirect } from 'next/navigation'
 import { Suspense, type ReactNode } from 'react'

@@ -28,7 +28,7 @@ import {
   DialogClose,
 } from '@/app/_components/ui'
 import { LoadingDots } from '@/app/_components/ui/loading-dots'
-import type { User } from '@/app/_types'
+import type { User } from '@/types'
 import { useLogout, useUser } from '@/app/_shared/use-user'
 
 export function UserDropdownOrSignIn() {

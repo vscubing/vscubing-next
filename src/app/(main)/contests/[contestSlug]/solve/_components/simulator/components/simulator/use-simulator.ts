@@ -1,4 +1,4 @@
-import { isDiscipline, type SimulatorSettings } from '@/app/_types'
+import { isDiscipline, type SimulatorSettings } from '@/types'
 import {
   type SimulatorCameraPosition,
   type TwistySimulatorMoveListener,

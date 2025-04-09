@@ -1,4 +1,4 @@
-import type { Discipline } from '@/app/_types'
+import type { Discipline } from '@/types'
 import { auth } from '@/server/auth'
 import { db } from '@/server/db'
 import {

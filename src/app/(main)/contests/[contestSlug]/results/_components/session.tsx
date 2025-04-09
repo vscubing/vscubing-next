@@ -12,7 +12,7 @@ import {
   SolveTimeLabel,
   SolveTimeLinkOrDnf,
 } from '@/app/_shared/SolveTimeButton'
-import type { Discipline, ContestResultRoundSession } from '@/app/_types'
+import type { Discipline, ContestResultRoundSession } from '@/types'
 import { SpinningBorder } from '@/app/_components/ui/spinning-border'
 import { tailwindConfig, useMatchesScreen } from '@/app/_utils/tailwind'
 import type { RefObject } from 'react'

@@ -13,7 +13,7 @@ import { type TwistyPlayer as Player } from '@vscubing/cubing/twisty'
 import { MinusIcon, PlusIcon } from '@/app/_components/ui'
 import * as Accordion from '@radix-ui/react-accordion'
 import { cn } from '@/app/_utils/cn'
-import type { Discipline } from '@/app/_types'
+import type { Discipline } from '@/types'
 import { useMatchesScreen } from '@/app/_utils/tailwind'
 
 export function TwistySection({

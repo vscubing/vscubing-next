@@ -5,7 +5,7 @@ import { validateSolveAction, type Solve } from '../actions'
 import { useForm } from 'react-hook-form'
 import { useState, useTransition } from 'react'
 import { removeSolutionComments } from '@/app/_utils/remove-solution-comments'
-import type { Discipline } from '@/app/_types'
+import type { Discipline } from '@/types'
 
 export function SolveValidator() {
   const {

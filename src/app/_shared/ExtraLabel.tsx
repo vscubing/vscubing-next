@@ -1,5 +1,5 @@
 import { cn } from '@/app/_utils/cn'
-import { isExtra, type ScramblePosition } from '../_types'
+import { isExtra, type ScramblePosition } from '../../types'
 
 export function ExtraLabel({
   scramblePosition,

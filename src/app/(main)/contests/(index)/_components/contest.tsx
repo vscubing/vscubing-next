@@ -1,4 +1,4 @@
-import { type Discipline } from '@/app/_types'
+import { type Discipline } from '@/types'
 import { DisciplineIcon, SecondaryButton } from '@/app/_components/ui'
 import type { contestTable } from '@/server/db/schema'
 import { formatContestDuration } from '@/app/_utils/formatDate'

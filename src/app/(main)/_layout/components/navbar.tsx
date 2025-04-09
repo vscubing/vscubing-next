@@ -16,7 +16,7 @@ import {
   OngoingContestIcon,
   CodeIcon,
 } from '@/app/_components/ui'
-import { DEFAULT_DISCIPLINE } from '@/app/_types'
+import { DEFAULT_DISCIPLINE } from '@/types'
 import { env } from '@/env'
 
 type NavbarProps = {

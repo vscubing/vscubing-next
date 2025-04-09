@@ -1,5 +1,5 @@
-import { SCRAMBLE_POSITIONS, SOLVE_STATES, type Discipline } from '@/app/_types'
-import { DISCIPLINES } from '@/shared'
+import { SCRAMBLE_POSITIONS, SOLVE_STATES, type Discipline } from '@/types'
+import { DISCIPLINES } from '@/types'
 import { sql } from 'drizzle-orm'
 import { pgTable, pgEnum, unique } from 'drizzle-orm/pg-core'
 import { createdUpdatedAtColumns } from './core'

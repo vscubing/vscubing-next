@@ -1,4 +1,4 @@
-import { DISCIPLINES, SCRAMBLE_POSITIONS } from '@/app/_types'
+import { DISCIPLINES, SCRAMBLE_POSITIONS } from '@/types'
 import dayjs from 'dayjs'
 import { eq, desc } from 'drizzle-orm'
 import { db } from '../db'

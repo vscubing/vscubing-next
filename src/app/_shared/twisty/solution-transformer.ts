@@ -6,7 +6,7 @@ import {
   getSolveAnalyzer,
 } from '@vscubing/cubing/twisty'
 import { Alg, LineComment } from '@vscubing/cubing/alg'
-import type { Discipline } from '@/app/_types'
+import type { Discipline } from '@/types'
 import { removeSolutionComments } from '@/app/_utils/remove-solution-comments'
 
 // TODO: simultaneous moves???

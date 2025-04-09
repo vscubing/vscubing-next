@@ -1,4 +1,4 @@
-import { DISCIPLINES } from '@/shared'
+import { DISCIPLINES } from '@/types'
 import { z } from 'zod'
 import { eq, and, sql } from 'drizzle-orm'
 import { createTRPCRouter, protectedProcedure } from '../trpc'
@@ -9,7 +9,7 @@ import {
   scrambleTable,
   solveTable,
 } from '@/server/db/schema'
-import { resultDnfish, SCRAMBLE_POSITIONS, SOLVE_STATES } from '@/app/_types'
+import { resultDnfish, SCRAMBLE_POSITIONS, SOLVE_STATES } from '@/types'
 import { sortWithRespectToExtras } from './sort-with-respect-to-extras'
 import { calculateAvg } from './calculate-avg'
 import { validateSolve } from '@/server/internal/validate-solve'

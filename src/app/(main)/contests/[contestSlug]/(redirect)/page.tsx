@@ -1,8 +1,8 @@
 import { HintSignInSection } from '@/app/_shared/HintSection'
-import { DEFAULT_DISCIPLINE, isDiscipline } from '@/app/_types'
+import { DEFAULT_DISCIPLINE, isDiscipline } from '@/types'
 import { assertUnreachable } from '@/app/_utils/assert-unreachable'
 import { getContestUserCapabilities } from '@/server/internal/get-contest-user-capabilities'
-import { CONTEST_UNAUTHORIZED_MESSAGE } from '@/shared'
+import { CONTEST_UNAUTHORIZED_MESSAGE } from '@/types'
 import { notFound, redirect, RedirectType } from 'next/navigation'
 
 export default async function ContestPage(props: {

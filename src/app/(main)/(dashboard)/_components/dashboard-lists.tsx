@@ -6,7 +6,7 @@ import dashboardEmptyImg from '@/../public/images/dashboard-empty.svg'
 import { useTRPC } from '@/trpc/react'
 import { useQuery } from '@tanstack/react-query'
 import { LatestContests } from './latest-contests'
-import type { Discipline } from '@/app/_types'
+import type { Discipline } from '@/types'
 
 export function DashboardLists() {
   const trpc = useTRPC()

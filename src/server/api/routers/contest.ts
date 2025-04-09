@@ -10,10 +10,10 @@ import {
   solveTable,
   userTable,
 } from '@/server/db/schema'
-import { DISCIPLINES, CONTEST_UNAUTHORIZED_MESSAGE } from '@/shared'
+import { DISCIPLINES, CONTEST_UNAUTHORIZED_MESSAGE } from '@/types'
 import { eq, desc, and, lt } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
-import { resultDnfish, type ContestResultRoundSession } from '@/app/_types'
+import { resultDnfish, type ContestResultRoundSession } from '@/types'
 import { groupBy } from '@/app/_utils/groupBy'
 import { sortWithRespectToExtras } from './sort-with-respect-to-extras'
 import { getContestUserCapabilities } from '../../internal/get-contest-user-capabilities'

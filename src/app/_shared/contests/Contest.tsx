@@ -1,6 +1,6 @@
 import { formatContestDuration } from '@/app/_utils/formatDate'
 import { SecondaryButton, ArrowRightIcon } from '@/app/_components/ui'
-import { type Discipline } from '@/app/_types'
+import { type Discipline } from '@/types'
 import type { contestTable } from '@/server/db/schema'
 import Link from 'next/link'
 import { cn } from '@/app/_utils/cn'

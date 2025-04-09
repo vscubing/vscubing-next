@@ -1,4 +1,4 @@
-import { DISCIPLINES } from '@/shared'
+import { DISCIPLINES } from '@/types'
 import { z } from 'zod'
 import { createTRPCRouter, publicProcedure } from '../trpc'
 import {
@@ -9,7 +9,7 @@ import {
   userTable,
 } from '@/server/db/schema'
 import { and, eq, isNotNull } from 'drizzle-orm'
-import { DEFAULT_DISCIPLINE } from '@/app/_types'
+import { DEFAULT_DISCIPLINE } from '@/types'
 
 export const leaderboardRouter = createTRPCRouter({
   bySingle: publicProcedure

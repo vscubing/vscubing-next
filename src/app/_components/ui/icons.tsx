@@ -34,7 +34,7 @@ import MinusIcon from '@/../public/icons/minus.svg?inline'
 import SettingIcon from '@/../public/icons/setting.svg?inline'
 import CodeIcon from '@/../public/icons/code.svg?inline'
 
-import { isDiscipline } from '@/app/_types'
+import { isDiscipline } from '@/types'
 import { cn } from '@/app/_utils/cn'
 import { type HTMLAttributes } from 'react'
 

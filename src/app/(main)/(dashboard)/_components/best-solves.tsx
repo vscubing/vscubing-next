@@ -9,7 +9,7 @@ import {
 } from '@/app/_components/ui'
 import { SpinningBorder } from '@/app/_components/ui/spinning-border'
 import { SolveTimeLinkOrDnf } from '@/app/_shared/SolveTimeButton'
-import { DISCIPLINES, type Discipline } from '@/app/_types'
+import { DISCIPLINES, type Discipline } from '@/types'
 import { cn } from '@/app/_utils/cn'
 import { tailwindConfig } from '@/app/_utils/tailwind'
 import Link from 'next/link'

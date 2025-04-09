@@ -4,7 +4,7 @@ import { type ComponentProps } from 'react'
 import { formatSolveTime } from '../_utils/formatSolveTime'
 import { cn } from '../_utils/cn'
 import { WatchSolveHintPopover } from './watch-solve-hint-popover.client'
-import type { Discipline, ResultDnfish } from '../_types'
+import type { Discipline, ResultDnfish } from '../../types'
 
 const solveTimeButtonVariants = cva(
   'transition-base outline-ring after-border-bottom vertical-alignment-fix inline-flex h-8 min-w-24 items-center justify-center hover:after:scale-x-100',

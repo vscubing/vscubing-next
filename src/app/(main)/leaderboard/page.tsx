@@ -5,7 +5,7 @@ import {
   isLeaderboardType,
   type Discipline,
   type LeaderboardType,
-} from '@/app/_types'
+} from '@/types'
 import { api } from '@/trpc/server'
 import { DisciplineSwitcher } from '@/app/_shared/discipline-switcher-client'
 import { NavigateBackButton } from '@/app/_shared/NavigateBackButton'
@@ -18,7 +18,7 @@ import {
   LayoutHeaderTitlePortalFallback,
 } from '@/app/(main)/_layout/layout-header'
 import { redirect } from 'next/navigation'
-import { DISCIPLINES } from '@/shared'
+import { DISCIPLINES } from '@/types'
 import { SingleResultList } from './_components/single-result-list'
 import { LayoutSectionHeader } from '@/app/(main)/_layout'
 import { Suspense } from 'react'
@@ -72,9 +72,9 @@ async function PageTitle({ type }: { type: LeaderboardType }) {
   const session = await auth()
   let title = ''
   if (session) {
-    title = `${session.user.name}, check out our best ${LEADERBOARD_TYPE_MAP[type]}`
+    title = `${session.user.name}, check out our best ${LEADERBOARDshared_MAP[type]}`
   } else {
-    title = `Check out our best ${LEADERBOARD_TYPE_MAP[type]}`
+    title = `Check out our best ${LEADERBOARDshared_MAP[type]}`
   }
   return (
     <>
@@ -99,7 +99,7 @@ async function PageContent({ discipline }: { discipline: Discipline }) {
   return <SingleResultList initialData={initialData} discipline={discipline} />
 }
 
-const LEADERBOARD_TYPE_MAP: Record<LeaderboardType, string> = {
+const LEADERBOARDshared_MAP: Record<LeaderboardType, string> = {
   average: 'results',
   single: 'solves',
 }

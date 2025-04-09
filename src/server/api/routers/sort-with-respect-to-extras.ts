@@ -1,4 +1,4 @@
-import { type ScramblePosition, isExtra } from '@/app/_types'
+import { type ScramblePosition, isExtra } from '@/types'
 
 export function sortWithRespectToExtras<
   T extends {
