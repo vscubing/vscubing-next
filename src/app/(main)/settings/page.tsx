@@ -51,11 +51,11 @@ async function WcaSignIn() {
       </Link>
     </p>
   ) : (
-    <PrimaryButton asChild>
-      <Link
-        className='pointer-events-none bg-grey-40 text-grey-60'
-        href='/api/auth/wca?redirectTo=/settings'
-      >
+    <PrimaryButton
+      className='pointer-events-none bg-grey-40 text-grey-60'
+      asChild
+    >
+      <Link href='/api/auth/wca?redirectTo=/settings'>
         Sign in with WCA (currently disabled)
       </Link>
     </PrimaryButton>

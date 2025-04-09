@@ -6,6 +6,7 @@ import type { ReactNode, ComponentPropsWithoutRef, ComponentRef } from 'react'
 import * as SelectPrimitive from '@radix-ui/react-select'
 import { useSimulatorSettings, useSimulatorSettingsMutation } from './queries'
 import type { RouterOutputs } from '@/trpc/react'
+import { z } from 'zod'
 
 export function SettingsList({
   initialData,
@@ -19,7 +20,7 @@ export function SettingsList({
     <ul className='space-y-2'>
       {settings ? (
         <>
-          <li className='flex items-center justify-between rounded-xl bg-grey-100 p-4'>
+          <li className='relative z-10 flex items-center justify-between rounded-xl bg-grey-100 p-4'>
             <span>VRC base speed (tps):</span>
             <Select
               options={CS_ANIMATION_DURATION_OPTIONS}
@@ -36,8 +37,9 @@ export function SettingsList({
               value={settings.inspectionVoiceAlert}
               onValueChange={(inspectionVoiceAlert) =>
                 mutateSettings({
-                  inspectionVoiceAlert:
-                    inspectionVoiceAlert as typeof settings.inspectionVoiceAlert,
+                  inspectionVoiceAlert: z
+                    .enum(['Male', 'Female', 'None'])
+                    .parse(inspectionVoiceAlert),
                 })
               }
               className='min-w-[9rem]'
