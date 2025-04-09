@@ -11,7 +11,7 @@ import {
   userTable,
 } from '@/backend/db/schema'
 import { DISCIPLINES, CONTEST_UNAUTHORIZED_MESSAGE } from '@/types'
-import { eq, desc, and, lt } from 'drizzle-orm'
+import { eq, desc, and, lte } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
 import { resultDnfish, type ContestResultRoundSession } from '@/types'
 import { groupBy } from '@/utils/group-by'
@@ -24,7 +24,7 @@ export const contestRouter = createTRPCRouter({
       z.object({
         discipline: z.enum(DISCIPLINES),
         cursor: z.string().optional(),
-        limit: z.number().min(1).default(30),
+        limit: z.number().min(1).default(15),
       }),
     )
     .query(async ({ ctx, input }) => {
@@ -53,7 +53,9 @@ export const contestRouter = createTRPCRouter({
           and(
             eq(contestTable.isOngoing, false),
             eq(disciplineTable.slug, input.discipline),
-            input.cursor ? lt(contestTable.startDate, input.cursor) : undefined,
+            input.cursor
+              ? lte(contestTable.startDate, input.cursor)
+              : undefined,
           ),
         )
         .orderBy(desc(contestTable.startDate), contestDisciplineTable.id)
