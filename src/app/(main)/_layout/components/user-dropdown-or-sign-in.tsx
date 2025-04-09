@@ -116,7 +116,7 @@ function LogoutButton({
   logoutTransition: TransitionStartFunction
 }) {
   const setMobileMenuOpen = useSetAtom(mobileMenuOpenAtom)
-  const { logout: logoutAsync } = useLogout()
+  const { logout } = useLogout()
 
   return (
     <Dialog
@@ -141,7 +141,7 @@ function LogoutButton({
               onClick={() => {
                 logoutTransition(async () => {
                   setMobileMenuOpen(false)
-                  await logoutAsync()
+                  await logout()
                 })
               }}
             >

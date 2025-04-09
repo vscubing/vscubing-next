@@ -14,6 +14,7 @@ import {
   getUserFromEmail,
 } from '@/server/auth/user'
 import { tryCatch } from '@/app/_utils/try-catch'
+import { GOOGLE_AUTH_ERROR_SEARCH_PARAM } from '../error-search-param'
 
 // TODO: redirect back on error
 export async function GET(request: Request): Promise<Response> {
@@ -23,12 +24,16 @@ export async function GET(request: Request): Promise<Response> {
   const cookieStore = await cookies()
   const storedState = cookieStore.get('google_oauth_state')?.value ?? null
   const codeVerifier = cookieStore.get('google_code_verifier')?.value ?? null
-  const redirectTo = cookieStore.get('google_redirect_to')?.value ?? '/'
+  const redirectTo = new URL(
+    cookieStore.get('google_redirect_to')?.value ?? '/',
+  )
+
   if (
     code === null ||
     state === null ||
     storedState === null ||
-    codeVerifier === null
+    codeVerifier === null ||
+    state !== storedState
   ) {
     console.log(
       '[GOOGLE AUTH] no code/state/storedState/codeVerifier: ',
@@ -37,13 +42,15 @@ export async function GET(request: Request): Promise<Response> {
       storedState,
       codeVerifier,
     )
+    redirectTo.searchParams.append(
+      GOOGLE_AUTH_ERROR_SEARCH_PARAM,
+      'Something went wrong during the authorization.',
+    )
     return new Response(null, {
-      status: 400,
-    })
-  }
-  if (state !== storedState) {
-    return new Response(null, {
-      status: 400,
+      status: 302,
+      headers: {
+        Location: redirectTo.toString(),
+      },
     })
   }
 
@@ -51,9 +58,17 @@ export async function GET(request: Request): Promise<Response> {
     googleOauthClient.validateAuthorizationCode(code, codeVerifier),
   )
   if (error) {
+    error.message = '[GOOGLE AUTH] ' + error.message
     console.log(error)
+    redirectTo.searchParams.append(
+      GOOGLE_AUTH_ERROR_SEARCH_PARAM,
+      'Something went wrong during the authorization.',
+    )
     return new Response(null, {
-      status: 400,
+      status: 302,
+      headers: {
+        Location: redirectTo.toString(),
+      },
     })
   }
   const claims = decodeIdToken(tokens.idToken()) as {
@@ -84,7 +99,7 @@ export async function GET(request: Request): Promise<Response> {
   return new Response(null, {
     status: 302,
     headers: {
-      Location: redirectTo,
+      Location: redirectTo.toString(),
     },
   })
 }

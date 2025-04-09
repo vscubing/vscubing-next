@@ -92,9 +92,10 @@
 - [x] adjust google auth permissions
 - [x] block external db access
 - [x] merge root layout files
-- [ ] remove select *
-- [ ] redirect back on sign in error
+- [x] remove select *
+- [x] redirect back on sign in error
 - [ ] settings one opened => close currently opened
+- [ ] remove user dropdown outline
 - [ ] hidden contest disciplines
 - [ ] redo migrations
     - [ ] correct primary key autoincrementation https://stackoverflow.com/questions/4448340/postgresql-duplicate-key-violates-unique-constraint

@@ -1,17 +1,39 @@
 'use client'
 
 import { cn } from '@/app/_utils/cn'
-import { GhostButton, GoogleIcon, PrimaryButton } from '@/app/_components/ui'
+import {
+  GhostButton,
+  GoogleIcon,
+  PrimaryButton,
+  toast,
+} from '@/app/_components/ui'
 import Link from 'next/link'
-import { type MouseEventHandler } from 'react'
+import { useEffect, type MouseEventHandler } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { GOOGLE_AUTH_ERROR_SEARCH_PARAM } from '../api/auth/google/error-search-param'
 
 type SignInButtonProps = { variant: 'primary' | 'ghost'; className?: string }
 export function SignInButton({ variant, className }: SignInButtonProps) {
   const href = '/api/auth/google'
+  const router = useRouter()
   const signIn: MouseEventHandler = (e) => {
     e.preventDefault()
-    location.href = `${href}?redirectTo=${window.location.toString()}`
+    router.push(`${href}?redirectTo=${window.location.toString()}`)
   }
+
+  const searchParams = useSearchParams()
+  useEffect(() => {
+    const callbackError = searchParams.get(GOOGLE_AUTH_ERROR_SEARCH_PARAM)
+    console.log(callbackError)
+    if (callbackError) {
+      toast({
+        title: 'Authorization error',
+        description: callbackError,
+        contactUsButton: true,
+        dedupId: 'google-auth-error',
+      })
+    }
+  }, [searchParams])
 
   if (variant === 'primary') {
     return (

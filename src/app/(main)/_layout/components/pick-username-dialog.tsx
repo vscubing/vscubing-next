@@ -41,9 +41,7 @@ export function PickUsernameDialog() {
     mutate(
       { username },
       {
-        onSuccess: () => {
-          location.reload()
-        },
+        onSuccess: () => location.reload(),
         onError: (error) => {
           if (error.data?.zodError) {
             setError('username', {
