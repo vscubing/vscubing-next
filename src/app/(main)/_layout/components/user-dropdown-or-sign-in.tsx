@@ -33,14 +33,14 @@ import { useLogout, useUser } from '@/app/_shared/use-user'
 
 export function UserDropdownOrSignIn() {
   const { user, isLoading } = useUser()
-  const [isLogoutPending, startTransition] = useTransition()
+  const [isLogoutPending, logoutTransition] = useTransition()
 
   if (isLoading || isLogoutPending) return <LoadingDots className='pr-4' />
   if (!user) return <SignInButton variant='ghost' />
   return (
     <UserDropdown
       user={user}
-      logoutTransition={startTransition}
+      logoutTransition={logoutTransition}
       className='md:-mr-2 sm:mr-0'
     />
   )
@@ -116,7 +116,7 @@ function LogoutButton({
   logoutTransition: TransitionStartFunction
 }) {
   const setMobileMenuOpen = useSetAtom(mobileMenuOpenAtom)
-  const { logoutAsync } = useLogout()
+  const { logout: logoutAsync } = useLogout()
 
   return (
     <Dialog
@@ -142,7 +142,6 @@ function LogoutButton({
                 logoutTransition(async () => {
                   setMobileMenuOpen(false)
                   await logoutAsync()
-                  location.reload()
                 })
               }}
             >
