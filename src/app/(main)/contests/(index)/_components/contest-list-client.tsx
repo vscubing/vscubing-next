@@ -34,17 +34,17 @@ export default function ContestList({
   const contests = data.pages.flatMap((page) => page.items)
   return contests.map((contest, index) => (
     <li
-      key={contest.contest?.slug}
+      key={contest?.slug}
       ref={index === contests.length - 1 ? lastElementRef : undefined}
     >
       <ContestRowDesktop
         discipline={discipline}
-        contest={contest.contest}
+        contest={contest}
         className='sm:hidden'
       />
       <ContestRowMobile
         discipline={discipline}
-        contest={contest.contest}
+        contest={contest}
         className='hidden sm:flex'
       />
     </li>

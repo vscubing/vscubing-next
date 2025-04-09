@@ -1,11 +1,11 @@
 'use client'
 
 import { env } from '@/env'
-import { Layout } from './(main)/_layout'
 import { PrimaryButton } from './_components/ui'
 import { ParallaxCubes, ParallaxCubesWrapper } from './_parallax-cubes'
 import { useMatchesScreen } from './_utils/tailwind'
 import img500 from '@/../public/images/500.svg'
+import Layout from './(main)/layout'
 
 export default function Error({
   error,

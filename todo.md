@@ -92,7 +92,8 @@
 - [x] adjust google auth permissions
 - [x] block external db access
 - [x] merge root layout files
-- [ ] todos
+- [ ] remove select *
+- [ ] redirect back on sign in error
 - [ ] settings one opened => close currently opened
 - [ ] hidden contest disciplines
 - [ ] redo migrations

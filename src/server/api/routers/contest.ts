@@ -29,7 +29,13 @@ export const contestRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const items = await ctx.db
-        .select() // TODO: don't select *
+        .select({
+          slug: contestTable.slug,
+          startDate: contestTable.startDate,
+          expectedEndDate: contestTable.expectedEndDate,
+          endDate: contestTable.endDate,
+          isOngoing: contestTable.isOngoing,
+        })
         .from(contestTable)
         .leftJoin(
           contestDisciplineTable,
@@ -51,7 +57,7 @@ export const contestRouter = createTRPCRouter({
 
       let nextCursor: typeof input.cursor | undefined = undefined
       if (items.length > input.limit) {
-        nextCursor = items.pop()?.contest.startDate
+        nextCursor = items.pop()?.startDate
       }
 
       return { items, nextCursor }
@@ -59,7 +65,14 @@ export const contestRouter = createTRPCRouter({
 
   getOngoing: publicProcedure.query(async ({ ctx }) => {
     const rows = await ctx.db
-      .select() // TODO: can we do better than `select *` ?
+      .select({
+        slug: contestTable.slug,
+        startDate: contestTable.startDate,
+        expectedEndDate: contestTable.expectedEndDate,
+        endDate: contestTable.endDate,
+        isOngoing: contestTable.isOngoing,
+        discipline: contestDisciplineTable.disciplineSlug,
+      })
       .from(contestTable)
       .innerJoin(
         contestDisciplineTable,
@@ -67,14 +80,12 @@ export const contestRouter = createTRPCRouter({
       )
       .where(eq(contestTable.isOngoing, true))
 
-    const ongoing = rows[0]?.contest
+    const ongoing = rows[0]
     if (!ongoing) return null
 
     return {
       ...ongoing,
-      disciplines: rows.map(
-        ({ contest_discipline }) => contest_discipline.disciplineSlug,
-      ),
+      disciplines: rows.map(({ discipline }) => discipline),
     }
   }),
 

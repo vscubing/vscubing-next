@@ -122,7 +122,6 @@
   }
 
   .landing-offset-anchor::before {
-    /* TODO: use scroll-padding-top */
     /* offset the anchoring point to account for the fixed header */
     content: '';
     display: block;
@@ -134,7 +133,7 @@
 
 @layer components {
   .spinning-border:before {
-    /* TODO: we probably can and should apply this directly in the template and remove this _secondary class with Tailwind v4 */
+    /* TODO: we probably can and should apply this directly in the template and remove this class with Tailwind v4 */
     background: conic-gradient(
       var(--spinning-border-color),
       100deg,

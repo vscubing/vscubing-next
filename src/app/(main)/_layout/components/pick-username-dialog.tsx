@@ -15,7 +15,7 @@ import { useForm } from 'react-hook-form'
 import { Input } from '@/app/_components/ui'
 import { useTRPC } from '@/trpc/react'
 import { useMutation } from '@tanstack/react-query'
-import { useUser } from '@/app/_shared/use-user'
+import { useLogout, useUser } from '@/app/_shared/use-user'
 
 export function PickUsernameDialog() {
   const { user, isLoading: isUserLoading } = useUser()
@@ -30,6 +30,7 @@ export function PickUsernameDialog() {
   } = useForm<{ username: string }>()
 
   const trpc = useTRPC()
+  const { logout } = useLogout()
   const { isPending: isMutationPending, mutate } = useMutation(
     trpc.user.setUsername.mutationOptions(),
   )
@@ -82,7 +83,7 @@ export function PickUsernameDialog() {
               <span className='caption'>{errors.username?.message}</span>
             </label>
             <AlertDialogFooter className='sm:grid sm:grid-cols-2'>
-              <AlertDialogCancel onClick={() => signOut()} type='button'>
+              <AlertDialogCancel onClick={() => logout()} type='button'>
                 Log out
               </AlertDialogCancel>
               <AlertDialogAction

@@ -53,7 +53,7 @@ export function LatestContests({
           <ContestSkeleton />
         </li>
         {contests
-          ? contests.slice(0, countToDisplay).map(({ contest }) => (
+          ? contests.slice(0, countToDisplay).map((contest) => (
               <li key={contest.slug}>
                 <Contest contest={contest} discipline={DEFAULT_DISCIPLINE} />
               </li>

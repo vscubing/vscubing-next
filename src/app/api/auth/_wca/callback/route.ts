@@ -66,7 +66,7 @@ export async function GET(request: Request): Promise<Response> {
     userId: session.user.id,
     access_token: token.access_token,
     refresh_token: token.refresh_token,
-    expires_at: token.created_at + token.expires_in,
+    expires_at: BigInt(token.created_at) + BigInt(token.expires_in),
     provider: 'wca',
     providerAccountId: claims.wca_id,
   })

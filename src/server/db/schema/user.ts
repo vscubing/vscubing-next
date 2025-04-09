@@ -10,7 +10,7 @@ export const userSimulatorSettingsTable = pgTable(
     userId: d
       .text('user_id')
       .notNull()
-      .references(() => userTable.id, { onDelete: 'cascade' }), // TODO: proper strict 1-to-1 relation
+      .references(() => userTable.id, { onDelete: 'cascade' }),
     animationDuration: d.integer('animation_duration').notNull().default(100),
     inspectionVoiceAlert: d
       .text('inspection_voice_alert')

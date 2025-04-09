@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { PrimaryButton } from './_components/ui'
 import { ParallaxCubes, ParallaxCubesWrapper } from './_parallax-cubes'
 import img404 from '@/../public/images/404.svg'
-import { Layout } from './(main)/_layout'
+import Layout from './(main)/layout'
 
 export const dynamic = 'force-static'
 
