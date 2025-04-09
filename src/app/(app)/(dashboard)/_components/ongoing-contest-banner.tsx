@@ -50,7 +50,7 @@ function BannerContent({
             className,
           )}
         >
-          <h3 className='title-h3 text-center'>Type</h3>
+          <p className='title-h3 text-center'>Type</p>
           <Disciplines ongoing={ongoing} />
         </div>
         <Divider className='absolute -right-32 top-0 h-full w-36' />
@@ -90,13 +90,19 @@ function BannerContentMobile({
       <div className='relative z-10 py-4 pl-4 sm:flex sm:items-center sm:gap-4 sm:p-0'>
         <Title />
 
+        <p className='sr-only'>
+          Solving from mobile devices is currently not supported
+        </p>
         <Popover>
           <PopoverContent>
             <p>Solving from mobile devices is currently not supported</p>
             <PopoverCloseButton />
           </PopoverContent>
 
-          <PopoverTrigger className='absolute -right-11 top-4 sm:static'>
+          <PopoverTrigger
+            className='absolute -right-11 top-4 sm:static'
+            aria-hidden
+          >
             <ExclamationCircleIcon />
           </PopoverTrigger>
         </Popover>

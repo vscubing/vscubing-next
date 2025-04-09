@@ -31,6 +31,7 @@ export function Contest({ contest, discipline, className }: ContestProps) {
             pathname: `/contests/${contest.slug}/results`,
             query: { discipline },
           }}
+          aria-label={`Contest ${contest.slug}`}
         >
           <ArrowRightIcon />
         </Link>

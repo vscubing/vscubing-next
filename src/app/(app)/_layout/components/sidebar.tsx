@@ -5,6 +5,7 @@ import { Navbar } from './navbar'
 import Image from 'next/image'
 import standWithUkraineImg from '@/../public/images/stand-with-ukraine.svg'
 import { CloseIcon, GithubIcon, LinkedinIcon, DiscordIcon } from '@/frontend/ui'
+import Link from 'next/link'
 
 export function Sidebar({ className }: { className?: string }) {
   return (
@@ -35,21 +36,31 @@ function SocialLinks({ className }: { className?: string }) {
   return (
     <div className={cn('flex justify-center gap-4 xl-short:gap-1', className)}>
       {[
-        { href: 'https://github.com/vscubing', children: <GithubIcon /> },
+        {
+          href: 'https://github.com/vscubing',
+          ariaLabel: 'Github',
+          children: <GithubIcon />,
+        },
         {
           href: 'https://www.linkedin.com/company/vscubing',
+          ariaLabel: 'LinkedIn',
           children: <LinkedinIcon />,
         },
-        { href: 'https://discord.gg/PxFrW9vTAy', children: <DiscordIcon /> },
-      ].map(({ href, children }) => (
-        <a
+        {
+          href: 'https://discord.gg/PxFrW9vTAy',
+          ariaLabel: 'Discord',
+          children: <DiscordIcon />,
+        },
+      ].map(({ href, children, ariaLabel }) => (
+        <Link
+          aria-label={ariaLabel}
           href={href}
           key={href}
           className='transition-base outline-ring flex h-11 w-11 items-center justify-center text-[1.5rem] text-grey-20 hover:text-primary-80'
           target='_blank'
         >
           {children}
-        </a>
+        </Link>
       ))}
     </div>
   )

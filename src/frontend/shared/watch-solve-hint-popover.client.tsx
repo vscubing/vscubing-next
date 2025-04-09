@@ -31,7 +31,7 @@ export function WatchSolveHintPopover({
 
   return (
     <Popover open={!seenHint && !disabled}>
-      <PopoverContent>
+      <PopoverContent aria-label='Tap on a time result to watch the solution'>
         <p>
           {isTouchDevice
             ? 'Tap on a time result to watch the solution'

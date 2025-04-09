@@ -19,6 +19,7 @@ export function DisciplineBadge({
         'inline-flex h-15 w-15 items-center justify-center rounded-xl bg-secondary-20 text-black-100 sm:h-11 sm:w-11 sm:rounded-lg',
         className,
       )}
+      aria-label={discipline.replace('by', ' by ')}
       ref={ref}
       {...props}
     >

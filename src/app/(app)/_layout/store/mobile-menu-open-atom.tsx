@@ -9,5 +9,11 @@ export function ControlMobileMenuButton({
   ...props
 }: ComponentProps<'button'> & { mode: boolean }) {
   const setOpenOnMobile = useSetAtom(mobileMenuOpenAtom)
-  return <button onClick={() => setOpenOnMobile(mode)} {...props} />
+  return (
+    <button
+      aria-label='Open the sidebar'
+      onClick={() => setOpenOnMobile(mode)}
+      {...props}
+    />
+  )
 }
