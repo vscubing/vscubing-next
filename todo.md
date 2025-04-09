@@ -91,7 +91,7 @@
     - [x] cron job github action
 - [x] adjust google auth permissions
 - [x] block external db access
-- [ ] merge root layout files
+- [x] merge root layout files
 - [ ] todos
 - [ ] settings one opened => close currently opened
 - [ ] hidden contest disciplines

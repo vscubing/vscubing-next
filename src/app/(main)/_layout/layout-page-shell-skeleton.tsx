@@ -1,6 +1,6 @@
 import { LoadingSpinner } from '@/app/_components/ui'
 import { NavigateBackButton } from '@/app/_shared/NavigateBackButton'
-import { LayoutSectionHeader } from './section-header'
+import { LayoutSectionHeader } from './layout-section-header'
 import { LayoutPageTitleMobileFallback } from '@/app/_shared/layout-page-title-mobile'
 
 export function LayoutPageShellSkeleton({
