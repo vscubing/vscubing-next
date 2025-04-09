@@ -11,12 +11,10 @@
     @apply text-base;
 
     --header-height: 4.375rem;
+    --layout-section-header-height: 5.75rem;
     @screen sm {
       --header-height: 3.5rem;
-    }
-    --section-header-height: 5.75rem;
-    @screen sm {
-      --section-header-height: 4.25rem;
+      --layout-section-header-height: 4.25rem;
     }
   }
   body {

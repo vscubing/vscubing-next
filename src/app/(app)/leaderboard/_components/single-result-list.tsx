@@ -62,7 +62,7 @@ export function SingleResultList({
             result={results[stickyItemIdx]!}
             discipline={discipline}
             place={stickyItemIdx + 1}
-            className='sticky bottom-[-2px] top-[calc(var(--section-header-height)-2px)] z-10'
+            className='sticky bottom-[-2px] top-[calc(var(--layout-section-header-height)-2px)] z-10'
             key={result.id}
             onPlaceClick={scrollToSticky}
           />

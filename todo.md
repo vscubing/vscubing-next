@@ -94,26 +94,24 @@
 - [x] merge root layout files
 - [x] remove select *
 - [x] redirect back on sign in error
-- [x] hide contests with no results
+- [x] use page based pagination for contestindexpage
+- [x] refactor file structure (shared/ui/components)
+- [x] make dashboard non blocking
+- [x] pagination spinner
+- [ ] hide contests with no results
+- [ ] rename contestdiscipline to round
+- [ ] rename state to status
+- [ ] rename add auth_ prefix to auth tables
+- [ ] rename reconstruction to solution
 - [ ] redo migrations
     - [ ] correct primary key autoincrementation https://stackoverflow.com/questions/4448340/postgresql-duplicate-key-violates-unique-constraint
     - [ ] figure out why deployment's initial db migration doesn't work (maybe it will be solved after redoing the migrations from scratch)
 
 nicities:
-- [ ] rename state to status
-- [ ] rename contestdiscipline to round
-- [ ] use page based pagination for contestindexpage
-- [ ] make contest link based on capabilities
-- [ ] use unstable_cache a bunch
 - [ ] expandContestLink
 - [ ] skip inspection by default
-- [ ] no ongoing contest handling
-- [ ] refactor file structure (shared/ui/components)
 - [ ] leaderboard: on tie => sort by single result (+ unit test it)
-- [ ] rename add auth_ prefix to auth tables
 - [ ] fancy white glowing outline effect on own result / after jumping to a solve
 - [ ] staging/prod env
 - [ ] reimport fresh db backup
 - [ ] db backups
-- [ ] make dashboard non blocking
-- [ ] pagespeed homepage and landing 

@@ -37,3 +37,23 @@ export function LoadingSpinnerPage() {
     </div>
   )
 }
+
+export function OverlaySpinner({
+  isVisible = true,
+  className,
+}: {
+  isVisible?: boolean
+  className?: string
+}) {
+  return (
+    <div
+      className={cn(
+        'transition-base pointer-events-none z-50 flex w-full items-center justify-center bg-black-100/75 p-4 transition-opacity',
+        { 'opacity-0': !isVisible },
+        className,
+      )}
+    >
+      <LoadingSpinner size='sm' />
+    </div>
+  )
+}
