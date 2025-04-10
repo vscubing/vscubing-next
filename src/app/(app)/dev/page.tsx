@@ -20,10 +20,8 @@ import { roundTable, scrambleTable } from '@/backend/db/schema'
 import { and, eq, or } from 'drizzle-orm'
 import { Suspense, type ReactNode } from 'react'
 
-export const ssg = false
-
 export default function DevPage() {
-  if (env.NEXT_PUBLIC_APP_ENV === 'production') notFound()
+  if (env.NEXT_PUBLIC_APP_ENV !== 'development') notFound()
 
   return (
     <div className='flex flex-1 flex-wrap justify-between gap-8 rounded-2xl bg-black-80 p-6 sm:p-3'>
