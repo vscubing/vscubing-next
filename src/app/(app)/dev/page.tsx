@@ -20,12 +20,20 @@ import { roundTable, scrambleTable } from '@/backend/db/schema'
 import { and, eq, or } from 'drizzle-orm'
 import { Suspense, type ReactNode } from 'react'
 
-export default function DevPage() {
-  if (env.NEXT_PUBLIC_APP_ENV !== 'development') notFound()
+type SearchParams = Promise<Record<string, string | string[] | undefined>>
+export default async function DevPage({
+  searchParams,
+}: {
+  searchParams: SearchParams
+}) {
+  await searchParams // hack to opt out of prerendering during build
+  if (env.NEXT_PUBLIC_APP_ENV === 'production') notFound()
+  // TODO: allow access for admins
 
   return (
     <div className='flex flex-1 flex-wrap justify-between gap-8 rounded-2xl bg-black-80 p-6 sm:p-3'>
-      <Suspense>
+      {/* TODO: disable prerendering of this somehow */}
+      <Suspense fallback='fallback'>
         <OngoingContestInfo />
         <SolveValidator />
       </Suspense>
@@ -34,6 +42,7 @@ export default function DevPage() {
 }
 
 export async function OngoingContestInfo() {
+  console.log('wtf')
   const latestContest = await getLatestContest()
 
   if (!latestContest)
