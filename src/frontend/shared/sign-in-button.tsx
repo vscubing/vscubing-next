@@ -19,8 +19,8 @@ export function SignInButton({ variant, className }: SignInButtonProps) {
   const searchParams = useSearchParams()
   useEffect(() => {
     const callbackError = searchParams.get(GOOGLE_AUTH_ERROR_SEARCH_PARAM)
-    console.error(callbackError)
     if (callbackError) {
+      console.error(callbackError)
       toast({
         title: 'Authorization error',
         description: callbackError,

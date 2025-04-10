@@ -2,23 +2,36 @@
 
 This is a fullstack port of [@vscubing](https://github.com/vscubing) that is meant to replace [@vscubing/vscubing-frontend](https://github.com/vscubing/vscubing-frontend) and [@vscubing/vscubing-backend](https://github.com/vscubing/vscubing-backend).
 
-Vscubing is contest platform to compete in virtual speedcubing: the art of solving twisty puzzles (like the Rubik's Cube) via a computer emulator controlled from the keyboard as fast as possible. For more detailed information refer to the [landing page](https://vscubing.com/landing).
+[vscubing.com](https://vscubing.com): The platform for competing in virtual speedcubing: the art of solving twisty puzzles (like the Rubik's Cube) via a computer emulator controlled from the keyboard as fast as possible. For more detailed information refer to the [landing page](https://vscubing.com/landing).
 
 ## Development
 
 ### Local setup
 
-- Add environment variables to `.env` (use `.env.example`, some of the variables are already set there)
-- You need a local DB to run the project locally. Run `./start-database.sh` to create a docker container for it. This script automatically sources `.env`. Make sure to have a docker daemon, e.g. `Docker Desktop`. After creating a database you have to temporarily uncomment the initial migration in `./drizzle/0000_sleepy_speed_demon.sql`, run `bun run db:migrate` once and then comment the initial migration out again.
-- (Optional) Import a database backup:
+1. Add environment variables to `.env` (use `.env.example`, some of the variables are already set there)
+2. You need a local DB to run the project locally. Run `bun run db:local` to create a docker container for it. This script automatically sources `.env`. Make sure to have started a docker daemon, e.g. `Docker Desktop`. After spinning up a local database you can run `bun run db:migrate-no-legacy` for the initial migrations.
+3. (Optional) Alternatively you can migrate with `bun run db:migrate`, but you would have to import a database backup first:
     ```bash
-    pg_restore -d $DATABASE_URL --verbose --no-owner ~/temp/vscubing-21.03.2025.sql 
+    pg_restore -d $DATABASE_URL --no-owner path/to/backup.sql
     ```
-- (Optional) Scramble generation relies on [tnoodle-cli](https://github.com/SpeedcuberOSS/tnoodle-cli). To be able to generate scrambles locally, you need to install it with `bun run vendor` first. Note: the script was only tested on WSL.
-- Run the project: `bun run dev`
+4. (Optional) Scramble generation relies on [tnoodle-cli](https://github.com/SpeedcuberOSS/tnoodle-cli). To be able to generate scrambles locally, you need to install it with `bun run vendor` first. Note: the script was only tested on WSL.
+5. Run the project: `bun run dev`
 
-### Deploying
+## Deploying
 
-- apparently, ghcr.io doesn't support fine-grained access tokens, so you have to create a "Classic" token and [manually login in the ssh](https://coolify.io/docs/knowledge-base/docker/registry#docker-credentials). also see this [issue](https://github.com/docker/docker-credential-helpers/issues/182#issuecomment-1898955055).
-- `pg_restore --no-owner -d 'CONNECTION_STRING' BACKUP_PATH` to import the db backup
+We deploy on a DigitalOcean Droplet with Dokploy. 
+
+### Environments
+
+- production: deployed from `main` (pushing directly is restricted, only PRs are allowed, which require CI checks to pass)
+    * Next.js app
+    * postgres db
+        + S3 backups (daily)
+- staging: deployed from `dev`
+    * Next.js app
+    * postgres db
+
+### Notes
+
+- apparently, ghcr.io doesn't support fine-grained access tokens, so you have to create a "Classic" token 
 - post-deployment: `bun run db:migrate && bun run start`
