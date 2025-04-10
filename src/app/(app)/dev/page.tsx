@@ -25,7 +25,8 @@ export default async function DevPage() {
   await headers() // hack to opt out of prerendering during build
 
   if (env.NEXT_PUBLIC_APP_ENV === 'production') notFound()
-  // TODO: allow access for admins
+  // TODO: allow access for admins in prod
+  // TODO: show docker image tag timestamp via env variable v2 & on deploy
 
   return (
     <div className='flex flex-1 flex-wrap justify-between gap-8 rounded-2xl bg-black-80 p-6 sm:p-3'>
