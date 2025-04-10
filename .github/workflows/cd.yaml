@@ -27,6 +27,7 @@ jobs:
         run: |
           cat <<EOF > .env
           NEXT_PUBLIC_APP_ENV=${{ vars.NEXT_PUBLIC_APP_ENV }}
+          NEXT_PUBLIC_POSTHOG_KEY=${{ vars.NEXT_PUBLIC_POSTHOG_KEY }}
           DATABASE_URL=${{ secrets.DATABASE_URL }}
           AUTH_SECRET=${{ secrets.AUTH_SECRET }}
           AUTH_GOOGLE_CLIENT_ID=${{ secrets.AUTH_GOOGLE_CLIENT_ID }}
