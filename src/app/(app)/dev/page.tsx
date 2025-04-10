@@ -50,7 +50,19 @@ export async function OngoingContestInfo() {
       </section>
     )
 
-  if (latestContest?.isOngoing === false)
+  if (latestContest.systemInitial) {
+    return (
+      <section>
+        There is only the system initial contest. You can{' '}
+        <CloseOngoingAndCreateNewContestButton>
+          create
+        </CloseOngoingAndCreateNewContestButton>{' '}
+        the first contest.
+      </section>
+    )
+  }
+
+  if (!latestContest.isOngoing)
     return (
       <section>
         No ongoing contest. But you can create a{' '}

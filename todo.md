@@ -106,8 +106,12 @@
     - [x] rename session to auth_session table
     - [x] rename reconstruction to solution
 - [ ] redo migrations
+    - [ ] disable existing migrations
+    - [ ] reimport fresh db backup
+    - [ ] legacy_ prefix
+    - [ ] import data from legacy tables
     - [ ] correct primary key autoincrementation https://stackoverflow.com/questions/4448340/postgresql-duplicate-key-violates-unique-constraint
-    - [ ] figure out why deployment's initial db migration doesn't work (maybe it will be solved after redoing the migrations from scratch)
+    - [ ] figure out why deployment's initial db migration doesn't work (maybe it will be resolved by redoing the migrations from scratch)
 - [ ] staging/prod env
 
 nicities:
@@ -115,7 +119,6 @@ nicities:
 - [ ] skip inspection by default
 - [ ] leaderboard: on tie => sort by single result (+ unit test it)
 - [ ] fancy white glowing outline effect on own result / after jumping to a solve
-- [ ] reimport fresh db backup
 - [ ] db backups
 - [ ] delete round sessions with no results & dnf round sessions with too little results
     - [ ] on contest close

@@ -18,7 +18,7 @@ export const SOLVE_STATUSES = [
   'submitted',
   'changed_to_extra',
 ] as const
-export type SolveState = (typeof SOLVE_STATUSES)[number]
+export type SolveStatus = (typeof SOLVE_STATUSES)[number]
 
 export type ResultDnfish = ResultSuccess | ResultDnf
 type ResultSuccess = { timeMs: number; isDnf: false }
