@@ -19,7 +19,7 @@ export default function AppLayout({
   withoutHeader?: boolean
 }) {
   return (
-    <TRPCReactProvider>
+    <>
       <Toaster />
       <PickUsernameDialog />
       <PopupSidebar />
@@ -40,7 +40,7 @@ export default function AppLayout({
           <div className='relative flex-1' id={MAIN_OVERLAY_ID}></div>
         </div>
       </div>
-    </TRPCReactProvider>
+    </>
   )
 }
 
