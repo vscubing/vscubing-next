@@ -30,6 +30,7 @@ export const env = createEnv({
    */
   client: {
     NEXT_PUBLIC_APP_ENV: z.enum(['development', 'staging', 'production']),
+    NEXT_PUBLIC_POSTHOG_KEY: z.string(),
   },
 
   /**
@@ -55,6 +56,7 @@ export const env = createEnv({
     CONTEST_CREATION_WEBHOOK_SECRET:
       process.env.CONTEST_CREATION_WEBHOOK_SECRET,
     CONTEST_CREATION_WEBHOOK_URL: process.env.CONTEST_CREATION_WEBHOOK_URL,
+    NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

@@ -5,6 +5,8 @@ import type { ReactNode } from 'react'
 import { Hind, Kanit } from 'next/font/google'
 import { cn } from '../frontend/utils/cn'
 import { env } from '@/env'
+import { PostHogProvider } from '../frontend/post-hog-provider'
+import { TRPCReactProvider } from '@/trpc/react'
 
 export const metadata: Metadata = {
   title: 'vscubing',
@@ -37,7 +39,15 @@ export default async function RootLayout({
 
   return (
     <html lang='en' className={cn(hind.className, kanit.className)}>
-      <body>{children}</body>
+      <body>
+        <TRPCReactProvider>
+          {env.NEXT_PUBLIC_APP_ENV === 'production' ? (
+            <PostHogProvider>{children}</PostHogProvider>
+          ) : (
+            children
+          )}
+        </TRPCReactProvider>
+      </body>
     </html>
   )
 }

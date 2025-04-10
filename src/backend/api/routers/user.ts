@@ -15,7 +15,15 @@ import {
 
 const USERNAME_LENGTH = { MIN: 3, MAX: 24 }
 export const userRouter = createTRPCRouter({
-  me: publicProcedure.query(({ ctx }) => ctx.session?.user ?? null),
+  me: publicProcedure.query(({ ctx: { session } }) => {
+    if (!session) return null
+    return {
+      name: session.user.name,
+      id: session.user.id,
+      email: session.user.email,
+      finishedRegistration: session.user.finishedRegistration,
+    }
+  }),
   logout: protectedProcedure.mutation(async ({ ctx: { session } }) => {
     await invalidateSession(session.id)
     await deleteSessionTokenCookie()
