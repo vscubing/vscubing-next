@@ -106,7 +106,7 @@
     - [x] rename session to auth_session table
     - [x] rename reconstruction to solution
 - [ ] redo migrations
-    - [ ] disable existing migrations
+    - [x] disable existing migrations
     - [ ] reimport fresh db backup
     - [ ] legacy_ prefix
     - [ ] import data from legacy tables
@@ -123,3 +123,5 @@ nicities:
 - [ ] delete round sessions with no results & dnf round sessions with too little results
     - [ ] on contest close
     - [ ] migration
+- [ ] clean up git branches
+- [ ] branch protection

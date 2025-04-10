@@ -1,1 +1,0 @@
-ALTER TABLE "round_session" ALTER COLUMN "is_finished" SET DEFAULT false;

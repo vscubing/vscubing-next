@@ -1,1 +1,0 @@
-ALTER TABLE "scramble" ALTER COLUMN "moves" SET NOT NULL;
