@@ -16,11 +16,11 @@ export const env = createEnv({
     AUTH_WCA_CLIENT_ID: z.string(),
     AUTH_WCA_CLIENT_SECRET: z.string(),
     AUTH_WCA_URL: z.string().url(),
-    CONTEST_CREATION_WEBHOOK_SECRET: z.string(),
-    GH_CONTEST_CREATION_WEBHOOK_URL: z.string().url(),
     TELEGRAM_TOKEN: z.string(),
     TELEGRAM_CHAT_ID: z.number(),
     TELEGRAM_CONTEST_MANAGEMENT_THREAD_ID: z.number(),
+    CONTEST_CREATION_WEBHOOK_SECRET: z.string(),
+    CONTEST_CREATION_WEBHOOK_URL: z.string().url(),
   },
 
   /**
@@ -47,15 +47,14 @@ export const env = createEnv({
     AUTH_WCA_CLIENT_SECRET: process.env.AUTH_WCA_CLIENT_SECRET,
     AUTH_WCA_URL: process.env.AUTH_WCA_URL,
     NEXT_PUBLIC_APP_ENV: process.env.NEXT_PUBLIC_APP_ENV,
-    CONTEST_CREATION_WEBHOOK_SECRET:
-      process.env.CONTEST_CREATION_WEBHOOK_SECRET,
-    GH_CONTEST_CREATION_WEBHOOK_URL:
-      process.env.GH_CONTEST_CREATION_WEBHOOK_URL,
     TELEGRAM_TOKEN: process.env.TELEGRAM_TOKEN,
     TELEGRAM_CHAT_ID: Number(process.env.TELEGRAM_CHAT_ID),
     TELEGRAM_CONTEST_MANAGEMENT_THREAD_ID: Number(
       process.env.TELEGRAM_CONTEST_MANAGEMENT_THREAD_ID,
     ),
+    CONTEST_CREATION_WEBHOOK_SECRET:
+      process.env.CONTEST_CREATION_WEBHOOK_SECRET,
+    CONTEST_CREATION_WEBHOOK_URL: process.env.CONTEST_CREATION_WEBHOOK_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
