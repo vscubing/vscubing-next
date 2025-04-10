@@ -16,7 +16,7 @@ import { notFound } from 'next/navigation'
 import { createSystemInitialContest } from './actions'
 import { SolveValidator } from './_components/solve-validator'
 import { db } from '@/backend/db'
-import { contestDisciplineTable, scrambleTable } from '@/backend/db/schema'
+import { roundTable, scrambleTable } from '@/backend/db/schema'
 import { and, eq, or } from 'drizzle-orm'
 import { Suspense, type ReactNode } from 'react'
 
@@ -64,18 +64,15 @@ export async function OngoingContestInfo() {
   const scrambles = await db
     .select()
     .from(scrambleTable)
-    .innerJoin(
-      contestDisciplineTable,
-      eq(contestDisciplineTable.id, scrambleTable.contestDisciplineId),
-    )
+    .innerJoin(roundTable, eq(roundTable.id, scrambleTable.roundId))
     .where(
       and(
         or(
           ...ongoingContest.disciplines.map((d) =>
-            eq(contestDisciplineTable.disciplineSlug, d),
+            eq(roundTable.disciplineSlug, d),
           ),
         ),
-        eq(contestDisciplineTable.contestSlug, ongoingContest.slug),
+        eq(roundTable.contestSlug, ongoingContest.slug),
       ),
     )
 

@@ -2,11 +2,7 @@ import { DISCIPLINES, SCRAMBLE_POSITIONS } from '@/types'
 import dayjs from 'dayjs'
 import { eq, desc } from 'drizzle-orm'
 import { db } from '../db'
-import {
-  contestTable,
-  contestDisciplineTable,
-  scrambleTable,
-} from '../db/schema'
+import { contestTable, roundTable, scrambleTable } from '../db/schema'
 import { generateScrambles } from './generate-scrambles'
 import { env } from '@/env'
 
@@ -49,8 +45,8 @@ export async function createNewContest({
   })
   console.log(`${PREFIX} created Contest ${slug}`)
 
-  const createdContestDisciplines = await tx
-    .insert(contestDisciplineTable)
+  const createdRounds = await tx
+    .insert(roundTable)
     .values(
       DISCIPLINES.map((discipline) => ({
         contestSlug: slug,
@@ -58,21 +54,21 @@ export async function createNewContest({
       })),
     )
     .returning({
-      id: contestDisciplineTable.id,
-      discipline: contestDisciplineTable.disciplineSlug,
+      id: roundTable.id,
+      discipline: roundTable.disciplineSlug,
     })
   console.log(
-    `${PREFIX} inserted disciplines ${createdContestDisciplines.map((d) => d.discipline).join(', ')} into Contest ${slug}`,
+    `${PREFIX} inserted disciplines ${createdRounds.map((d) => d.discipline).join(', ')} into Contest ${slug}`,
   )
 
   const scrambleRows: (typeof scrambleTable.$inferInsert)[] = []
-  for (const { id, discipline } of createdContestDisciplines) {
+  for (const { id, discipline } of createdRounds) {
     const scrambles = easyScrambles
       ? generateEasyScrambles(7)
       : await generateScrambles(discipline, 7)
     for (const [idx, scramble] of scrambles.entries()) {
       scrambleRows.push({
-        contestDisciplineId: id,
+        roundId: id,
         position: SCRAMBLE_POSITIONS[idx]!,
         moves: scramble,
       })

@@ -4,7 +4,7 @@ import { eq, and, sql } from 'drizzle-orm'
 import { createTRPCRouter, protectedProcedure } from '../trpc'
 import { TRPCError } from '@trpc/server'
 import {
-  contestDisciplineTable,
+  roundTable,
   roundSessionTable,
   scrambleTable,
   solveTable,
@@ -57,37 +57,34 @@ export const roundSessionAuthProcedure = protectedProcedure
         message: "You can't participate in a round you've already completed.",
       })
 
-    const contestDisciplineSubquery = ctx.db
+    const roundSubquery = ctx.db
       .select()
-      .from(contestDisciplineTable)
+      .from(roundTable)
       .where(
         and(
-          eq(contestDisciplineTable.contestSlug, input.contestSlug),
-          eq(contestDisciplineTable.disciplineSlug, input.discipline),
+          eq(roundTable.contestSlug, input.contestSlug),
+          eq(roundTable.disciplineSlug, input.discipline),
         ),
       )
       .as('subquery')
 
     const [roundSession] = await ctx.db
       .select({ id: roundSessionTable.id })
-      .from(contestDisciplineSubquery)
+      .from(roundSubquery)
       .innerJoin(
         roundSessionTable,
-        eq(roundSessionTable.contestDisciplineId, contestDisciplineSubquery.id),
+        eq(roundSessionTable.roundId, roundSubquery.id),
       )
-      .innerJoin(
-        scrambleTable,
-        eq(scrambleTable.contestDisciplineId, contestDisciplineSubquery.id),
-      )
+      .innerJoin(scrambleTable, eq(scrambleTable.roundId, roundSubquery.id))
       .where(eq(roundSessionTable.contestantId, ctx.session.user.id))
 
     if (roundSession) return next({ ctx: { roundSession } })
 
     const [createdRoundSession] = await ctx.db
-      .with(contestDisciplineSubquery)
+      .with(roundSubquery)
       .insert(roundSessionTable)
       .values({
-        contestDisciplineId: sql`(select id from ${contestDisciplineSubquery})`,
+        roundId: sql`(select id from ${roundSubquery})`,
         contestantId: ctx.session.user.id,
       })
       .returning({ id: roundSessionTable.id })
@@ -116,14 +113,8 @@ export const roundSessionRouter = createTRPCRouter({
         state: solveTable.state,
       })
       .from(roundSessionTable)
-      .innerJoin(
-        contestDisciplineTable,
-        eq(contestDisciplineTable.id, roundSessionTable.contestDisciplineId),
-      )
-      .innerJoin(
-        scrambleTable,
-        eq(scrambleTable.contestDisciplineId, contestDisciplineTable.id),
-      )
+      .innerJoin(roundTable, eq(roundTable.id, roundSessionTable.roundId))
+      .innerJoin(scrambleTable, eq(scrambleTable.roundId, roundTable.id))
       .leftJoin(
         solveTable,
         and(
@@ -185,13 +176,10 @@ export const roundSessionRouter = createTRPCRouter({
       const [scramble] = await ctx.db
         .select({
           moves: scrambleTable.moves,
-          discipline: contestDisciplineTable.disciplineSlug,
+          discipline: roundTable.disciplineSlug,
         })
         .from(scrambleTable)
-        .innerJoin(
-          contestDisciplineTable,
-          eq(contestDisciplineTable.id, scrambleTable.contestDisciplineId),
-        )
+        .innerJoin(roundTable, eq(roundTable.id, scrambleTable.roundId))
         .where(eq(scrambleTable.id, input.scrambleId))
       if (!scramble) throw new TRPCError({ code: 'NOT_FOUND' })
 

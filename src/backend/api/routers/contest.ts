@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { createTRPCRouter, publicProcedure } from '@/backend/api/trpc'
 import {
   contestTable,
-  contestDisciplineTable,
+  roundTable,
   disciplineTable,
   roundSessionTable,
   scrambleTable,
@@ -29,7 +29,7 @@ export const contestRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const items = await ctx.db
-        .selectDistinctOn([contestTable.startDate, contestDisciplineTable.id], {
+        .selectDistinctOn([contestTable.startDate, roundTable.id], {
           slug: contestTable.slug,
           startDate: contestTable.startDate,
           expectedEndDate: contestTable.expectedEndDate,
@@ -37,17 +37,14 @@ export const contestRouter = createTRPCRouter({
           isOngoing: contestTable.isOngoing,
         })
         .from(contestTable)
-        .innerJoin(
-          contestDisciplineTable,
-          eq(contestDisciplineTable.contestSlug, contestTable.slug),
-        )
+        .innerJoin(roundTable, eq(roundTable.contestSlug, contestTable.slug))
         .innerJoin(
           disciplineTable,
-          eq(contestDisciplineTable.disciplineSlug, disciplineTable.slug),
+          eq(roundTable.disciplineSlug, disciplineTable.slug),
         )
         .innerJoin(
           roundSessionTable,
-          eq(roundSessionTable.contestDisciplineId, contestDisciplineTable.id),
+          eq(roundSessionTable.roundId, roundTable.id),
         )
         .where(
           and(
@@ -58,7 +55,7 @@ export const contestRouter = createTRPCRouter({
               : undefined,
           ),
         )
-        .orderBy(desc(contestTable.startDate), contestDisciplineTable.id)
+        .orderBy(desc(contestTable.startDate), roundTable.id)
         .limit(input.limit + 1)
 
       let nextCursor: typeof input.cursor | undefined = undefined
@@ -77,13 +74,10 @@ export const contestRouter = createTRPCRouter({
         expectedEndDate: contestTable.expectedEndDate,
         endDate: contestTable.endDate,
         isOngoing: contestTable.isOngoing,
-        discipline: contestDisciplineTable.disciplineSlug,
+        discipline: roundTable.disciplineSlug,
       })
       .from(contestTable)
-      .innerJoin(
-        contestDisciplineTable,
-        eq(contestDisciplineTable.contestSlug, contestTable.slug),
-      )
+      .innerJoin(roundTable, eq(roundTable.contestSlug, contestTable.slug))
       .where(eq(contestTable.isOngoing, true))
 
     const ongoing = rows[0]
@@ -105,16 +99,13 @@ export const contestRouter = createTRPCRouter({
           expectedEndDate: contestTable.expectedEndDate,
           endDate: contestTable.endDate,
           isOngoing: contestTable.isOngoing,
-          disciplineSlug: contestDisciplineTable.disciplineSlug,
+          disciplineSlug: roundTable.disciplineSlug,
         })
         .from(contestTable)
-        .innerJoin(
-          contestDisciplineTable,
-          eq(contestDisciplineTable.contestSlug, input.contestSlug),
-        )
+        .innerJoin(roundTable, eq(roundTable.contestSlug, input.contestSlug))
         .innerJoin(
           disciplineTable,
-          eq(disciplineTable.slug, contestDisciplineTable.disciplineSlug),
+          eq(disciplineTable.slug, roundTable.disciplineSlug),
         )
         .where(eq(contestTable.slug, input.contestSlug))
         .orderBy(disciplineTable.createdAt)
@@ -175,10 +166,10 @@ export const contestRouter = createTRPCRouter({
           isDnf: solveTable.isDnf,
           position: scrambleTable.position,
         })
-        .from(contestDisciplineTable)
+        .from(roundTable)
         .innerJoin(
           roundSessionTable,
-          eq(roundSessionTable.contestDisciplineId, contestDisciplineTable.id),
+          eq(roundSessionTable.roundId, roundTable.id),
         )
         .innerJoin(
           solveTable,
@@ -188,8 +179,8 @@ export const contestRouter = createTRPCRouter({
         .innerJoin(userTable, eq(userTable.id, roundSessionTable.contestantId))
         .where(
           and(
-            eq(contestDisciplineTable.contestSlug, input.contestSlug),
-            eq(contestDisciplineTable.disciplineSlug, input.discipline),
+            eq(roundTable.contestSlug, input.contestSlug),
+            eq(roundTable.disciplineSlug, input.discipline),
             eq(roundSessionTable.isFinished, true),
             eq(solveTable.state, 'submitted'),
           ),
@@ -232,7 +223,7 @@ export const contestRouter = createTRPCRouter({
           solution: solveTable.solution,
           username: userTable.name,
           timeMs: solveTable.timeMs,
-          discipline: contestDisciplineTable.disciplineSlug,
+          discipline: roundTable.disciplineSlug,
         })
         .from(solveTable)
         .innerJoin(scrambleTable, eq(scrambleTable.id, solveTable.scrambleId))
@@ -241,10 +232,7 @@ export const contestRouter = createTRPCRouter({
           eq(roundSessionTable.id, solveTable.roundSessionId),
         )
         .innerJoin(userTable, eq(userTable.id, roundSessionTable.contestantId))
-        .innerJoin(
-          contestDisciplineTable,
-          eq(contestDisciplineTable.id, roundSessionTable.contestDisciplineId),
-        )
+        .innerJoin(roundTable, eq(roundTable.id, roundSessionTable.roundId))
         .where(eq(solveTable.id, input.solveId))
 
       if (!solve) throw new TRPCError({ code: 'NOT_FOUND' })

@@ -12,7 +12,7 @@ export const disciplineTable = pgTable('discipline', (d) => ({
 
 export const contestTable = pgTable('contest', (d) => ({
   ...createdUpdatedAtColumns,
-  slug: d.text('slug').notNull().primaryKey().unique(), // index this?
+  slug: d.text('slug').notNull().primaryKey().unique(),
   startDate: d
     .timestamp('start_date', {
       withTimezone: true,
@@ -30,7 +30,7 @@ export const contestTable = pgTable('contest', (d) => ({
   systemInitial: d.boolean('system_initial').notNull().default(false),
 }))
 
-export const contestDisciplineTable = pgTable('contest_discipline', (d) => ({
+export const roundTable = pgTable('round', (d) => ({
   ...createdUpdatedAtColumns,
   id: d.integer('id').primaryKey().generatedByDefaultAsIdentity(),
   contestSlug: d
@@ -53,10 +53,10 @@ export const scrambleTable = pgTable(
   (d) => ({
     ...createdUpdatedAtColumns,
     id: d.integer('id').primaryKey().generatedByDefaultAsIdentity(),
-    contestDisciplineId: d
-      .integer('contest_discipline_id')
+    roundId: d
+      .integer('round_id')
       .notNull()
-      .references(() => contestDisciplineTable.id, { onDelete: 'cascade' }),
+      .references(() => roundTable.id, { onDelete: 'cascade' }),
     position: scramblePositionEnum('position').notNull(),
     isExtra: d
       .boolean('is_extra')
@@ -67,10 +67,7 @@ export const scrambleTable = pgTable(
     moves: d.text('moves').notNull(),
   }),
   (t) => [
-    unique('contest_discipline_position_unique').on(
-      t.contestDisciplineId,
-      t.position,
-    ),
+    unique('contest_discipline_position_unique').on(t.roundId, t.position),
   ],
 )
 
@@ -81,10 +78,10 @@ export const roundSessionTable = pgTable('round_session', (d) => ({
     .text('contestant_id')
     .notNull()
     .references(() => userTable.id, { onDelete: 'cascade' }),
-  contestDisciplineId: d
-    .integer('contest_discipline_id')
+  roundId: d
+    .integer('round_id')
     .notNull()
-    .references(() => contestDisciplineTable.id, { onDelete: 'cascade' }),
+    .references(() => roundTable.id, { onDelete: 'cascade' }),
   avgMs: d.integer('avg_ms'),
   isDnf: d.boolean('is_dnf'),
   isFinished: d.boolean('is_finished').default(false).notNull(),

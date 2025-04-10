@@ -99,9 +99,9 @@
 - [x] make dashboard non blocking
 - [x] pagination spinner
 - [x] hide contests with no results
-- [ ] telegram notification for contest creation
+- [x] telegram notification for contest creation
 - [ ] db refactor
-    - [ ] rename contestdiscipline to round
+    - [x] rename contestdiscipline to round
     - [ ] rename state to status
     - [ ] rename add auth_ prefix to auth tables
     - [ ] rename reconstruction to solution
