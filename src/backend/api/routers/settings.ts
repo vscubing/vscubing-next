@@ -15,7 +15,8 @@ export const settingsRouter = createTRPCRouter({
       .insert(userSimulatorSettingsTable)
       .values({ userId: ctx.session.user.id })
       .returning()
-    return insertedSettings!
+    if (insertedSettings) throw new Error("couldn't create settings")
+    return insertedSettings
   }),
   setSimulatorSettings: protectedProcedure
     .input(
@@ -26,10 +27,16 @@ export const settingsRouter = createTRPCRouter({
         cameraPositionPhi: z.number().optional(),
       }),
     )
-    .mutation(({ ctx, input }) =>
-      ctx.db
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db
         .update(userSimulatorSettingsTable)
         .set({ ...input })
-        .where(eq(userSimulatorSettingsTable.userId, ctx.session.user.id)),
-    ),
+        .where(eq(userSimulatorSettingsTable.userId, ctx.session.user.id))
+
+      ctx.analytics.capture({
+        event: 'simulator_settings_changed',
+        distinctId: ctx.session.user.id,
+        properties: input,
+      })
+    }),
 })

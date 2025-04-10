@@ -4,7 +4,7 @@ on:
   pull_request:
     types: [opened, synchronize, edited, ready_for_review]
   push:
-    branches: [main, dev]
+    branches: [dev]
   workflow_dispatch:
   
 concurrency:

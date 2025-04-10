@@ -1,10 +1,11 @@
-import { DISCIPLINES, SCRAMBLE_POSITIONS } from '@/types'
+import { DISCIPLINES, SCRAMBLE_POSITIONS, type Discipline } from '@/types'
 import dayjs from 'dayjs'
 import { eq, desc } from 'drizzle-orm'
 import { db } from '../db'
 import { contestTable, roundTable, scrambleTable } from '../db/schema'
 import { generateScrambles } from './generate-scrambles'
 import { env } from '@/env'
+import { posthogClient } from '../posthog'
 
 const PREFIX = '[ONGOING CONTEST ADMIN]'
 export const NO_ONGOING_CONTEST_ERROR_MESSAGE = `${PREFIX} no ongoing contest. Please create one manually from the developer tools`
@@ -36,6 +37,7 @@ export async function createNewContest({
   tx?: Transaction | typeof db
   easyScrambles?: boolean
 }) {
+  const disciplines = DISCIPLINES
   const now = dayjs()
   await tx.insert(contestTable).values({
     slug,
@@ -44,11 +46,19 @@ export async function createNewContest({
     expectedEndDate: now.add(7, 'day').toISOString(),
   })
   console.log(`${PREFIX} created Contest ${slug}`)
+  posthogClient.groupIdentify({
+    groupType: 'contest',
+    groupKey: slug,
+    properties: {
+      disciplines,
+      startDate: now.toDate(),
+    },
+  })
 
   const createdRounds = await tx
     .insert(roundTable)
     .values(
-      DISCIPLINES.map((discipline) => ({
+      disciplines.map((discipline) => ({
         contestSlug: slug,
         disciplineSlug: discipline,
       })),
@@ -60,8 +70,21 @@ export async function createNewContest({
   console.log(
     `${PREFIX} inserted disciplines ${createdRounds.map((d) => d.discipline).join(', ')} into Contest ${slug}`,
   )
+  for (const { discipline, id } of createdRounds) {
+    posthogClient.groupIdentify({
+      groupType: 'discipline',
+      groupKey: discipline,
+    })
+    posthogClient.groupIdentify({
+      groupType: 'round',
+      groupKey: String(id),
+      properties: { discipline },
+    })
+  }
 
-  const scrambleRows: (typeof scrambleTable.$inferInsert)[] = []
+  const scrambleRows: (typeof scrambleTable.$inferInsert & {
+    discipline: Discipline
+  })[] = []
   for (const { id, discipline } of createdRounds) {
     const scrambles = easyScrambles
       ? generateEasyScrambles(7)
@@ -71,6 +94,7 @@ export async function createNewContest({
         roundId: id,
         position: SCRAMBLE_POSITIONS[idx]!,
         moves: scramble,
+        discipline,
       })
     }
   }
@@ -78,7 +102,19 @@ export async function createNewContest({
     `${PREFIX} generated ${easyScrambles ? 'easy ' : ''}scrambles for Contest ${slug}`,
   )
 
-  await tx.insert(scrambleTable).values(scrambleRows)
+  const scrambles = await tx
+    .insert(scrambleTable)
+    .values(scrambleRows)
+    .returning({ id: scrambleTable.id, roundId: scrambleTable.roundId })
+
+  for (const [idx, { id, roundId }] of scrambles.entries()) {
+    posthogClient.groupIdentify({
+      groupType: 'scramble',
+      groupKey: String(id),
+      properties: { id, discipline: scrambleRows[idx]!.discipline, roundId },
+    })
+  }
+
   return { newContestSlug: slug }
 }
 

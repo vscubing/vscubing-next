@@ -69,7 +69,7 @@ export const roundSessionAuthProcedure = protectedProcedure
       .as('subquery')
 
     const [roundSession] = await ctx.db
-      .select({ id: roundSessionTable.id })
+      .select({ id: roundSessionTable.id, roundId: roundSubquery.id })
       .from(roundSubquery)
       .innerJoin(
         roundSessionTable,
@@ -87,12 +87,22 @@ export const roundSessionAuthProcedure = protectedProcedure
         roundId: sql`(select id from ${roundSubquery})`,
         contestantId: ctx.session.user.id,
       })
-      .returning({ id: roundSessionTable.id })
+      .returning({ id: roundSessionTable.id, roundId: roundSubquery.id })
     if (!createdRoundSession)
       throw new Error(
         `Error while creating a round session for ${JSON.stringify(input)}`,
       )
 
+    ctx.analytics.groupIdentify({
+      groupType: 'roundSession',
+      groupKey: String(createdRoundSession.id),
+      distinctId: ctx.session.user.id,
+      properties: {
+        discipline: input.discipline,
+        contest: input.contestSlug,
+        roundId: createdRoundSession.roundId,
+      },
+    })
     return next({ ctx: { roundSession: createdRoundSession } })
   })
 
@@ -201,13 +211,35 @@ export const roundSessionRouter = createTRPCRouter({
         }
       }
 
-      await ctx.db.insert(solveTable).values({
-        roundSessionId: ctx.roundSession.id,
-        isDnf,
-        timeMs: input.result.timeMs,
-        solution: input.solution,
-        status: 'pending',
-        scrambleId: input.scrambleId,
+      const [solve] = await ctx.db
+        .insert(solveTable)
+        .values({
+          roundSessionId: ctx.roundSession.id,
+          isDnf,
+          timeMs: input.result.timeMs,
+          solution: input.solution,
+          status: 'pending',
+          scrambleId: input.scrambleId,
+        })
+        .returning({ id: solveTable.id })
+
+      if (!solve) throw new Error("couldn't insert a solve")
+
+      ctx.analytics.capture({
+        event: 'solve_created',
+        distinctId: ctx.session.user.id,
+        properties: {
+          isValid,
+          timeMs: input.result.timeMs,
+          isDnf,
+          id: solve.id,
+        },
+        groups: {
+          discipline: input.discipline,
+          contest: input.contestSlug,
+          round: ctx.roundSession.roundId,
+          roundSession: ctx.roundSession.id,
+        },
       })
 
       if (!isValid) {
@@ -222,37 +254,75 @@ export const roundSessionRouter = createTRPCRouter({
         type: z.enum(['submitted', 'changed_to_extra']),
       }),
     )
-    .mutation(async ({ ctx, input }) =>
-      ctx.db.transaction(async (t) => {
-        await t
-          .update(solveTable)
-          .set({ status: input.type })
-          .where(
-            and(
-              eq(solveTable.id, input.solveId),
-              eq(solveTable.roundSessionId, ctx.roundSession.id),
-            ),
-          )
-
-        const submittedResults = (
+    .mutation(async ({ ctx, input }) => {
+      const { sessionFinished, avgMs, isDnf } = await ctx.db.transaction(
+        async (t) => {
           await t
-            .select({ isDnf: solveTable.isDnf, timeMs: solveTable.timeMs })
-            .from(solveTable)
+            .update(solveTable)
+            .set({ status: input.type })
             .where(
               and(
+                eq(solveTable.id, input.solveId),
                 eq(solveTable.roundSessionId, ctx.roundSession.id),
-                eq(solveTable.status, 'submitted'),
               ),
             )
-        ).map((res) => resultDnfish.parse(res))
 
-        if (submittedResults.length === ROUND_ATTEMPTS_QTY) {
-          const { timeMs: avgMs, isDnf } = calculateAvg(submittedResults)
-          await t
-            .update(roundSessionTable)
-            .set({ isFinished: true, avgMs, isDnf })
-            .where(eq(roundSessionTable.id, ctx.roundSession.id))
-        }
-      }),
-    ),
+          const submittedResults = (
+            await t
+              .select({ isDnf: solveTable.isDnf, timeMs: solveTable.timeMs })
+              .from(solveTable)
+              .where(
+                and(
+                  eq(solveTable.roundSessionId, ctx.roundSession.id),
+                  eq(solveTable.status, 'submitted'),
+                ),
+              )
+          ).map((res) => resultDnfish.parse(res))
+
+          const sessionFinished = submittedResults.length === ROUND_ATTEMPTS_QTY
+          if (sessionFinished) {
+            const { timeMs: avgMs, isDnf } = calculateAvg(submittedResults)
+            await t
+              .update(roundSessionTable)
+              .set({ isFinished: true, avgMs, isDnf })
+              .where(eq(roundSessionTable.id, ctx.roundSession.id))
+            return { sessionFinished: true, avgMs, isDnf }
+          }
+
+          return { sessionFinished: false, avgMs: null }
+        },
+      )
+
+      ctx.analytics.capture({
+        event: 'solve_submitted',
+        distinctId: ctx.session.user.id,
+        properties: {
+          id: input.solveId,
+          type: input.type,
+        },
+        groups: {
+          discipline: input.discipline,
+          contestSlug: input.contestSlug,
+          round: ctx.roundSession.roundId,
+          roundSession: ctx.roundSession.id,
+        },
+      })
+
+      if (sessionFinished) {
+        ctx.analytics.capture({
+          event: 'round_session_finished',
+          distinctId: ctx.session.user.id,
+          properties: {
+            avgMs,
+            isDnf,
+          },
+          groups: {
+            discipline: input.discipline,
+            contestSlug: input.contestSlug,
+            round: ctx.roundSession.roundId,
+            roundSession: ctx.roundSession.id,
+          },
+        })
+      }
+    }),
 })

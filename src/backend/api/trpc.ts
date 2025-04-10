@@ -13,6 +13,7 @@ import { ZodError } from 'zod'
 
 import { auth } from '@/backend/auth'
 import { db } from '@/backend/db'
+import { posthogClient } from '../posthog'
 
 /**
  * 1. CONTEXT
@@ -33,6 +34,7 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
     db,
     session,
     ...opts,
+    analytics: posthogClient,
   }
 }
 
