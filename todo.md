@@ -1,6 +1,6 @@
-- [ ] posthog analytics
-    - [ ] initial setup
-    - [ ] custom events
+- [x] posthog analytics
+    - [x] initial setup
+    - [x] custom events
     - [ ] error handling
 - [ ] expandContestLink
 - [ ] stop using NODE_ENV
