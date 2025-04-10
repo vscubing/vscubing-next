@@ -18,31 +18,26 @@ import { SolveValidator } from './_components/solve-validator'
 import { db } from '@/backend/db'
 import { roundTable, scrambleTable } from '@/backend/db/schema'
 import { and, eq, or } from 'drizzle-orm'
-import { Suspense, type ReactNode } from 'react'
+import { type ReactNode } from 'react'
+import { headers } from 'next/headers'
 
-type SearchParams = Promise<Record<string, string | string[] | undefined>>
-export default async function DevPage({
-  searchParams,
-}: {
-  searchParams: SearchParams
-}) {
-  await searchParams // hack to opt out of prerendering during build
+export default async function DevPage() {
+  await headers() // hack to opt out of prerendering during build
+
   if (env.NEXT_PUBLIC_APP_ENV === 'production') notFound()
   // TODO: allow access for admins
 
   return (
     <div className='flex flex-1 flex-wrap justify-between gap-8 rounded-2xl bg-black-80 p-6 sm:p-3'>
       {/* TODO: disable prerendering of this somehow */}
-      <Suspense fallback='fallback'>
-        <OngoingContestInfo />
-        <SolveValidator />
-      </Suspense>
+
+      <OngoingContestInfo />
+      <SolveValidator />
     </div>
   )
 }
 
 export async function OngoingContestInfo() {
-  console.log('wtf')
   const latestContest = await getLatestContest()
 
   if (!latestContest)
