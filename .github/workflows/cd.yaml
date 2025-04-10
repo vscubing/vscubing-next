@@ -13,7 +13,7 @@ env:
   IMAGE_NAME: ghcr.io/${{ github.repository }}
 
 jobs:
-  build-and-push:
+  CD:
     environment: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
     runs-on: blacksmith-16vcpu-ubuntu-2204
     permissions:

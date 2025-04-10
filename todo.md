@@ -109,8 +109,9 @@
     - [x] disable existing migrations
     - [x] reimport fresh db backup
     - [x] import data from legacy tables
-- [ ] staging/prod env
-    - [ ] protect staging
+- [x] setup staging env
+- [x] protect staging
+- [ ] change console.log to console.error
 
 nicities:
 - [ ] expandContestLink
@@ -123,3 +124,5 @@ nicities:
     - [ ] migration
 - [ ] clean up git branches
 - [ ] branch protection
+
+TEST

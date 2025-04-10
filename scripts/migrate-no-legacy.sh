@@ -3,7 +3,6 @@
 
 FILE="drizzle/0001_legacy-import.sql" 
 
-cp $FILE $FILE.bak
-sed -i '' 's/^/-- /' $FILE
+sed -i'.bak' 's/^/-- /' $FILE
 bun run db:migrate
 mv $FILE.bak $FILE
