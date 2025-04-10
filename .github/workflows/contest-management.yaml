@@ -16,4 +16,4 @@ jobs:
       run: |
         curl --fail -X POST \
           -H "Authorization: Bearer ${{ secrets.CONTEST_CREATION_WEBHOOK_SECRET }}" \
-          ${{ vars.GH_CONTEST_CREATION_WEBHOOK_URL }}
+          ${{ vars.CONTEST_CREATION_WEBHOOK_URL }}
