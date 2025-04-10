@@ -111,19 +111,17 @@
     - [x] import data from legacy tables
 - [x] setup staging env
 - [x] protect staging
-- [ ] change console.log to console.error
-- [ ] fix solve page on mobile
+- [x] change console.log to console.error
+- [x] db backups
+- [x] branch protection
+- [x] fix solve page on mobile
+- [x] clean up git branches
 
 nicities:
 - [ ] expandContestLink
 - [ ] skip inspection by default
 - [ ] leaderboard: on tie => sort by single result (+ unit test it)
 - [ ] fancy white glowing outline effect on own result / after jumping to a solve
-- [ ] db backups
 - [ ] delete round sessions with no results & dnf round sessions with too little results
     - [ ] on contest close
     - [ ] migration
-- [ ] clean up git branches
-- [ ] branch protection
-
-TEST

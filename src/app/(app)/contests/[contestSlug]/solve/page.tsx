@@ -60,8 +60,8 @@ export default async function SolveContestPage({
             initialDiscipline={discipline}
           />
         </div>
-        <div className='ml-10 flex flex-1 items-center gap-4'>
-          <ExclamationCircleIcon />
+        <div className='ml-10 flex flex-1 items-center gap-4 sm:sr-only'>
+          <ExclamationCircleIcon className='shrink-0' />
           <p>
             You can't see the results of an ongoing round until you solve all
             scrambles or the round ends
