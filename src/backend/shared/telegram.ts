@@ -7,7 +7,8 @@ export async function sendTelegramMessage(
   message: string,
   thread: 'contest-management',
 ) {
-  return bot.sendMessage(env.TELEGRAM_CHAT_ID, message, {
+  const envPrefix = `[${env.NEXT_PUBLIC_APP_ENV}] `
+  return bot.sendMessage(env.TELEGRAM_CHAT_ID, envPrefix + message, {
     message_thread_id: THREAD_ID_MAP[thread],
   })
 }

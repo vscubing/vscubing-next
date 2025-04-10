@@ -110,6 +110,7 @@
     - [x] reimport fresh db backup
     - [x] import data from legacy tables
 - [ ] staging/prod env
+    - [ ] protect staging
 
 nicities:
 - [ ] expandContestLink
