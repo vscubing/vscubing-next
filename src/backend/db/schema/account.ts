@@ -54,8 +54,8 @@ export const accountRelations = relations(accountTable, ({ one }) => ({
   }),
 }))
 
-export const sessionTable = pgTable(
-  'session',
+export const authSessionTable = pgTable(
+  'auth_session',
   (d) => ({
     id: d.varchar('id', { length: 255 }).primaryKey(),
     userId: d
@@ -69,12 +69,12 @@ export const sessionTable = pgTable(
   (t) => [index('t_user_id_idx').on(t.userId)],
 )
 
-export const sessionRelations = relations(sessionTable, ({ one }) => ({
+export const authSessionRelations = relations(authSessionTable, ({ one }) => ({
   user: one(userTable, {
-    fields: [sessionTable.userId],
+    fields: [authSessionTable.userId],
     references: [userTable.id],
   }),
 }))
 
 export type User = InferSelectModel<typeof userTable>
-export type Session = InferSelectModel<typeof sessionTable>
+export type Session = InferSelectModel<typeof authSessionTable>

@@ -102,8 +102,8 @@
 - [x] telegram notification for contest creation
 - [ ] db refactor
     - [x] rename contestdiscipline to round
-    - [ ] rename state to status
-    - [ ] rename add auth_ prefix to auth tables
+    - [x] rename state to status
+    - [x] rename session to auth_session table
     - [ ] rename reconstruction to solution
 - [ ] redo migrations
     - [ ] correct primary key autoincrementation https://stackoverflow.com/questions/4448340/postgresql-duplicate-key-violates-unique-constraint
