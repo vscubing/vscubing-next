@@ -193,7 +193,7 @@ export const roundSessionRouter = createTRPCRouter({
           solution: removeSolutionComments(input.solution),
         })
         if (error || !_isValid) {
-          console.log(
+          console.error(
             `[SOLVE] invalid solve: ${JSON.stringify(scramble)}\n ${JSON.stringify(input.solution)}\n ${JSON.stringify(error)}`,
           )
           isValid = false

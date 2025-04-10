@@ -16,7 +16,6 @@ import {
 import { tryCatch } from '@/utils/try-catch'
 import { GOOGLE_AUTH_ERROR_SEARCH_PARAM } from '../error-search-param'
 
-// TODO: redirect back on error
 export async function GET(request: Request): Promise<Response> {
   const url = new URL(request.url)
   const code = url.searchParams.get('code')
@@ -35,7 +34,7 @@ export async function GET(request: Request): Promise<Response> {
     codeVerifier === null ||
     state !== storedState
   ) {
-    console.log(
+    console.error(
       '[GOOGLE AUTH] no code/state/storedState/codeVerifier: ',
       code,
       state,
@@ -59,7 +58,7 @@ export async function GET(request: Request): Promise<Response> {
   )
   if (error) {
     error.message = '[GOOGLE AUTH] ' + error.message
-    console.log(error)
+    console.error(error)
     redirectTo.searchParams.append(
       GOOGLE_AUTH_ERROR_SEARCH_PARAM,
       'Something went wrong during the authorization.',

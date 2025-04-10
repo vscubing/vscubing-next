@@ -112,6 +112,7 @@
 - [x] setup staging env
 - [x] protect staging
 - [ ] change console.log to console.error
+- [ ] fix solve page on mobile
 
 nicities:
 - [ ] expandContestLink

@@ -90,7 +90,7 @@ export async function closeOngoingContest(
   const latestContest = await getLatestContest()
 
   if (latestContest?.isOngoing !== true) {
-    console.log(NO_ONGOING_CONTEST_ERROR_MESSAGE)
+    console.error(NO_ONGOING_CONTEST_ERROR_MESSAGE)
     throw new Error(NO_ONGOING_CONTEST_ERROR_MESSAGE)
   }
 
