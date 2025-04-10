@@ -13,12 +13,12 @@ export function isExtra(position: ScramblePosition) {
   return position.startsWith('E')
 }
 
-export const SOLVE_STATES = [
+export const SOLVE_STATUSES = [
   'pending',
   'submitted',
   'changed_to_extra',
 ] as const
-export type SolveState = (typeof SOLVE_STATES)[number]
+export type SolveState = (typeof SOLVE_STATUSES)[number]
 
 export type ResultDnfish = ResultSuccess | ResultDnf
 type ResultSuccess = { timeMs: number; isDnf: false }
