@@ -12,11 +12,11 @@ export async function POST(request: NextRequest) {
     .get('Authorization')
     ?.slice('Bearer '.length)
   if (!token) {
-    console.log('[CONTEST MANAGEMENT] Webhook secret required')
+    console.error('[CONTEST MANAGEMENT] Webhook secret required')
     return new Response('Webhook secret required', { status: 401 })
   }
   if (token !== env.CONTEST_CREATION_WEBHOOK_SECRET) {
-    console.log(
+    console.error(
       `[CONTEST MANAGEMENT] Incorrect webhook secret. Expected: \n"${env.CONTEST_CREATION_WEBHOOK_SECRET}" (${env.CONTEST_CREATION_WEBHOOK_SECRET.length}) \n Received:\n"${token}" (${token.length})`,
     )
     return new Response('Incorrect webhook secret', { status: 403 })
@@ -24,14 +24,14 @@ export async function POST(request: NextRequest) {
 
   const { data, error } = await tryCatch(closeOngoingAndCreateNewContest())
   if (error?.message === NO_ONGOING_CONTEST_ERROR_MESSAGE) {
-    console.log(`[CONTEST MANAGEMENT] ${NO_ONGOING_CONTEST_ERROR_MESSAGE}`)
+    console.error(`[CONTEST MANAGEMENT] ${NO_ONGOING_CONTEST_ERROR_MESSAGE}`)
     return new Response(error.message, { status: 412 })
   }
   if (error) throw error
 
   const { newContestSlug } = data
 
-  console.log(
+  console.error(
     `[CONTEST MANAGEMENT] Closed ongoing and published Contest ${newContestSlug} (cause: webhook)`,
   )
   await sendTelegramMessage(

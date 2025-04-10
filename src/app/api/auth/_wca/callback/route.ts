@@ -44,7 +44,7 @@ export async function GET(request: Request): Promise<Response> {
     }) as Promise<unknown>,
   )
   if (tokenError) {
-    console.log('[WCA] invalid token schema: ', tokenError)
+    console.error('[WCA] invalid token schema: ', tokenError)
     return new Response(null, {
       status: 400,
     })

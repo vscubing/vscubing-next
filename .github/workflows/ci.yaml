@@ -39,3 +39,5 @@ jobs:
 
       - name: Lint check
         run: bun run lint:check
+
+# TODO: also run tests here
