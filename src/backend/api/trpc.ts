@@ -120,18 +120,14 @@ export const publicProcedure = t.procedure.use(timingMiddleware)
  */
 export const protectedProcedure = t.procedure
   .use(timingMiddleware)
-  .use(({ ctx, next, path, type }) => {
+  .use(({ ctx, next, path }) => {
     if (!ctx.session) {
       throw new TRPCError({ code: 'UNAUTHORIZED' })
     }
 
     const { session, user } = ctx.session
 
-    if (
-      !user.finishedRegistration &&
-      type === 'mutation' &&
-      path !== 'user.setUsername'
-    ) {
+    if (!user.finishedRegistration && !path.startsWith('user.')) {
       throw new TRPCError({
         code: 'UNAUTHORIZED',
         message: 'You must finish the registration first.',

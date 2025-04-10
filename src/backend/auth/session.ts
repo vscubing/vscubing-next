@@ -2,7 +2,7 @@ import { db } from '../db'
 import {
   type User,
   type Session,
-  sessionTable,
+  authSessionTable,
   userTable,
 } from '../db/schema/account'
 import {
@@ -31,7 +31,7 @@ export async function createSession(
     userId,
     expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
   }
-  await db.insert(sessionTable).values(session)
+  await db.insert(authSessionTable).values(session)
   return session
 }
 
@@ -41,37 +41,37 @@ export async function validateSessionToken(
   const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)))
 
   const [result] = await db
-    .select({ user: userTable, session: sessionTable })
-    .from(sessionTable)
-    .innerJoin(userTable, eq(sessionTable.userId, userTable.id))
-    .where(eq(sessionTable.id, sessionId))
+    .select({ user: userTable, session: authSessionTable })
+    .from(authSessionTable)
+    .innerJoin(userTable, eq(authSessionTable.userId, userTable.id))
+    .where(eq(authSessionTable.id, sessionId))
   if (!result) {
     return null
   }
   const { user, session } = result
 
   if (Date.now() >= session.expiresAt.getTime()) {
-    await db.delete(sessionTable).where(eq(sessionTable.id, session.id))
+    await db.delete(authSessionTable).where(eq(authSessionTable.id, session.id))
     return null
   }
   if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
     session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
     await db
-      .update(sessionTable)
+      .update(authSessionTable)
       .set({
         expiresAt: session.expiresAt,
       })
-      .where(eq(sessionTable.id, session.id))
+      .where(eq(authSessionTable.id, session.id))
   }
   return { session, user }
 }
 
 export async function invalidateSession(sessionId: string): Promise<void> {
-  await db.delete(sessionTable).where(eq(sessionTable.id, sessionId))
+  await db.delete(authSessionTable).where(eq(authSessionTable.id, sessionId))
 }
 
 export async function invalidateAllSessions(userId: string): Promise<void> {
-  await db.delete(sessionTable).where(eq(sessionTable.userId, userId))
+  await db.delete(authSessionTable).where(eq(authSessionTable.userId, userId))
 }
 
 export async function setSessionTokenCookie(

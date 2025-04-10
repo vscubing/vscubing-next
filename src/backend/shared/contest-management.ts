@@ -111,6 +111,7 @@ export async function getLatestContest() {
       .select({
         slug: contestTable.slug,
         isOngoing: contestTable.isOngoing,
+        systemInitial: contestTable.systemInitial,
       })
       .from(contestTable)
       .orderBy(desc(contestTable.endDate))
