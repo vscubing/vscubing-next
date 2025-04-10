@@ -1,13 +1,11 @@
 import {
-  SCRAMBLE_POSITIONS,
-  SOLVE_STATUSES,
   type Discipline,
   type ScramblePosition,
   type SolveStatus,
 } from '@/types'
 import { DISCIPLINES } from '@/types'
 import { sql } from 'drizzle-orm'
-import { pgTable, pgEnum, unique } from 'drizzle-orm/pg-core'
+import { pgTable, unique } from 'drizzle-orm/pg-core'
 import { createdUpdatedAtColumns } from './core'
 import { userTable } from './account'
 
