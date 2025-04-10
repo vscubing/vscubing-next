@@ -182,7 +182,7 @@ export const contestRouter = createTRPCRouter({
             eq(roundTable.contestSlug, input.contestSlug),
             eq(roundTable.disciplineSlug, input.discipline),
             eq(roundSessionTable.isFinished, true),
-            eq(solveTable.state, 'submitted'),
+            eq(solveTable.status, 'submitted'),
           ),
         )
         .orderBy(roundSessionTable.avgMs)

@@ -1,4 +1,4 @@
-import { SCRAMBLE_POSITIONS, SOLVE_STATES, type Discipline } from '@/types'
+import { SCRAMBLE_POSITIONS, SOLVE_STATUSES, type Discipline } from '@/types'
 import { DISCIPLINES } from '@/types'
 import { sql } from 'drizzle-orm'
 import { pgTable, pgEnum, unique } from 'drizzle-orm/pg-core'
@@ -66,9 +66,7 @@ export const scrambleTable = pgTable(
       .notNull(),
     moves: d.text('moves').notNull(),
   }),
-  (t) => [
-    unique('contest_discipline_position_unique').on(t.roundId, t.position),
-  ],
+  (t) => [unique('round_position_unique').on(t.roundId, t.position)],
 )
 
 export const roundSessionTable = pgTable('round_session', (d) => ({
@@ -87,7 +85,7 @@ export const roundSessionTable = pgTable('round_session', (d) => ({
   isFinished: d.boolean('is_finished').default(false).notNull(),
 }))
 
-export const solveStateEnum = pgEnum('solve_state', SOLVE_STATES)
+export const solveStatusEnum = pgEnum('solve_status', SOLVE_STATUSES)
 export const solveTable = pgTable(
   'solve',
   (d) => ({
@@ -101,7 +99,7 @@ export const solveTable = pgTable(
       .integer('round_session_id')
       .notNull()
       .references(() => roundSessionTable.id, { onDelete: 'cascade' }),
-    state: solveStateEnum('state').notNull().default('pending'),
+    status: solveStatusEnum('status').notNull().default('pending'),
     timeMs: d.integer('time_ms'),
     isDnf: d.boolean('is_dnf').notNull(),
     solution: d.varchar('solution', { length: 10000 }),

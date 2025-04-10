@@ -9,7 +9,7 @@ import {
   scrambleTable,
   solveTable,
 } from '@/backend/db/schema'
-import { resultDnfish, SCRAMBLE_POSITIONS, SOLVE_STATES } from '@/types'
+import { resultDnfish, SCRAMBLE_POSITIONS, SOLVE_STATUSES } from '@/types'
 import { sortWithRespectToExtras } from '../../shared/sort-with-respect-to-extras'
 import { calculateAvg } from '../../shared/calculate-avg'
 import { validateSolve } from '@/backend/shared/validate-solve'
@@ -28,7 +28,7 @@ const submittedSolvesInvariant = z.array(
         position: z.enum(SCRAMBLE_POSITIONS),
       }),
       id: z.number(),
-      state: z.enum(SOLVE_STATES),
+      status: z.enum(SOLVE_STATUSES),
       result: resultDnfish,
     },
     {
@@ -110,7 +110,7 @@ export const roundSessionRouter = createTRPCRouter({
           timeMs: solveTable.timeMs,
         },
         id: solveTable.id,
-        state: solveTable.state,
+        status: solveTable.status,
       })
       .from(roundSessionTable)
       .innerJoin(roundTable, eq(roundTable.id, roundSessionTable.roundId))
@@ -125,23 +125,23 @@ export const roundSessionRouter = createTRPCRouter({
       .where(and(eq(roundSessionTable.id, ctx.roundSession.id)))
 
     const extrasUsed = allRows.filter(
-      ({ state }) => state === 'changed_to_extra',
+      ({ status: state }) => state === 'changed_to_extra',
     ).length
 
     const notChangedToExtraSolves = sortWithRespectToExtras(
       allRows
-        .filter(({ state }) => state !== 'changed_to_extra')
-        .map(({ id, result, scramble, state }) => ({
+        .filter(({ status: state }) => state !== 'changed_to_extra')
+        .map(({ id, result, scramble, status }) => ({
           scramble,
           position: scramble.position,
           id,
-          state,
+          status,
           result: result && resultDnfish.parse(result),
         })),
     )
 
     const currentSolveRow = notChangedToExtraSolves.find(
-      ({ state }) => state === null || state === 'pending',
+      ({ status }) => status === null || status === 'pending',
     )
     if (!currentSolveRow)
       throw new Error(
@@ -156,7 +156,7 @@ export const roundSessionRouter = createTRPCRouter({
 
     return {
       submittedSolves: submittedSolvesInvariant.parse(
-        notChangedToExtraSolves.filter(({ state }) => state === 'submitted'),
+        notChangedToExtraSolves.filter(({ status }) => status === 'submitted'),
       ),
       currentScramble: currentSolveRow.scramble,
       currentSolve,
@@ -206,7 +206,7 @@ export const roundSessionRouter = createTRPCRouter({
         isDnf,
         timeMs: input.result.timeMs,
         solution: input.solution,
-        state: 'pending',
+        status: 'pending',
         scrambleId: input.scrambleId,
       })
 
@@ -226,7 +226,7 @@ export const roundSessionRouter = createTRPCRouter({
       ctx.db.transaction(async (t) => {
         await t
           .update(solveTable)
-          .set({ state: input.type })
+          .set({ status: input.type })
           .where(
             and(
               eq(solveTable.id, input.solveId),
@@ -241,7 +241,7 @@ export const roundSessionRouter = createTRPCRouter({
             .where(
               and(
                 eq(solveTable.roundSessionId, ctx.roundSession.id),
-                eq(solveTable.state, 'submitted'),
+                eq(solveTable.status, 'submitted'),
               ),
             )
         ).map((res) => resultDnfish.parse(res))
