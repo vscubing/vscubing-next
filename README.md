@@ -14,17 +14,18 @@ This is a fullstack port of [@vscubing](https://github.com/vscubing) that is mea
     ```bash
     pg_restore -d $DATABASE_URL --no-owner path/to/backup.sql
     ```
-4. (Optional) Scramble generation relies on [tnoodle-cli](https://github.com/SpeedcuberOSS/tnoodle-cli). To be able to generate scrambles locally, you need to install it with `bun run vendor` first. Note: the script was only tested on WSL.
+4. (Optional) Scramble generation relies on [tnoodle-cli](https://github.com/SpeedcuberOSS/tnoodle-cli). To be able to generate scrambles locally, you need to install it with `bun run vendor` first.
 5. Run the project: `bun run dev`
 
 ## Deploying
 
-We deploy on a DigitalOcean Droplet with Dokploy. 
+We deploy on a `DigitalOcean` Droplet with `Dokploy`. 
 
 ### Environments
 
 - production: deployed from `main` (pushing directly is restricted, only PRs are allowed, which require CI checks to pass)
     * Next.js app
+        + new contests are automatically published weekly via `./github/workflows/contest-management.yaml`
     * postgres db
         + S3 backups (daily)
 - staging: deployed from `dev`

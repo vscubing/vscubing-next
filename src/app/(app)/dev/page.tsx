@@ -30,8 +30,6 @@ export default async function DevPage() {
 
   return (
     <div className='flex flex-1 flex-wrap justify-between gap-8 rounded-2xl bg-black-80 p-6 sm:p-3'>
-      {/* TODO: disable prerendering of this somehow */}
-
       <OngoingContestInfo />
       <SolveValidator />
     </div>
