@@ -9,10 +9,11 @@
     "build": "next build",
     "start": "next start",
     "db:migrate": "drizzle-kit migrate",
+    "db:migrate-no-legacy": "./scripts/migrate-no-legacy.sh",
     "db:generate": "drizzle-kit generate",
     "db:custom": "drizzle-kit generate --custom --name",
     "db:drop": "drizzle-kit drop",
-    "db:local": "./start-database.sh && drizzle-kit studio",
+    "db:local": "./scripts/start-database.sh",
     "db:studio": "drizzle-kit studio",
     "check": "bun format:check && bun lint:check && bun type:check && bun test",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
@@ -21,7 +22,7 @@
     "lint:write": "next lint --fix",
     "type:check": "tsc --noEmit",
     "test": "bun test",
-    "vendor": "./install-vendor.sh"
+    "vendor": "./scripts/install-vendor.sh"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",

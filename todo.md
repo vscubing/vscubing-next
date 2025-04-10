@@ -105,13 +105,10 @@
     - [x] rename state to status
     - [x] rename session to auth_session table
     - [x] rename reconstruction to solution
-- [ ] redo migrations
+- [x] redo migrations
     - [x] disable existing migrations
-    - [ ] reimport fresh db backup
-    - [ ] legacy_ prefix
-    - [ ] import data from legacy tables
-    - [ ] correct primary key autoincrementation https://stackoverflow.com/questions/4448340/postgresql-duplicate-key-violates-unique-constraint
-    - [ ] figure out why deployment's initial db migration doesn't work (maybe it will be resolved by redoing the migrations from scratch)
+    - [x] reimport fresh db backup
+    - [x] import data from legacy tables
 - [ ] staging/prod env
 
 nicities:
