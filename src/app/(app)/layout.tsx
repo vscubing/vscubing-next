@@ -5,9 +5,9 @@ import { PopupSidebar } from './_layout/components/popup-sidebar'
 import { Sidebar } from './_layout/components/sidebar'
 import { LayoutHeader } from './_layout/layout-header'
 import { cn } from '@/frontend/utils/cn'
-import { Toaster } from 'sonner'
 import ClientOnlyPortal from '@/frontend/utils/client-only-portal'
 import type { ReactNode } from 'react'
+import { Toaster } from '@/frontend/ui'
 
 const MAIN_OVERLAY_ID = 'main-overlay'
 

@@ -1,1 +1,0 @@
-ALTER TABLE "contest" ALTER COLUMN "expected_end_date" SET NOT NULL;
