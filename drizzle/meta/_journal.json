@@ -407,6 +407,13 @@
       "when": 1744152138356,
       "tag": "0061_fat_inhumans",
       "breakpoints": true
+    },
+    {
+      "idx": 62,
+      "version": "7",
+      "when": 1744266388828,
+      "tag": "0062_light_tigra",
+      "breakpoints": true
     }
   ]
 }

@@ -3,7 +3,7 @@ import { auth } from '@/backend/auth'
 import { db } from '@/backend/db'
 import {
   contestTable,
-  contestDisciplineTable,
+  roundTable,
   roundSessionTable,
   userTable,
 } from '@/backend/db/schema'
@@ -19,14 +19,11 @@ export async function getContestUserCapabilities({
   const [contest] = await db
     .select({ isOngoing: contestTable.isOngoing })
     .from(contestTable)
-    .innerJoin(
-      contestDisciplineTable,
-      eq(contestDisciplineTable.contestSlug, contestTable.slug),
-    )
+    .innerJoin(roundTable, eq(roundTable.contestSlug, contestTable.slug))
     .where(
       and(
         eq(contestTable.slug, contestSlug),
-        eq(contestDisciplineTable.disciplineSlug, discipline),
+        eq(roundTable.disciplineSlug, discipline),
       ),
     )
 
@@ -38,16 +35,13 @@ export async function getContestUserCapabilities({
 
   const [ownSession] = await db
     .select({ isFinished: roundSessionTable.isFinished })
-    .from(contestDisciplineTable)
-    .innerJoin(
-      roundSessionTable,
-      eq(roundSessionTable.contestDisciplineId, contestDisciplineTable.id),
-    )
+    .from(roundTable)
+    .innerJoin(roundSessionTable, eq(roundSessionTable.roundId, roundTable.id))
     .innerJoin(userTable, eq(userTable.id, roundSessionTable.contestantId))
     .where(
       and(
-        eq(contestDisciplineTable.contestSlug, contestSlug),
-        eq(contestDisciplineTable.disciplineSlug, discipline),
+        eq(roundTable.contestSlug, contestSlug),
+        eq(roundTable.disciplineSlug, discipline),
         eq(userTable.id, session.user.id),
       ),
     )

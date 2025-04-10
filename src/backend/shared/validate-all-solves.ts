@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm'
 import { db } from '../db'
-import { contestDisciplineTable, scrambleTable, solveTable } from '../db/schema'
+import { roundTable, scrambleTable, solveTable } from '../db/schema'
 import { validateSolve } from './validate-solve'
 
 // NOTE: this isn't used anywhere in the codebase, it's just for testing the valdation
@@ -9,14 +9,11 @@ const solves = await db
     id: solveTable.id,
     solution: solveTable.solution,
     scramble: scrambleTable.moves,
-    discipline: contestDisciplineTable.disciplineSlug,
+    discipline: roundTable.disciplineSlug,
   })
   .from(solveTable)
   .innerJoin(scrambleTable, eq(scrambleTable.id, solveTable.scrambleId))
-  .innerJoin(
-    contestDisciplineTable,
-    eq(contestDisciplineTable.id, scrambleTable.contestDisciplineId),
-  )
+  .innerJoin(roundTable, eq(roundTable.id, scrambleTable.roundId))
   .where(eq(solveTable.isDnf, false))
 
 for (const [idx, { discipline, id, scramble, solution }] of solves.entries()) {

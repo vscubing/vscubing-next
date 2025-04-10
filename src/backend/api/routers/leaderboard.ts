@@ -2,7 +2,7 @@ import { DISCIPLINES } from '@/types'
 import { z } from 'zod'
 import { createTRPCRouter, publicProcedure } from '../trpc'
 import {
-  contestDisciplineTable,
+  roundTable,
   contestTable,
   roundSessionTable,
   solveTable,
@@ -28,20 +28,14 @@ export const leaderboardRouter = createTRPCRouter({
           roundSessionTable,
           eq(roundSessionTable.id, solveTable.roundSessionId),
         )
-        .innerJoin(
-          contestDisciplineTable,
-          eq(contestDisciplineTable.id, roundSessionTable.contestDisciplineId),
-        )
-        .innerJoin(
-          contestTable,
-          eq(contestTable.slug, contestDisciplineTable.contestSlug),
-        )
+        .innerJoin(roundTable, eq(roundTable.id, roundSessionTable.roundId))
+        .innerJoin(contestTable, eq(contestTable.slug, roundTable.contestSlug))
         .innerJoin(userTable, eq(userTable.id, roundSessionTable.contestantId))
         .where(
           and(
             eq(solveTable.isDnf, false),
             isNotNull(solveTable.timeMs),
-            eq(contestDisciplineTable.disciplineSlug, input.discipline),
+            eq(roundTable.disciplineSlug, input.discipline),
             eq(contestTable.isOngoing, false),
           ),
         )
@@ -55,7 +49,7 @@ export const leaderboardRouter = createTRPCRouter({
           createdAt: solveTable.createdAt,
           nickname: userTable.name,
           userId: userTable.id,
-          contestSlug: contestDisciplineTable.contestSlug,
+          contestSlug: roundTable.contestSlug,
         })
         .from(bestSolveByUserUnsorted)
         .innerJoin(solveTable, eq(solveTable.id, bestSolveByUserUnsorted.id))
@@ -63,10 +57,7 @@ export const leaderboardRouter = createTRPCRouter({
           roundSessionTable,
           eq(roundSessionTable.id, solveTable.roundSessionId),
         )
-        .innerJoin(
-          contestDisciplineTable,
-          eq(contestDisciplineTable.id, roundSessionTable.contestDisciplineId),
-        )
+        .innerJoin(roundTable, eq(roundTable.id, roundSessionTable.roundId))
         .innerJoin(userTable, eq(userTable.id, roundSessionTable.contestantId))
         .orderBy(solveTable.timeMs)
 
