@@ -3,7 +3,8 @@ FROM --platform=linux/amd64 oven/bun:alpine AS base
 # Stage 1: Install dependencies
 FROM base AS deps
 WORKDIR /app
-COPY . .
+COPY package.json bun.lock ./
+COPY scripts ./scripts
 RUN apk add curl bash unzip
 COPY package.json bun.lock scripts ./
 RUN bun install --no-save --frozen-lockfile && bun run vendor
@@ -22,8 +23,8 @@ WORKDIR /app
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
-COPY --from=base /app/drizzle ./drizzle
-COPY --from=base /app/drizzle.config.ts ./drizzle.config.ts
+COPY --from=base drizzle ./drizzle
+COPY --from=base drizzle.config.ts ./drizzle.config.ts
 
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
