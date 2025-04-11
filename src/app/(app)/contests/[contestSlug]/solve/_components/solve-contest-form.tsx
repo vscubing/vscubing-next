@@ -25,6 +25,7 @@ export function SolveContestForm({
   discipline: Discipline
   initialData: RouterOutputs['roundSession']['state']
 }) {
+  throw new Error('error!')
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const [seenDiscordInvite, setSeenDiscordInvite] = useLocalStorage(
