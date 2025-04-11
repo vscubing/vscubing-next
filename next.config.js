@@ -8,7 +8,11 @@ import './src/env.js'
 
 /** @type {import("next").NextConfig} */
 const config = {
-  webpack(config) {
+  webpack(config, { isServer }) {
+    if (isServer) {
+      config.devtool = 'source-map'
+    }
+
     // Find the default image loader rule
     const imageLoaderRule = config.module.rules.find(
       (/** @type {{ loader: string; }} */ rule) =>
