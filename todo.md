@@ -9,9 +9,8 @@
     - [x] session
         - [x] display
         - [x] notify
-        - [ ] formerPersonalBest
-    - [ ] results
-    - [ ] previous pb in toast
+    - [x] previous pb in toast
+    - [ ] contest results
 - [ ] DNF avg in contest leaderboard
 - [ ] DNF in leaderboard
 - [ ] expandContestLink

@@ -1,6 +1,6 @@
 import { DISCIPLINES, type Discipline } from '@/types'
 import { z } from 'zod'
-import { eq, and, sql } from 'drizzle-orm'
+import { eq, and, sql, or } from 'drizzle-orm'
 import { createTRPCRouter, protectedProcedure } from '../trpc'
 import { TRPCError } from '@trpc/server'
 import {
@@ -269,7 +269,15 @@ export const roundSessionRouter = createTRPCRouter({
       if (!isValid) {
         throw new TRPCError({ code: 'BAD_REQUEST' })
       }
-      return { setNewPersonalBest }
+
+      if (setNewPersonalBest)
+        return {
+          setNewPersonalBest,
+          previousPersonalBest: {
+            ...activePersonalBest,
+            timeMs: activePersonalBest.timeMs!,
+          },
+        }
     }),
 
   submitSolve: roundSessionAuthProcedure
@@ -361,6 +369,7 @@ async function getPersonalBest(
     .select({
       id: solveTable.id,
       timeMs: solveTable.timeMs,
+      contestSlug: roundTable.contestSlug,
     })
     .from(solveTable)
     .innerJoin(
@@ -373,8 +382,13 @@ async function getPersonalBest(
         eq(roundSessionTable.contestantId, userId),
         eq(roundTable.disciplineSlug, discipline),
         eq(solveTable.isDnf, false),
+        or(
+          eq(solveTable.status, 'submitted'),
+          eq(solveTable.status, 'pending'),
+        ),
       ),
     )
     .orderBy(solveTable.timeMs)
+    .limit(1)
   return activePersonalBest
 }

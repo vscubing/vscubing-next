@@ -41,7 +41,7 @@ export const TOASTS_PRESETS = {
   },
 } satisfies Record<string, Toast>
 
-const durations = {
+const DURATIONS = {
   short: 3_000,
   normal: 10_000,
   infinite: Infinity,
@@ -53,7 +53,7 @@ export type Toast = {
   description: ReactNode
   contactUsButton?: boolean
   contactUsButtonLabel?: string
-  duration?: keyof typeof durations
+  duration?: keyof typeof DURATIONS
   variant?: 'default' | 'festive'
   className?: string
 }
@@ -76,7 +76,7 @@ export function toast({
           onClick: () => window.open('https://discord.gg/PxFrW9vTAy', '_blank'),
         }
       : undefined,
-    duration: durations[duration],
+    duration: DURATIONS[duration],
     id: dedupId,
     className: cn(
       {

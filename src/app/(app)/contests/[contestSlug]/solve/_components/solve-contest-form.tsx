@@ -16,6 +16,8 @@ import { useLocalStorage } from 'usehooks-ts'
 import { toast, type Toast } from '@/frontend/ui'
 import { TRPCError } from '@trpc/server'
 import { useEffect } from 'react'
+import { formatSolveTime } from '@/utils/format-solve-time'
+import { SolveTimeLinkOrDnf } from '@/frontend/shared/solve-time-button'
 
 export function SolveContestForm({
   contestSlug,
@@ -61,13 +63,9 @@ export function SolveContestForm({
   const { mutate: postSolveResult, isPending: isPostSolvePending } =
     useMutation(
       trpc.roundSession.postSolve.mutationOptions({
-        onSuccess: ({ setNewPersonalBest }) => {
-          if (setNewPersonalBest)
-            toast({
-              title: 'Wow, new personal best!',
-              description: 'Keep up the amazing work!',
-              variant: 'festive',
-            })
+        onSuccess: (res) => {
+          if (res?.setNewPersonalBest)
+            handlePersonalBest(res.previousPersonalBest)
         },
         onSettled: () => queryClient.invalidateQueries(stateQuery),
         onError: (error) => {
@@ -128,6 +126,35 @@ export function SolveContestForm({
       })
       setSeenDiscordInvite(true)
     }
+  }
+
+  function handlePersonalBest(previousPersonalBest: {
+    id: number
+    timeMs: number
+    contestSlug: string
+  }) {
+    toast({
+      title: 'Wow, new personal best!',
+      description: (
+        <>
+          Previous personal best:{' '}
+          {
+            <SolveTimeLinkOrDnf
+              className='h-auto min-w-0'
+              canShowHint={false}
+              result={{
+                isDnf: false,
+                timeMs: previousPersonalBest.timeMs,
+              }}
+              discipline={discipline}
+              contestSlug={previousPersonalBest.contestSlug}
+              solveId={previousPersonalBest.id}
+            />
+          }
+        </>
+      ),
+      variant: 'festive',
+    })
   }
 
   const currentSolveNumber = (state?.submittedSolves?.length ?? 0) + 1

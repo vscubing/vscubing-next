@@ -43,7 +43,7 @@ export function SolveTimeLinkOrDnf({
   contestSlug,
   solveId,
   canShowHint,
-  isFestive = true,
+  isFestive = false,
   discipline,
 }: SolveTimeLinkOrDnfProps) {
   if (result.isDnf) {
