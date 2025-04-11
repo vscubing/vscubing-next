@@ -5,6 +5,14 @@
     - [x] disable in staging and local
 - [x] stop using NODE_ENV
 - [ ] pb
+    - [x] ui
+    - [x] session
+        - [x] display
+        - [x] notify
+        - [ ] formerPersonalBest
+    - [ ] results
+    - [ ] previous pb in toast
+- [ ] DNF avg in contest leaderboard
 - [ ] DNF in leaderboard
 - [ ] expandContestLink
 - [ ] skip inspection by default

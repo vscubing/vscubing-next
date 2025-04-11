@@ -1,4 +1,4 @@
-import { DISCIPLINES } from '@/types'
+import { DISCIPLINES, type Discipline } from '@/types'
 import { z } from 'zod'
 import { eq, and, sql } from 'drizzle-orm'
 import { createTRPCRouter, protectedProcedure } from '../trpc'
@@ -15,6 +15,7 @@ import { calculateAvg } from '../../shared/calculate-avg'
 import { validateSolve } from '@/backend/shared/validate-solve'
 import { getContestUserCapabilities } from '../../shared/get-contest-user-capabilities'
 import { removeSolutionComments } from '@/utils/remove-solution-comments'
+import type { db } from '@/backend/db'
 
 const EXTRAS_PER_ROUND = 2
 const ROUND_ATTEMPTS_QTY = 5
@@ -30,6 +31,7 @@ const submittedSolvesInvariant = z.array(
       id: z.number(),
       status: z.enum(SOLVE_STATUSES),
       result: resultDnfish,
+      isPersonalBest: z.boolean().default(false),
     },
     {
       message: '[SOLVE] invalid submitted solve invariant',
@@ -107,7 +109,7 @@ export const roundSessionAuthProcedure = protectedProcedure
   })
 
 export const roundSessionRouter = createTRPCRouter({
-  state: roundSessionAuthProcedure.query(async ({ ctx }) => {
+  state: roundSessionAuthProcedure.query(async ({ ctx, input }) => {
     const allRows = await ctx.db
       .select({
         scramble: {
@@ -134,19 +136,26 @@ export const roundSessionRouter = createTRPCRouter({
       )
       .where(and(eq(roundSessionTable.id, ctx.roundSession.id)))
 
+    const activePersonalBest = await getPersonalBest(
+      ctx.db,
+      ctx.session.user.id,
+      input.discipline,
+    )
+
     const extrasUsed = allRows.filter(
       ({ status: state }) => state === 'changed_to_extra',
     ).length
 
     const notChangedToExtraSolves = sortWithRespectToExtras(
       allRows
-        .filter(({ status: state }) => state !== 'changed_to_extra')
+        .filter(({ status }) => status !== 'changed_to_extra')
         .map(({ id, result, scramble, status }) => ({
           scramble,
           position: scramble.position,
-          id,
-          status,
+          id: id!,
+          status: status!,
           result: result && resultDnfish.parse(result),
+          isPersonalBest: activePersonalBest?.id === id,
         })),
     )
 
@@ -160,6 +169,7 @@ export const roundSessionRouter = createTRPCRouter({
     const currentSolve = currentSolveRow.id
       ? {
           id: currentSolveRow.id,
+          isPersonalBest: currentSolveRow.isPersonalBest,
           result: resultDnfish.parse(currentSolveRow.result),
         }
       : null
@@ -211,6 +221,20 @@ export const roundSessionRouter = createTRPCRouter({
         }
       }
 
+      const activePersonalBest = await getPersonalBest(
+        ctx.db,
+        ctx.session.user.id,
+        input.discipline,
+      )
+
+      const setNewPersonalBest = !!(
+        activePersonalBest?.timeMs &&
+        !isDnf &&
+        isValid &&
+        input.result.timeMs &&
+        input.result.timeMs < activePersonalBest.timeMs
+      )
+
       const [solve] = await ctx.db
         .insert(solveTable)
         .values({
@@ -245,6 +269,7 @@ export const roundSessionRouter = createTRPCRouter({
       if (!isValid) {
         throw new TRPCError({ code: 'BAD_REQUEST' })
       }
+      return { setNewPersonalBest }
     }),
 
   submitSolve: roundSessionAuthProcedure
@@ -326,3 +351,30 @@ export const roundSessionRouter = createTRPCRouter({
       }
     }),
 })
+
+async function getPersonalBest(
+  _db: typeof db,
+  userId: string,
+  discipline: Discipline,
+) {
+  const [activePersonalBest] = await _db
+    .select({
+      id: solveTable.id,
+      timeMs: solveTable.timeMs,
+    })
+    .from(solveTable)
+    .innerJoin(
+      roundSessionTable,
+      eq(roundSessionTable.id, solveTable.roundSessionId),
+    )
+    .innerJoin(roundTable, eq(roundTable.id, roundSessionTable.roundId))
+    .where(
+      and(
+        eq(roundSessionTable.contestantId, userId),
+        eq(roundTable.disciplineSlug, discipline),
+        eq(solveTable.isDnf, false),
+      ),
+    )
+    .orderBy(solveTable.timeMs)
+  return activePersonalBest
+}

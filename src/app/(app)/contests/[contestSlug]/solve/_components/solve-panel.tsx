@@ -9,20 +9,22 @@ import { type ReactNode } from 'react'
 
 export function SolvePanel({
   number,
+  isPersonalBest,
   position,
   scramble,
   solveId,
   result,
-  ActionComponent,
+  renderAction,
   contestSlug,
   discipline,
 }: {
   number: number
+  isPersonalBest: boolean
   solveId: number | null
   result: ResultDnfish | null
   position: ScramblePosition
   scramble: string
-  ActionComponent?: ReactNode
+  renderAction?: ReactNode
   contestSlug: string
   discipline: Discipline
 }) {
@@ -38,6 +40,7 @@ export function SolvePanel({
       <TimeSection
         result={result}
         id={solveId}
+        isPersonalBest={isPersonalBest}
         contestSlug={contestSlug}
         discipline={discipline}
       />
@@ -51,7 +54,7 @@ export function SolvePanel({
         </span>
       )}
       <div className='ml-auto'>
-        {ActionComponent ?? <CheckIcon className='mr-4 text-primary-80' />}
+        {renderAction ?? <CheckIcon className='mr-4 text-primary-80' />}
       </div>
     </div>
   )
@@ -62,11 +65,13 @@ type TimeSectionProps = {
   discipline: Discipline
   id: number | null
   result: ResultDnfish | null
+  isPersonalBest: boolean
 }
 function TimeSection({
   result,
   id,
   contestSlug,
+  isPersonalBest,
   discipline,
 }: TimeSectionProps) {
   if (!result || !id) {
@@ -80,6 +85,7 @@ function TimeSection({
       canShowHint={false}
       contestSlug={contestSlug}
       solveId={id}
+      isFestive={isPersonalBest}
       result={result}
       discipline={discipline}
     />

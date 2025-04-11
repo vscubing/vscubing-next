@@ -33,16 +33,6 @@ export function SolveContestForm({
     false,
   )
 
-  useEffect(
-    () =>
-      toast({
-        title: 'Wow, new personal best!',
-        description: 'Keep up the amazing work!',
-        variant: 'festive',
-      }),
-    [],
-  )
-
   const stateQuery = trpc.roundSession.state.queryOptions(
     {
       contestSlug,
@@ -71,6 +61,14 @@ export function SolveContestForm({
   const { mutate: postSolveResult, isPending: isPostSolvePending } =
     useMutation(
       trpc.roundSession.postSolve.mutationOptions({
+        onSuccess: ({ setNewPersonalBest }) => {
+          if (setNewPersonalBest)
+            toast({
+              title: 'Wow, new personal best!',
+              description: 'Keep up the amazing work!',
+              variant: 'festive',
+            })
+        },
         onSettled: () => queryClient.invalidateQueries(stateQuery),
         onError: (error) => {
           if (error?.data?.code === 'BAD_REQUEST') toast(SOLVE_REJECTED_TOAST)
@@ -156,6 +154,7 @@ export function SolveContestForm({
                 solveId={solve.id}
                 position={solve.scramble.position}
                 scramble={solve.scramble.moves}
+                isPersonalBest={solve.isPersonalBest}
                 key={solve.id}
               />
             ))}
@@ -169,6 +168,7 @@ export function SolveContestForm({
               scramble={state.currentScramble.moves}
               solveId={state.currentSolve?.id ?? null}
               result={state.currentSolve?.result ?? null}
+              isPersonalBest={state.currentSolve?.isPersonalBest ?? false}
               onChangeToExtra={(reason) =>
                 handleSubmitSolve({ type: 'changed_to_extra', reason })
               }

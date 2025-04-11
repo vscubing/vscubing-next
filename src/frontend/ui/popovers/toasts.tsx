@@ -54,7 +54,7 @@ export type Toast = {
   contactUsButton?: boolean
   contactUsButtonLabel?: string
   duration?: keyof typeof durations
-  variant: 'default' | 'festive'
+  variant?: 'default' | 'festive'
   className?: string
 }
 export function toast({

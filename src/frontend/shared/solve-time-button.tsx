@@ -95,10 +95,6 @@ export function SolveTimeLabel({
 }) {
   let variant: 'average' | 'dnf' | undefined
 
-  if (timeMs === 2147483647) {
-    isDnf = true
-  }
-
   if (isDnf) {
     variant = 'dnf'
   } else if (isAverage) {
