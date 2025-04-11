@@ -23,8 +23,8 @@ WORKDIR /app
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
-COPY --from=base drizzle ./drizzle
-COPY --from=base drizzle.config.ts ./drizzle.config.ts
+COPY drizzle ./drizzle
+COPY drizzle.config.ts ./drizzle.config.ts
 
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
