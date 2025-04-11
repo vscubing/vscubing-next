@@ -41,11 +41,7 @@ export default async function RootLayout({
     <html lang='en' className={cn(hind.className, kanit.className)}>
       <body>
         <TRPCReactProvider>
-          {env.NEXT_PUBLIC_APP_ENV === 'production' ? (
-            <PostHogProvider>{children}</PostHogProvider>
-          ) : (
-            children
-          )}
+          <PostHogProvider>{children}</PostHogProvider>
         </TRPCReactProvider>
       </body>
     </html>
