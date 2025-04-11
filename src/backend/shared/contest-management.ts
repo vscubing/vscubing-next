@@ -50,6 +50,7 @@ export async function createNewContest({
     groupType: 'contest',
     groupKey: slug,
     properties: {
+      distinctId: undefined,
       disciplines,
       startDate: now.toDate(),
     },
@@ -73,12 +74,17 @@ export async function createNewContest({
   for (const { discipline, id } of createdRounds) {
     posthogClient.groupIdentify({
       groupType: 'discipline',
+      distinctId: undefined,
       groupKey: discipline,
+      properties: {
+        env: env.NEXT_PUBLIC_APP_ENV,
+      },
     })
     posthogClient.groupIdentify({
       groupType: 'round',
+      distinctId: undefined,
       groupKey: String(id),
-      properties: { discipline },
+      properties: { discipline, env: env.NEXT_PUBLIC_APP_ENV },
     })
   }
 
