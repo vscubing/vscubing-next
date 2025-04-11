@@ -30,7 +30,10 @@ export const env = createEnv({
    */
   client: {
     NEXT_PUBLIC_APP_ENV: z.enum(['development', 'staging', 'production']),
-    NEXT_PUBLIC_POSTHOG_KEY: z.string(),
+    NEXT_PUBLIC_POSTHOG_KEY:
+      process.env.NEXT_PUBLIC_APP_ENV === 'production'
+        ? z.string().refine((val) => val !== 'DISABLED')
+        : z.literal('DISABLED'),
   },
 
   /**

@@ -2,8 +2,10 @@
     - [x] initial setup
     - [x] custom events
     - [x] error handling
+    - [ ] disable in staging and local
 - [ ] expandContestLink
 - [ ] stop using NODE_ENV
+- [ ] pb
 - [ ] skip inspection by default
 - [ ] leaderboard: on tie => sort by single result (+ unit test it)
 - [ ] fancy white glowing outline effect on own result / after jumping to a solve
