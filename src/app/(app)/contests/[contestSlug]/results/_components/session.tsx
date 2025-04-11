@@ -133,6 +133,7 @@ function SessionTablet({
                           solveId={solve.id}
                           discipline={discipline}
                           result={solve.result}
+                          isFestive={solve.isPersonalBest}
                           variant={
                             solve.id === bestId
                               ? 'best'
@@ -219,6 +220,7 @@ function SessionDesktop({
                       discipline={discipline}
                       solveId={solve.id}
                       result={solve.result}
+                      isFestive={solve.isPersonalBest}
                       variant={
                         solve.id === bestId
                           ? 'best'
@@ -230,7 +232,10 @@ function SessionDesktop({
 
                     <ExtraLabel
                       scramblePosition={solve.position}
-                      className='absolute -top-2 right-[1.1rem]'
+                      className={cn('absolute -top-2 right-[1.1rem] z-10', {
+                        'text-white-100 [text-shadow:_1px_1px_2px_black]':
+                          solve.isPersonalBest,
+                      })}
                     />
                   </span>
                 </li>

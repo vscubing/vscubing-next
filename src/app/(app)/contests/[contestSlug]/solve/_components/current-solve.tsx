@@ -29,6 +29,7 @@ export function CurrentSolve({
   result,
   solveId,
   scramble,
+  isPersonalBest,
   onChangeToExtra,
   onSolveInit,
   onSolveSubmit,
@@ -41,6 +42,7 @@ export function CurrentSolve({
   scramble: string
   position: ScramblePosition
   result: ResultDnfish | null
+  isPersonalBest: boolean
   solveId: number | null
   onChangeToExtra: (reason: string) => void
   onSolveInit: () => void
@@ -56,44 +58,69 @@ export function CurrentSolve({
       scramble={scramble}
       position={position}
       result={result}
+      isPersonalBest={isPersonalBest}
       solveId={solveId}
-      ActionComponent={
-        result === null ? (
-          <PrimaryButton
-            size='sm'
-            onClick={onSolveInit}
-            disabled={areActionsDisabled}
-          >
-            Solve
-          </PrimaryButton>
-        ) : (
-          <div className='flex gap-1'>
-            {canChangeToExtra && (
-              <ExtraReasonPrompt
-                onChangeToExtra={onChangeToExtra}
-                trigger={
-                  <SecondaryButton
-                    size='sm'
-                    className='w-[5.25rem]'
-                    disabled={areActionsDisabled}
-                  >
-                    Extra
-                  </SecondaryButton>
-                }
-              />
-            )}
-            <PrimaryButton
-              size='sm'
-              className='w-[5.25rem]'
-              onClick={onSolveSubmit}
-              disabled={areActionsDisabled}
-            >
-              Submit
-            </PrimaryButton>
-          </div>
-        )
+      renderAction={
+        <SolveAction
+          result={result}
+          disabled={areActionsDisabled}
+          onSolveSubmit={onSolveSubmit}
+          onSolveInit={onSolveInit}
+          onChangeToExtra={onChangeToExtra}
+          canChangeToExtra={canChangeToExtra}
+        />
       }
     />
+  )
+}
+
+function SolveAction({
+  result,
+  disabled,
+  canChangeToExtra,
+  onSolveInit,
+  onChangeToExtra,
+  onSolveSubmit,
+}: {
+  disabled: boolean
+  result: ResultDnfish | null
+  canChangeToExtra: boolean
+  onSolveInit: () => void
+  onSolveSubmit: () => void
+  onChangeToExtra: (reason: string) => void
+}) {
+  if (result === null)
+    return (
+      <PrimaryButton size='sm' onClick={onSolveInit} disabled={disabled}>
+        Solve
+      </PrimaryButton>
+    )
+
+  return (
+    <div className='flex gap-1'>
+      {canChangeToExtra && (
+        <ExtraReasonPrompt
+          onChangeToExtra={onChangeToExtra}
+          renderTrigger={
+            <SecondaryButton
+              size='sm'
+              className='w-[5.25rem]'
+              disabled={disabled}
+            >
+              Extra
+            </SecondaryButton>
+          }
+        />
+      )}
+      <PrimaryButton
+        size='sm'
+        className='w-[5.25rem]'
+        onClick={onSolveSubmit}
+        disabled={disabled}
+      >
+        Submit
+      </PrimaryButton>
+    </div>
   )
 }
 
@@ -107,10 +134,10 @@ const reasonFormSchema = z.object({
 type ReasonForm = z.infer<typeof reasonFormSchema>
 
 function ExtraReasonPrompt({
-  trigger,
+  renderTrigger,
   onChangeToExtra,
 }: {
-  trigger: ReactNode
+  renderTrigger: ReactNode
   onChangeToExtra: (reason: string) => void
 }) {
   const {
@@ -135,7 +162,7 @@ function ExtraReasonPrompt({
       }}
       open={open}
     >
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
+      <DialogTrigger asChild>{renderTrigger}</DialogTrigger>
       <DialogPortal>
         <DialogOverlay withCubes={false} className='bg-black-1000/25' />
         <DialogContent className='max-w-[35rem] p-0'>

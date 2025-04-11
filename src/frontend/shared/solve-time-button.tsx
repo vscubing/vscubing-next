@@ -5,9 +5,11 @@ import { formatSolveTime } from '../../utils/format-solve-time'
 import { cn } from '../utils/cn'
 import { WatchSolveHintPopover } from './watch-solve-hint-popover.client'
 import type { Discipline, ResultDnfish } from '../../types'
+import confettiImg from '@/../public/images/confetti-solve-time-link.svg'
+import Image from 'next/image'
 
-const solveTimeButtonVariants = cva(
-  'transition-base outline-ring after-border-bottom vertical-alignment-fix inline-flex h-8 min-w-24 items-center justify-center hover:after:scale-x-100',
+const solveTimeLinkOrDnfVariants = cva(
+  'transition-base outline-ring after-border-bottom vertical-alignment-fix relative inline-flex h-8 min-w-24 items-center justify-center hover:after:scale-x-100',
   {
     variants: {
       variant: {
@@ -22,12 +24,15 @@ const solveTimeButtonVariants = cva(
   },
 )
 
-type SolveTimeLinkOrDnfProps = VariantProps<typeof solveTimeButtonVariants> & {
+type SolveTimeLinkOrDnfProps = VariantProps<
+  typeof solveTimeLinkOrDnfVariants
+> & {
   result: ResultDnfish
   solveId: number
   contestSlug: string
   discipline: Discipline
   canShowHint: boolean
+  isFestive?: boolean
   className?: string
 }
 
@@ -38,6 +43,7 @@ export function SolveTimeLinkOrDnf({
   contestSlug,
   solveId,
   canShowHint,
+  isFestive = false,
   discipline,
 }: SolveTimeLinkOrDnfProps) {
   if (result.isDnf) {
@@ -47,8 +53,15 @@ export function SolveTimeLinkOrDnf({
     <WatchSolveHintPopover disabled={!canShowHint}>
       <Link
         href={`/contests/${contestSlug}/watch/${solveId}?discipline=${discipline}`}
-        className={cn(solveTimeButtonVariants({ variant, className }))}
+        className={cn(solveTimeLinkOrDnfVariants({ variant, className }))}
       >
+        {isFestive && (
+          <Image
+            src={confettiImg}
+            alt=''
+            className='pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2'
+          />
+        )}
         {formatSolveTime(result.timeMs)}
       </Link>
     </WatchSolveHintPopover>
@@ -81,10 +94,6 @@ export function SolveTimeLabel({
   ref?: React.RefObject<HTMLSpanElement>
 }) {
   let variant: 'average' | 'dnf' | undefined
-
-  if (timeMs === 2147483647) {
-    isDnf = true
-  }
 
   if (isDnf) {
     variant = 'dnf'

@@ -15,6 +15,9 @@ import { useSimulator } from './simulator'
 import { useLocalStorage } from 'usehooks-ts'
 import { toast, type Toast } from '@/frontend/ui'
 import { TRPCError } from '@trpc/server'
+import { useEffect } from 'react'
+import { formatSolveTime } from '@/utils/format-solve-time'
+import { SolveTimeLinkOrDnf } from '@/frontend/shared/solve-time-button'
 
 export function SolveContestForm({
   contestSlug,
@@ -60,6 +63,10 @@ export function SolveContestForm({
   const { mutate: postSolveResult, isPending: isPostSolvePending } =
     useMutation(
       trpc.roundSession.postSolve.mutationOptions({
+        onSuccess: (res) => {
+          if (res?.setNewPersonalBest)
+            handlePersonalBest(res.previousPersonalBest)
+        },
         onSettled: () => queryClient.invalidateQueries(stateQuery),
         onError: (error) => {
           if (error?.data?.code === 'BAD_REQUEST') toast(SOLVE_REJECTED_TOAST)
@@ -121,6 +128,35 @@ export function SolveContestForm({
     }
   }
 
+  function handlePersonalBest(previousPersonalBest: {
+    id: number
+    timeMs: number
+    contestSlug: string
+  }) {
+    toast({
+      title: 'Wow, new personal best!',
+      description: (
+        <>
+          Previous personal best:{' '}
+          {
+            <SolveTimeLinkOrDnf
+              className='h-auto min-w-0'
+              canShowHint={false}
+              result={{
+                isDnf: false,
+                timeMs: previousPersonalBest.timeMs,
+              }}
+              discipline={discipline}
+              contestSlug={previousPersonalBest.contestSlug}
+              solveId={previousPersonalBest.id}
+            />
+          }
+        </>
+      ),
+      variant: 'festive',
+    })
+  }
+
   const currentSolveNumber = (state?.submittedSolves?.length ?? 0) + 1
   return (
     <div className='flex flex-1 justify-center pl-16 pr-12'>
@@ -145,6 +181,7 @@ export function SolveContestForm({
                 solveId={solve.id}
                 position={solve.scramble.position}
                 scramble={solve.scramble.moves}
+                isPersonalBest={solve.isPersonalBest}
                 key={solve.id}
               />
             ))}
@@ -158,6 +195,7 @@ export function SolveContestForm({
               scramble={state.currentScramble.moves}
               solveId={state.currentSolve?.id ?? null}
               result={state.currentSolve?.result ?? null}
+              isPersonalBest={state.currentSolve?.isPersonalBest ?? false}
               onChangeToExtra={(reason) =>
                 handleSubmitSolve({ type: 'changed_to_extra', reason })
               }

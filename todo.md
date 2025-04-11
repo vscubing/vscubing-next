@@ -4,11 +4,22 @@
     - [x] error handling
     - [x] disable in staging and local
 - [x] stop using NODE_ENV
+- [x] pb
+    - [x] ui
+    - [x] session
+        - [x] display
+        - [x] notify
+    - [x] previous pb in toast
+    - [x] contest results
+- [ ] DNF avg in contest leaderboard
+- [ ] DNF in leaderboard
 - [ ] expandContestLink
-- [ ] pb
 - [ ] skip inspection by default
 - [ ] leaderboard: on tie => sort by single result (+ unit test it)
 - [ ] fancy white glowing outline effect on own result / after jumping to a solve
 - [ ] delete round sessions with no results & dnf round sessions with too little results
     - [ ] on contest close
     - [ ] migration
+
+BEFORE RELEASE:
+- [ ] new posthog project
