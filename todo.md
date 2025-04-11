@@ -1,7 +1,7 @@
 - [x] posthog analytics
     - [x] initial setup
     - [x] custom events
-    - [ ] error handling
+    - [x] error handling
 - [ ] expandContestLink
 - [ ] stop using NODE_ENV
 - [ ] skip inspection by default
