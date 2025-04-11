@@ -67,6 +67,7 @@ export type ContestResultRoundSession = {
     id: number
     position: ScramblePosition
     result: ResultDnfish
+    isPersonalBest: boolean
   }[]
   id: number
   avgMs: number | null

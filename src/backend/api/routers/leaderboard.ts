@@ -3,13 +3,13 @@ import { z } from 'zod'
 import { createTRPCRouter, publicProcedure } from '../trpc'
 import {
   roundTable,
-  contestTable,
   roundSessionTable,
   solveTable,
   userTable,
 } from '@/backend/db/schema'
-import { and, eq, isNotNull } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 import { DEFAULT_DISCIPLINE } from '@/types'
+import { getPersonalBestSubquery } from '@/backend/shared/personal-best-subquery'
 
 export const leaderboardRouter = createTRPCRouter({
   bySingle: publicProcedure
@@ -19,40 +19,22 @@ export const leaderboardRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      const bestSolveByUserUnsorted = ctx.db
-        .selectDistinctOn([userTable.id], {
-          id: solveTable.id,
-        })
-        .from(solveTable)
-        .innerJoin(
-          roundSessionTable,
-          eq(roundSessionTable.id, solveTable.roundSessionId),
-        )
-        .innerJoin(roundTable, eq(roundTable.id, roundSessionTable.roundId))
-        .innerJoin(contestTable, eq(contestTable.slug, roundTable.contestSlug))
-        .innerJoin(userTable, eq(userTable.id, roundSessionTable.contestantId))
-        .where(
-          and(
-            eq(solveTable.isDnf, false),
-            isNotNull(solveTable.timeMs),
-            eq(roundTable.disciplineSlug, input.discipline),
-            eq(contestTable.isOngoing, false),
-          ),
-        )
-        .orderBy(userTable.id, solveTable.timeMs)
-        .as('sq')
+      const personalBestSubquery = getPersonalBestSubquery(
+        ctx.db,
+        input.discipline,
+      )
 
       const rows = await ctx.db
         .select({
-          id: bestSolveByUserUnsorted.id,
+          id: personalBestSubquery.id,
           timeMs: solveTable.timeMs,
           createdAt: solveTable.createdAt,
           nickname: userTable.name,
           userId: userTable.id,
           contestSlug: roundTable.contestSlug,
         })
-        .from(bestSolveByUserUnsorted)
-        .innerJoin(solveTable, eq(solveTable.id, bestSolveByUserUnsorted.id))
+        .from(personalBestSubquery)
+        .innerJoin(solveTable, eq(solveTable.id, personalBestSubquery.id))
         .innerJoin(
           roundSessionTable,
           eq(roundSessionTable.id, solveTable.roundSessionId),

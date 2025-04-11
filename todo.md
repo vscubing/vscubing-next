@@ -4,13 +4,13 @@
     - [x] error handling
     - [x] disable in staging and local
 - [x] stop using NODE_ENV
-- [ ] pb
+- [x] pb
     - [x] ui
     - [x] session
         - [x] display
         - [x] notify
     - [x] previous pb in toast
-    - [ ] contest results
+    - [x] contest results
 - [ ] DNF avg in contest leaderboard
 - [ ] DNF in leaderboard
 - [ ] expandContestLink
