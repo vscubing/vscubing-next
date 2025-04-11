@@ -25,6 +25,7 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY drizzle ./drizzle
 COPY drizzle.config.ts ./drizzle.config.ts
+RUN apk add curl # necessary for swarm health checks
 
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
