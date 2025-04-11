@@ -15,6 +15,7 @@ import { useSimulator } from './simulator'
 import { useLocalStorage } from 'usehooks-ts'
 import { toast, type Toast } from '@/frontend/ui'
 import { TRPCError } from '@trpc/server'
+import { useEffect } from 'react'
 
 export function SolveContestForm({
   contestSlug,
@@ -30,6 +31,16 @@ export function SolveContestForm({
   const [seenDiscordInvite, setSeenDiscordInvite] = useLocalStorage(
     'vs-seenDiscordInvite',
     false,
+  )
+
+  useEffect(
+    () =>
+      toast({
+        title: 'Wow, new personal best!',
+        description: 'Keep up the amazing work!',
+        variant: 'festive',
+      }),
+    [],
   )
 
   const stateQuery = trpc.roundSession.state.queryOptions(
