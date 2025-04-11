@@ -28,7 +28,6 @@ export const contestRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      throw new Error('artificial error')
       const items = await ctx.db
         .selectDistinctOn([contestTable.startDate, roundTable.id], {
           slug: contestTable.slug,
