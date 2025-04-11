@@ -1,3 +1,4 @@
+import { env } from '@/env'
 import { NextResponse } from 'next/server'
 
 import type { NextRequest } from 'next/server'
@@ -14,7 +15,7 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
         maxAge: 60 * 60 * 24 * 30,
         sameSite: 'lax',
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: env.NEXT_PUBLIC_APP_ENV === 'production',
       })
     }
     return response

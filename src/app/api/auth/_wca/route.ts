@@ -17,14 +17,14 @@ export async function GET(request: NextRequest): Promise<Response> {
   cookieStore.set('wca_oauth_state', state, {
     path: '/',
     httpOnly: true,
-    secure: env.NODE_ENV === 'production',
+    secure: env.NEXT_PUBLIC_APP_ENV === 'production',
     maxAge: 60 * 10, // 10 minutes
     sameSite: 'lax',
   })
   cookieStore.set('wca_code_verifier', codeVerifier, {
     path: '/',
     httpOnly: true,
-    secure: env.NODE_ENV === 'production',
+    secure: env.NEXT_PUBLIC_APP_ENV === 'production',
     maxAge: 60 * 10, // 10 minutes
     sameSite: 'lax',
   })

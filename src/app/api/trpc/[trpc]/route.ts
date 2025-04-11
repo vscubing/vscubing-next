@@ -22,7 +22,7 @@ const handler = (req: NextRequest) =>
     router: appRouter,
     createContext: () => createContext(req),
     onError:
-      env.NODE_ENV === 'development'
+      env.NEXT_PUBLIC_APP_ENV === 'development'
         ? ({ path, error }) => {
             console.error(
               `❌ tRPC failed on ${path ?? '<no-path>'}: ${error.message}`,

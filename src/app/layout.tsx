@@ -31,7 +31,7 @@ export default async function RootLayout({
 }: {
   children: ReactNode
 }) {
-  if (env.NODE_ENV === 'development') {
+  if (env.NEXT_PUBLIC_APP_ENV === 'development') {
     const headersList = await headers()
     if (headersList.get('host') === '127.0.0.1:3000')
       throw new Error("use localhost:3000, auth won't work otherwise")

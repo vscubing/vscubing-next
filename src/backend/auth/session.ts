@@ -13,6 +13,7 @@ import { sha256 } from '@oslojs/crypto/sha2'
 import { eq } from 'drizzle-orm'
 import { cookies } from 'next/headers'
 import { cache } from 'react'
+import { env } from '@/env'
 
 export function generateSessionToken(): string {
   const bytes = new Uint8Array(20)
@@ -82,7 +83,7 @@ export async function setSessionTokenCookie(
   cookieStore.set('session', token, {
     httpOnly: true,
     sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production',
+    secure: env.NEXT_PUBLIC_APP_ENV === 'production',
     expires: expiresAt,
     path: '/',
   })
@@ -93,7 +94,7 @@ export async function deleteSessionTokenCookie(): Promise<void> {
   cookieStore.set('session', '', {
     httpOnly: true,
     sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production',
+    secure: env.NEXT_PUBLIC_APP_ENV === 'production',
     maxAge: 0,
     path: '/',
   })

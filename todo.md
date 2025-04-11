@@ -2,9 +2,9 @@
     - [x] initial setup
     - [x] custom events
     - [x] error handling
-    - [ ] disable in staging and local
+    - [x] disable in staging and local
+- [x] stop using NODE_ENV
 - [ ] expandContestLink
-- [ ] stop using NODE_ENV
 - [ ] pb
 - [ ] skip inspection by default
 - [ ] leaderboard: on tie => sort by single result (+ unit test it)
