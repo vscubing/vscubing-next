@@ -63,9 +63,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push Docker images
-        uses: iloveitaly/github-action-nixpacks@main
+      - name: Build and push Docker image
+        uses: docker/build-push-action@
         with:
+          context: .
           push: true
           tags: |
             ${{ env.IMAGE_NAME }}:${{ env.ENV_TAG }}
