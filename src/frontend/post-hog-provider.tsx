@@ -8,14 +8,20 @@ import { useUser } from './shared/use-user'
 import { env } from '@/env'
 
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
+  const enabled = env.NEXT_PUBLIC_POSTHOG_KEY !== 'DISABLED'
+
   useEffect(() => {
-    posthog.init(env.NEXT_PUBLIC_POSTHOG_KEY, {
-      api_host: '/ingest',
-      ui_host: 'https://eu.posthog.com',
-      capture_pageview: false, // We capture pageviews manually
-      capture_pageleave: true, // Enable pageleave capture
-    })
-  }, [])
+    if (enabled) {
+      posthog.init(env.NEXT_PUBLIC_POSTHOG_KEY, {
+        api_host: '/ingest',
+        ui_host: 'https://eu.posthog.com',
+        capture_pageview: false, // We capture pageviews manually
+        capture_pageleave: true, // Enable pageleave capture
+      })
+    }
+  }, [enabled])
+
+  if (!enabled) return children
 
   return (
     <PHProvider client={posthog}>
