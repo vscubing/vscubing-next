@@ -32,4 +32,4 @@ ENV HOSTNAME="0.0.0.0"
 EXPOSE 3000
 
 # curl is necessary for swarm health checks
-CMD ["apk add curl && bun install drizzle-orm drizzle-kit postgres && bun run db:migrate && bun run server.js"]
+CMD apk add curl; bun install drizzle-orm drizzle-kit postgres; bun run db:migrate; bun run server.js
