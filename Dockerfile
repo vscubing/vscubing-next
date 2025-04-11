@@ -25,6 +25,7 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY drizzle ./drizzle
 COPY drizzle.config.ts ./drizzle.config.ts
+RUN bun install drizzle-orm drizzle-kit postgres
 RUN apk add curl # necessary for swarm health checks
 
 ENV PORT=3000
@@ -32,4 +33,4 @@ ENV HOSTNAME="0.0.0.0"
 
 EXPOSE 3000
 
-CMD ["node", "server.js"]
+CMD ["bun run db:migrate && bun run server.js"]
