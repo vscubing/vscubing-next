@@ -6,7 +6,6 @@ WORKDIR /app
 COPY package.json bun.lock ./
 COPY scripts ./scripts
 RUN apk add curl bash unzip
-COPY package.json bun.lock scripts ./
 RUN bun install --no-save --frozen-lockfile && bun run vendor
 
 # Stage 2: Build the application
@@ -32,4 +31,4 @@ ENV HOSTNAME="0.0.0.0"
 EXPOSE 3000
 
 # curl is necessary for swarm health checks
-CMD apk add curl; bun install drizzle-orm drizzle-kit postgres; bun run db:migrate; bun run server.js
+CMD apk add curl; rm package.json; rm bun.lock; bun install drizzle-orm postgres; bunx drizzle-kit migrate; bun run server.js
