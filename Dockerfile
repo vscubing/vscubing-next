@@ -31,4 +31,4 @@ ENV HOSTNAME="0.0.0.0"
 EXPOSE 3000
 
 # curl is necessary for swarm health checks
-CMD apk add curl; rm package.json; rm bun.lock; bun install drizzle-orm postgres; bunx drizzle-kit migrate; bun run server.js
+CMD apk add curl; rm package.json; bun install drizzle-orm postgres; bunx drizzle-kit migrate; bun run server.js
