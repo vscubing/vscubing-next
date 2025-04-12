@@ -11,13 +11,13 @@ import {
   userTable,
 } from '@/backend/db/schema'
 import { DISCIPLINES, CONTEST_UNAUTHORIZED_MESSAGE } from '@/types'
-import { eq, desc, and, lte, isNotNull } from 'drizzle-orm'
+import { eq, desc, and, lte } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
 import { resultDnfish, type ContestResultRoundSession } from '@/types'
 import { groupBy } from '@/utils/group-by'
 import { sortWithRespectToExtras } from '../../shared/sort-with-respect-to-extras'
 import { getContestUserCapabilities } from '../../shared/get-contest-user-capabilities'
-import { getPersonalBestSubquery } from '@/backend/shared/personal-best-subquery'
+import { getPersonalBestExcludingOngoingSubquery } from '@/backend/shared/personal-best-subquery'
 
 export const contestRouter = createTRPCRouter({
   getPastContests: publicProcedure
@@ -156,7 +156,7 @@ export const contestRouter = createTRPCRouter({
             "You can't see the results of an ongoing contest round before finishing it",
         })
 
-      const personalBestSubquery = getPersonalBestSubquery(
+      const personalBestSubquery = getPersonalBestExcludingOngoingSubquery(
         ctx.db,
         input.discipline,
       )

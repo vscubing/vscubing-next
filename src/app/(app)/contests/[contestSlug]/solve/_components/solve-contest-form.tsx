@@ -15,8 +15,6 @@ import { useSimulator } from './simulator'
 import { useLocalStorage } from 'usehooks-ts'
 import { toast, type Toast } from '@/frontend/ui'
 import { TRPCError } from '@trpc/server'
-import { useEffect } from 'react'
-import { formatSolveTime } from '@/utils/format-solve-time'
 import { SolveTimeLinkOrDnf } from '@/frontend/shared/solve-time-button'
 
 export function SolveContestForm({

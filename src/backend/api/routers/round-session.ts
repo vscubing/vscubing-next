@@ -1,6 +1,6 @@
-import { DISCIPLINES, type Discipline } from '@/types'
+import { DISCIPLINES } from '@/types'
 import { z } from 'zod'
-import { eq, and, sql, or } from 'drizzle-orm'
+import { eq, and, sql } from 'drizzle-orm'
 import { createTRPCRouter, protectedProcedure } from '../trpc'
 import { TRPCError } from '@trpc/server'
 import {
@@ -15,7 +15,7 @@ import { calculateAvg } from '../../shared/calculate-avg'
 import { validateSolve } from '@/backend/shared/validate-solve'
 import { getContestUserCapabilities } from '../../shared/get-contest-user-capabilities'
 import { removeSolutionComments } from '@/utils/remove-solution-comments'
-import type { db } from '@/backend/db'
+import { getPersonalBestIncludingOngoing } from '@/backend/shared/personal-best-subquery'
 
 const EXTRAS_PER_ROUND = 2
 const ROUND_ATTEMPTS_QTY = 5
@@ -136,7 +136,7 @@ export const roundSessionRouter = createTRPCRouter({
       )
       .where(and(eq(roundSessionTable.id, ctx.roundSession.id)))
 
-    const activePersonalBest = await getPersonalBest(
+    const activePersonalBest = await getPersonalBestIncludingOngoing(
       ctx.db,
       ctx.session.user.id,
       input.discipline,
@@ -221,7 +221,7 @@ export const roundSessionRouter = createTRPCRouter({
         }
       }
 
-      const activePersonalBest = await getPersonalBest(
+      const activePersonalBest = await getPersonalBestIncludingOngoing(
         ctx.db,
         ctx.session.user.id,
         input.discipline,
@@ -359,36 +359,3 @@ export const roundSessionRouter = createTRPCRouter({
       }
     }),
 })
-
-async function getPersonalBest(
-  _db: typeof db,
-  userId: string,
-  discipline: Discipline,
-) {
-  const [activePersonalBest] = await _db
-    .select({
-      id: solveTable.id,
-      timeMs: solveTable.timeMs,
-      contestSlug: roundTable.contestSlug,
-    })
-    .from(solveTable)
-    .innerJoin(
-      roundSessionTable,
-      eq(roundSessionTable.id, solveTable.roundSessionId),
-    )
-    .innerJoin(roundTable, eq(roundTable.id, roundSessionTable.roundId))
-    .where(
-      and(
-        eq(roundSessionTable.contestantId, userId),
-        eq(roundTable.disciplineSlug, discipline),
-        eq(solveTable.isDnf, false),
-        or(
-          eq(solveTable.status, 'submitted'),
-          eq(solveTable.status, 'pending'),
-        ),
-      ),
-    )
-    .orderBy(solveTable.timeMs)
-    .limit(1)
-  return activePersonalBest
-}
