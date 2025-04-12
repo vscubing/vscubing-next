@@ -1,4 +1,4 @@
-FROM oven/bun:alpine AS base
+FROM oven/bun:slim AS base
 
 # Stage 1: Install dependencies
 FROM base AS deps
