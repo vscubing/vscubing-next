@@ -74,8 +74,6 @@ jobs:
           tags: |
             ${{ env.IMAGE_NAME }}:${{ env.ENV_TAG }}
             ${{ env.IMAGE_NAME }}:${{ env.DATE_STAMP }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       - name: Deploy to Dokploy
         run: | 
