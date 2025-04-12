@@ -59,7 +59,7 @@ export function castLeaderboardType(str: unknown): LeaderboardType {
 
 export type ContestMetadata = Pick<
   typeof contestTable.$inferSelect,
-  'startDate' | 'endDate' | 'expectedEndDate' | 'slug'
+  'startDate' | 'endDate' | 'expectedEndDate' | 'slug' | 'isOngoing'
 >
 
 export type ContestResultRoundSession = {

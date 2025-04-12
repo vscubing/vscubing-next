@@ -62,7 +62,7 @@ export default async function ContestsIndexPage(props: {
 }
 
 async function PageContent({ discipline }: { discipline: Discipline }) {
-  const contests = await api.contest.getPastContests({
+  const contests = await api.contest.getAllContests({
     discipline,
   })
 

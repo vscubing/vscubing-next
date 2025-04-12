@@ -20,7 +20,7 @@ import { getContestUserCapabilities } from '../../shared/get-contest-user-capabi
 import { getPersonalBestExcludingOngoingSubquery } from '@/backend/shared/personal-best-subquery'
 
 export const contestRouter = createTRPCRouter({
-  getPastContests: publicProcedure
+  getAllContests: publicProcedure
     .input(
       z.object({
         discipline: z.enum(DISCIPLINES),
@@ -49,7 +49,6 @@ export const contestRouter = createTRPCRouter({
         )
         .where(
           and(
-            eq(contestTable.isOngoing, false),
             eq(disciplineTable.slug, input.discipline),
             input.cursor
               ? lte(contestTable.startDate, input.cursor)

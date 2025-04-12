@@ -11,7 +11,7 @@ import type { Discipline } from '@/types'
 export function DashboardLists() {
   const trpc = useTRPC()
   const { data: latestContests } = useQuery(
-    trpc.contest.getPastContests.queryOptions({
+    trpc.contest.getAllContests.queryOptions({
       discipline: '3by3',
       limit: 10,
     }),
@@ -40,7 +40,7 @@ export function DashboardLists() {
     <div className='flex flex-grow gap-3 md:flex-grow-0 md:flex-col sm:gap-2'>
       <LatestContests
         className='h-full basis-[calc(40%-0.75rem/2)]'
-        contests={latestContests?.items}
+        contests={latestContests?.items?.filter(({ isOngoing }) => !isOngoing)}
       />
       <BestSolves
         className='h-full basis-[calc(60%-0.75rem/2)]'
