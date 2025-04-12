@@ -4,7 +4,6 @@ FROM oven/bun:alpine AS base
 FROM base AS deps
 WORKDIR /app
 COPY package.json bun.lock ./
-COPY scripts ./scripts
 RUN bun install --no-save --frozen-lockfile
 
 # Stage 2: Build the application
@@ -20,6 +19,7 @@ WORKDIR /app
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
+COPY scripts ./scripts
 COPY drizzle ./drizzle
 COPY drizzle.config.ts ./drizzle.config.ts
 
