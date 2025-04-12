@@ -92,7 +92,6 @@ const config = {
 
   skipTrailingSlashRedirect: true, // This is required to support PostHog trailing slash API requests
   productionBrowserSourceMaps: true,
-  output: 'standalone',
 }
 
 export default config
