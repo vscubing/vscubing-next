@@ -11,7 +11,6 @@ RUN bun install --no-save --frozen-lockfile
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/vendor ./vendor
 COPY . .
 RUN bun run build
 
