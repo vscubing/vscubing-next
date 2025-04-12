@@ -11,7 +11,7 @@
         - [x] notify
     - [x] previous pb in toast
     - [x] contest results
-- [ ] DNF avg in contest leaderboard
+- [x] DNF avg in contest leaderboard
 - [ ] DNF in leaderboard
 - [ ] expandContestLink
 - [ ] skip inspection by default

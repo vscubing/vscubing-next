@@ -118,9 +118,9 @@ export function SolveContestForm({
       toast({
         title: 'Great to have you on board',
         description:
-          'Join our Discord community to connect with other cubing fans',
+          'Join our Discord community to connect with other vscubers',
         contactUsButton: true,
-        contactUsButtonLabel: 'Join us on Discord',
+        contactUsButtonLabel: 'Discord',
         duration: 'infinite',
         className: 'w-[23.75rem]',
       })

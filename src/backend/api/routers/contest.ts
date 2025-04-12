@@ -196,7 +196,6 @@ export const contestRouter = createTRPCRouter({
             eq(solveTable.status, 'submitted'),
           ),
         )
-        .orderBy(roundSessionTable.avgMs)
 
       const solvesBySessionId = groupBy(
         queryRes,
@@ -204,7 +203,7 @@ export const contestRouter = createTRPCRouter({
       )
 
       return Array.from(solvesBySessionId.values())
-        .sort((a, b) => (a[0]!.avgMs ?? -Infinity) - (b[0]!.avgMs ?? -Infinity))
+        .sort((a, b) => (a[0]!.avgMs ?? Infinity) - (b[0]!.avgMs ?? Infinity))
         .map((session) => ({
           avgMs: session[0]!.avgMs,
           id: session[0]!.roundSessionId,
