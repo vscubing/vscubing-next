@@ -22,7 +22,9 @@
 - [ ] fancy white glowing outline effect on own result / after jumping to a solve
     - [x] refactor scrollToItem
     - [x] scroll on click
-    - [ ] scroll on navigate
+    - [x] glowing
+    - [x] scroll on navigate from avg leaderboard
+    - [ ] scroll on navigate from single leaderboard
     - [ ] make switchers accept baseParams
 - [ ] add indexes for timeMs and avgMs
 - [ ] admin on prod

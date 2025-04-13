@@ -189,7 +189,7 @@ function RoundSessionRowTablet({
                     className='mt-4 h-11 w-full gap-1'
                   >
                     <Link
-                      href={`/contests/${contestSlug}/results?discipline=${discipline}`}
+                      href={`/contests/${contestSlug}/results?discipline=${discipline}&scrollToId=${session.id}`}
                     >
                       <span>Contest {contestSlug}</span>
                       <ArrowRightIcon className='inline-block' />
@@ -288,7 +288,7 @@ function RoundSessionRowDesktop({
               className='w-[9.25rem] justify-between px-[1.3rem]'
             >
               <Link
-                href={`/contests/${contestSlug}/results?discipline=${discipline}`}
+                href={`/contests/${contestSlug}/results?discipline=${discipline}&scrollToId=${session.id}`}
               >
                 <span>Contest {contestSlug}</span>
                 <ArrowRightIcon className='inline-block' />

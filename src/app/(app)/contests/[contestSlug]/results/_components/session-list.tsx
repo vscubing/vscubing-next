@@ -3,7 +3,7 @@ import { HintSection } from '@/frontend/shared/hint-section'
 import { type Discipline } from '@/types'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { useTRPC, type RouterOutputs } from '@/trpc/react'
-import { useEffect, useRef, type ReactNode, type RefObject } from 'react'
+import { useCallback, useEffect, type ReactNode } from 'react'
 import {
   RoundSessionRow,
   RoundSessionHeader,
@@ -15,10 +15,12 @@ export function SessionList({
   contestSlug,
   discipline,
   initialData,
+  scrollToId,
 }: {
   contestSlug: string
   discipline: Discipline
   initialData?: RouterOutputs['contest']['getContestResults']
+  scrollToId?: number
 }) {
   const trpc = useTRPC()
   const { data: sessions } = useSuspenseQuery(
@@ -32,6 +34,23 @@ export function SessionList({
   )
 
   const { containerRef, performScrollToIdx } = useScrollToIndex()
+  const scrollAndGlow = useCallback(
+    (idx: number) => {
+      const item = containerRef.current?.children[idx]
+      if (!item) return
+      item.classList.add('animate-glow')
+      performScrollToIdx(idx)
+      setTimeout(() => item?.classList.remove('animate-glow'), 2000)
+    },
+    [containerRef, performScrollToIdx],
+  )
+
+  useEffect(() => {
+    if (scrollToId)
+      scrollAndGlow(
+        sessions.findIndex((result) => result.session.id === scrollToId),
+      )
+  }, [scrollToId, sessions, scrollAndGlow])
 
   if (sessions.length === 0) {
     return (
@@ -51,14 +70,14 @@ export function SessionList({
             place={idx + 1}
             discipline={discipline}
             isFirstOnPage={false}
-            className={cn({
+            className={cn('rounded-xl', {
               'sticky bottom-[-2px] top-[calc(var(--layout-section-header-height)-2px)] z-10':
                 idx === stickyItemIdx,
             })}
             key={session.session.id}
             onPlaceClick={
               idx === stickyItemIdx
-                ? () => performScrollToIdx(stickyItemIdx)
+                ? () => scrollAndGlow(stickyItemIdx)
                 : undefined
             }
           />
