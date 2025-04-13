@@ -21,7 +21,7 @@ export default async function SettingsPage() {
       <LayoutHeaderTitlePortal>Simulator settings</LayoutHeaderTitlePortal>
       <div className='flex h-full flex-col gap-6 rounded-2xl bg-black-80 p-6 sm:p-3'>
         <SettingsList initialData={initialData} />
-        This is indeed the latest app version v2
+        This is indeed the latest app version (8)
         <WcaSignIn />
       </div>
     </>
