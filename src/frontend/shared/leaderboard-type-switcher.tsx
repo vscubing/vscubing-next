@@ -30,7 +30,13 @@ export function LeaderboardTypeSwitcher({
   )
 
   return (
-    <div className='flex rounded-xl bg-grey-100'>
+    <div className='relative flex rounded-xl bg-grey-100'>
+      <div
+        className={cn(
+          'transition-base absolute left-0 top-0 h-full w-[8.5rem] rounded-xl bg-secondary-20 sm:w-11',
+          { 'translate-x-full': currentType === LEADERBOARD_TYPES[1] },
+        )}
+      />
       {LEADERBOARD_TYPES.map((type) => (
         <Link
           href={{
@@ -39,6 +45,7 @@ export function LeaderboardTypeSwitcher({
           }}
           onClick={() => setCurrentType(type)}
           key={type}
+          className='z-10'
         >
           <LeaderboardTypeSwitcherItem
             type={type}
@@ -63,10 +70,8 @@ function LeaderboardTypeSwitcherItem({
   return (
     <span
       className={cn(
-        'transition-base outline-ring btn-sm flex h-15 w-[8.5rem] cursor-pointer items-center justify-center gap-1 rounded-xl sm:h-11 sm:w-11',
-        isActive
-          ? 'bg-secondary-20 text-black-100'
-          : 'border border-transparent text-grey-60 hover:border-secondary-20 active:bg-secondary-20 active:text-black-100',
+        'transition-base outline-ring btn-sm flex h-15 w-[8.5rem] cursor-pointer items-center justify-center gap-1 rounded-xl border border-transparent hover:border-secondary-20 sm:h-11 sm:w-11',
+        isActive ? 'text-black-100' : 'text-grey-60',
         className,
       )}
     >
