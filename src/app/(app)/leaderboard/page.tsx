@@ -7,7 +7,7 @@ import {
   type LeaderboardType,
 } from '@/types'
 import { api } from '@/trpc/server'
-import { DisciplineSwitcher } from '@/frontend/shared/discipline-switcher-client'
+import { DisciplineSwitcher } from '@/frontend/shared/discipline-switcher'
 import { NavigateBackButton } from '@/frontend/shared/navigate-back-button'
 import {
   LayoutPageTitleMobile,
@@ -27,13 +27,19 @@ import {
   SingleResultListShell,
   SingleResultSkeleton,
 } from './_components/single-result'
+import { LeaderboardTypeSwitcher } from '@/frontend/shared/leaderboard-type-switcher'
+import {
+  AverageList,
+  AverageListShell,
+  AverageResultSkeleton,
+} from './_components/average-list'
 
 export default async function LeaderboardPage({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
-  const { discipline, type: type } = await searchParams
+  const { discipline, type } = await searchParams
   if (!isDiscipline(discipline) || !isLeaderboardType(type))
     redirect(
       `/leaderboard?discipline=${castDiscipline(discipline)}&type=${castLeaderboardType(type)}`,
@@ -45,25 +51,43 @@ export default async function LeaderboardPage({
         <PageTitle type={type} />
       </Suspense>
       <NavigateBackButton />
-      <LayoutSectionHeader className='sticky top-0 z-10'>
+      <LayoutSectionHeader className='sticky top-0 z-10 flex justify-between'>
         <DisciplineSwitcher
           disciplines={DISCIPLINES}
           initialDiscipline={discipline}
         />
+        <LeaderboardTypeSwitcher initialType={type} />
       </LayoutSectionHeader>
 
-      <Suspense
-        key={discipline}
-        fallback={
-          <SingleResultListShell>
-            {Array.from({ length: 20 }).map((_, idx) => (
-              <SingleResultSkeleton key={idx} />
-            ))}
-          </SingleResultListShell>
-        }
-      >
-        <PageContent discipline={discipline} />
-      </Suspense>
+      {type === 'single' && (
+        <Suspense
+          key={JSON.stringify({ discipline, type })}
+          fallback={
+            <SingleResultListShell>
+              {Array.from({ length: 20 }).map((_, idx) => (
+                <SingleResultSkeleton key={idx} />
+              ))}
+            </SingleResultListShell>
+          }
+        >
+          <PageContentSingle discipline={discipline} />
+        </Suspense>
+      )}
+
+      {type === 'average' && (
+        <Suspense
+          key={JSON.stringify({ discipline, type })}
+          fallback={
+            <AverageListShell>
+              {Array.from({ length: 20 }).map((_, idx) => (
+                <AverageResultSkeleton key={idx} />
+              ))}
+            </AverageListShell>
+          }
+        >
+          <PageContentAverage discipline={discipline} />
+        </Suspense>
+      )}
     </>
   )
 }
@@ -72,9 +96,9 @@ async function PageTitle({ type }: { type: LeaderboardType }) {
   const session = await auth()
   let title = ''
   if (session) {
-    title = `${session.user.name}, check out our best ${LEADERBOARDshared_MAP[type]}`
+    title = `${session.user.name}, check out our ${LEADERBOARD_TITLE_MAP[type]}`
   } else {
-    title = `Check out our best ${LEADERBOARDshared_MAP[type]}`
+    title = `Check out our ${LEADERBOARD_TITLE_MAP[type]}`
   }
   return (
     <>
@@ -93,13 +117,19 @@ function PageTitleFallback() {
   )
 }
 
-async function PageContent({ discipline }: { discipline: Discipline }) {
+async function PageContentSingle({ discipline }: { discipline: Discipline }) {
   const initialData = await api.leaderboard.bySingle({ discipline })
 
   return <SingleResultList initialData={initialData} discipline={discipline} />
 }
 
-const LEADERBOARDshared_MAP: Record<LeaderboardType, string> = {
-  average: 'results',
-  single: 'solves',
+async function PageContentAverage({ discipline }: { discipline: Discipline }) {
+  const initialData = await api.leaderboard.byAverage({ discipline })
+
+  return <AverageList initialData={initialData} discipline={discipline} />
+}
+
+const LEADERBOARD_TITLE_MAP: Record<LeaderboardType, string> = {
+  average: 'best averages',
+  single: 'best singles',
 }

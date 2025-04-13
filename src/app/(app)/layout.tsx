@@ -1,4 +1,3 @@
-import { TRPCReactProvider } from '@/trpc/react'
 import { Navbar } from './_layout/components/navbar'
 import { PickUsernameDialog } from './_layout/components/pick-username-dialog'
 import { PopupSidebar } from './_layout/components/popup-sidebar'

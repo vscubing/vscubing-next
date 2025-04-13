@@ -21,6 +21,8 @@ import Link from 'next/link'
 import { type ReactNode, type RefObject } from 'react'
 import tailwindConfig from 'tailwind.config'
 
+// HACK: we need castom handling for refs because you can't set one ref to 2 elements at the same time
+// HACK: we can't just use useMatchesScreen for switching between Desktop and Tablet because then it won't be SSRed properly
 type SingleResultProps = {
   result: RouterOutputs['leaderboard']['bySingle'][number]
   discipline: Discipline
@@ -41,7 +43,6 @@ export function SingleResult({
 
   return (
     <>
-      {/* we can't just use useMatchesScreen because then it won't be SSRed properly */}
       <SingleResultDesktop
         className={cn('md:hidden', className)}
         discipline={discipline}
@@ -49,7 +50,6 @@ export function SingleResult({
         result={result}
         onPlaceClick={onPlaceClick}
         ref={isTablet === false ? ref : undefined}
-        // we need castom handling for refs because you can't set one ref to 2 elements at the same time
       />
       <SingleResultTablet
         className={cn('hidden md:block', className)}
@@ -64,7 +64,7 @@ export function SingleResult({
 }
 
 function SingleResultDesktop({
-  result: { timeMs, id, createdAt, contestSlug, nickname, isOwn },
+  result: { result, id, createdAt, contestSlug, nickname, isOwn },
   discipline,
   place,
   className,
@@ -89,52 +89,40 @@ function SingleResultDesktop({
             isOwn ? 'bg-secondary-80' : 'bg-grey-100',
           )}
         >
-          <div className='flex flex-1 items-center'>
-            <PlaceLabel
-              onClick={onPlaceClick}
-              className={cn('mr-3', { 'cursor-pointer': onPlaceClick })}
+          <PlaceLabel
+            onClick={onPlaceClick}
+            className={cn('mr-3', { 'cursor-pointer': onPlaceClick })}
+          >
+            {place}
+          </PlaceLabel>
+          <DisciplineIcon className='mr-3' discipline={discipline} />
+          <Ellipsis className='vertical-alignment-fix flex-1'>
+            {displayedNickname}
+          </Ellipsis>
+          <SolveTimeLinkOrDnf
+            className='mr-6'
+            canShowHint={place === 1}
+            result={result}
+            solveId={id}
+            contestSlug={contestSlug}
+            discipline={discipline}
+          />
+
+          <span className='vertical-alignment-fix w-36 border-l border-grey-60 text-center'>
+            {formatDate(createdAt)}
+          </span>
+          <SecondaryButton
+            asChild
+            size='lg'
+            className='w-[9.25rem] justify-between px-[1.3rem]'
+          >
+            <Link
+              href={`/contests/${contestSlug}/results?discipline=${discipline}`}
             >
-              {place}
-            </PlaceLabel>
-            <DisciplineIcon className='mr-3' discipline={discipline} />
-            <Ellipsis className='vertical-alignment-fix flex-1'>
-              {displayedNickname}
-            </Ellipsis>
-            <span className='mr-6'>
-              <span className='sm:vertical-alignment-fix mb-1 hidden text-center text-grey-40'>
-                Single time
-              </span>
-              <SolveTimeLinkOrDnf
-                canShowHint={place === 1}
-                result={{ isDnf: false, timeMs }}
-                solveId={id}
-                contestSlug={contestSlug}
-                discipline={discipline}
-              />
-            </span>
-          </div>
-          <div className='overflow-y-clip data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down'>
-            <span className='flex items-center'>
-              <span className='vertical-alignment-fix w-36 border-l border-grey-60 text-center'>
-                <span className='mb-2 hidden text-center text-grey-40'>
-                  Solve date
-                </span>
-                {formatDate(createdAt)}
-              </span>
-              <SecondaryButton
-                asChild
-                size='lg'
-                className='w-[9.25rem] justify-between px-[1.3rem]'
-              >
-                <Link
-                  href={`/contests/${contestSlug}/results?discipline=${discipline}`}
-                >
-                  <span>Contest {contestSlug}</span>
-                  <ArrowRightIcon className='inline-block' />
-                </Link>
-              </SecondaryButton>
-            </span>
-          </div>
+              <span>Contest {contestSlug}</span>
+              <ArrowRightIcon className='inline-block' />
+            </Link>
+          </SecondaryButton>
         </div>
       </SpinningBorder>
     </li>
@@ -142,7 +130,7 @@ function SingleResultDesktop({
 }
 
 function SingleResultTablet({
-  result: { timeMs, id, createdAt, contestSlug, nickname, isOwn },
+  result: { result, id, createdAt, contestSlug, nickname, isOwn },
   discipline,
   place,
   className,
@@ -191,7 +179,7 @@ function SingleResultTablet({
                   </span>
                   <SolveTimeLinkOrDnf
                     canShowHint={place === 1}
-                    result={{ isDnf: false, timeMs }}
+                    result={result}
                     solveId={id}
                     contestSlug={contestSlug}
                     discipline={discipline}

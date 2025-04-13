@@ -1,6 +1,6 @@
 import type { Discipline } from '@/types'
 import type { db } from '../db'
-import { eq, and, isNotNull } from 'drizzle-orm'
+import { eq, and, or, getTableColumns } from 'drizzle-orm'
 import {
   userTable,
   solveTable,
@@ -9,14 +9,17 @@ import {
   contestTable,
 } from '../db/schema'
 
-export function getPersonalBestSubquery(
-  _db: typeof db,
-  discipline: Discipline,
-) {
+export function getPersonalBestSolveSubquery({
+  db: _db,
+  discipline,
+  includeOngoing,
+}: {
+  db: typeof db
+  discipline: Discipline
+  includeOngoing: boolean
+}) {
   return _db
-    .selectDistinctOn([userTable.id], {
-      id: solveTable.id,
-    })
+    .selectDistinctOn([userTable.id], getTableColumns(solveTable))
     .from(solveTable)
     .innerJoin(
       roundSessionTable,
@@ -27,13 +30,42 @@ export function getPersonalBestSubquery(
     .innerJoin(userTable, eq(userTable.id, roundSessionTable.contestantId))
     .where(
       and(
-        eq(solveTable.isDnf, false),
-        eq(solveTable.status, 'submitted'),
-        isNotNull(solveTable.timeMs),
         eq(roundTable.disciplineSlug, discipline),
-        eq(contestTable.isOngoing, false),
+        includeOngoing
+          ? or(
+              eq(solveTable.status, 'submitted'),
+              eq(solveTable.status, 'pending'),
+            )
+          : eq(solveTable.status, 'submitted'),
+        includeOngoing ? undefined : eq(contestTable.isOngoing, false),
       ),
     )
     .orderBy(userTable.id, solveTable.timeMs)
-    .as('sq')
+    .as('personal_best_solve_subquery')
+}
+
+export function getPersonalBestSessionSubquery({
+  db: _db,
+  discipline,
+  includeOngoing,
+}: {
+  db: typeof db
+  discipline: Discipline
+  includeOngoing: boolean
+}) {
+  return _db
+    .selectDistinctOn([userTable.id], getTableColumns(roundSessionTable))
+    .from(roundSessionTable)
+    .innerJoin(roundTable, eq(roundTable.id, roundSessionTable.roundId))
+    .innerJoin(contestTable, eq(contestTable.slug, roundTable.contestSlug))
+    .innerJoin(userTable, eq(userTable.id, roundSessionTable.contestantId))
+    .where(
+      and(
+        eq(roundTable.disciplineSlug, discipline),
+        eq(roundSessionTable.isFinished, true),
+        includeOngoing ? undefined : eq(contestTable.isOngoing, false),
+      ),
+    )
+    .orderBy(userTable.id, roundSessionTable.avgMs)
+    .as('personal_best_session_subquery')
 }

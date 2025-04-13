@@ -13,11 +13,11 @@ export default function ContestList({
   initialData,
 }: {
   discipline: Discipline
-  initialData: RouterOutputs['contest']['getPastContests']
+  initialData: RouterOutputs['contest']['getAllContests']
 }) {
   const trpc = useTRPC()
   const { data, fetchNextPage, isFetchingNextPage } = useInfiniteQuery(
-    trpc.contest.getPastContests.infiniteQueryOptions(
+    trpc.contest.getAllContests.infiniteQueryOptions(
       {
         discipline,
       },

@@ -1,6 +1,6 @@
 import { DISCIPLINES, type Discipline } from '@/types'
 import { z } from 'zod'
-import { eq, and, sql, or } from 'drizzle-orm'
+import { eq, and, sql } from 'drizzle-orm'
 import { createTRPCRouter, protectedProcedure } from '../trpc'
 import { TRPCError } from '@trpc/server'
 import {
@@ -15,6 +15,7 @@ import { calculateAvg } from '../../shared/calculate-avg'
 import { validateSolve } from '@/backend/shared/validate-solve'
 import { getContestUserCapabilities } from '../../shared/get-contest-user-capabilities'
 import { removeSolutionComments } from '@/utils/remove-solution-comments'
+import { getPersonalBestSolveSubquery } from '@/backend/shared/personal-best-subquery'
 import type { db } from '@/backend/db'
 
 const EXTRAS_PER_ROUND = 2
@@ -136,7 +137,7 @@ export const roundSessionRouter = createTRPCRouter({
       )
       .where(and(eq(roundSessionTable.id, ctx.roundSession.id)))
 
-    const activePersonalBest = await getPersonalBest(
+    const activePersonalBest = await getPersonalBestSolveIncludingOngoing(
       ctx.db,
       ctx.session.user.id,
       input.discipline,
@@ -221,7 +222,7 @@ export const roundSessionRouter = createTRPCRouter({
         }
       }
 
-      const activePersonalBest = await getPersonalBest(
+      const activePersonalBest = await getPersonalBestSolveIncludingOngoing(
         ctx.db,
         ctx.session.user.id,
         input.discipline,
@@ -360,35 +361,29 @@ export const roundSessionRouter = createTRPCRouter({
     }),
 })
 
-async function getPersonalBest(
+async function getPersonalBestSolveIncludingOngoing(
   _db: typeof db,
   userId: string,
   discipline: Discipline,
 ) {
-  const [activePersonalBest] = await _db
+  const subquery = getPersonalBestSolveSubquery({
+    db: _db,
+    discipline,
+    includeOngoing: true,
+  })
+  const [activeBest] = await _db
     .select({
-      id: solveTable.id,
-      timeMs: solveTable.timeMs,
+      id: subquery.id,
+      timeMs: subquery.timeMs,
       contestSlug: roundTable.contestSlug,
     })
-    .from(solveTable)
+    .from(subquery)
     .innerJoin(
       roundSessionTable,
-      eq(roundSessionTable.id, solveTable.roundSessionId),
+      eq(roundSessionTable.id, subquery.roundSessionId),
     )
     .innerJoin(roundTable, eq(roundTable.id, roundSessionTable.roundId))
-    .where(
-      and(
-        eq(roundSessionTable.contestantId, userId),
-        eq(roundTable.disciplineSlug, discipline),
-        eq(solveTable.isDnf, false),
-        or(
-          eq(solveTable.status, 'submitted'),
-          eq(solveTable.status, 'pending'),
-        ),
-      ),
-    )
-    .orderBy(solveTable.timeMs)
-    .limit(1)
-  return activePersonalBest
+    .where(eq(roundSessionTable.contestantId, userId))
+
+  return activeBest
 }

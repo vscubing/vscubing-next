@@ -77,7 +77,7 @@ const solveTimeLabelVariants = cva(
   },
 )
 type SolveTimeLabelProps = {
-  timeMs?: number
+  timeMs?: number // this is loosely typed without ResultDnfish because isPlaceholder and isAverage are tricky
   isDnf?: boolean
   isPlaceholder?: boolean
   isAverage?: boolean

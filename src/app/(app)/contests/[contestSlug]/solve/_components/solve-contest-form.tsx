@@ -15,8 +15,6 @@ import { useSimulator } from './simulator'
 import { useLocalStorage } from 'usehooks-ts'
 import { toast, type Toast } from '@/frontend/ui'
 import { TRPCError } from '@trpc/server'
-import { useEffect } from 'react'
-import { formatSolveTime } from '@/utils/format-solve-time'
 import { SolveTimeLinkOrDnf } from '@/frontend/shared/solve-time-button'
 
 export function SolveContestForm({
@@ -118,9 +116,9 @@ export function SolveContestForm({
       toast({
         title: 'Great to have you on board',
         description:
-          'Join our Discord community to connect with other cubing fans',
+          'Join our Discord community to connect with other vscubers',
         contactUsButton: true,
-        contactUsButtonLabel: 'Join us on Discord',
+        contactUsButtonLabel: 'Discord',
         duration: 'infinite',
         className: 'w-[23.75rem]',
       })

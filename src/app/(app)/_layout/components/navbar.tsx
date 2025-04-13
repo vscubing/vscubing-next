@@ -174,7 +174,7 @@ function getNavbarLinks(
       children: (
         <>
           <AllContestsIcon />
-          <span>Past contests</span>
+          <span>All contests</span>
         </>
       ),
       route: '/contests',

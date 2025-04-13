@@ -1,10 +1,11 @@
 'use client'
 
-import { DisciplineSwitcherItem } from '@/frontend/ui'
 import { type Discipline } from '@/types'
 import Link from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { useCallback, useState } from 'react'
+import { DisciplineBadge } from '../ui'
+import { cn } from '../utils/cn'
 
 export function DisciplineSwitcher({
   initialDiscipline,
@@ -42,12 +43,32 @@ export function DisciplineSwitcher({
           key={discipline}
         >
           <DisciplineSwitcherItem
-            asButton={false}
             discipline={discipline}
             isActive={discipline === currentDiscipline}
           />
         </Link>
       ))}
     </div>
+  )
+}
+
+function DisciplineSwitcherItem({
+  className,
+  isActive,
+  discipline,
+}: {
+  className?: string
+  isActive?: boolean
+  discipline: Discipline
+}) {
+  return (
+    <DisciplineBadge
+      className={cn(
+        'transition-base outline-ring cursor-pointer border border-transparent bg-grey-100 text-grey-60 hover:border-secondary-20 active:bg-secondary-20 active:text-black-100',
+        { 'bg-secondary-20 text-black-100': isActive },
+        className,
+      )}
+      discipline={discipline}
+    />
   )
 }

@@ -3,6 +3,8 @@ import { DisciplineIcon, SecondaryButton } from '@/frontend/ui'
 import { formatContestDuration } from '@/utils/format-date'
 import Link from 'next/link'
 import { cn } from '@/frontend/utils/cn'
+import tailwindConfig from 'tailwind.config'
+import { SpinningBorder } from '@/frontend/ui/spinning-border'
 
 export {
   Contest as ContestRowMobile,
@@ -22,28 +24,35 @@ export function ContestRowDesktop({
   className,
 }: ContestProps) {
   return (
-    <div
-      className={cn(
-        'text-large flex h-15 items-center justify-between rounded-xl bg-grey-100 pl-4',
-        className,
-      )}
-      style={{ height }}
+    <SpinningBorder
+      color={tailwindConfig.theme.colors.secondary[60]}
+      enabled={contest.isOngoing}
+      className='rounded-xl'
     >
-      <DisciplineIcon discipline={discipline} className='mr-4' />
-      <span className='vertical-alignment-fix relative mr-4 flex-1 pr-4 after:absolute after:right-0 after:top-1/2 after:h-6 after:w-px after:-translate-y-1/2 after:bg-grey-60'>
-        Contest {contest.slug}
-      </span>
-      <span className='vertical-alignment-fix mr-10 w-44 whitespace-nowrap'>
-        {formatContestDuration(contest)}
-      </span>
-      <SecondaryButton asChild className='h-full'>
-        <Link
-          href={`/contests/${contest.slug}/results?discipline=${discipline}`}
-        >
-          view contest
-        </Link>
-      </SecondaryButton>
-    </div>
+      <div
+        className={cn(
+          'text-large flex h-15 items-center justify-between rounded-xl pl-4',
+          contest.isOngoing ? 'bg-secondary-80' : 'bg-grey-100',
+          className,
+        )}
+        style={{ height }}
+      >
+        <DisciplineIcon discipline={discipline} className='mr-4' />
+        <span className='vertical-alignment-fix relative mr-4 flex-1 pr-4 after:absolute after:right-0 after:top-1/2 after:h-6 after:w-px after:-translate-y-1/2 after:bg-grey-60'>
+          Contest {contest.slug} {contest.isOngoing && '(ongoing)'}
+        </span>
+        <span className='vertical-alignment-fix mr-10 w-44 whitespace-nowrap'>
+          {formatContestDuration(contest)}
+        </span>
+        <SecondaryButton asChild className='h-full'>
+          <Link
+            href={`/contests/${contest.slug}/results?discipline=${discipline}`}
+          >
+            view contest
+          </Link>
+        </SecondaryButton>
+      </div>
+    </SpinningBorder>
   )
 }
 

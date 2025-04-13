@@ -27,7 +27,7 @@ import {
   LayoutHeaderTitlePortal,
   LayoutHeaderTitlePortalFallback,
 } from '@/app/(app)/_layout/layout-header'
-import { DisciplineSwitcher } from '@/frontend/shared/discipline-switcher-client'
+import { DisciplineSwitcher } from '@/frontend/shared/discipline-switcher'
 import { TouchNotSupportedWrapper } from './_components/touch-not-supported-wrapper'
 import { withSuspense } from '@/frontend/utils/with-suspense'
 import {

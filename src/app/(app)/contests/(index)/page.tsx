@@ -18,7 +18,7 @@ import {
 } from './_components/contest'
 import ContestList from './_components/contest-list-client'
 import { LayoutHeaderTitlePortal } from '../../_layout/layout-header'
-import { DisciplineSwitcher } from '@/frontend/shared/discipline-switcher-client'
+import { DisciplineSwitcher } from '@/frontend/shared/discipline-switcher'
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>
 export default async function ContestsIndexPage(props: {
@@ -62,7 +62,7 @@ export default async function ContestsIndexPage(props: {
 }
 
 async function PageContent({ discipline }: { discipline: Discipline }) {
-  const contests = await api.contest.getPastContests({
+  const contests = await api.contest.getAllContests({
     discipline,
   })
 

@@ -15,7 +15,7 @@ export function LatestContests({
   contests,
 }: {
   className: string
-  contests?: RouterOutputs['contest']['getPastContests']['items']
+  contests?: RouterOutputs['contest']['getAllContests']['items']
 }) {
   const { fittingCount, containerRef, fakeElementRef } = useFittingCount()
   const isMd = useMatchesScreen('md')
