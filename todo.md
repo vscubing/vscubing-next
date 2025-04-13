@@ -17,8 +17,8 @@
     - [x] backend query
     - [x] switcher
     - [x] ui
-    - [ ] add contest link
-    - [ ] adjust height (single/avg)
+    - [x] add contest link
+    - [x] adjust height (single/avg)
 - [ ] fix discipline: string everywhere
 - [ ] skip inspection by default and play the solve automatically
 - [ ] fancy white glowing outline effect on own result / after jumping to a solve

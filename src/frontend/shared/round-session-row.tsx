@@ -72,7 +72,7 @@ export function RoundSessionRow({
 
 export function RoundSessionRowSkeleton() {
   return (
-    <div className='h-15 animate-pulse rounded-xl bg-grey-100 md:h-[5.1rem] sm:h-28'></div>
+    <div className='h-16 animate-pulse rounded-xl bg-grey-100 md:h-[5.25rem] sm:h-[7.25rem]'></div>
   )
 }
 
@@ -123,7 +123,7 @@ function RoundSessionRowTablet({
           >
             <div
               className={cn(
-                'flex min-h-[5.1rem] flex-wrap items-center rounded-xl px-4 py-3 sm:min-h-28 sm:p-4',
+                'flex min-h-[5.25rem] flex-wrap items-center rounded-xl px-4 py-3 sm:min-h-[7.25rem] sm:p-4',
                 session.isOwn ? 'bg-secondary-80' : 'bg-grey-100',
               )}
             >
@@ -235,7 +235,7 @@ function RoundSessionRowDesktop({
       >
         <div
           className={cn(
-            'flex h-15 w-full items-center rounded-xl pl-2',
+            'flex h-16 w-full items-center rounded-xl pl-2',
             session.isOwn ? 'bg-secondary-80' : 'bg-grey-100',
           )}
         >
