@@ -28,7 +28,11 @@ import {
   SingleResultSkeleton,
 } from './_components/single-result'
 import { LeaderboardTypeSwitcher } from '@/frontend/shared/leaderboard-type-switcher'
-import { AverageList } from './_components/average-list'
+import {
+  AverageList,
+  AverageListShell,
+  AverageResultSkeleton,
+} from './_components/average-list'
 
 export default async function LeaderboardPage({
   searchParams,
@@ -74,11 +78,11 @@ export default async function LeaderboardPage({
         <Suspense
           key={JSON.stringify({ discipline, type })}
           fallback={
-            <SingleResultListShell>
+            <AverageListShell>
               {Array.from({ length: 20 }).map((_, idx) => (
-                <SingleResultSkeleton key={idx} />
+                <AverageResultSkeleton key={idx} />
               ))}
-            </SingleResultListShell>
+            </AverageListShell>
           }
         >
           <PageContentAverage discipline={discipline} />
@@ -126,6 +130,6 @@ async function PageContentAverage({ discipline }: { discipline: Discipline }) {
 }
 
 const LEADERBOARD_TITLE_MAP: Record<LeaderboardType, string> = {
-  average: 'best results',
-  single: 'best solves',
+  average: 'best averages',
+  single: 'best singles',
 }

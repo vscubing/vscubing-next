@@ -89,52 +89,40 @@ function SingleResultDesktop({
             isOwn ? 'bg-secondary-80' : 'bg-grey-100',
           )}
         >
-          <div className='flex flex-1 items-center'>
-            <PlaceLabel
-              onClick={onPlaceClick}
-              className={cn('mr-3', { 'cursor-pointer': onPlaceClick })}
+          <PlaceLabel
+            onClick={onPlaceClick}
+            className={cn('mr-3', { 'cursor-pointer': onPlaceClick })}
+          >
+            {place}
+          </PlaceLabel>
+          <DisciplineIcon className='mr-3' discipline={discipline} />
+          <Ellipsis className='vertical-alignment-fix flex-1'>
+            {displayedNickname}
+          </Ellipsis>
+          <SolveTimeLinkOrDnf
+            className='mr-6'
+            canShowHint={place === 1}
+            result={result}
+            solveId={id}
+            contestSlug={contestSlug}
+            discipline={discipline}
+          />
+
+          <span className='vertical-alignment-fix w-36 border-l border-grey-60 text-center'>
+            {formatDate(createdAt)}
+          </span>
+          <SecondaryButton
+            asChild
+            size='lg'
+            className='w-[9.25rem] justify-between px-[1.3rem]'
+          >
+            <Link
+              href={`/contests/${contestSlug}/results?discipline=${discipline}`}
             >
-              {place}
-            </PlaceLabel>
-            <DisciplineIcon className='mr-3' discipline={discipline} />
-            <Ellipsis className='vertical-alignment-fix flex-1'>
-              {displayedNickname}
-            </Ellipsis>
-            <span className='mr-6'>
-              <span className='sm:vertical-alignment-fix mb-1 hidden text-center text-grey-40'>
-                Single time
-              </span>
-              <SolveTimeLinkOrDnf
-                canShowHint={place === 1}
-                result={result}
-                solveId={id}
-                contestSlug={contestSlug}
-                discipline={discipline}
-              />
-            </span>
-          </div>
-          <div className='overflow-y-clip data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down'>
-            <span className='flex items-center'>
-              <span className='vertical-alignment-fix w-36 border-l border-grey-60 text-center'>
-                <span className='mb-2 hidden text-center text-grey-40'>
-                  Solve date
-                </span>
-                {formatDate(createdAt)}
-              </span>
-              <SecondaryButton
-                asChild
-                size='lg'
-                className='w-[9.25rem] justify-between px-[1.3rem]'
-              >
-                <Link
-                  href={`/contests/${contestSlug}/results?discipline=${discipline}`}
-                >
-                  <span>Contest {contestSlug}</span>
-                  <ArrowRightIcon className='inline-block' />
-                </Link>
-              </SecondaryButton>
-            </span>
-          </div>
+              <span>Contest {contestSlug}</span>
+              <ArrowRightIcon className='inline-block' />
+            </Link>
+          </SecondaryButton>
         </div>
       </SpinningBorder>
     </li>

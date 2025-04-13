@@ -1,4 +1,11 @@
-import { DisciplineIcon, Ellipsis, PlusIcon, MinusIcon } from '@/frontend/ui'
+import {
+  DisciplineIcon,
+  Ellipsis,
+  PlusIcon,
+  MinusIcon,
+  ArrowRightIcon,
+  SecondaryButton,
+} from '@/frontend/ui'
 import { cn } from '@/frontend/utils/cn'
 import * as Accordion from '@radix-ui/react-accordion'
 import { ExtraLabel } from '@/frontend/shared/extra-label'
@@ -11,12 +18,14 @@ import type { Discipline, RoundSession } from '@/types'
 import { SpinningBorder } from '@/frontend/ui/spinning-border'
 import { tailwindConfig, useMatchesScreen } from '@/frontend/utils/tailwind'
 import type { RefObject } from 'react'
+import Link from 'next/link'
 
 // HACK: we need castom handling for refs because you can't set one ref to 2 elements at the same time
 // HACK: we can't just use useMatchesScreen for switching between Desktop and Tablet because then it won't be SSRed properly
 type RoundSessionRowProps = {
   session: RoundSession
   discipline: Discipline
+  withContestLink?: boolean
   isFirstOnPage: boolean
   place: number
   className?: string
@@ -25,6 +34,7 @@ type RoundSessionRowProps = {
 }
 export function RoundSessionRow({
   discipline,
+  withContestLink = false,
   isFirstOnPage,
   place,
   session,
@@ -40,6 +50,7 @@ export function RoundSessionRow({
         className={cn('md:hidden', className)}
         discipline={discipline}
         isFirstOnPage={isFirstOnPage}
+        withContestLink={withContestLink}
         place={place}
         session={session}
         ref={isTablet === false ? ref : undefined}
@@ -49,6 +60,7 @@ export function RoundSessionRow({
         className={cn('hidden md:block', className)}
         discipline={discipline}
         isFirstOnPage={isFirstOnPage}
+        withContestLink={withContestLink}
         place={place}
         session={session}
         ref={isTablet === true ? ref : undefined}
@@ -64,24 +76,31 @@ export function RoundSessionRowSkeleton() {
   )
 }
 
-export function RoundSessionHeader() {
+export function RoundSessionHeader({
+  withContestLink = false,
+}: {
+  withContestLink?: boolean
+}) {
   return (
-    <div className='flex whitespace-nowrap px-2 text-grey-40 md:hidden'>
+    <div className='flex whitespace-nowrap pl-2 text-grey-40 md:hidden'>
       <span className='mr-2 w-11 text-center'>Place</span>
       <span className='mr-2'>Type</span>
       <span className='flex-1'>Nickname</span>
       <span className='mr-4 w-24 text-center'>Average time</span>
       {Array.from({ length: 5 }, (_, index) => (
-        <span key={index} className='mr-2 w-24 text-center last:mr-0'>
+        <span key={index} className='mr-2 w-24 text-center'>
           Attempt {index + 1}
         </span>
       ))}
+
+      {withContestLink && <div className='w-[9.25rem]' />}
     </div>
   )
 }
 
 function RoundSessionRowTablet({
   session: { solves, nickname, session, contestSlug },
+  withContestLink,
   place,
   discipline,
   isFirstOnPage,
@@ -170,6 +189,20 @@ function RoundSessionRowTablet({
                     </li>
                   ))}
                 </ul>
+                {withContestLink && (
+                  <SecondaryButton
+                    asChild
+                    size='sm'
+                    className='mt-4 h-11 w-full gap-1'
+                  >
+                    <Link
+                      href={`/contests/${contestSlug}/results?discipline=${discipline}`}
+                    >
+                      <span>Contest {contestSlug}</span>
+                      <ArrowRightIcon className='inline-block' />
+                    </Link>
+                  </SecondaryButton>
+                )}
               </Accordion.Content>
             </div>
           </SpinningBorder>
@@ -182,6 +215,7 @@ function RoundSessionRowTablet({
 function RoundSessionRowDesktop({
   session: { solves, nickname, session, contestSlug },
   place,
+  withContestLink,
   isFirstOnPage,
   discipline,
   className,
@@ -201,65 +235,74 @@ function RoundSessionRowDesktop({
       >
         <div
           className={cn(
-            'flex h-15 w-full items-center rounded-xl px-2',
+            'flex h-15 w-full items-center rounded-xl pl-2',
             session.isOwn ? 'bg-secondary-80' : 'bg-grey-100',
           )}
         >
-          <div className='flex flex-1 items-center'>
-            <PlaceLabel
-              onClick={onPlaceClick}
-              className={cn('mr-3', { 'cursor-pointer': onPlaceClick })}
+          <PlaceLabel
+            onClick={onPlaceClick}
+            className={cn('mr-3', { 'cursor-pointer': onPlaceClick })}
+          >
+            {place}
+          </PlaceLabel>
+          <DisciplineIcon className='mr-3' discipline={discipline} />
+          <Ellipsis className='vertical-alignment-fix flex-1'>{`${nickname}${currentUserLabel}`}</Ellipsis>
+
+          <SolveTimeLabel
+            timeMs={session.result.timeMs ?? undefined}
+            isDnf={session.result.isDnf}
+            isAverage
+            className='relative mr-4 after:absolute after:-right-2 after:top-1/2 after:h-6 after:w-px after:-translate-y-1/2 after:bg-grey-60'
+          />
+
+          <ul className='mr-2 grid grid-cols-[repeat(5,min-content)] gap-x-2'>
+            {solves.map((solve, index) => (
+              <li key={solve.id} className='contents'>
+                <span className='hidden text-center text-grey-40'>
+                  Attempt {index + 1}
+                </span>
+                <span className='relative'>
+                  <SolveTimeLinkOrDnf
+                    canShowHint={isFirstOnPage && index === 0}
+                    contestSlug={contestSlug}
+                    discipline={discipline}
+                    solveId={solve.id}
+                    result={solve.result}
+                    isFestive={solve.isPersonalBest}
+                    variant={
+                      solve.id === bestId
+                        ? 'best'
+                        : solve.id === worstId
+                          ? 'worst'
+                          : undefined
+                    }
+                  />
+
+                  <ExtraLabel
+                    scramblePosition={solve.position}
+                    className={cn('absolute -top-2 right-[1.1rem] z-10', {
+                      'text-white-100 [text-shadow:_1px_1px_2px_black]':
+                        solve.isPersonalBest,
+                    })}
+                  />
+                </span>
+              </li>
+            ))}
+          </ul>
+          {withContestLink && (
+            <SecondaryButton
+              asChild
+              size='lg'
+              className='w-[9.25rem] justify-between px-[1.3rem]'
             >
-              {place}
-            </PlaceLabel>
-            <DisciplineIcon className='mr-3' discipline={discipline} />
-            <Ellipsis className='vertical-alignment-fix flex-1'>{`${nickname}${currentUserLabel}`}</Ellipsis>
-
-            <span className='mr-4'>
-              <SolveTimeLabel
-                timeMs={session.result.timeMs ?? undefined}
-                isDnf={session.result.isDnf}
-                isAverage
-                className='relative after:absolute after:-right-2 after:top-1/2 after:h-6 after:w-px after:-translate-y-1/2 after:bg-grey-60'
-              />
-            </span>
-          </div>
-          <div className='data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down'>
-            <ul className='grid grid-cols-[repeat(5,min-content)] gap-x-2'>
-              {solves.map((solve, index) => (
-                <li key={solve.id} className='contents'>
-                  <span className='hidden text-center text-grey-40'>
-                    Attempt {index + 1}
-                  </span>
-                  <span className='relative'>
-                    <SolveTimeLinkOrDnf
-                      canShowHint={isFirstOnPage && index === 0}
-                      contestSlug={contestSlug}
-                      discipline={discipline}
-                      solveId={solve.id}
-                      result={solve.result}
-                      isFestive={solve.isPersonalBest}
-                      variant={
-                        solve.id === bestId
-                          ? 'best'
-                          : solve.id === worstId
-                            ? 'worst'
-                            : undefined
-                      }
-                    />
-
-                    <ExtraLabel
-                      scramblePosition={solve.position}
-                      className={cn('absolute -top-2 right-[1.1rem] z-10', {
-                        'text-white-100 [text-shadow:_1px_1px_2px_black]':
-                          solve.isPersonalBest,
-                      })}
-                    />
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
+              <Link
+                href={`/contests/${contestSlug}/results?discipline=${discipline}`}
+              >
+                <span>Contest {contestSlug}</span>
+                <ArrowRightIcon className='inline-block' />
+              </Link>
+            </SecondaryButton>
+          )}
         </div>
       </SpinningBorder>
     </li>

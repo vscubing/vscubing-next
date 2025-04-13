@@ -8,6 +8,7 @@ import { useRef, type ReactNode, type RefObject } from 'react'
 import {
   RoundSessionRow,
   RoundSessionHeader,
+  RoundSessionRowSkeleton,
 } from '@/frontend/shared/round-session-row'
 
 export function AverageList({
@@ -62,6 +63,7 @@ export function AverageList({
         return idx === stickyItemIdx ? (
           <RoundSessionRow
             session={sessions[stickyItemIdx]!}
+            withContestLink
             place={stickyItemIdx + 1}
             discipline={discipline}
             isFirstOnPage={false}
@@ -72,6 +74,7 @@ export function AverageList({
         ) : (
           <RoundSessionRow
             session={session}
+            withContestLink
             discipline={discipline}
             isFirstOnPage={idx === 0}
             place={idx + 1}
@@ -87,9 +90,11 @@ export function AverageList({
 export function AverageListShell({ children }: { children: ReactNode }) {
   return (
     <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 sm:p-3'>
-      <RoundSessionHeader />
+      <RoundSessionHeader withContestLink />
 
       <ul className='flex flex-1 flex-col gap-2'>{children}</ul>
     </div>
   )
 }
+
+export const AverageResultSkeleton = RoundSessionRowSkeleton
