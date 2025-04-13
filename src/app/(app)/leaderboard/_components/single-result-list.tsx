@@ -5,7 +5,8 @@ import { type Discipline } from '@/types'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { useTRPC, type RouterOutputs } from '@/trpc/react'
 import { SingleResult, SingleResultListShell } from './single-result'
-import { useRef, type RefObject } from 'react'
+import { cn } from '@/frontend/utils/cn'
+import { useScrollToIndex } from '@/frontend/utils/use-scroll-to-index'
 
 export function SingleResultList({
   discipline,
@@ -24,19 +25,7 @@ export function SingleResultList({
     ),
   )
 
-  const stickyItemIdx = results.findIndex((result) => result.isOwn)
-
-  const beforeStickyItemRef = useRef<HTMLLIElement | null>(null)
-  const afterStickyItemRef = useRef<HTMLLIElement | null>(null)
-  function scrollToSticky() {
-    const afterItem = afterStickyItemRef.current
-    const beforeItem = beforeStickyItemRef.current
-    const scrollTo = afterItem ?? beforeItem!
-    scrollTo.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center',
-    })
-  }
+  const { containerRef, performScrollToIdx } = useScrollToIndex()
 
   if (results.length === 0) {
     return (
@@ -47,35 +36,26 @@ export function SingleResultList({
     )
   }
 
+  const stickyItemIdx = results.findIndex((result) => result.isOwn)
   return (
     <SingleResultListShell>
-      {results.map((result, idx) => {
-        let ref: RefObject<HTMLLIElement | null> | undefined = undefined
-        if (idx === stickyItemIdx + 1) {
-          ref = afterStickyItemRef
-        } else if (idx === stickyItemIdx - 1) {
-          ref = beforeStickyItemRef
-        }
-
-        return idx === stickyItemIdx ? (
-          <SingleResult
-            result={results[stickyItemIdx]!}
-            discipline={discipline}
-            place={stickyItemIdx + 1}
-            className='sticky bottom-[-2px] top-[calc(var(--layout-section-header-height)-2px)] z-10'
-            key={result.id}
-            onPlaceClick={scrollToSticky}
-          />
-        ) : (
+      <ul className='space-y-2' ref={containerRef}>
+        {results.map((result, idx) => (
           <SingleResult
             result={result}
             discipline={discipline}
             place={idx + 1}
+            className={cn({
+              'sticky bottom-[-2px] top-[calc(var(--layout-section-header-height)-2px)] z-10':
+                idx === stickyItemIdx,
+            })}
             key={result.id}
-            ref={ref}
+            onPlaceClick={
+              idx === stickyItemIdx ? () => performScrollToIdx(idx) : undefined
+            }
           />
-        )
-      })}
+        ))}
+      </ul>
     </SingleResultListShell>
   )
 }

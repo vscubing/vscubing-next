@@ -19,16 +19,28 @@
     - [x] ui
     - [x] add contest link
     - [x] adjust height (single/avg)
-- [ ] fix discipline: string everywhere
-- [ ] skip inspection by default and play the solve automatically
 - [ ] fancy white glowing outline effect on own result / after jumping to a solve
-    - [ ] refactor scrollToItem
-- [ ] delete round sessions with no results & dnf round sessions with too little results
-    - [ ] on contest close
-    - [ ] migration
+    - [x] refactor scrollToItem
+    - [x] scroll on click
+    - [x] glowing
+    - [x] scroll on navigate from avg leaderboard
+    - [ ] scroll on navigate from single leaderboard
+    - [ ] make switchers accept baseParams
+- [ ] add indexes for timeMs and avgMs
+- [ ] admin on prod
+- [ ] toast adjust "single personal best" text
 - [ ] rework logo homepage/landing link
-- [ ] boring stuff (cookies, privacy policy, etc)
 - [ ] use node-cron 
+- [ ] boring stuff (cookies, privacy policy, etc)
 
 BEFORE RELEASE:
 - [ ] new posthog project
+
+AFTER RELEASE:
+- [ ] include ongoing in leaderboard if capabilities=view_results
+- [ ] average personal best toast & avg 
+- [ ] fix discipline: string everywhere
+- [ ] skip inspection by default and play the solve automatically
+- [ ] delete round sessions with no results & dnf round sessions with too little results
+    - [ ] on contest close
+    - [ ] migration

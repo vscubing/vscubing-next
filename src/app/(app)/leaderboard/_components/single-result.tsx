@@ -14,52 +14,44 @@ import { SolveTimeLinkOrDnf } from '@/frontend/shared/solve-time-button'
 import type { Discipline } from '@/types'
 import { cn } from '@/frontend/utils/cn'
 import { formatDate } from '@/utils/format-date'
-import { useMatchesScreen } from '@/frontend/utils/tailwind'
 import type { RouterOutputs } from '@/trpc/react'
 import * as Accordion from '@radix-ui/react-accordion'
 import Link from 'next/link'
-import { type ReactNode, type RefObject } from 'react'
+import { type ReactNode } from 'react'
 import tailwindConfig from 'tailwind.config'
 
-// HACK: we need castom handling for refs because you can't set one ref to 2 elements at the same time
 // HACK: we can't just use useMatchesScreen for switching between Desktop and Tablet because then it won't be SSRed properly
 type SingleResultProps = {
   result: RouterOutputs['leaderboard']['bySingle'][number]
   discipline: Discipline
   place: number
-  className?: string
   onPlaceClick?: () => void
-  ref?: RefObject<HTMLLIElement | null>
+  className?: string
 }
 export function SingleResult({
   className,
   discipline,
   place,
   result,
-  ref,
   onPlaceClick,
 }: SingleResultProps) {
-  const isTablet = useMatchesScreen('md')
-
   return (
-    <>
+    <li className={className}>
       <SingleResultDesktop
-        className={cn('md:hidden', className)}
+        className='md:hidden'
         discipline={discipline}
         place={place}
         result={result}
         onPlaceClick={onPlaceClick}
-        ref={isTablet === false ? ref : undefined}
       />
       <SingleResultTablet
-        className={cn('hidden md:block', className)}
+        className='hidden md:block'
         discipline={discipline}
         place={place}
         result={result}
-        ref={isTablet === true ? ref : undefined}
         onPlaceClick={onPlaceClick}
       />
-    </>
+    </li>
   )
 }
 
@@ -68,7 +60,6 @@ function SingleResultDesktop({
   discipline,
   place,
   className,
-  ref,
   onPlaceClick,
 }: SingleResultProps & { className: string }) {
   let displayedNickname = nickname
@@ -77,7 +68,7 @@ function SingleResultDesktop({
   }
 
   return (
-    <li className={className} ref={ref}>
+    <div className={className}>
       <SpinningBorder
         color={tailwindConfig.theme.colors.secondary[60]}
         enabled={isOwn}
@@ -125,7 +116,7 @@ function SingleResultDesktop({
           </SecondaryButton>
         </div>
       </SpinningBorder>
-    </li>
+    </div>
   )
 }
 
@@ -134,7 +125,6 @@ function SingleResultTablet({
   discipline,
   place,
   className,
-  ref,
   onPlaceClick,
 }: SingleResultProps & { className: string }) {
   let displayedNickname = nickname
@@ -145,7 +135,7 @@ function SingleResultTablet({
   return (
     <Accordion.Root type='single' collapsible asChild>
       <Accordion.Item value='result' asChild>
-        <li className={className} ref={ref}>
+        <div className={className}>
           <SpinningBorder
             enabled={isOwn}
             color={tailwindConfig.theme.colors.secondary[60]}
@@ -214,7 +204,7 @@ function SingleResultTablet({
               </Accordion.Content>
             </div>
           </SpinningBorder>
-        </li>
+        </div>
       </Accordion.Item>
     </Accordion.Root>
   )
@@ -222,7 +212,7 @@ function SingleResultTablet({
 
 export function SingleResultSkeleton() {
   return (
-    <li className='h-16 animate-pulse rounded-xl bg-grey-100 md:h-[5.25rem] sm:h-[7.25rem]'></li>
+    <div className='h-16 animate-pulse rounded-xl bg-grey-100 md:h-[5.25rem] sm:h-[7.25rem]'></div>
   )
 }
 
@@ -240,8 +230,7 @@ export function SingleResultListShell({ children }: { children: ReactNode }) {
           className='invisible h-px w-[9.25rem]'
         ></SecondaryButton>
       </div>
-
-      <ul className='flex flex-1 flex-col gap-2'>{children}</ul>
+      {children}
     </div>
   )
 }
