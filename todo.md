@@ -12,12 +12,23 @@
     - [x] previous pb in toast
     - [x] contest results
 - [x] DNF avg in contest leaderboard
-- [ ] expandContestLink
-- [ ] skip inspection by default
+- [x] refactor getPersonalBestSubquery
+- [x] avg leaderboard
+    - [x] backend query
+    - [x] switcher
+    - [x] ui
+    - [x] add contest link
+    - [x] adjust height (single/avg)
+- [ ] fix discipline: string everywhere
+- [ ] skip inspection by default and play the solve automatically
 - [ ] fancy white glowing outline effect on own result / after jumping to a solve
+    - [ ] refactor scrollToItem
 - [ ] delete round sessions with no results & dnf round sessions with too little results
     - [ ] on contest close
     - [ ] migration
+- [ ] rework logo homepage/landing link
+- [ ] boring stuff (cookies, privacy policy, etc)
+- [ ] use node-cron 
 
 BEFORE RELEASE:
 - [ ] new posthog project

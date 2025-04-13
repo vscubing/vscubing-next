@@ -13,11 +13,11 @@ import {
 import { DISCIPLINES, CONTEST_UNAUTHORIZED_MESSAGE } from '@/types'
 import { eq, desc, and, lte } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
-import { resultDnfish, type ContestResultRoundSession } from '@/types'
+import { resultDnfish, type RoundSession } from '@/types'
 import { groupBy } from '@/utils/group-by'
 import { sortWithRespectToExtras } from '../../shared/sort-with-respect-to-extras'
 import { getContestUserCapabilities } from '../../shared/get-contest-user-capabilities'
-import { getPersonalBestExcludingOngoingSubquery } from '@/backend/shared/personal-best-subquery'
+import { getPersonalBestSolveSubquery } from '@/backend/shared/personal-best-subquery'
 
 export const contestRouter = createTRPCRouter({
   getAllContests: publicProcedure
@@ -134,7 +134,7 @@ export const contestRouter = createTRPCRouter({
         discipline: z.enum(DISCIPLINES),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }): Promise<RoundSession[]> => {
       const userCapabilities = await getContestUserCapabilities({
         contestSlug: input.contestSlug,
         discipline: input.discipline,
@@ -155,22 +155,30 @@ export const contestRouter = createTRPCRouter({
             "You can't see the results of an ongoing contest round before finishing it",
         })
 
-      const personalBestSubquery = getPersonalBestExcludingOngoingSubquery(
-        ctx.db,
-        input.discipline,
-      )
+      const bestSolveSubquery = getPersonalBestSolveSubquery({
+        db: ctx.db,
+        discipline: input.discipline,
+        includeOngoing: true,
+      })
 
       const queryRes = await ctx.db
         .select({
-          roundSessionId: roundSessionTable.id,
-          nickname: userTable.name,
-          contestantId: roundSessionTable.contestantId,
-          avgMs: roundSessionTable.avgMs,
-          solveId: solveTable.id,
-          timeMs: solveTable.timeMs,
-          isDnf: solveTable.isDnf,
-          position: scrambleTable.position,
-          personalBestId: personalBestSubquery.id,
+          session: {
+            id: roundSessionTable.id,
+            timeMs: roundSessionTable.avgMs,
+            isDnf: roundSessionTable.isDnf,
+          },
+          solve: {
+            timeMs: solveTable.timeMs,
+            isDnf: solveTable.isDnf,
+            id: solveTable.id,
+            position: scrambleTable.position,
+            personalBestId: bestSolveSubquery.id,
+          },
+          user: {
+            name: userTable.name,
+            id: userTable.id,
+          },
         })
         .from(roundTable)
         .innerJoin(
@@ -183,10 +191,7 @@ export const contestRouter = createTRPCRouter({
         )
         .innerJoin(scrambleTable, eq(scrambleTable.id, solveTable.scrambleId))
         .innerJoin(userTable, eq(userTable.id, roundSessionTable.contestantId))
-        .leftJoin(
-          personalBestSubquery,
-          eq(personalBestSubquery.id, solveTable.id),
-        )
+        .leftJoin(bestSolveSubquery, eq(bestSolveSubquery.id, solveTable.id))
         .where(
           and(
             eq(roundTable.contestSlug, input.contestSlug),
@@ -195,30 +200,29 @@ export const contestRouter = createTRPCRouter({
             eq(solveTable.status, 'submitted'),
           ),
         )
+        .orderBy(roundSessionTable.avgMs)
 
-      const solvesBySessionId = groupBy(
-        queryRes,
-        ({ roundSessionId }) => roundSessionId,
-      )
+      const solvesBySessionId = groupBy(queryRes, ({ session }) => session.id)
 
-      return Array.from(solvesBySessionId.values())
-        .sort((a, b) => (a[0]!.avgMs ?? Infinity) - (b[0]!.avgMs ?? Infinity))
-        .map((session) => ({
-          avgMs: session[0]!.avgMs,
-          id: session[0]!.roundSessionId,
-          isOwn: session[0]!.contestantId === ctx.session?.user.id,
-          solves: sortWithRespectToExtras(
-            session.map(
-              ({ solveId, timeMs, isDnf, position, personalBestId }) => ({
-                id: solveId,
-                position,
-                result: resultDnfish.parse({ timeMs, isDnf }),
-                isPersonalBest: solveId === personalBestId,
-              }),
-            ),
+      return Array.from(solvesBySessionId.values()).map((session) => ({
+        session: {
+          result: resultDnfish.parse(session[0]!.session),
+          id: session[0]!.session.id,
+          isOwn: session[0]!.user.id === ctx.session?.user.id,
+        },
+        solves: sortWithRespectToExtras(
+          session.map(
+            ({ solve: { id, personalBestId, position, isDnf, timeMs } }) => ({
+              id,
+              position,
+              result: resultDnfish.parse({ timeMs, isDnf }),
+              isPersonalBest: id === personalBestId,
+            }),
           ),
-          nickname: session[0]!.nickname,
-        })) satisfies ContestResultRoundSession[]
+        ),
+        nickname: session[0]!.user.name,
+        contestSlug: input.contestSlug,
+      }))
     }),
 
   getSolve: publicProcedure

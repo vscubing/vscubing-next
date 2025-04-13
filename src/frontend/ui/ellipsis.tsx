@@ -22,11 +22,20 @@ const Ellipsis = ({
 }) => {
   const innerRef = useRef<HTMLSpanElement>(null)
   useEffect(() => {
-    const elem = innerRef.current
-    if (elem?.textContent && elem.offsetWidth < elem.scrollWidth) {
-      elem.setAttribute('title', elem.textContent)
-      return () => elem.removeAttribute('title')
-    }
+    const abortSignal = new AbortController()
+
+    window.addEventListener(
+      'resize',
+      () => {
+        const elem = innerRef.current
+        if (elem?.textContent && elem.offsetWidth < elem.scrollWidth)
+          elem.setAttribute('title', elem.textContent)
+        else elem?.removeAttribute('title')
+      },
+      { signal: abortSignal.signal },
+    )
+
+    return () => abortSignal.abort()
   }, [text, innerRef])
   useImperativeHandle(ref, () => innerRef.current!, [innerRef])
   return (

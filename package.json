@@ -15,7 +15,7 @@
     "db:drop": "drizzle-kit drop",
     "db:local": "./scripts/start-database.sh",
     "db:studio": "drizzle-kit studio",
-    "check": "bun format:check && bun lint:check && bun type:check && bun test",
+    "check": "bun format:check; bun lint:check; bun type:check; bun test",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
     "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
     "lint:check": "next lint",

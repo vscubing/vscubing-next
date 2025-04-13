@@ -1,6 +1,6 @@
 import { DEFAULT_DISCIPLINE, isDiscipline, type Discipline } from '@/types'
 import { api } from '@/trpc/server'
-import { DisciplineSwitcher } from '@/frontend/shared/discipline-switcher-client'
+import { DisciplineSwitcher } from '@/frontend/shared/discipline-switcher'
 import { NavigateBackButton } from '@/frontend/shared/navigate-back-button'
 import { LayoutPageTitleMobile } from '@/frontend/shared/layout-page-title-mobile'
 import { LayoutHeaderTitlePortal } from '@/app/(app)/_layout/layout-header'
@@ -11,7 +11,7 @@ import { CONTEST_UNAUTHORIZED_MESSAGE } from '@/types'
 import { SessionList, SessionListShell } from './_components/session-list'
 import { LayoutSectionHeader } from '@/app/(app)/_layout'
 import { Suspense } from 'react'
-import { SessionSkeleton } from './_components/session'
+import { RoundSessionRowSkeleton } from '../../../../../frontend/shared/round-session-row'
 import { formatContestDuration } from '@/utils/format-date'
 
 export default async function ContestResultsPage({
@@ -60,7 +60,7 @@ export default async function ContestResultsPage({
           <SessionListShell>
             {Array.from({ length: 20 }).map((_, idx) => (
               <li key={idx}>
-                <SessionSkeleton />
+                <RoundSessionRowSkeleton />
               </li>
             ))}
           </SessionListShell>

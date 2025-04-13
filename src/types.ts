@@ -47,7 +47,7 @@ export function castDiscipline(str: unknown): Discipline {
   return z.enum(DISCIPLINES).catch(DEFAULT_DISCIPLINE).parse(str)
 }
 
-export const LEADERBOARD_TYPES = ['average', 'single'] as const
+export const LEADERBOARD_TYPES = ['single', 'average'] as const
 export type LeaderboardType = (typeof LEADERBOARD_TYPES)[number]
 export const DEFAULT_LEADERBOARD_TYPE: LeaderboardType = 'single'
 export function isLeaderboardType(str: unknown): str is LeaderboardType {
@@ -62,17 +62,20 @@ export type ContestMetadata = Pick<
   'startDate' | 'endDate' | 'expectedEndDate' | 'slug' | 'isOngoing'
 >
 
-export type ContestResultRoundSession = {
+export type RoundSession = {
+  session: {
+    result: ResultDnfish
+    id: number
+    isOwn: boolean
+  }
   solves: {
     id: number
     position: ScramblePosition
     result: ResultDnfish
     isPersonalBest: boolean
   }[]
-  id: number
-  avgMs: number | null
+  contestSlug: string
   nickname: string
-  isOwn: boolean
 }
 
 export const CONTEST_UNAUTHORIZED_MESSAGE =

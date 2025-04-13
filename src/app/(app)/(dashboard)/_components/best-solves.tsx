@@ -9,13 +9,13 @@ import {
 } from '@/frontend/ui'
 import { SpinningBorder } from '@/frontend/ui/spinning-border'
 import { SolveTimeLinkOrDnf } from '@/frontend/shared/solve-time-button'
-import { DISCIPLINES, type Discipline } from '@/types'
+import { DISCIPLINES, type Discipline, type ResultDnfish } from '@/types'
 import { cn } from '@/frontend/utils/cn'
 import { tailwindConfig } from '@/frontend/utils/tailwind'
 import Link from 'next/link'
 
 type Solve = {
-  timeMs: number
+  result: ResultDnfish
   isOwn: boolean
   id: number
   nickname: string
@@ -112,10 +112,7 @@ function SolveRow({ solve, isFirstOnPage }: SolveProps) {
             <span className='mr-4 sm:mr-0'>
               <SolveTimeLinkOrDnf
                 canShowHint={isFirstOnPage}
-                result={{
-                  timeMs: solve.timeMs,
-                  isDnf: false,
-                }}
+                result={solve.result}
                 solveId={solve.id}
                 discipline={solve.discipline}
                 contestSlug={solve.contestSlug}
