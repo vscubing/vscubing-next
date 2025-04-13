@@ -64,9 +64,11 @@ export default async function LeaderboardPage({
           key={JSON.stringify({ discipline, type })}
           fallback={
             <SingleResultListShell>
-              {Array.from({ length: 20 }).map((_, idx) => (
-                <SingleResultSkeleton key={idx} />
-              ))}
+              <div className='space-y-2'>
+                {Array.from({ length: 20 }).map((_, idx) => (
+                  <SingleResultSkeleton key={idx} />
+                ))}
+              </div>
             </SingleResultListShell>
           }
         >
@@ -79,9 +81,11 @@ export default async function LeaderboardPage({
           key={JSON.stringify({ discipline, type })}
           fallback={
             <AverageListShell>
-              {Array.from({ length: 20 }).map((_, idx) => (
-                <AverageResultSkeleton key={idx} />
-              ))}
+              <div className='space-y-2'>
+                {Array.from({ length: 20 }).map((_, idx) => (
+                  <AverageResultSkeleton key={idx} />
+                ))}
+              </div>
             </AverageListShell>
           }
         >

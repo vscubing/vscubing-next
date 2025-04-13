@@ -16,11 +16,10 @@ import {
 } from '@/frontend/shared/solve-time-button'
 import type { Discipline, RoundSession } from '@/types'
 import { SpinningBorder } from '@/frontend/ui/spinning-border'
-import { tailwindConfig, useMatchesScreen } from '@/frontend/utils/tailwind'
+import { tailwindConfig } from '@/frontend/utils/tailwind'
 import type { RefObject } from 'react'
 import Link from 'next/link'
 
-// HACK: we need castom handling for refs because you can't set one ref to 2 elements at the same time
 // HACK: we can't just use useMatchesScreen for switching between Desktop and Tablet because then it won't be SSRed properly
 type RoundSessionRowProps = {
   session: RoundSession
@@ -29,7 +28,6 @@ type RoundSessionRowProps = {
   isFirstOnPage: boolean
   place: number
   className?: string
-  ref?: RefObject<HTMLLIElement | null>
   onPlaceClick?: () => void
 }
 export function RoundSessionRow({
@@ -41,32 +39,28 @@ export function RoundSessionRow({
   ref,
   className,
   onPlaceClick,
-}: RoundSessionRowProps) {
-  const isTablet = useMatchesScreen('md')
-
+}: RoundSessionRowProps & { ref?: RefObject<HTMLLIElement | null> }) {
   return (
-    <>
+    <li ref={ref} className={className}>
       <RoundSessionRowDesktop
-        className={cn('md:hidden', className)}
+        className='md:hidden'
         discipline={discipline}
         isFirstOnPage={isFirstOnPage}
         withContestLink={withContestLink}
         place={place}
         session={session}
-        ref={isTablet === false ? ref : undefined}
         onPlaceClick={onPlaceClick}
       />
       <RoundSessionRowTablet
-        className={cn('hidden md:block', className)}
+        className='hidden md:block'
         discipline={discipline}
         isFirstOnPage={isFirstOnPage}
         withContestLink={withContestLink}
         place={place}
         session={session}
-        ref={isTablet === true ? ref : undefined}
         onPlaceClick={onPlaceClick}
       />
-    </>
+    </li>
   )
 }
 
@@ -105,9 +99,8 @@ function RoundSessionRowTablet({
   discipline,
   isFirstOnPage,
   className,
-  ref,
   onPlaceClick,
-}: RoundSessionRowProps & { className: string }) {
+}: RoundSessionRowProps) {
   const currentUserLabel = session.isOwn ? ' (you)' : ''
 
   const { bestId, worstId } = getBestAndWorstIds(solves)
@@ -115,7 +108,7 @@ function RoundSessionRowTablet({
   return (
     <Accordion.Root type='single' collapsible asChild>
       <Accordion.Item value='result' asChild>
-        <li className={className} ref={ref}>
+        <div className={className}>
           <SpinningBorder
             enabled={session.isOwn}
             color={tailwindConfig.theme.colors.secondary[60]}
@@ -206,7 +199,7 @@ function RoundSessionRowTablet({
               </Accordion.Content>
             </div>
           </SpinningBorder>
-        </li>
+        </div>
       </Accordion.Item>
     </Accordion.Root>
   )
@@ -219,15 +212,14 @@ function RoundSessionRowDesktop({
   isFirstOnPage,
   discipline,
   className,
-  ref,
   onPlaceClick,
-}: RoundSessionRowProps & { className: string }) {
+}: RoundSessionRowProps) {
   const currentUserLabel = session.isOwn ? ' (you)' : ''
 
   const { bestId, worstId } = getBestAndWorstIds(solves)
 
   return (
-    <li className={className} ref={ref}>
+    <div className={className}>
       <SpinningBorder
         color={tailwindConfig.theme.colors.secondary[60]}
         enabled={session.isOwn}
@@ -305,7 +297,7 @@ function RoundSessionRowDesktop({
           )}
         </div>
       </SpinningBorder>
-    </li>
+    </div>
   )
 }
 

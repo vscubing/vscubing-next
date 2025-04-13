@@ -58,11 +58,11 @@ export default async function ContestResultsPage({
         key={discipline}
         fallback={
           <SessionListShell>
-            {Array.from({ length: 20 }).map((_, idx) => (
-              <li key={idx}>
-                <RoundSessionRowSkeleton />
-              </li>
-            ))}
+            <div className='space-y-2'>
+              {Array.from({ length: 20 }).map((_, idx) => (
+                <RoundSessionRowSkeleton key={idx} />
+              ))}
+            </div>
           </SessionListShell>
         }
       >

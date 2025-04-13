@@ -4,12 +4,14 @@ import { HintSection } from '@/frontend/shared/hint-section'
 import { type Discipline } from '@/types'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { useTRPC, type RouterOutputs } from '@/trpc/react'
-import { useRef, type ReactNode, type RefObject } from 'react'
+import { type ReactNode } from 'react'
 import {
   RoundSessionRow,
   RoundSessionHeader,
   RoundSessionRowSkeleton,
 } from '@/frontend/shared/round-session-row'
+import { useScrollToIndex } from '@/frontend/utils/use-scroll-to-index'
+import { cn } from '@/frontend/utils/cn'
 
 export function AverageList({
   discipline,
@@ -28,19 +30,7 @@ export function AverageList({
     ),
   )
 
-  const stickyItemIdx = sessions.findIndex((result) => result.session.isOwn)
-
-  const beforeStickyItemRef = useRef<HTMLLIElement | null>(null)
-  const afterStickyItemRef = useRef<HTMLLIElement | null>(null)
-  function scrollToSticky() {
-    const afterItem = afterStickyItemRef.current
-    const beforeItem = beforeStickyItemRef.current
-    const scrollTo = afterItem ?? beforeItem!
-    scrollTo.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center',
-    })
-  }
+  const { containerRef, performScrollToIdx } = useScrollToIndex()
 
   if (sessions.length === 0) {
     return (
@@ -50,39 +40,30 @@ export function AverageList({
     )
   }
 
+  const stickyItemIdx = sessions.findIndex((result) => result.session.isOwn)
   return (
     <AverageListShell>
-      {sessions.map((session, idx) => {
-        let ref: RefObject<HTMLLIElement | null> | undefined = undefined
-        if (idx === stickyItemIdx + 1) {
-          ref = afterStickyItemRef
-        } else if (idx === stickyItemIdx - 1) {
-          ref = beforeStickyItemRef
-        }
-
-        return idx === stickyItemIdx ? (
-          <RoundSessionRow
-            session={sessions[stickyItemIdx]!}
-            withContestLink
-            place={stickyItemIdx + 1}
-            discipline={discipline}
-            isFirstOnPage={false}
-            className='sticky bottom-[-2px] top-[calc(var(--layout-section-header-height)-2px)] z-10'
-            key={session.session.id}
-            onPlaceClick={scrollToSticky}
-          />
-        ) : (
+      <ul className='space-y-2' ref={containerRef}>
+        {sessions.map((session, idx) => (
           <RoundSessionRow
             session={session}
             withContestLink
+            place={idx + 1}
             discipline={discipline}
             isFirstOnPage={idx === 0}
-            place={idx + 1}
+            className={cn({
+              'sticky bottom-[-2px] top-[calc(var(--layout-section-header-height)-2px)] z-10':
+                idx === stickyItemIdx,
+            })}
             key={session.session.id}
-            ref={ref}
+            onPlaceClick={
+              idx === stickyItemIdx
+                ? () => performScrollToIdx(stickyItemIdx)
+                : undefined
+            }
           />
-        )
-      })}
+        ))}
+      </ul>
     </AverageListShell>
   )
 }
@@ -91,8 +72,7 @@ export function AverageListShell({ children }: { children: ReactNode }) {
   return (
     <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 sm:p-3'>
       <RoundSessionHeader withContestLink />
-
-      <ul className='flex flex-1 flex-col gap-2'>{children}</ul>
+      {children}
     </div>
   )
 }
