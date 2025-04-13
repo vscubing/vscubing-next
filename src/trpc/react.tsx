@@ -1,7 +1,12 @@
 'use client'
 
 import { QueryClientProvider, type QueryClient } from '@tanstack/react-query'
-import { createTRPCClient, httpBatchLink, loggerLink } from '@trpc/client'
+import {
+  createTRPCClient,
+  httpBatchLink,
+  httpBatchStreamLink,
+  loggerLink,
+} from '@trpc/client'
 import { createTRPCContext } from '@trpc/tanstack-react-query'
 import { type inferRouterInputs, type inferRouterOutputs } from '@trpc/server'
 import { useState } from 'react'
@@ -58,6 +63,7 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
           headers: () => {
             const headers = new Headers()
             headers.set('x-trpc-source', 'nextjs-react')
+            headers.set('trpc-accept', 'application/json')
             return headers
           },
         }),
