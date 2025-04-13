@@ -80,8 +80,8 @@ export const leaderboardRouter = createTRPCRouter({
 
       const rows = await ctx.db
         .select({
-          id: bestSessionSubquery.id,
-          sessionResult: {
+          session: {
+            id: bestSessionSubquery.id,
             timeMs: bestSessionSubquery.avgMs,
             isDnf: bestSessionSubquery.isDnf,
           },
@@ -111,13 +111,15 @@ export const leaderboardRouter = createTRPCRouter({
         .where(eq(solveTable.status, 'submitted'))
         .orderBy(bestSessionSubquery.avgMs)
 
-      const solvesBySessionId = groupBy(rows, ({ id }) => id)
+      const solvesBySessionId = groupBy(rows, ({ session }) => session.id)
 
       return Array.from(solvesBySessionId.values()).map((session) => {
         return {
-          result: resultDnfish.parse(session[0]!.sessionResult),
-          id: session[0]!.id,
-          isOwn: session[0]!.user.id === ctx.session?.user.id,
+          session: {
+            result: resultDnfish.parse(session[0]!.session),
+            id: session[0]!.session.id,
+            isOwn: session[0]!.user.id === ctx.session?.user.id,
+          },
           solves: sortWithRespectToExtras(
             session.map(({ solve: { id, position, isDnf, timeMs } }) => ({
               id,
@@ -125,6 +127,7 @@ export const leaderboardRouter = createTRPCRouter({
               result: resultDnfish.parse({ timeMs, isDnf }),
             })),
           ),
+          contestSlug: session[0]!.contestSlug,
           nickname: session[0]!.user.name,
         }
       }) satisfies LeaderboardRoundSession[]

@@ -26,7 +26,7 @@ export function SessionList({
     ),
   )
 
-  const stickyItemIdx = sessions.findIndex((result) => result.isOwn)
+  const stickyItemIdx = sessions.findIndex((result) => result.session.isOwn)
 
   const beforeStickyItemRef = useRef<HTMLLIElement | null>(null)
   const afterStickyItemRef = useRef<HTMLLIElement | null>(null)
@@ -66,7 +66,7 @@ export function SessionList({
             discipline={discipline}
             isFirstOnPage={false}
             className='sticky bottom-[-2px] top-[calc(var(--layout-section-header-height)-2px)] z-10'
-            key={session.id}
+            key={session.session.id}
             onPlaceClick={scrollToSticky}
           />
         ) : (
@@ -76,7 +76,7 @@ export function SessionList({
             discipline={discipline}
             isFirstOnPage={idx === 0}
             place={idx + 1}
-            key={session.id}
+            key={session.session.id}
             ref={ref}
           />
         )

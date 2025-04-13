@@ -63,27 +63,32 @@ export type ContestMetadata = Pick<
 >
 
 export type ContestResultRoundSession = {
+  session: {
+    result: ResultDnfish
+    id: number
+    isOwn: boolean
+  }
   solves: {
     id: number
     position: ScramblePosition
     result: ResultDnfish
     isPersonalBest: boolean
   }[]
-  id: number
-  avgMs: number | null
   nickname: string
-  isOwn: boolean
 }
 
 export type LeaderboardRoundSession = {
-  result: ResultDnfish
-  id: number
-  isOwn: boolean
+  session: {
+    result: ResultDnfish
+    id: number
+    isOwn: boolean
+  }
   solves: {
     id: number
     position: ScramblePosition
     result: ResultDnfish
   }[]
+  contestSlug: string
   nickname: string
 }
 

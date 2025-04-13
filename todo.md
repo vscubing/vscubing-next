@@ -19,7 +19,7 @@
     - [ ] ui desktop
     - [ ] ui tablet
     - [ ] ui mobile
-- [ ] skip inspection by default
+- [ ] skip inspection by default and play the solve automatically
 - [ ] fancy white glowing outline effect on own result / after jumping to a solve
     - [ ] refactor scrollToItem
 - [ ] delete round sessions with no results & dnf round sessions with too little results

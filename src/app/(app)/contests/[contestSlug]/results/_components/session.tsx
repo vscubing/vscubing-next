@@ -61,7 +61,7 @@ export function Session({
 }
 
 function SessionTablet({
-  session: { solves, nickname, isOwn, avgMs },
+  session: { solves, nickname, session },
   place,
   contestSlug,
   discipline,
@@ -70,7 +70,7 @@ function SessionTablet({
   ref,
   onPlaceClick,
 }: SessionProps & { className: string }) {
-  const currentUserLabel = isOwn ? ' (you)' : ''
+  const currentUserLabel = session.isOwn ? ' (you)' : ''
 
   const { bestId, worstId } = getBestAndWorstIds(solves)
 
@@ -79,14 +79,14 @@ function SessionTablet({
       <Accordion.Item value='result' asChild>
         <li className={className} ref={ref}>
           <SpinningBorder
-            enabled={isOwn}
+            enabled={session.isOwn}
             color={tailwindConfig.theme.colors.secondary[60]}
             className='rounded-xl'
           >
             <div
               className={cn(
                 'flex min-h-[5.1rem] flex-wrap items-center rounded-xl px-4 py-3 sm:min-h-28 sm:p-4',
-                isOwn ? 'bg-secondary-80' : 'bg-grey-100',
+                session.isOwn ? 'bg-secondary-80' : 'bg-grey-100',
               )}
             >
               <Accordion.Header className='flex w-full flex-1 items-center sm:grid sm:grid-flow-col sm:grid-cols-[min-content_1fr_min-content] sm:grid-rows-[repeat(2,min-content)] sm:gap-x-3 sm:gap-y-1'>
@@ -109,8 +109,8 @@ function SessionTablet({
                     Average time
                   </span>
                   <SolveTimeLabel
-                    timeMs={avgMs ?? undefined}
-                    isDnf={avgMs === null}
+                    timeMs={session.result.timeMs ?? undefined}
+                    isDnf={session.result.isDnf}
                     isAverage
                   />
                 </span>
@@ -161,7 +161,7 @@ function SessionTablet({
 }
 
 function SessionDesktop({
-  session: { solves, nickname, isOwn, avgMs },
+  session: { solves, nickname, session },
   place,
   isFirstOnPage,
   contestSlug,
@@ -170,7 +170,7 @@ function SessionDesktop({
   ref,
   onPlaceClick,
 }: SessionProps & { className: string }) {
-  const currentUserLabel = isOwn ? ' (you)' : ''
+  const currentUserLabel = session.isOwn ? ' (you)' : ''
 
   const { bestId, worstId } = getBestAndWorstIds(solves)
 
@@ -178,13 +178,13 @@ function SessionDesktop({
     <li className={className} ref={ref}>
       <SpinningBorder
         color={tailwindConfig.theme.colors.secondary[60]}
-        enabled={isOwn}
+        enabled={session.isOwn}
         className='rounded-xl'
       >
         <div
           className={cn(
             'flex h-15 w-full items-center rounded-xl px-2',
-            isOwn ? 'bg-secondary-80' : 'bg-grey-100',
+            session.isOwn ? 'bg-secondary-80' : 'bg-grey-100',
           )}
         >
           <div className='flex flex-1 items-center'>
@@ -199,8 +199,8 @@ function SessionDesktop({
 
             <span className='mr-4'>
               <SolveTimeLabel
-                timeMs={avgMs ?? undefined}
-                isDnf={avgMs === null}
+                timeMs={session.result.timeMs ?? undefined}
+                isDnf={session.result.isDnf}
                 isAverage
                 className='relative after:absolute after:-right-2 after:top-1/2 after:h-6 after:w-px after:-translate-y-1/2 after:bg-grey-60'
               />
