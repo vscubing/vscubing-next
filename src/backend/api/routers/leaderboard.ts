@@ -1,9 +1,4 @@
-import {
-  DISCIPLINES,
-  resultDnfish,
-  type ContestResultRoundSession,
-  type LeaderboardRoundSession,
-} from '@/types'
+import { DISCIPLINES, resultDnfish, type RoundSession } from '@/types'
 import { z } from 'zod'
 import { createTRPCRouter, publicProcedure } from '../trpc'
 import {
@@ -71,7 +66,7 @@ export const leaderboardRouter = createTRPCRouter({
         discipline: z.enum(DISCIPLINES).default(DEFAULT_DISCIPLINE),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }): Promise<RoundSession[]> => {
       const bestSessionSubquery = getPersonalBestSessionSubquery({
         db: ctx.db,
         discipline: input.discipline,
@@ -125,11 +120,12 @@ export const leaderboardRouter = createTRPCRouter({
               id,
               position,
               result: resultDnfish.parse({ timeMs, isDnf }),
+              isPersonalBest: false,
             })),
           ),
           contestSlug: session[0]!.contestSlug,
           nickname: session[0]!.user.name,
         }
-      }) satisfies LeaderboardRoundSession[]
+      })
     }),
 })

@@ -28,6 +28,7 @@ import {
   SingleResultSkeleton,
 } from './_components/single-result'
 import { LeaderboardTypeSwitcher } from '@/frontend/shared/leaderboard-type-switcher'
+import { AverageList } from './_components/average-list'
 
 export default async function LeaderboardPage({
   searchParams,
@@ -56,7 +57,7 @@ export default async function LeaderboardPage({
 
       {type === 'single' && (
         <Suspense
-          key={discipline}
+          key={JSON.stringify({ discipline, type })}
           fallback={
             <SingleResultListShell>
               {Array.from({ length: 20 }).map((_, idx) => (
@@ -71,7 +72,7 @@ export default async function LeaderboardPage({
 
       {type === 'average' && (
         <Suspense
-          key={discipline}
+          key={JSON.stringify({ discipline, type })}
           fallback={
             <SingleResultListShell>
               {Array.from({ length: 20 }).map((_, idx) => (
@@ -121,8 +122,7 @@ async function PageContentSingle({ discipline }: { discipline: Discipline }) {
 async function PageContentAverage({ discipline }: { discipline: Discipline }) {
   const initialData = await api.leaderboard.byAverage({ discipline })
 
-  return ''
-  // return <SingleResultList initialData={initialData} discipline={discipline} />
+  return <AverageList initialData={initialData} discipline={discipline} />
 }
 
 const LEADERBOARD_TITLE_MAP: Record<LeaderboardType, string> = {

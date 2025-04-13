@@ -13,7 +13,7 @@ import {
 import { DISCIPLINES, CONTEST_UNAUTHORIZED_MESSAGE } from '@/types'
 import { eq, desc, and, lte } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
-import { resultDnfish, type ContestResultRoundSession } from '@/types'
+import { resultDnfish, type RoundSession } from '@/types'
 import { groupBy } from '@/utils/group-by'
 import { sortWithRespectToExtras } from '../../shared/sort-with-respect-to-extras'
 import { getContestUserCapabilities } from '../../shared/get-contest-user-capabilities'
@@ -134,7 +134,7 @@ export const contestRouter = createTRPCRouter({
         discipline: z.enum(DISCIPLINES),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }): Promise<RoundSession[]> => {
       const userCapabilities = await getContestUserCapabilities({
         contestSlug: input.contestSlug,
         discipline: input.discipline,
@@ -221,7 +221,8 @@ export const contestRouter = createTRPCRouter({
           ),
         ),
         nickname: session[0]!.user.name,
-      })) satisfies ContestResultRoundSession[]
+        contestSlug: input.contestSlug,
+      }))
     }),
 
   getSolve: publicProcedure

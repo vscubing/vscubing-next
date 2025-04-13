@@ -62,7 +62,7 @@ export type ContestMetadata = Pick<
   'startDate' | 'endDate' | 'expectedEndDate' | 'slug' | 'isOngoing'
 >
 
-export type ContestResultRoundSession = {
+export type RoundSession = {
   session: {
     result: ResultDnfish
     id: number
@@ -73,20 +73,6 @@ export type ContestResultRoundSession = {
     position: ScramblePosition
     result: ResultDnfish
     isPersonalBest: boolean
-  }[]
-  nickname: string
-}
-
-export type LeaderboardRoundSession = {
-  session: {
-    result: ResultDnfish
-    id: number
-    isOwn: boolean
-  }
-  solves: {
-    id: number
-    position: ScramblePosition
-    result: ResultDnfish
   }[]
   contestSlug: string
   nickname: string

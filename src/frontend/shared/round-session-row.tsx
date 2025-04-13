@@ -7,14 +7,15 @@ import {
   SolveTimeLabel,
   SolveTimeLinkOrDnf,
 } from '@/frontend/shared/solve-time-button'
-import type { Discipline, ContestResultRoundSession } from '@/types'
+import type { Discipline, RoundSession } from '@/types'
 import { SpinningBorder } from '@/frontend/ui/spinning-border'
 import { tailwindConfig, useMatchesScreen } from '@/frontend/utils/tailwind'
 import type { RefObject } from 'react'
 
-type SessionProps = {
-  session: ContestResultRoundSession
-  contestSlug: string
+// HACK: we need castom handling for refs because you can't set one ref to 2 elements at the same time
+// HACK: we can't just use useMatchesScreen for switching between Desktop and Tablet because then it won't be SSRed properly
+type RoundSessionRowProps = {
+  session: RoundSession
   discipline: Discipline
   isFirstOnPage: boolean
   place: number
@@ -22,8 +23,7 @@ type SessionProps = {
   ref?: RefObject<HTMLLIElement | null>
   onPlaceClick?: () => void
 }
-export function Session({
-  contestSlug,
+export function RoundSessionRow({
   discipline,
   isFirstOnPage,
   place,
@@ -31,14 +31,13 @@ export function Session({
   ref,
   className,
   onPlaceClick,
-}: SessionProps) {
+}: RoundSessionRowProps) {
   const isTablet = useMatchesScreen('md')
 
   return (
     <>
-      <SessionDesktop
+      <RoundSessionRowDesktop
         className={cn('md:hidden', className)}
-        contestSlug={contestSlug}
         discipline={discipline}
         isFirstOnPage={isFirstOnPage}
         place={place}
@@ -46,9 +45,8 @@ export function Session({
         ref={isTablet === false ? ref : undefined}
         onPlaceClick={onPlaceClick}
       />
-      <SessionTablet
+      <RoundSessionRowTablet
         className={cn('hidden md:block', className)}
-        contestSlug={contestSlug}
         discipline={discipline}
         isFirstOnPage={isFirstOnPage}
         place={place}
@@ -60,16 +58,37 @@ export function Session({
   )
 }
 
-function SessionTablet({
-  session: { solves, nickname, session },
+export function RoundSessionRowSkeleton() {
+  return (
+    <div className='h-15 animate-pulse rounded-xl bg-grey-100 md:h-[5.1rem] sm:h-28'></div>
+  )
+}
+
+export function RoundSessionHeader() {
+  return (
+    <div className='flex whitespace-nowrap px-2 text-grey-40 md:hidden'>
+      <span className='mr-2 w-11 text-center'>Place</span>
+      <span className='mr-2'>Type</span>
+      <span className='flex-1'>Nickname</span>
+      <span className='mr-4 w-24 text-center'>Average time</span>
+      {Array.from({ length: 5 }, (_, index) => (
+        <span key={index} className='mr-2 w-24 text-center last:mr-0'>
+          Attempt {index + 1}
+        </span>
+      ))}
+    </div>
+  )
+}
+
+function RoundSessionRowTablet({
+  session: { solves, nickname, session, contestSlug },
   place,
-  contestSlug,
   discipline,
   isFirstOnPage,
   className,
   ref,
   onPlaceClick,
-}: SessionProps & { className: string }) {
+}: RoundSessionRowProps & { className: string }) {
   const currentUserLabel = session.isOwn ? ' (you)' : ''
 
   const { bestId, worstId } = getBestAndWorstIds(solves)
@@ -160,16 +179,15 @@ function SessionTablet({
   )
 }
 
-function SessionDesktop({
-  session: { solves, nickname, session },
+function RoundSessionRowDesktop({
+  session: { solves, nickname, session, contestSlug },
   place,
   isFirstOnPage,
-  contestSlug,
   discipline,
   className,
   ref,
   onPlaceClick,
-}: SessionProps & { className: string }) {
+}: RoundSessionRowProps & { className: string }) {
   const currentUserLabel = session.isOwn ? ' (you)' : ''
 
   const { bestId, worstId } = getBestAndWorstIds(solves)
@@ -248,13 +266,7 @@ function SessionDesktop({
   )
 }
 
-export function SessionSkeleton() {
-  return (
-    <div className='h-15 animate-pulse rounded-xl bg-grey-100 md:h-[5.1rem] sm:h-28'></div>
-  )
-}
-
-function getBestAndWorstIds(solves: SessionProps['session']['solves']) {
+function getBestAndWorstIds(solves: RoundSessionRowProps['session']['solves']) {
   const dnfSolve = solves.find(({ result: { isDnf } }) => isDnf)
   const successful = solves
     .filter(({ result: { timeMs, isDnf } }) => timeMs !== null && !isDnf)

@@ -15,10 +15,10 @@
 - [x] refactor getPersonalBestSubquery
 - [ ] avg leaderboard
     - [x] backend query
-    - [ ] switcher
-    - [ ] ui desktop
-    - [ ] ui tablet
-    - [ ] ui mobile
+    - [x] switcher
+    - [x] ui
+    - [ ] add contest link
+    - [ ] adjust height (single/avg)
 - [ ] fix discipline: string everywhere
 - [ ] skip inspection by default and play the solve automatically
 - [ ] fancy white glowing outline effect on own result / after jumping to a solve

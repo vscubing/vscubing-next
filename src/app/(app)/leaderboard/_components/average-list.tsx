@@ -1,4 +1,5 @@
 'use client'
+
 import { HintSection } from '@/frontend/shared/hint-section'
 import { type Discipline } from '@/types'
 import { useSuspenseQuery } from '@tanstack/react-query'
@@ -9,20 +10,17 @@ import {
   RoundSessionHeader,
 } from '@/frontend/shared/round-session-row'
 
-export function SessionList({
-  contestSlug,
+export function AverageList({
   discipline,
   initialData,
 }: {
-  contestSlug: string
   discipline: Discipline
-  initialData?: RouterOutputs['contest']['getContestResults']
+  initialData?: RouterOutputs['leaderboard']['byAverage']
 }) {
   const trpc = useTRPC()
   const { data: sessions } = useSuspenseQuery(
-    trpc.contest.getContestResults.queryOptions(
+    trpc.leaderboard.byAverage.queryOptions(
       {
-        contestSlug,
         discipline,
       },
       { initialData },
@@ -52,7 +50,7 @@ export function SessionList({
   }
 
   return (
-    <SessionListShell>
+    <AverageListShell>
       {sessions.map((session, idx) => {
         let ref: RefObject<HTMLLIElement | null> | undefined = undefined
         if (idx === stickyItemIdx + 1) {
@@ -82,11 +80,11 @@ export function SessionList({
           />
         )
       })}
-    </SessionListShell>
+    </AverageListShell>
   )
 }
 
-export function SessionListShell({ children }: { children: ReactNode }) {
+export function AverageListShell({ children }: { children: ReactNode }) {
   return (
     <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 sm:p-3'>
       <RoundSessionHeader />

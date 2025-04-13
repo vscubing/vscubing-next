@@ -21,6 +21,8 @@ import Link from 'next/link'
 import { type ReactNode, type RefObject } from 'react'
 import tailwindConfig from 'tailwind.config'
 
+// HACK: we need castom handling for refs because you can't set one ref to 2 elements at the same time
+// HACK: we can't just use useMatchesScreen for switching between Desktop and Tablet because then it won't be SSRed properly
 type SingleResultProps = {
   result: RouterOutputs['leaderboard']['bySingle'][number]
   discipline: Discipline
@@ -41,7 +43,6 @@ export function SingleResult({
 
   return (
     <>
-      {/* we can't just use useMatchesScreen because then it won't be SSRed properly */}
       <SingleResultDesktop
         className={cn('md:hidden', className)}
         discipline={discipline}
@@ -49,7 +50,6 @@ export function SingleResult({
         result={result}
         onPlaceClick={onPlaceClick}
         ref={isTablet === false ? ref : undefined}
-        // we need castom handling for refs because you can't set one ref to 2 elements at the same time
       />
       <SingleResultTablet
         className={cn('hidden md:block', className)}
