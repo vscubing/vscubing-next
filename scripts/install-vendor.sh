@@ -17,7 +17,7 @@ PACKAGE_NAME=tnoodle-cli-1.1.1
 
 if [ -d "vendor/$PACKAGE_NAME" ]; then
     echo "tnoodle-cli already installed. Exiting..."
-    exit 1
+    exit 0
 fi
 
 mkdir -p vendor && cd vendor
