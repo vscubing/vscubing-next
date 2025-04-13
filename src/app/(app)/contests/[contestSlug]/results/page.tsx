@@ -1,6 +1,6 @@
 import { DEFAULT_DISCIPLINE, isDiscipline, type Discipline } from '@/types'
 import { api } from '@/trpc/server'
-import { DisciplineSwitcher } from '@/frontend/shared/discipline-switcher-client'
+import { DisciplineSwitcher } from '@/frontend/shared/discipline-switcher'
 import { NavigateBackButton } from '@/frontend/shared/navigate-back-button'
 import { LayoutPageTitleMobile } from '@/frontend/shared/layout-page-title-mobile'
 import { LayoutHeaderTitlePortal } from '@/app/(app)/_layout/layout-header'

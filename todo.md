@@ -19,6 +19,7 @@
     - [ ] ui desktop
     - [ ] ui tablet
     - [ ] ui mobile
+- [ ] fix discipline: string everywhere
 - [ ] skip inspection by default and play the solve automatically
 - [ ] fancy white glowing outline effect on own result / after jumping to a solve
     - [ ] refactor scrollToItem

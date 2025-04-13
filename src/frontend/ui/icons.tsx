@@ -33,6 +33,8 @@ import PlusIcon from '@/../public/icons/plus.svg?inline'
 import MinusIcon from '@/../public/icons/minus.svg?inline'
 import SettingIcon from '@/../public/icons/setting.svg?inline'
 import CodeIcon from '@/../public/icons/code.svg?inline'
+import AverageIcon from '@/../public/icons/average.svg?inline'
+import SingleIcon from '@/../public/icons/single.svg?inline'
 
 import { isDiscipline } from '@/types'
 import { cn } from '@/frontend/utils/cn'
@@ -72,6 +74,8 @@ export {
   MinusIcon,
   SettingIcon,
   CodeIcon,
+  AverageIcon,
+  SingleIcon,
 }
 
 type DisciplineIconProps = HTMLAttributes<SVGSVGElement> & {

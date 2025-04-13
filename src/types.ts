@@ -47,7 +47,7 @@ export function castDiscipline(str: unknown): Discipline {
   return z.enum(DISCIPLINES).catch(DEFAULT_DISCIPLINE).parse(str)
 }
 
-export const LEADERBOARD_TYPES = ['average', 'single'] as const
+export const LEADERBOARD_TYPES = ['single', 'average'] as const
 export type LeaderboardType = (typeof LEADERBOARD_TYPES)[number]
 export const DEFAULT_LEADERBOARD_TYPE: LeaderboardType = 'single'
 export function isLeaderboardType(str: unknown): str is LeaderboardType {
