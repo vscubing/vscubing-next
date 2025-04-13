@@ -19,7 +19,11 @@
     - [x] ui
     - [x] add contest link
     - [x] adjust height (single/avg)
+- [ ] toast adjust "single personal best" text
+- [ ] include ongoing in leaderboard if capabilities=view_results
+- [ ] average personal best toast & avg 
 - [ ] fix discipline: string everywhere
+- [ ] add indexes for timeMs and avgMs
 - [ ] skip inspection by default and play the solve automatically
 - [ ] fancy white glowing outline effect on own result / after jumping to a solve
     - [ ] refactor scrollToItem
