@@ -12,7 +12,13 @@
     - [x] previous pb in toast
     - [x] contest results
 - [x] DNF avg in contest leaderboard
+- [x] refactor getPersonalBestSubquery
 - [ ] avg leaderboard
+    - [x] backend query
+    - [ ] switcher
+    - [ ] ui desktop
+    - [ ] ui tablet
+    - [ ] ui mobile
 - [ ] skip inspection by default
 - [ ] fancy white glowing outline effect on own result / after jumping to a solve
     - [ ] refactor scrollToItem

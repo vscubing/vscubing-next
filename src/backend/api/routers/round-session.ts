@@ -15,7 +15,7 @@ import { calculateAvg } from '../../shared/calculate-avg'
 import { validateSolve } from '@/backend/shared/validate-solve'
 import { getContestUserCapabilities } from '../../shared/get-contest-user-capabilities'
 import { removeSolutionComments } from '@/utils/remove-solution-comments'
-import { getPersonalBestSubquery } from '@/backend/shared/personal-best-subquery'
+import { getPersonalBestSolveSubquery } from '@/backend/shared/personal-best-subquery'
 import type { db } from '@/backend/db'
 
 const EXTRAS_PER_ROUND = 2
@@ -137,7 +137,7 @@ export const roundSessionRouter = createTRPCRouter({
       )
       .where(and(eq(roundSessionTable.id, ctx.roundSession.id)))
 
-    const activePersonalBest = await getPersonalBestIncludingOngoing(
+    const activePersonalBest = await getPersonalBestSolveIncludingOngoing(
       ctx.db,
       ctx.session.user.id,
       input.discipline,
@@ -222,7 +222,7 @@ export const roundSessionRouter = createTRPCRouter({
         }
       }
 
-      const activePersonalBest = await getPersonalBestIncludingOngoing(
+      const activePersonalBest = await getPersonalBestSolveIncludingOngoing(
         ctx.db,
         ctx.session.user.id,
         input.discipline,
@@ -361,17 +361,17 @@ export const roundSessionRouter = createTRPCRouter({
     }),
 })
 
-async function getPersonalBestIncludingOngoing(
+async function getPersonalBestSolveIncludingOngoing(
   _db: typeof db,
   userId: string,
   discipline: Discipline,
 ) {
-  const subquery = getPersonalBestSubquery({
+  const subquery = getPersonalBestSolveSubquery({
     db: _db,
     discipline,
     includeOngoing: true,
   })
-  const [activePersonalBest] = await _db
+  const [activeBest] = await _db
     .select({
       id: subquery.id,
       timeMs: subquery.timeMs,
@@ -385,5 +385,5 @@ async function getPersonalBestIncludingOngoing(
     .innerJoin(roundTable, eq(roundTable.id, roundSessionTable.roundId))
     .where(eq(roundSessionTable.contestantId, userId))
 
-  return activePersonalBest
+  return activeBest
 }

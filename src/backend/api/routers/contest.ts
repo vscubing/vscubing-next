@@ -17,7 +17,7 @@ import { resultDnfish, type ContestResultRoundSession } from '@/types'
 import { groupBy } from '@/utils/group-by'
 import { sortWithRespectToExtras } from '../../shared/sort-with-respect-to-extras'
 import { getContestUserCapabilities } from '../../shared/get-contest-user-capabilities'
-import { getPersonalBestSubquery } from '@/backend/shared/personal-best-subquery'
+import { getPersonalBestSolveSubquery } from '@/backend/shared/personal-best-subquery'
 
 export const contestRouter = createTRPCRouter({
   getAllContests: publicProcedure
@@ -155,7 +155,7 @@ export const contestRouter = createTRPCRouter({
             "You can't see the results of an ongoing contest round before finishing it",
         })
 
-      const personalBestSubquery = getPersonalBestSubquery({
+      const bestSolveSubquery = getPersonalBestSolveSubquery({
         db: ctx.db,
         discipline: input.discipline,
         includeOngoing: true,
@@ -171,7 +171,7 @@ export const contestRouter = createTRPCRouter({
           timeMs: solveTable.timeMs,
           isDnf: solveTable.isDnf,
           position: scrambleTable.position,
-          personalBestId: personalBestSubquery.id,
+          personalBestId: bestSolveSubquery.id,
         })
         .from(roundTable)
         .innerJoin(
@@ -184,10 +184,7 @@ export const contestRouter = createTRPCRouter({
         )
         .innerJoin(scrambleTable, eq(scrambleTable.id, solveTable.scrambleId))
         .innerJoin(userTable, eq(userTable.id, roundSessionTable.contestantId))
-        .leftJoin(
-          personalBestSubquery,
-          eq(personalBestSubquery.id, solveTable.id),
-        )
+        .leftJoin(bestSolveSubquery, eq(bestSolveSubquery.id, solveTable.id))
         .where(
           and(
             eq(roundTable.contestSlug, input.contestSlug),

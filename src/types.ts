@@ -75,6 +75,18 @@ export type ContestResultRoundSession = {
   isOwn: boolean
 }
 
+export type LeaderboardRoundSession = {
+  result: ResultDnfish
+  id: number
+  isOwn: boolean
+  solves: {
+    id: number
+    position: ScramblePosition
+    result: ResultDnfish
+  }[]
+  nickname: string
+}
+
 export const CONTEST_UNAUTHORIZED_MESSAGE =
   'You need to be signed in to participate in an ongoing contest or view its results'
 

@@ -64,7 +64,7 @@ export function SingleResult({
 }
 
 function SingleResultDesktop({
-  result: { timeMs, id, createdAt, contestSlug, nickname, isOwn },
+  result: { result, id, createdAt, contestSlug, nickname, isOwn },
   discipline,
   place,
   className,
@@ -106,7 +106,7 @@ function SingleResultDesktop({
               </span>
               <SolveTimeLinkOrDnf
                 canShowHint={place === 1}
-                result={{ isDnf: false, timeMs }}
+                result={result}
                 solveId={id}
                 contestSlug={contestSlug}
                 discipline={discipline}
@@ -142,7 +142,7 @@ function SingleResultDesktop({
 }
 
 function SingleResultTablet({
-  result: { timeMs, id, createdAt, contestSlug, nickname, isOwn },
+  result: { result, id, createdAt, contestSlug, nickname, isOwn },
   discipline,
   place,
   className,
@@ -191,7 +191,7 @@ function SingleResultTablet({
                   </span>
                   <SolveTimeLinkOrDnf
                     canShowHint={place === 1}
-                    result={{ isDnf: false, timeMs }}
+                    result={result}
                     solveId={id}
                     contestSlug={contestSlug}
                     discipline={discipline}
