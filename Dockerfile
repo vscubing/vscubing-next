@@ -3,7 +3,24 @@ FROM oven/bun:slim
 WORKDIR /app
 COPY . .
 RUN bun install --no-save --frozen-lockfile
-RUN bun run build
-RUN apt update && apt install curl unzip -y && bun run vendor
 
-CMD bunx drizzle-kit migrate && bun run start -H 0.0.0.0
+# Stage 1: Install dependencies
+FROM base AS deps
+WORKDIR /app
+COPY package.json bun.lock ./
+RUN bun install --no-save --frozen-lockfile
+
+# Stage 2: Build the application
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+RUN bun run build
+
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+EXPOSE 3000
+
+# curl is necessary for swarm health checks
+CMD apt update && apt install curl unzip -y && bun run vendor && rm package.json && bun install drizzle-kit drizzle-orm postgres && bunx drizzle-kit migrate && node server.js
