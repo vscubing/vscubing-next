@@ -90,8 +90,7 @@ const config = {
     ]
   },
 
-  // This is required to support PostHog trailing slash API requests
-  skipTrailingSlashRedirect: true,
+  skipTrailingSlashRedirect: true, // This is required to support PostHog trailing slash API requests
   productionBrowserSourceMaps: true,
 }
 
