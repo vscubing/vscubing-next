@@ -66,7 +66,6 @@ function LeaderboardTypeSwitcherItem({
   isActive?: boolean
   type: LeaderboardType
 }) {
-  // TODO: sliding background
   return (
     <span
       className={cn(

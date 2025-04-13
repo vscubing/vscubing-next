@@ -13,7 +13,7 @@
     - [x] contest results
 - [x] DNF avg in contest leaderboard
 - [x] refactor getPersonalBestSubquery
-- [ ] avg leaderboard
+- [x] avg leaderboard
     - [x] backend query
     - [x] switcher
     - [x] ui
