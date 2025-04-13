@@ -9,7 +9,7 @@ import {
 } from '@/backend/db/schema'
 import { eq } from 'drizzle-orm'
 import { DEFAULT_DISCIPLINE } from '@/types'
-import { getPersonalBestExcludingOngoingSubquery } from '@/backend/shared/personal-best-subquery'
+import { getPersonalBestSubquery } from '@/backend/shared/personal-best-subquery'
 
 export const leaderboardRouter = createTRPCRouter({
   bySingle: publicProcedure
@@ -19,10 +19,11 @@ export const leaderboardRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      const personalBestSubquery = getPersonalBestExcludingOngoingSubquery(
-        ctx.db,
-        input.discipline,
-      )
+      const personalBestSubquery = getPersonalBestSubquery({
+        db: ctx.db,
+        discipline: input.discipline,
+        includeOngoing: false,
+      })
 
       const rows = await ctx.db
         .select({

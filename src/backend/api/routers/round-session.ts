@@ -1,4 +1,4 @@
-import { DISCIPLINES } from '@/types'
+import { DISCIPLINES, type Discipline } from '@/types'
 import { z } from 'zod'
 import { eq, and, sql } from 'drizzle-orm'
 import { createTRPCRouter, protectedProcedure } from '../trpc'
@@ -15,7 +15,8 @@ import { calculateAvg } from '../../shared/calculate-avg'
 import { validateSolve } from '@/backend/shared/validate-solve'
 import { getContestUserCapabilities } from '../../shared/get-contest-user-capabilities'
 import { removeSolutionComments } from '@/utils/remove-solution-comments'
-import { getPersonalBestIncludingOngoing } from '@/backend/shared/personal-best-subquery'
+import { getPersonalBestSubquery } from '@/backend/shared/personal-best-subquery'
+import type { db } from '@/backend/db'
 
 const EXTRAS_PER_ROUND = 2
 const ROUND_ATTEMPTS_QTY = 5
@@ -359,3 +360,30 @@ export const roundSessionRouter = createTRPCRouter({
       }
     }),
 })
+
+async function getPersonalBestIncludingOngoing(
+  _db: typeof db,
+  userId: string,
+  discipline: Discipline,
+) {
+  const subquery = getPersonalBestSubquery({
+    db: _db,
+    discipline,
+    includeOngoing: true,
+  })
+  const [activePersonalBest] = await _db
+    .select({
+      id: subquery.id,
+      timeMs: subquery.timeMs,
+      contestSlug: roundTable.contestSlug,
+    })
+    .from(subquery)
+    .innerJoin(
+      roundSessionTable,
+      eq(roundSessionTable.id, subquery.roundSessionId),
+    )
+    .innerJoin(roundTable, eq(roundTable.id, roundSessionTable.roundId))
+    .where(eq(roundSessionTable.contestantId, userId))
+
+  return activePersonalBest
+}

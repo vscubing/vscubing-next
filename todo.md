@@ -12,12 +12,16 @@
     - [x] previous pb in toast
     - [x] contest results
 - [x] DNF avg in contest leaderboard
-- [ ] expandContestLink
+- [ ] avg leaderboard
 - [ ] skip inspection by default
 - [ ] fancy white glowing outline effect on own result / after jumping to a solve
+    - [ ] refactor scrollToItem
 - [ ] delete round sessions with no results & dnf round sessions with too little results
     - [ ] on contest close
     - [ ] migration
+- [ ] rework logo homepage/landing link
+- [ ] boring stuff (cookies, privacy policy, etc)
+- [ ] use node-cron 
 
 BEFORE RELEASE:
 - [ ] new posthog project
