@@ -1,49 +1,53 @@
-import {
-  closeOngoingAndCreateNewContest,
-  closeOngoingContest,
-  createNewContest,
-  getLatestContest,
-  getNextContestSlug,
-} from '@/backend/shared/contest-management'
 import { api } from '@/trpc/server'
 import {
   PrimaryButtonWithFormStatus,
   SecondaryButtonWithFormStatus,
 } from './_components/buttons-with-form-status'
 import { revalidatePath } from 'next/cache'
-import { env } from '@/env'
 import { notFound } from 'next/navigation'
-import { createSystemInitialContest } from './actions'
 import { SolveValidator } from './_components/solve-validator'
 import { db } from '@/backend/db'
 import { roundTable, scrambleTable } from '@/backend/db/schema'
 import { and, eq, or } from 'drizzle-orm'
 import { type ReactNode } from 'react'
-import { headers } from 'next/headers'
+import type { RouterInputs } from '@/trpc/react'
 
 export default async function DevPage() {
-  await headers() // hack to opt out of prerendering during build
+  const authorized = await api.admin.authorized()
+  if (!authorized) notFound()
 
-  if (env.NEXT_PUBLIC_APP_ENV === 'production') notFound()
-  // TODO: allow access for admins in prod
   // TODO: show docker image tag timestamp via env variable v2 & on deploy
 
   return (
     <div className='flex flex-1 flex-wrap justify-between gap-8 rounded-2xl bg-black-80 p-6 sm:p-3'>
       <OngoingContestInfo />
-      <SolveValidator />
+      <SolveValidator
+        validateSolveAction={async (
+          solve: RouterInputs['admin']['validateSolveAction'],
+        ) => {
+          'use server'
+          return api.admin.validateSolveAction(solve)
+        }}
+      />
     </div>
   )
 }
 
 export async function OngoingContestInfo() {
-  const latestContest = await getLatestContest()
+  const latestContest = await api.admin.getLatestContest()
 
   if (!latestContest)
     return (
       <section>
         <span>No initial contest. Please</span>
-        <form className='ml-2 inline-block' action={createSystemInitialContest}>
+        <form
+          className='ml-2 inline-block'
+          action={async () => {
+            'use server'
+            await api.admin.createSystemInitialContest()
+            revalidatePath('/dev')
+          }}
+        >
           <PrimaryButtonWithFormStatus size='sm'>
             Seed data
           </PrimaryButtonWithFormStatus>
@@ -119,7 +123,7 @@ function CloseContestButton({ children }: { children: ReactNode }) {
       className='inline-flex items-center gap-2'
       action={async () => {
         'use server'
-        await closeOngoingContest()
+        await api.admin.closeOngoingContest()
         revalidatePath('/')
       }}
     >
@@ -136,7 +140,7 @@ function CreateNewContestButton({ children }: { children: ReactNode }) {
       className='inline-flex flex-col gap-2'
       action={async (formData: FormData) => {
         'use server'
-        const latestContest = await getLatestContest()
+        const latestContest = await api.admin.getLatestContest()
 
         if (!latestContest) throw new Error('no latest contest found')
         if (latestContest.isOngoing)
@@ -145,10 +149,7 @@ function CreateNewContestButton({ children }: { children: ReactNode }) {
           )
 
         const easyScrambles = formData.get('easy-scrambles') === 'on'
-        await createNewContest({
-          easyScrambles,
-          slug: getNextContestSlug(latestContest.slug),
-        })
+        await api.admin.createNewContest({ easyScrambles })
         revalidatePath('/')
       }}
     >
@@ -174,7 +175,7 @@ function CloseOngoingAndCreateNewContestButton({
       action={async (formData: FormData) => {
         'use server'
         const easyScrambles = formData.get('easy-scrambles') === 'on'
-        await closeOngoingAndCreateNewContest(easyScrambles)
+        await api.admin.closeOngoingAndCreateNewContest({ easyScrambles })
         revalidatePath('/')
       }}
     >

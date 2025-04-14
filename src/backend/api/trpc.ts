@@ -14,6 +14,8 @@ import { ZodError } from 'zod'
 import { auth } from '@/backend/auth'
 import { db } from '@/backend/db'
 import { posthogClient } from '../posthog'
+import { env } from 'process'
+import type { User } from '@/types'
 
 /**
  * 1. CONTEXT
@@ -142,3 +144,11 @@ export const protectedProcedure = t.procedure
       },
     })
   })
+
+export function isAdmin(user?: User) {
+  return user?.role === 'admin' || env.NEXT_PUBLIC_APP_ENV !== 'production'
+}
+export const adminProcedure = protectedProcedure.use(async ({ next, ctx }) => {
+  if (!isAdmin(ctx.session.user)) throw new TRPCError({ code: 'FORBIDDEN' })
+  return next()
+})

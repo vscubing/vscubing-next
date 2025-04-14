@@ -15,6 +15,7 @@ export const userTable = pgTable('user', (d) => ({
     .boolean('finished_registration')
     .default(false)
     .notNull(),
+  role: d.text().$type<'admin'>(),
 }))
 
 export const userRelations = relations(userTable, ({ many }) => ({

@@ -7,10 +7,14 @@ import { generateScrambles } from './generate-scrambles'
 import { env } from '@/env'
 import { posthogClient } from '../posthog'
 
-const PREFIX = '[ONGOING CONTEST ADMIN]'
+const PREFIX = '[CONTEST_MANAGEMENT]'
 export const NO_ONGOING_CONTEST_ERROR_MESSAGE = `${PREFIX} no ongoing contest. Please create one manually from the developer tools`
 export async function closeOngoingAndCreateNewContest(
-  easyScrambles = false,
+  {
+    easyScrambles,
+  }: {
+    easyScrambles?: boolean
+  } = { easyScrambles: false },
 ): Promise<{ newContestSlug: string }> {
   return await db.transaction(async (tx) => {
     console.log(`${PREFIX} closeOngoingAndCreateNewContest start`)
@@ -76,15 +80,12 @@ export async function createNewContest({
       groupType: 'discipline',
       distinctId: undefined,
       groupKey: discipline,
-      properties: {
-        env: env.NEXT_PUBLIC_APP_ENV,
-      },
     })
     posthogClient.groupIdentify({
       groupType: 'round',
       distinctId: undefined,
       groupKey: String(id),
-      properties: { discipline, env: env.NEXT_PUBLIC_APP_ENV },
+      properties: { discipline },
     })
   }
 

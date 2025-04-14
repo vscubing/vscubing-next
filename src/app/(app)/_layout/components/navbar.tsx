@@ -17,7 +17,6 @@ import {
   CodeIcon,
 } from '@/frontend/ui'
 import { DEFAULT_DISCIPLINE } from '@/types'
-import { env } from '@/env'
 
 type NavbarProps = {
   variant: 'vertical' | 'horizontal'
@@ -41,7 +40,11 @@ export function Navbar({ variant }: NavbarProps) {
     setOpenOnMobile(false)
   }
 
-  const devToolsEnabled = env.NEXT_PUBLIC_APP_ENV !== 'production'
+  const devToolsEnabledQuery = useQuery(
+    trpc.admin.authorized.queryOptions(undefined),
+  )
+  const devToolsEnabled = devToolsEnabledQuery.data ?? false
+
   if (variant === 'vertical') {
     return (
       <nav className='flex flex-col gap-4 sm:gap-0'>
