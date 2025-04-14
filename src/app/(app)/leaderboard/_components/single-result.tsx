@@ -56,7 +56,15 @@ export function SingleResult({
 }
 
 function SingleResultDesktop({
-  result: { result, id, createdAt, contestSlug, nickname, isOwn },
+  result: {
+    result,
+    id,
+    createdAt,
+    contestSlug,
+    nickname,
+    isOwn,
+    roundSessionId,
+  },
   discipline,
   place,
   className,
@@ -108,7 +116,7 @@ function SingleResultDesktop({
             className='w-[9.25rem] justify-between px-[1.3rem]'
           >
             <Link
-              href={`/contests/${contestSlug}/results?discipline=${discipline}`}
+              href={`/contests/${contestSlug}/results?discipline=${discipline}&scrollToId=${roundSessionId}`}
             >
               <span>Contest {contestSlug}</span>
               <ArrowRightIcon className='inline-block' />
@@ -121,7 +129,15 @@ function SingleResultDesktop({
 }
 
 function SingleResultTablet({
-  result: { result, id, createdAt, contestSlug, nickname, isOwn },
+  result: {
+    result,
+    id,
+    createdAt,
+    contestSlug,
+    nickname,
+    isOwn,
+    roundSessionId,
+  },
   discipline,
   place,
   className,
@@ -194,7 +210,7 @@ function SingleResultTablet({
                     className='h-[3.25rem] w-[9.25rem] justify-between px-[1.3rem] sm:h-11'
                   >
                     <Link
-                      href={`/contests/${contestSlug}/results?discipline=${discipline}`}
+                      href={`/contests/${contestSlug}/results?discipline=${discipline}&scrollToId=${roundSessionId}`}
                     >
                       <span>Contest {contestSlug}</span>
                       <ArrowRightIcon className='inline-block' />

@@ -34,12 +34,15 @@ export const leaderboardRouter = createTRPCRouter({
       const rows = await ctx.db
         .select({
           id: bestSolveSubquery.id,
-          timeMs: bestSolveSubquery.timeMs,
-          isDnf: bestSolveSubquery.isDnf,
+          result: {
+            timeMs: bestSolveSubquery.timeMs,
+            isDnf: bestSolveSubquery.isDnf,
+          },
           createdAt: bestSolveSubquery.createdAt,
           nickname: userTable.name,
           userId: userTable.id,
           contestSlug: roundTable.contestSlug,
+          roundSessionId: roundSessionTable.id,
         })
         .from(bestSolveSubquery)
         .innerJoin(
@@ -51,11 +54,8 @@ export const leaderboardRouter = createTRPCRouter({
         .orderBy(bestSolveSubquery.timeMs)
 
       return rows.map((row) => ({
-        id: row.id,
-        createdAt: row.createdAt,
-        nickname: row.nickname,
-        contestSlug: row.contestSlug,
-        result: resultDnfish.parse({ timeMs: row.timeMs, isDnf: row.isDnf }),
+        ...row,
+        result: resultDnfish.parse(row.result),
         isOwn: ctx.session?.user?.id === row.userId,
       }))
     }),
