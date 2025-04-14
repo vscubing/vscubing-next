@@ -2,7 +2,7 @@ import { MenuIcon } from '@/frontend/ui'
 import { type ReactNode } from 'react'
 import { ControlMobileMenuButton } from './store/mobile-menu-open-atom'
 import { cn } from '@/frontend/utils/cn'
-import { LogoWithLinkToLanding } from './components/logo'
+import { LogoHomeLink } from './components/logo'
 import { UserDropdownOrSignIn } from './components/user-dropdown-or-sign-in'
 import ClientOnlyPortal from '@/frontend/utils/client-only-portal'
 import { LoadingDots } from '@/frontend/ui/loading-dots'
@@ -19,7 +19,7 @@ export function LayoutHeader({ className }: { className?: string }) {
         <MenuIcon />
       </ControlMobileMenuButton>
       <div className='flex h-[var(--header-height)] flex-1 items-center justify-between rounded-2xl bg-black-80 px-4 lg:justify-end sm:pl-4 sm:pr-2'>
-        <LogoWithLinkToLanding className='mr-auto hidden lg:block' />
+        <LogoHomeLink className='mr-auto hidden lg:block' />
         <h1 className='title-h3 lg:hidden sm:hidden' id={HEADER_TITLE_ID} />
         <span className='flex items-center justify-end'>
           <UserDropdownOrSignIn />

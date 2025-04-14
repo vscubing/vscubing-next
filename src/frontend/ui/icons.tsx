@@ -35,6 +35,7 @@ import SettingIcon from '@/../public/icons/setting.svg?inline'
 import CodeIcon from '@/../public/icons/code.svg?inline'
 import AverageIcon from '@/../public/icons/average.svg?inline'
 import SingleIcon from '@/../public/icons/single.svg?inline'
+import VscubingIcon from '@/../public/icons/vscubing.svg?inline'
 
 import { isDiscipline } from '@/types'
 import { cn } from '@/frontend/utils/cn'
@@ -76,6 +77,7 @@ export {
   CodeIcon,
   AverageIcon,
   SingleIcon,
+  VscubingIcon,
 }
 
 type DisciplineIconProps = HTMLAttributes<SVGSVGElement> & {
