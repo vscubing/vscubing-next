@@ -1,16 +1,17 @@
 import { api } from '@/trpc/server'
-import {
-  PrimaryButtonWithFormStatus,
-  SecondaryButtonWithFormStatus,
-} from './_components/buttons-with-form-status'
+import { PrimaryButtonWithFormStatus } from './_components/buttons-with-form-status'
 import { revalidatePath } from 'next/cache'
 import { notFound } from 'next/navigation'
 import { SolveValidator } from './_components/solve-validator'
 import { db } from '@/backend/db'
 import { roundTable, scrambleTable } from '@/backend/db/schema'
 import { and, eq, or } from 'drizzle-orm'
-import { type ReactNode } from 'react'
 import type { RouterInputs } from '@/trpc/react'
+import {
+  CloseOngoingAndCreateNewContestButton,
+  CreateNewContestButton,
+  CloseContestButton,
+} from './_components/client'
 
 export default async function DevPage() {
   const authorized = await api.admin.authorized()
@@ -114,78 +115,5 @@ export async function OngoingContestInfo() {
         )}
       </pre>
     </section>
-  )
-}
-
-function CloseContestButton({ children }: { children: ReactNode }) {
-  return (
-    <form
-      className='inline-flex items-center gap-2'
-      action={async () => {
-        'use server'
-        await api.admin.closeOngoingContest()
-        revalidatePath('/')
-      }}
-    >
-      <SecondaryButtonWithFormStatus size='sm' className='ml-2'>
-        {children}
-      </SecondaryButtonWithFormStatus>
-    </form>
-  )
-}
-
-function CreateNewContestButton({ children }: { children: ReactNode }) {
-  return (
-    <form
-      className='inline-flex flex-col gap-2'
-      action={async (formData: FormData) => {
-        'use server'
-        const latestContest = await api.admin.getLatestContest()
-
-        if (!latestContest) throw new Error('no latest contest found')
-        if (latestContest.isOngoing)
-          throw new Error(
-            'there is an ongoing contest, please call another method that would close it and create a new one in one transaction',
-          )
-
-        const easyScrambles = formData.get('easy-scrambles') === 'on'
-        await api.admin.createNewContest({ easyScrambles })
-        revalidatePath('/')
-      }}
-    >
-      <SecondaryButtonWithFormStatus size='sm' className='ml-2'>
-        {children}
-      </SecondaryButtonWithFormStatus>
-      <label>
-        <input type='checkbox' name='easy-scrambles' />
-        Easy scrambles
-      </label>
-    </form>
-  )
-}
-
-function CloseOngoingAndCreateNewContestButton({
-  children,
-}: {
-  children: ReactNode
-}) {
-  return (
-    <form
-      className='inline-flex flex-col gap-2'
-      action={async (formData: FormData) => {
-        'use server'
-        const easyScrambles = formData.get('easy-scrambles') === 'on'
-        await api.admin.closeOngoingAndCreateNewContest({ easyScrambles })
-        revalidatePath('/')
-      }}
-    >
-      <SecondaryButtonWithFormStatus size='sm' className='ml-2'>
-        {children}
-      </SecondaryButtonWithFormStatus>
-      <label>
-        <input type='checkbox' name='easy-scrambles' />
-        Easy scrambles
-      </label>
-    </form>
   )
 }

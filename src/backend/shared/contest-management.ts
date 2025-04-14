@@ -108,6 +108,7 @@ export async function createNewContest({
   console.log(
     `${PREFIX} generated ${easyScrambles ? 'easy ' : ''}scrambles for Contest ${slug}`,
   )
+  console.log(scrambleRows)
 
   const scrambles = await tx
     .insert(scrambleTable)
@@ -167,8 +168,10 @@ export function getNextContestSlug(lastContestSlug: string) {
 }
 
 function generateEasyScrambles(count: number) {
-  if (env.NEXT_PUBLIC_APP_ENV === 'production')
+  if (env.NEXT_PUBLIC_APP_ENV === 'production') {
+    console.error('attempted to generate easy scrambles in production!')
     throw new Error('attempted to generate easy scrambles in production!')
+  }
   const moves = ['R', 'U', 'F', 'B', 'L', 'D']
   return Array.from({ length: count }).map(() => {
     const scr = []
