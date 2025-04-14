@@ -1,13 +1,18 @@
 'use client'
 
 import { Input, PrimaryButton } from '@/frontend/ui'
-import { validateSolveAction, type Solve } from '../actions'
 import { useForm } from 'react-hook-form'
 import { useState, useTransition } from 'react'
 import { removeSolutionComments } from '@/utils/remove-solution-comments'
 import type { Discipline } from '@/types'
+import type { RouterInputs } from '@/trpc/react'
 
-export function SolveValidator() {
+type Solve = RouterInputs['admin']['validateSolveAction']
+export function SolveValidator({
+  validateSolveAction,
+}: {
+  validateSolveAction: (solve: Solve) => Promise<string>
+}) {
   const {
     register,
     handleSubmit,

@@ -22,6 +22,7 @@ export const userRouter = createTRPCRouter({
       name: session.user.name,
       id: session.user.id,
       email: session.user.email,
+      role: session.user.role,
       finishedRegistration: session.user.finishedRegistration,
     } satisfies User
   }),
