@@ -19,13 +19,14 @@
     - [x] ui
     - [x] add contest link
     - [x] adjust height (single/avg)
-- [ ] fancy white glowing outline effect on own result / after jumping to a solve
+- [x] fancy white glowing outline effect on own result / after jumping to a solve
     - [x] refactor scrollToItem
     - [x] scroll on click
     - [x] glowing
     - [x] scroll on navigate from avg leaderboard
-    - [ ] scroll on navigate from single leaderboard
-    - [ ] make switchers accept baseParams
+    - [x] scroll on navigate from single leaderboard
+    - [x] scroll on navigate from replay
+- [ ] make contest row height same as other rows
 - [ ] add indexes for timeMs and avgMs
 - [ ] admin on prod
 - [ ] toast adjust "single personal best" text
