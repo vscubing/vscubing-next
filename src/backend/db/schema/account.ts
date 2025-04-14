@@ -29,7 +29,7 @@ export const accountTable = pgTable(
     userId: d
       .varchar('user_id', { length: 255 })
       .notNull()
-      .references(() => userTable.id),
+      .references(() => userTable.id, { onDelete: 'cascade' }),
     provider: d
       .varchar('provider', { length: 255 })
       .notNull()
@@ -62,7 +62,7 @@ export const authSessionTable = pgTable(
     userId: d
       .varchar('user_id', { length: 255 })
       .notNull()
-      .references(() => userTable.id),
+      .references(() => userTable.id, { onDelete: 'cascade' }),
     expiresAt: d
       .timestamp('expires_at', { mode: 'date', withTimezone: true })
       .notNull(),
