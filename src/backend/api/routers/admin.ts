@@ -61,7 +61,7 @@ export const adminRouter = createTRPCRouter({
         easyScrambles: z.boolean().optional().default(false),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const latestContest = await getLatestContest()
 
       if (!latestContest) throw new Error('no latest contest found')
@@ -70,10 +70,13 @@ export const adminRouter = createTRPCRouter({
           'there is an ongoing contest, please call another method that would close it and create a new one in one transaction',
         )
 
-      return createNewContest({
-        easyScrambles: input.easyScrambles,
-        slug: getNextContestSlug(latestContest.slug),
-      })
+      return ctx.db.transaction((tx) =>
+        createNewContest({
+          tx,
+          easyScrambles: input.easyScrambles,
+          slug: getNextContestSlug(latestContest.slug),
+        }),
+      )
     }),
   closeOngoingContest: adminProcedure.mutation(async () =>
     closeOngoingContest(),
