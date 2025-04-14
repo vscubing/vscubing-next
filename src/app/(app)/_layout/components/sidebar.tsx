@@ -1,10 +1,16 @@
 import { cn } from '@/frontend/utils/cn'
 import { ControlMobileMenuButton } from '../store/mobile-menu-open-atom'
-import { LogoWithLinkToLanding } from './logo'
+import { LogoHomeLink } from './logo'
 import { Navbar } from './navbar'
 import Image from 'next/image'
 import standWithUkraineImg from '@/../public/images/stand-with-ukraine.svg'
-import { CloseIcon, GithubIcon, LinkedinIcon, DiscordIcon } from '@/frontend/ui'
+import {
+  CloseIcon,
+  GithubIcon,
+  LinkedinIcon,
+  DiscordIcon,
+  VscubingIcon,
+} from '@/frontend/ui'
 import Link from 'next/link'
 
 export function Sidebar({ className }: { className?: string }) {
@@ -17,15 +23,15 @@ export function Sidebar({ className }: { className?: string }) {
         >
           <CloseIcon />
         </ControlMobileMenuButton>
-        <LogoWithLinkToLanding className='flex w-full rounded-2xl bg-black-80 px-4 lg:px-7 sm:px-4' />
+        <LogoHomeLink className='flex w-full rounded-2xl bg-black-80 px-4 lg:px-7 sm:px-4' />
       </div>
       <div className='flex flex-1 flex-col rounded-2xl bg-black-80 py-6 lg:py-3'>
         <Navbar variant='vertical' />
         <SocialLinks className='mb-4 mt-auto' />
         <div className='flex justify-center border-t border-grey-80 pt-2'>
-          <a href='https://u24.gov.ua/about'>
+          <Link href='https://u24.gov.ua/about'>
             <Image alt='Stand with Ukraine' src={standWithUkraineImg} />
-          </a>
+          </Link>
         </div>
       </div>
     </aside>
@@ -36,6 +42,11 @@ function SocialLinks({ className }: { className?: string }) {
   return (
     <div className={cn('flex justify-center gap-4 xl-short:gap-1', className)}>
       {[
+        {
+          href: '/landing',
+          ariaLabel: 'vscubing landing page',
+          children: <VscubingIcon />,
+        },
         {
           href: 'https://github.com/vscubing',
           ariaLabel: 'Github',
