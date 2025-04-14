@@ -10,7 +10,7 @@
 - [x] fix scroll and glow
 - [x] admin on prod
     - [x] implement
-    - [ ] are you ABSOLUTELY SURE?
+    - [x] are you ABSOLUTELY SURE?
 - [ ] toast adjust "single personal best" text
 - [ ] rework logo homepage/landing link
 - [ ] use node-cron 
