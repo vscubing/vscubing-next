@@ -16,9 +16,10 @@ export async function POST(request: NextRequest) {
     return new Response('Webhook secret required', { status: 401 })
   }
   if (token !== env.CONTEST_CREATION_WEBHOOK_SECRET) {
-    console.error(
-      `[CONTEST MANAGEMENT] Incorrect webhook secret. Expected: \n"${env.CONTEST_CREATION_WEBHOOK_SECRET}" (${env.CONTEST_CREATION_WEBHOOK_SECRET.length}) \n Received:\n"${token}" (${token.length})`,
-    )
+    console.error('[CONTEST MANAGEMENT] Incorrect webhook secret')
+    // console.error(
+    //   `[CONTEST MANAGEMENT] Incorrect webhook secret. Expected: \n"${env.CONTEST_CREATION_WEBHOOK_SECRET}" (${env.CONTEST_CREATION_WEBHOOK_SECRET.length}) \n Received:\n"${token}" (${token.length})`,
+    // )
     return new Response('Incorrect webhook secret', { status: 403 })
   }
 
@@ -34,9 +35,10 @@ export async function POST(request: NextRequest) {
   console.error(
     `[CONTEST MANAGEMENT] Closed ongoing and published Contest ${newContestSlug} (cause: webhook)`,
   )
-  await sendTelegramMessage(
-    `Closed ongoing and published Contest ${newContestSlug} (cause: webhook)`,
-    'contest-management',
-  )
+  if (env.NEXT_PUBLIC_APP_ENV !== 'development')
+    await sendTelegramMessage(
+      `Closed ongoing and published Contest ${newContestSlug} (cause: webhook)`,
+      'contest-management',
+    )
   return new Response(`Successfully published Contest ${newContestSlug}`)
 }
