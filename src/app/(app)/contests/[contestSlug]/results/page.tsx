@@ -22,7 +22,7 @@ export default async function ContestResultsPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
   const { contestSlug } = await params
-  const discipline = (await searchParams).discipline
+  const { discipline, scrollToId } = await searchParams
   if (!isDiscipline(discipline))
     redirect(
       `/contests/${contestSlug}/results?discipline=${DEFAULT_DISCIPLINE}`,
@@ -58,26 +58,32 @@ export default async function ContestResultsPage({
         key={discipline}
         fallback={
           <SessionListShell>
-            {Array.from({ length: 20 }).map((_, idx) => (
-              <li key={idx}>
-                <RoundSessionRowSkeleton />
-              </li>
-            ))}
+            <div className='space-y-2'>
+              {Array.from({ length: 20 }).map((_, idx) => (
+                <RoundSessionRowSkeleton key={idx} />
+              ))}
+            </div>
           </SessionListShell>
         }
       >
-        <Content contestSlug={contestSlug} discipline={discipline} />
+        <PageContent
+          contestSlug={contestSlug}
+          discipline={discipline}
+          scrollToId={Number(scrollToId)}
+        />
       </Suspense>
     </>
   )
 }
 
-async function Content({
+async function PageContent({
   contestSlug,
   discipline,
+  scrollToId,
 }: {
   contestSlug: string
   discipline: Discipline
+  scrollToId?: number
 }) {
   const { data: initialData, error } = await tryCatchTRPC(
     api.contest.getContestResults({
@@ -99,6 +105,7 @@ async function Content({
       initialData={initialData}
       contestSlug={contestSlug}
       discipline={discipline}
+      scrollToId={scrollToId}
     />
   )
 }

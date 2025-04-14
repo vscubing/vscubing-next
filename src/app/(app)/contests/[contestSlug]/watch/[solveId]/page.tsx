@@ -57,6 +57,7 @@ async function PageContentWithShell({ solveId, contestSlug }: PathParams) {
   return (
     <PageShell
       discipline={solve.discipline}
+      roundSessionId={solve.roundSessionId}
       contestSlug={contestSlug}
       username={solve.username}
       timeMs={solve.timeMs}
@@ -77,10 +78,12 @@ function PageShell({
   timeMs,
   scramblePosition,
   contestSlug,
+  roundSessionId,
   children,
 }: {
   discipline: Discipline
   contestSlug: string
+  roundSessionId?: number
   scramblePosition: string
   timeMs: number
   username: string
@@ -97,7 +100,7 @@ function PageShell({
           </Link>
           <div>
             <Link
-              href={`/contests/${contestSlug}/results?discipline=${discipline}`}
+              href={`/contests/${contestSlug}/results?discipline=${discipline}&scrollToId=${roundSessionId}`}
               className='title-h2 mb-1 text-secondary-20'
             >
               Contest {contestSlug}

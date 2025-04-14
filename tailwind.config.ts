@@ -64,6 +64,31 @@ export default {
           from: { transform: 'rotate(0deg)' },
           to: { transform: 'rotate(360deg)' },
         },
+        'spinning-border': {
+          '0%': {
+            transform:
+              'translate(-50%, -50%) scale(1, var(--spinning-border-ratio)) rotate(56deg)',
+          },
+          '50%,100%': {
+            transform:
+              'translate(-50%, -50%) scale(1, var(--spinning-border-ratio)) rotate(-304deg)',
+          },
+          '60%,95%': {
+            opacity: '0',
+          },
+        },
+        glow: {
+          '0%, 100%': {
+            boxShadow: '0 0 4px rgba(143, 143, 254, 0)',
+          },
+          '50%': {
+            boxShadow: `
+              0 0 4px rgba(143, 143, 254, 0.9),
+              0 0 8px rgba(143, 143, 254, 0.8),
+              0 0 12px rgba(143, 143, 254, 0.7)
+            `,
+          },
+        },
         'landing-alternating-text': {
           '0%,20%': { transform: 'translateY(85%)' },
           '33.3%,53.3%': { transform: 'translateY(0)' },
@@ -137,23 +162,13 @@ export default {
             transform: 'translateY(var(--toTranslateY))',
           },
         },
-        'spinning-border': {
-          '0%': {
-            transform:
-              'translate(-50%, -50%) scale(1, var(--spinning-border-ratio)) rotate(56deg)',
-          },
-          '50%,100%': {
-            transform:
-              'translate(-50%, -50%) scale(1, var(--spinning-border-ratio)) rotate(-304deg)',
-          },
-          '60%,95%': {
-            opacity: '0',
-          },
-        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        'spinning-border':
+          'spinning-border 6s linear(0, 0.32 40%, 0.48 50%, 0.83 90%, 1) infinite',
+        glow: 'glow 2s ease-in-out',
         'landing-alternating-text':
           'landing-alternating-text 6s linear infinite',
         'landing-blobs': 'landing-blobs 20s linear infinite',
@@ -170,8 +185,6 @@ export default {
         'landing-features-sharing-img':
           'landing-features-sharing-img linear 1s forwards 3.3s',
         'landing-footer-cubes': 'landing-footer-cubes linear 10s infinite',
-        'spinning-border':
-          'spinning-border 6s linear(0, 0.32 40%, 0.48 50%, 0.83 90%, 1) infinite',
       },
       spacing: {
         15: '3.75rem',

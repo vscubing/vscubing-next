@@ -1,34 +1,29 @@
 - [x] posthog analytics
-    - [x] initial setup
-    - [x] custom events
-    - [x] error handling
-    - [x] disable in staging and local
 - [x] stop using NODE_ENV
 - [x] pb
-    - [x] ui
-    - [x] session
-        - [x] display
-        - [x] notify
-    - [x] previous pb in toast
-    - [x] contest results
 - [x] DNF avg in contest leaderboard
 - [x] refactor getPersonalBestSubquery
 - [x] avg leaderboard
-    - [x] backend query
-    - [x] switcher
-    - [x] ui
-    - [x] add contest link
-    - [x] adjust height (single/avg)
-- [ ] fix discipline: string everywhere
-- [ ] skip inspection by default and play the solve automatically
-- [ ] fancy white glowing outline effect on own result / after jumping to a solve
-    - [ ] refactor scrollToItem
-- [ ] delete round sessions with no results & dnf round sessions with too little results
-    - [ ] on contest close
-    - [ ] migration
+- [x] fancy white glowing outline effect on own result / after jumping to a solve
+- [x] make contest row height same as other rows
+- [x] add indexes for timeMs and avgMs
+- [x] fix scroll and glow
+- [x] admin on prod
+    - [x] implement
+    - [ ] are you ABSOLUTELY SURE?
+- [ ] toast adjust "single personal best" text
 - [ ] rework logo homepage/landing link
-- [ ] boring stuff (cookies, privacy policy, etc)
 - [ ] use node-cron 
+- [ ] boring stuff (cookies, privacy policy, etc)
 
 BEFORE RELEASE:
 - [ ] new posthog project
+
+AFTER RELEASE:
+- [ ] include ongoing in leaderboard if capabilities=view_results
+- [ ] average personal best toast & avg 
+- [ ] fix discipline: string everywhere
+- [ ] skip inspection by default and play the solve automatically
+- [ ] delete round sessions with no results & dnf round sessions with too little results
+    - [ ] on contest close
+    - [ ] migration

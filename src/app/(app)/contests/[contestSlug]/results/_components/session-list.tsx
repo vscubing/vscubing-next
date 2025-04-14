@@ -3,20 +3,24 @@ import { HintSection } from '@/frontend/shared/hint-section'
 import { type Discipline } from '@/types'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { useTRPC, type RouterOutputs } from '@/trpc/react'
-import { useRef, type ReactNode, type RefObject } from 'react'
+import { useCallback, useEffect, type ReactNode } from 'react'
 import {
   RoundSessionRow,
   RoundSessionHeader,
 } from '@/frontend/shared/round-session-row'
+import { useScrollToIndex } from '@/frontend/utils/use-scroll-to-index'
+import { cn } from '@/frontend/utils/cn'
 
 export function SessionList({
   contestSlug,
   discipline,
   initialData,
+  scrollToId,
 }: {
   contestSlug: string
   discipline: Discipline
   initialData?: RouterOutputs['contest']['getContestResults']
+  scrollToId?: number
 }) {
   const trpc = useTRPC()
   const { data: sessions } = useSuspenseQuery(
@@ -29,19 +33,24 @@ export function SessionList({
     ),
   )
 
-  const stickyItemIdx = sessions.findIndex((result) => result.session.isOwn)
+  const { containerRef, performScrollToIdx } = useScrollToIndex()
+  const scrollAndGlow = useCallback(
+    (idx: number) => {
+      const item = containerRef.current?.children[idx]
+      if (!item) return
+      item.classList.add('animate-glow')
+      performScrollToIdx(idx)
+      setTimeout(() => item?.classList.remove('animate-glow'), 2000)
+    },
+    [containerRef, performScrollToIdx],
+  )
 
-  const beforeStickyItemRef = useRef<HTMLLIElement | null>(null)
-  const afterStickyItemRef = useRef<HTMLLIElement | null>(null)
-  function scrollToSticky() {
-    const afterItem = afterStickyItemRef.current
-    const beforeItem = beforeStickyItemRef.current
-    const scrollTo = afterItem ?? beforeItem!
-    scrollTo.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center',
-    })
-  }
+  useEffect(() => {
+    if (scrollToId)
+      scrollAndGlow(
+        sessions.findIndex((result) => result.session.id === scrollToId),
+      )
+  }, [scrollToId, sessions, scrollAndGlow])
 
   if (sessions.length === 0) {
     return (
@@ -51,37 +60,29 @@ export function SessionList({
     )
   }
 
+  const stickyItemIdx = sessions.findIndex((result) => result.session.isOwn)
   return (
     <SessionListShell>
-      {sessions.map((session, idx) => {
-        let ref: RefObject<HTMLLIElement | null> | undefined = undefined
-        if (idx === stickyItemIdx + 1) {
-          ref = afterStickyItemRef
-        } else if (idx === stickyItemIdx - 1) {
-          ref = beforeStickyItemRef
-        }
-
-        return idx === stickyItemIdx ? (
-          <RoundSessionRow
-            session={sessions[stickyItemIdx]!}
-            place={stickyItemIdx + 1}
-            discipline={discipline}
-            isFirstOnPage={false}
-            className='sticky bottom-[-2px] top-[calc(var(--layout-section-header-height)-2px)] z-10'
-            key={session.session.id}
-            onPlaceClick={scrollToSticky}
-          />
-        ) : (
+      <ul ref={containerRef} className='space-y-2'>
+        {sessions.map((session, idx) => (
           <RoundSessionRow
             session={session}
-            discipline={discipline}
-            isFirstOnPage={idx === 0}
             place={idx + 1}
+            discipline={discipline}
+            isFirstOnPage={false}
+            className={cn('rounded-xl', {
+              'sticky bottom-[-2px] top-[calc(var(--layout-section-header-height)-2px)] z-10':
+                idx === stickyItemIdx,
+            })}
             key={session.session.id}
-            ref={ref}
+            onPlaceClick={
+              idx === stickyItemIdx
+                ? () => scrollAndGlow(stickyItemIdx)
+                : undefined
+            }
           />
-        )
-      })}
+        ))}
+      </ul>
     </SessionListShell>
   )
 }

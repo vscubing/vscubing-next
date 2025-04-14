@@ -56,7 +56,7 @@ export function ContestSkeleton({
 }) {
   return (
     <div
-      className={cn('min-h-16 animate-pulse rounded-xl bg-grey-100', className)}
+      className={cn('h-16 animate-pulse rounded-xl bg-grey-100', className)}
       style={{ height }}
     ></div>
   )

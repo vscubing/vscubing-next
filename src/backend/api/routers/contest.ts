@@ -240,6 +240,7 @@ export const contestRouter = createTRPCRouter({
           username: userTable.name,
           timeMs: solveTable.timeMs,
           discipline: roundTable.disciplineSlug,
+          roundSessionId: roundSessionTable.id,
         })
         .from(solveTable)
         .innerJoin(scrambleTable, eq(scrambleTable.id, solveTable.scrambleId))
@@ -253,7 +254,7 @@ export const contestRouter = createTRPCRouter({
 
       if (!solve) throw new TRPCError({ code: 'NOT_FOUND' })
 
-      if (!solve.solution || !solve.timeMs || !solve.scramble)
+      if (!solve.solution || !solve.timeMs)
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: `The solve exists, but it is incomplete. \nSolution: ${solve.solution} \ntimeMs: ${solve.timeMs} \nscramble: ${solve.scramble}`,
@@ -263,7 +264,6 @@ export const contestRouter = createTRPCRouter({
         ...solve,
         solution: solve.solution, // reassign to make typescript infer non-nullability
         timeMs: solve.timeMs,
-        scramble: solve.scramble,
       }
     }),
 })
