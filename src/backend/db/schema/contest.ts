@@ -5,7 +5,7 @@ import {
 } from '@/types'
 import { DISCIPLINES } from '@/types'
 import { sql } from 'drizzle-orm'
-import { pgTable, unique } from 'drizzle-orm/pg-core'
+import { index, pgTable, unique } from 'drizzle-orm/pg-core'
 import { createdUpdatedAtColumns } from './core'
 import { userTable } from './account'
 
@@ -69,21 +69,25 @@ export const scrambleTable = pgTable(
   (t) => [unique('round_position_unique').on(t.roundId, t.position)],
 )
 
-export const roundSessionTable = pgTable('round_session', (d) => ({
-  ...createdUpdatedAtColumns,
-  id: d.integer('id').primaryKey().generatedByDefaultAsIdentity(),
-  contestantId: d
-    .text('contestant_id')
-    .notNull()
-    .references(() => userTable.id, { onDelete: 'cascade' }),
-  roundId: d
-    .integer('round_id')
-    .notNull()
-    .references(() => roundTable.id, { onDelete: 'cascade' }),
-  avgMs: d.integer('avg_ms'),
-  isDnf: d.boolean('is_dnf'),
-  isFinished: d.boolean('is_finished').default(false).notNull(),
-}))
+export const roundSessionTable = pgTable(
+  'round_session',
+  (d) => ({
+    ...createdUpdatedAtColumns,
+    id: d.integer('id').primaryKey().generatedByDefaultAsIdentity(),
+    contestantId: d
+      .text('contestant_id')
+      .notNull()
+      .references(() => userTable.id, { onDelete: 'cascade' }),
+    roundId: d
+      .integer('round_id')
+      .notNull()
+      .references(() => roundTable.id, { onDelete: 'cascade' }),
+    avgMs: d.integer('avg_ms'),
+    isDnf: d.boolean('is_dnf'),
+    isFinished: d.boolean('is_finished').default(false).notNull(),
+  }),
+  (t) => [index('avg_ms_idx').on(t.avgMs)],
+)
 
 export const solveTable = pgTable(
   'solve',
@@ -105,5 +109,6 @@ export const solveTable = pgTable(
   }),
   (t) => [
     unique('round_session_scramble_unique').on(t.roundSessionId, t.scrambleId),
+    index('time_ms_idx').on(t.timeMs),
   ],
 )

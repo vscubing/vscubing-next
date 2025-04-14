@@ -26,8 +26,8 @@
     - [x] scroll on navigate from avg leaderboard
     - [x] scroll on navigate from single leaderboard
     - [x] scroll on navigate from replay
-- [ ] make contest row height same as other rows
-- [ ] add indexes for timeMs and avgMs
+- [x] make contest row height same as other rows
+- [x] add indexes for timeMs and avgMs
 - [ ] admin on prod
 - [ ] toast adjust "single personal best" text
 - [ ] rework logo homepage/landing link

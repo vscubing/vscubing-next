@@ -15,6 +15,13 @@
       "when": 1744269466734,
       "tag": "0001_legacy-import",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1744611308030,
+      "tag": "0002_ordinary_black_bolt",
+      "breakpoints": true
     }
   ]
 }
