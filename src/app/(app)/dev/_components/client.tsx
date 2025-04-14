@@ -85,7 +85,7 @@ export function DangerousContestActionsContent() {
   return (
     <div>
       <CloseOngoingAndCreateNewContestButton>
-        Create the ongoing and create a new contest
+        Close the ongoing and create a new contest
       </CloseOngoingAndCreateNewContestButton>{' '}
       or just
       <CloseContestButton>close the ongoing</CloseContestButton>
