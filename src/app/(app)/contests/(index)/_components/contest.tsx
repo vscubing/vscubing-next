@@ -31,7 +31,7 @@ export function ContestRowDesktop({
     >
       <div
         className={cn(
-          'text-large flex h-15 items-center justify-between rounded-xl pl-4',
+          'text-large flex h-16 items-center justify-between rounded-xl pl-4',
           contest.isOngoing ? 'bg-secondary-80' : 'bg-grey-100',
           className,
         )}
@@ -65,7 +65,7 @@ export function ContestRowSkeletonDesktop({
 }) {
   return (
     <div
-      className={cn('h-15 animate-pulse rounded-xl bg-grey-100', className)}
+      className={cn('h-16 animate-pulse rounded-xl bg-grey-100', className)}
       style={{ height }}
     ></div>
   )
