@@ -11,7 +11,7 @@
 - [x] admin on prod
     - [x] implement
     - [x] are you ABSOLUTELY SURE?
-- [ ] toast adjust "single personal best" text
+- [x] toast adjust "single personal best" text
 - [ ] rework logo homepage/landing link
 - [ ] use node-cron 
 - [ ] boring stuff (cookies, privacy policy, etc)

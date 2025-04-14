@@ -132,7 +132,7 @@ export function SolveContestForm({
     contestSlug: string
   }) {
     toast({
-      title: 'Wow, new personal best!',
+      title: 'Wow, new personal best single!',
       description: (
         <>
           Previous personal best:{' '}
