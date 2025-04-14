@@ -12,7 +12,7 @@
     - [x] implement
     - [x] are you ABSOLUTELY SURE?
 - [x] toast adjust "single personal best" text
-- [ ] rework logo homepage/landing link
+- [x] rework logo homepage/landing link
 - [ ] use node-cron 
 - [ ] boring stuff (cookies, privacy policy, etc)
 
