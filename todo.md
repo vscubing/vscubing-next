@@ -28,6 +28,7 @@
     - [x] scroll on navigate from replay
 - [x] make contest row height same as other rows
 - [x] add indexes for timeMs and avgMs
+- [x] fix scroll and glow
 - [ ] admin on prod
 - [ ] toast adjust "single personal best" text
 - [ ] rework logo homepage/landing link
