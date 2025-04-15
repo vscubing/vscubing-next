@@ -25,8 +25,8 @@ export const env = createEnv({
         : z.string().url(),
     TNOODLE_SECRET:
       process.env.NEXT_PUBLIC_APP_ENV === 'development'
-        ? z.string().url().optional()
-        : z.string().url(),
+        ? z.string().optional()
+        : z.string(),
   },
 
   /**
