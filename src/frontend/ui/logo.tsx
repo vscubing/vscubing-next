@@ -30,6 +30,9 @@ export function Logo({
       {env.NEXT_PUBLIC_APP_ENV === 'staging' && (
         <span className='title-h1 absolute top-0 text-white-100'>STAGING</span>
       )}
+      {env.NEXT_PUBLIC_APP_ENV === 'production' && (
+        <span className='title-h1 absolute top-0 text-white-100'>BETA</span>
+      )}
     </span>
   )
 }
