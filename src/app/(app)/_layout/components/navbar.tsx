@@ -17,7 +17,6 @@ import {
   CodeIcon,
 } from '@/frontend/ui'
 import { DEFAULT_DISCIPLINE } from '@/types'
-import { ESLINT_DEFAULT_DIRS } from 'next/dist/lib/constants'
 
 type NavbarProps = {
   variant: 'vertical' | 'horizontal'
