@@ -51,18 +51,14 @@ const config = {
     })
     return config
   },
-  experimental: {
-    typedRoutes: true,
-    urlImports: ['https://code.jquery.com'],
 
-    // turbo: {
-    //   rules: {
-    //     '*.svg?inline': { // ?inline doesn't work
-    //       loaders: ['@svgr/webpack'],
-    //       as: '*.js',
-    //     },
-    //   },
-    // },
+  turbopack: {
+    rules: {
+      '*.icon.svg': {
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
+      },
+    },
   },
 
   eslint: {
