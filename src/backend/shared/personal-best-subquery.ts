@@ -40,7 +40,7 @@ export function getPersonalBestSolveSubquery({
         includeOngoing ? undefined : eq(contestTable.isOngoing, false),
       ),
     )
-    .orderBy(userTable.id, solveTable.timeMs)
+    .orderBy(userTable.id, solveTable.isDnf, solveTable.timeMs)
     .as('personal_best_solve_subquery')
 }
 
@@ -66,6 +66,6 @@ export function getPersonalBestSessionSubquery({
         includeOngoing ? undefined : eq(contestTable.isOngoing, false),
       ),
     )
-    .orderBy(userTable.id, roundSessionTable.avgMs)
+    .orderBy(userTable.id, roundSessionTable.isDnf, roundSessionTable.avgMs)
     .as('personal_best_session_subquery')
 }

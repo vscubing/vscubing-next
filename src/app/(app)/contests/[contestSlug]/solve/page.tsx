@@ -28,7 +28,6 @@ import {
   LayoutHeaderTitlePortalFallback,
 } from '@/app/(app)/_layout/layout-header'
 import { DisciplineSwitcher } from '@/frontend/shared/discipline-switcher'
-import { TouchNotSupportedWrapper } from './_components/touch-not-supported-wrapper'
 import { withSuspense } from '@/frontend/utils/with-suspense'
 import {
   LayoutPageTitleMobile,
@@ -89,7 +88,12 @@ const PageTitle = withSuspense(
   async () => {
     const ongoing = await api.contest.getOngoing()
     if (!ongoing) return
-    const title = `Ongoing contest ${ongoing?.slug} (${formatContestDuration(ongoing)})`
+    const title = (
+      <>
+        Ongoing contest {ongoing?.slug}{' '}
+        <span className='text-nowrap'>({formatContestDuration(ongoing)})</span>
+      </>
+    )
     return (
       <>
         <LayoutPageTitleMobile>{title}</LayoutPageTitleMobile>
@@ -121,38 +125,36 @@ async function PageContent({
   if (error) throw error
 
   return (
-    <TouchNotSupportedWrapper>
-      <div className='flex-1 rounded-2xl bg-black-80'>
-        <div className='relative flex h-full flex-col pb-8 pt-7 xl-short:pb-6 xl-short:pt-4'>
-          <div className='absolute right-4 top-4 flex items-center gap-4'>
-            <Dialog>
-              <KeyMapDialogTrigger />
-              <DialogPortal>
-                <DialogOverlay className='bg-black-1000/40' withCubes={false} />
-                <KeyMapDialogContent />
-              </DialogPortal>
-            </Dialog>
-            <SecondaryButton asChild className='h-11 w-11 p-0'>
-              <Link href='/settings'>
-                <SettingIcon />
-              </Link>
-            </SecondaryButton>
-          </div>
-
-          <p className='title-h2 mb-6 text-center text-secondary-20'>
-            {getSplashText({ contestSlug, discipline })}
-          </p>
-
-          <SimulatorProvider>
-            <SolveContestForm
-              initialData={roundSessionState}
-              contestSlug={contestSlug}
-              discipline={discipline}
-            />
-          </SimulatorProvider>
+    <div className='flex-1 rounded-2xl bg-black-80'>
+      <div className='relative flex h-full flex-col pb-8 pt-7 xl-short:pb-6 xl-short:pt-4 sm:py-6'>
+        <div className='absolute right-4 top-4 flex items-center gap-4 sm:right-2 sm:top-2'>
+          <Dialog>
+            <KeyMapDialogTrigger className='touch:hidden' />
+            <DialogPortal>
+              <DialogOverlay className='bg-black-1000/40' withCubes={false} />
+              <KeyMapDialogContent />
+            </DialogPortal>
+          </Dialog>
+          <SecondaryButton asChild className='h-11 w-11 p-0 sm:h-11'>
+            <Link href='/settings'>
+              <SettingIcon />
+            </Link>
+          </SecondaryButton>
         </div>
+
+        <p className='title-h2 mb-6 text-center text-secondary-20'>
+          {getSplashText({ contestSlug, discipline })}
+        </p>
+
+        <SimulatorProvider>
+          <SolveContestForm
+            initialData={roundSessionState}
+            contestSlug={contestSlug}
+            discipline={discipline}
+          />
+        </SimulatorProvider>
       </div>
-    </TouchNotSupportedWrapper>
+    </div>
   )
 }
 

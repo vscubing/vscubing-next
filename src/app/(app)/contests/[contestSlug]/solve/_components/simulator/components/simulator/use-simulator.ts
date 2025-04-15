@@ -24,6 +24,7 @@ export function useTwistySimulator({
   scramble,
   discipline,
   settings,
+  touchCubeEnabled,
   setCameraPosition,
 }: {
   containerRef: RefObject<HTMLElement | null>
@@ -31,6 +32,7 @@ export function useTwistySimulator({
   scramble: string | undefined
   discipline: string
   settings: SimulatorSettings
+  touchCubeEnabled: boolean
   setCameraPosition: (pos: SimulatorCameraPosition) => void
 }) {
   if (!isDiscipline(discipline))
@@ -58,6 +60,7 @@ export function useTwistySimulator({
       {
         puzzle: SIMULATOR_DISCIPLINES_MAP[discipline].puzzle,
         animationDuration: settings.animationDuration,
+        allowDragging: touchCubeEnabled,
       },
       moveListener,
       (pos) => setCameraPosition(pos),
@@ -72,6 +75,7 @@ export function useTwistySimulator({
     containerRef,
     discipline,
     onMove,
+    touchCubeEnabled,
     setCameraPosition,
   ])
 

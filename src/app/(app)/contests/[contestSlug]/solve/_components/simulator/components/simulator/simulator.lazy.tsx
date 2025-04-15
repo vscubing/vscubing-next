@@ -13,6 +13,8 @@ import {
 import type { ResultDnfish } from '@/types'
 import type { userSimulatorSettingsTable } from '@/backend/db/schema'
 import type { SimulatorCameraPosition } from 'vendor/cstimer'
+import { useIsTouchDevice } from '@/frontend/utils/use-media-query'
+import { cn } from '@/frontend/utils/cn'
 
 export type InitSolveData = { scramble: string; discipline: string }
 
@@ -40,6 +42,7 @@ export default function Simulator({
   setCameraPosition,
 }: SimulatorProps) {
   const containerRef = useRef<HTMLDivElement>(null)
+  const isTouchDevice = useIsTouchDevice()
   const [status, setStatus] = useState<
     'idle' | 'ready' | 'inspecting' | 'solving' | 'solved'
   >('idle')
@@ -83,6 +86,9 @@ export default function Simulator({
     )
     return () => abortSignal.abort()
   }, [status])
+  function touchStartHandler(): void {
+    if (status === 'ready' && isTouchDevice) setStatus('inspecting')
+  }
 
   useEffect(() => {
     if (status !== 'inspecting') return
@@ -205,6 +211,7 @@ export default function Simulator({
     containerRef,
     onMove: moveHandler,
     scramble: hasRevealedScramble ? initSolveData.scramble : undefined,
+    touchCubeEnabled: isTouchDevice ?? false,
     discipline: initSolveData.discipline,
     settings,
     setCameraPosition,
@@ -217,8 +224,42 @@ export default function Simulator({
         href='https://fonts.googleapis.com/css2?family=M+PLUS+1+Code&display=swap'
         rel='stylesheet'
       />
-      <div className='relative flex h-full items-center justify-center'>
-        <span className='absolute right-4 top-1/2 -translate-y-1/2 text-7xl [font-family:"M_PLUS_1_Code",monospace] md:bottom-4 md:left-1/2 md:right-auto md:top-auto md:-translate-x-1/2 md:translate-y-0'>
+      <style>
+        {`
+        .touchcube {
+          position: absolute;
+          text-align: center;
+          user-select: none;
+        }
+        .touchcube tr td {
+          width: 33%;
+          height: 33%;
+        }
+        .touchcube.active {
+          background-color: #6666;
+          color: #fffa;
+        }
+        .touchcube.active td.touchto {
+          background-color: #0f0a;
+        }
+        .touchcube.active td.touchfrom {
+          background-color: #f00a;
+        }
+        .touchcube.board td {
+          border: 2px solid #6666;
+          border: 0.15rem solid #6666;
+        }
+        `}
+      </style>
+      <div
+        className='relative flex h-full items-center justify-center'
+        onTouchStart={touchStartHandler}
+      >
+        <span
+          className={cn(
+            'absolute right-4 top-1/2 -translate-y-1/2 text-7xl [font-family:"M_PLUS_1_Code",monospace] md:bottom-4 md:left-1/2 md:right-auto md:top-auto md:-translate-x-1/2 md:translate-y-0',
+          )}
+        >
           {getDisplay(
             solveStartTimestamp,
             inspectionStartTimestamp,
@@ -226,12 +267,17 @@ export default function Simulator({
           )}
         </span>
         {status === 'ready' && (
-          <span className='absolute bottom-20 rounded-[.75rem] bg-black-100 px-10 py-6 font-kanit text-[1.25rem] text-secondary-20'>
-            Press space to scramble the cube and start the preinspection
+          <span className='absolute bottom-20 mx-2 flex min-h-20 items-center rounded-[.75rem] bg-black-100 px-10 py-2 text-center font-kanit text-[1.25rem] text-secondary-20 sm:px-4'>
+            <span className='hidden touch:inline'>
+              Tap on the cube to scramble it and start the preinspection
+            </span>
+            <span className='touch:hidden'>
+              Press space to scramble the cube and start the preinspection
+            </span>
           </span>
         )}
         <div
-          className='h-[60%] outline-none [&>div]:flex'
+          className='aspect-square h-[60%] outline-none sm:h-auto sm:w-full sm:max-w-[34rem] [&>div]:flex'
           tabIndex={-1}
           ref={containerRef}
         ></div>
