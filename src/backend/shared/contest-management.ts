@@ -169,6 +169,7 @@ export function getNextContestSlug(lastContestSlug: string) {
 }
 
 function generateEasyScrambles(count: number) {
+  console.log(`${PREFIX} generating easy scrambles...`)
   if (env.NEXT_PUBLIC_APP_ENV === 'production') {
     console.error('attempted to generate easy scrambles in production!')
     throw new Error('attempted to generate easy scrambles in production!')
