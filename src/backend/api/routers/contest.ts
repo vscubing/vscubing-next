@@ -88,7 +88,12 @@ export const contestRouter = createTRPCRouter({
           eq(roundSessionTable.roundId, roundTable.id),
         ),
       )
+      .innerJoin(
+        disciplineTable,
+        eq(disciplineTable.slug, roundTable.disciplineSlug),
+      )
       .where(eq(contestTable.isOngoing, true))
+      .orderBy(disciplineTable.createdAt)
 
     const ongoing = rows[0]
     if (!ongoing) return null
