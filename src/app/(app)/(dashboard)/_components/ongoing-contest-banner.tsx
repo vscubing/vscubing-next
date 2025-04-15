@@ -1,18 +1,11 @@
-import {
-  PrimaryButton,
-  PopoverCloseButton,
-  ExclamationCircleIcon,
-  DisciplineBadge,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/frontend/ui'
+import { PrimaryButton, DisciplineBadge } from '@/frontend/ui'
 import { cn } from '@/frontend/utils/cn'
 import { formatContestDuration } from '@/utils/format-date'
 import { withSuspense } from '@/frontend/utils/with-suspense'
 import type { RouterOutputs } from '@/trpc/react'
 import { api } from '@/trpc/server'
 import Link from 'next/link'
+import { DEFAULT_DISCIPLINE } from '@/types'
 
 export const OngoingContestBanner = withSuspense(
   async () => {
@@ -41,6 +34,11 @@ function BannerContent({
   ongoing: NonNullable<RouterOutputs['contest']['getOngoing']>
   className?: string
 }) {
+  const defaultDisciplineCapabilities = ongoing.disciplines.find(
+    (d) => d.slug === DEFAULT_DISCIPLINE,
+  )?.capabilities
+  const defaultDisciplineLink = `/contests/${ongoing.slug}/${defaultDisciplineCapabilities}?discipline=${DEFAULT_DISCIPLINE}`
+
   return (
     <div className={cn('flex h-44', className)}>
       <div className='relative mr-32'>
@@ -65,7 +63,7 @@ function BannerContent({
               <Duration ongoing={ongoing} />
             </div>
             <PrimaryButton asChild>
-              <Link href={`/contests/${ongoing.slug}`}>Solve now</Link>
+              <Link href={defaultDisciplineLink}>Solve now</Link>
             </PrimaryButton>
           </div>
         </div>
@@ -89,23 +87,6 @@ function BannerContentMobile({
     >
       <div className='relative z-10 py-4 pl-4 sm:flex sm:items-center sm:gap-4 sm:p-0'>
         <Title />
-
-        <p className='sr-only'>
-          Solving from mobile devices is currently not supported
-        </p>
-        <Popover>
-          <PopoverContent>
-            <p>Solving from mobile devices is currently not supported</p>
-            <PopoverCloseButton />
-          </PopoverContent>
-
-          <PopoverTrigger
-            className='absolute -right-11 top-4 sm:static'
-            aria-hidden
-          >
-            <ExclamationCircleIcon />
-          </PopoverTrigger>
-        </Popover>
       </div>
 
       <div className='relative flex-1 sm:hidden'>
@@ -160,10 +141,9 @@ function Disciplines({
   return (
     <div className='flex gap-2'>
       {ongoing.disciplines.map((discipline) => {
-        const page = discipline.roundSessionFinished ? 'results' : 'solve'
         return (
           <Link
-            href={`/contests/${ongoing.slug}/${page}?discipline=${discipline.slug}`}
+            href={`/contests/${ongoing.slug}/${discipline.capabilities}?discipline=${discipline.slug}`}
             className='outline-ring group flex flex-col gap-2'
             key={discipline.slug}
           >

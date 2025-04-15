@@ -221,9 +221,7 @@ function getOngoingLink(
   if (!ongoingContest) return undefined
   const page = ongoingContest?.disciplines.find(
     (d) => d.slug === DEFAULT_DISCIPLINE,
-  )?.roundSessionFinished
-    ? 'results'
-    : 'solve'
+  )?.capabilities
 
   return `/contests/${ongoingContest.slug}/${page}?discipline=${DEFAULT_DISCIPLINE}`
 }

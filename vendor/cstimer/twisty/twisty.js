@@ -122,9 +122,7 @@ const twistyjs = (function () {
       twistyCanvas = renderer.domElement
 
       twistyContainer.appendChild(twistyCanvas)
-      touchCube = $(
-        '<table class="touchcube">',
-      ) /* .appendTo(twistyContainer) */ // NOTE: touchCube removed by @vscubing
+      touchCube = $('<table class="touchcube">').appendTo(twistyContainer)
       var trs = ''
       for (var i = 0; i < 3; i++) {
         var tds = ''
@@ -211,13 +209,9 @@ const twistyjs = (function () {
 
     function hintBoard() {
       touchCube.addClass('board')
-      $.delayExec(
-        'hintBoard',
-        function () {
-          touchCube && touchCube.removeClass('board')
-        },
-        5000,
-      )
+      setTimeout(function () {
+        touchCube && touchCube.removeClass('board')
+      }, 5000)
     }
 
     function onTouchDown(event) {

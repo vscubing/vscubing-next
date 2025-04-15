@@ -19,7 +19,13 @@
     - [x] connect it to staging
     - [x] connect it on prod
     - [x] add auth
+- [ ] solve on mobile
+- [ ] abort solve on escape
+- [ ] dnf all solves for admins
+- [ ] make admins "capable" of everything
 - [ ] boring stuff (cookies, privacy policy, etc)
+- [ ] devtools to skip session
+- [ ] see what we can do with redirect on discipline change between results/solve page
 
 BEFORE RELEASE:
 - [ ] new posthog project
@@ -32,5 +38,3 @@ AFTER RELEASE:
 - [ ] delete round sessions with no results & dnf round sessions with too little results
     - [ ] on contest close
     - [ ] migration
-- [ ] abort solve on escape
-- [ ] make admins "capable" of everything
