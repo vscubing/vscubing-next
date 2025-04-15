@@ -32,3 +32,4 @@ AFTER RELEASE:
 - [ ] delete round sessions with no results & dnf round sessions with too little results
     - [ ] on contest close
     - [ ] migration
+- [ ] abort solve on escape
