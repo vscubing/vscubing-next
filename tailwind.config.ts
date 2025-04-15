@@ -10,6 +10,7 @@ export default {
       lg: { max: '1280px' },
       md: { max: '1023px' },
       sm: { max: '767px' },
+      touch: { raw: '(pointer:coarse)' },
     },
     colors: {
       current: 'currentColor',

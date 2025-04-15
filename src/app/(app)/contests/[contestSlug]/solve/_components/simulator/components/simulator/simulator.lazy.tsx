@@ -268,9 +268,12 @@ export default function Simulator({
         </span>
         {status === 'ready' && (
           <span className='absolute bottom-20 rounded-[.75rem] bg-black-100 px-10 py-6 font-kanit text-[1.25rem] text-secondary-20'>
-            {isTouchDevice
-              ? 'Tap on the cube to scramble it and start the preinspection'
-              : 'Press space to scramble the cube and start the preinspection'}
+            <span className='hidden touch:inline'>
+              Tap on the cube to scramble it and start the preinspection
+            </span>
+            <span className='touch:hidden'>
+              Press space to scramble the cube and start the preinspection
+            </span>
           </span>
         )}
         <div

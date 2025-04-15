@@ -13,7 +13,7 @@ export function ExtraLabel({
   }
   const extraNumber = scramblePosition[1]
   return (
-    <span className={cn('caption-sm text-red-80', className)}>
+    <span className={cn('caption-sm text-nowrap text-red-80', className)}>
       Extra {extraNumber}
     </span>
   )
