@@ -44,8 +44,8 @@ export async function OngoingContestInfo() {
     .where(
       and(
         or(
-          ...ongoingContest.disciplines.map((d) =>
-            eq(roundTable.disciplineSlug, d),
+          ...ongoingContest.disciplines.map(({ slug }) =>
+            eq(roundTable.disciplineSlug, slug),
           ),
         ),
         eq(roundTable.contestSlug, ongoingContest.slug),

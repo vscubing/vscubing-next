@@ -17,6 +17,7 @@ import {
   CodeIcon,
 } from '@/frontend/ui'
 import { DEFAULT_DISCIPLINE } from '@/types'
+import { ESLINT_DEFAULT_DIRS } from 'next/dist/lib/constants'
 
 type NavbarProps = {
   variant: 'vertical' | 'horizontal'
@@ -191,9 +192,7 @@ function getNavbarLinks(
         </>
       ),
       route: '/contests/ongoing',
-      href: ongoingContest?.slug
-        ? `/contests/${ongoingContest.slug}`
-        : undefined,
+      href: getOngoingLink(ongoingContest),
       disabled: ongoingContest === null,
     },
   ]
@@ -215,4 +214,17 @@ function getNavbarLinks(
 
 function removePrefix(value: string, prefix: string) {
   return value.startsWith(prefix) ? value.slice(prefix.length) : value
+}
+
+function getOngoingLink(
+  ongoingContest: RouterOutputs['contest']['getOngoing'] | undefined,
+) {
+  if (!ongoingContest) return undefined
+  const page = ongoingContest?.disciplines.find(
+    (d) => d.slug === DEFAULT_DISCIPLINE,
+  )?.roundSessionFinished
+    ? 'results'
+    : 'solve'
+
+  return `/contests/${ongoingContest.slug}/${page}?discipline=${DEFAULT_DISCIPLINE}`
 }

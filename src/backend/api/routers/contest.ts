@@ -74,18 +74,34 @@ export const contestRouter = createTRPCRouter({
         expectedEndDate: contestTable.expectedEndDate,
         endDate: contestTable.endDate,
         isOngoing: contestTable.isOngoing,
-        discipline: roundTable.disciplineSlug,
+        discipline: {
+          slug: roundTable.disciplineSlug,
+          roundSessionFinished: roundSessionTable.isFinished,
+        },
       })
       .from(contestTable)
       .innerJoin(roundTable, eq(roundTable.contestSlug, contestTable.slug))
+      .leftJoin(
+        roundSessionTable,
+        and(
+          eq(roundSessionTable.contestantId, ctx.session?.user?.id ?? ''),
+          eq(roundSessionTable.roundId, roundTable.id),
+        ),
+      )
       .where(eq(contestTable.isOngoing, true))
 
     const ongoing = rows[0]
     if (!ongoing) return null
 
     return {
-      ...ongoing,
-      disciplines: rows.map(({ discipline }) => discipline),
+      slug: ongoing.slug,
+      startDate: ongoing.startDate,
+      expectedEndDate: ongoing.expectedEndDate,
+      endDate: ongoing.endDate,
+      disciplines: rows.map(({ discipline }) => ({
+        slug: discipline.slug,
+        roundSessionFinished: discipline.roundSessionFinished ?? false,
+      })),
     }
   }),
 

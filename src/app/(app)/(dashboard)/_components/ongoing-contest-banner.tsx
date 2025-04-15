@@ -159,21 +159,24 @@ function Disciplines({
 }) {
   return (
     <div className='flex gap-2'>
-      {ongoing.disciplines.map((discipline) => (
-        <Link
-          href={`/contests/ongoing?discipline=${discipline}`}
-          className='outline-ring group flex flex-col gap-2'
-          key={discipline}
-        >
-          <DisciplineBadge
-            discipline={discipline}
-            className='transition-base outline-ring group-hover:bg-secondary-40 group-active:bg-secondary-20'
-          />
-          <span className='btn-lg text-center lg:hidden'>
-            {discipline.replace('by', 'x')}
-          </span>
-        </Link>
-      ))}
+      {ongoing.disciplines.map((discipline) => {
+        const page = discipline.roundSessionFinished ? 'results' : 'solve'
+        return (
+          <Link
+            href={`/contests/${ongoing.slug}/${page}?discipline=${discipline.slug}`}
+            className='outline-ring group flex flex-col gap-2'
+            key={discipline.slug}
+          >
+            <DisciplineBadge
+              discipline={discipline.slug}
+              className='transition-base outline-ring group-hover:bg-secondary-40 group-active:bg-secondary-20'
+            />
+            <span className='btn-lg text-center lg:hidden'>
+              {discipline.slug.replace('by', 'x')}
+            </span>
+          </Link>
+        )
+      })}
     </div>
   )
 }
