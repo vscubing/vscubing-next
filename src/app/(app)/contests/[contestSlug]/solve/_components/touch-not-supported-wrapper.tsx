@@ -12,22 +12,22 @@ export function TouchNotSupportedWrapper({
 }: {
   children: ReactNode
 }) {
-  const isTouchDevice = useIsTouchDevice()
-  const isSmScreen = useMatchesScreen('sm')
-  if (isTouchDevice) {
-    return (
-      <HintSection>
-        <p>Solving from mobile devices is currently not supported</p>
-        <PrimaryButton
-          asChild
-          size={isSmScreen ? 'sm' : 'lg'}
-          className='sm:self-stretch'
-        >
-          <Link href='/'>Go to dashboard</Link>
-        </PrimaryButton>
-      </HintSection>
-    )
-  }
+  // const isTouchDevice = useIsTouchDevice()
+  // const isSmScreen = useMatchesScreen('sm')
+  // if (isTouchDevice) {
+  //   return (
+  //     <HintSection>
+  //       <p>Solving from mobile devices is currently not supported</p>
+  //       <PrimaryButton
+  //         asChild
+  //         size={isSmScreen ? 'sm' : 'lg'}
+  //         className='sm:self-stretch'
+  //       >
+  //         <Link href='/'>Go to dashboard</Link>
+  //       </PrimaryButton>
+  //     </HintSection>
+  //   )
+  // }
 
   return children
 }
