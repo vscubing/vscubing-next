@@ -13,8 +13,9 @@
     - [x] are you ABSOLUTELY SURE?
 - [x] toast adjust "single personal best" text
 - [x] rework logo homepage/landing link
-- [ ] use node-cron 
+- [x] use node-cron 
 - [ ] boring stuff (cookies, privacy policy, etc)
+- [ ] make vendor/twisty a microservice 
 
 BEFORE RELEASE:
 - [ ] new posthog project
