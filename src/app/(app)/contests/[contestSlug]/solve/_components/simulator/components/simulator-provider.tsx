@@ -144,7 +144,7 @@ export function SimulatorProvider({ children }: { children: React.ReactNode }) {
           <DialogPrimitive.Content
             aria-describedby={undefined}
             style={{ pointerEvents: undefined }}
-            className='fixed inset-[1.625rem] z-50 rounded-2xl bg-black-80 duration-500 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0'
+            className='fixed inset-[1.625rem] z-50 rounded-2xl bg-black-80 duration-500 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 sm:inset-3'
           >
             <DialogPrimitive.Title className='sr-only'>
               Virtual cube simulator
@@ -172,9 +172,12 @@ export function SimulatorProvider({ children }: { children: React.ReactNode }) {
                   />
                 )}
               </Suspense>
-              <div className='absolute left-6 right-6 top-6 flex items-start justify-between'>
+              <div className='absolute left-6 right-6 top-6 flex items-start sm:right-4 sm:top-4'>
                 <Dialog>
-                  <KeyMapDialogTrigger autoFocus={false} />
+                  <KeyMapDialogTrigger
+                    autoFocus={false}
+                    className='touch:hidden'
+                  />
                   <DialogPortal>
                     <DialogOverlay
                       className='bg-black-1000/25'
@@ -187,7 +190,10 @@ export function SimulatorProvider({ children }: { children: React.ReactNode }) {
                     />
                   </DialogPortal>
                 </Dialog>
-                <DialogCloseCross onClick={abortOrShowPrompt} />
+                <DialogCloseCross
+                  onClick={abortOrShowPrompt}
+                  className='ml-auto'
+                />
               </div>
 
               <AbortPrompt

@@ -267,8 +267,8 @@ export default function Simulator({
           )}
         </span>
         {status === 'ready' && (
-          <span className='absolute bottom-20 rounded-[.75rem] bg-black-100 px-10 py-6 font-kanit text-[1.25rem] text-secondary-20'>
-            <span className='hidden touch:inline'>
+          <span className='absolute bottom-20 mx-2 flex min-h-20 items-center rounded-[.75rem] bg-black-100 px-10 py-2 text-center font-kanit text-[1.25rem] text-secondary-20 sm:px-4'>
+            <span className='touch:inline hidden'>
               Tap on the cube to scramble it and start the preinspection
             </span>
             <span className='touch:hidden'>
@@ -277,7 +277,7 @@ export default function Simulator({
           </span>
         )}
         <div
-          className='h-[60%] outline-none [&>div]:flex'
+          className='aspect-square h-[60%] outline-none sm:h-auto sm:w-full sm:max-w-[34rem] [&>div]:flex'
           tabIndex={-1}
           ref={containerRef}
         ></div>
