@@ -75,4 +75,4 @@ jobs:
 
       - name: Deploy to Dokploy
         run: | 
-          curl --request GET '${{ secrets.DOKPLOY_WEBHOOK }}'
+          curl --fail-with-body --request GET '${{ secrets.DOKPLOY_WEBHOOK }}'
