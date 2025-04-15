@@ -91,7 +91,12 @@ function SolveAction({
 }) {
   if (result === null)
     return (
-      <PrimaryButton size='sm' onClick={onSolveInit} disabled={disabled}>
+      <PrimaryButton
+        size='sm'
+        onClick={onSolveInit}
+        disabled={disabled}
+        autoFocus
+      >
         Solve
       </PrimaryButton>
     )
@@ -117,6 +122,7 @@ function SolveAction({
         className='w-[5.25rem]'
         onClick={onSolveSubmit}
         disabled={disabled}
+        autoFocus
       >
         Submit
       </PrimaryButton>
