@@ -14,11 +14,11 @@
 - [x] toast adjust "single personal best" text
 - [x] rework logo homepage/landing link
 - [x] use node-cron 
-- [ ] make vendor/twisty a microservice 
+- [x] make vendor/twisty a microservice 
     - [x] scaffold the microservice
-    - [ ] connect it to staging
-    - [ ] connect it on prod
-    - [ ] add auth
+    - [x] connect it to staging
+    - [x] connect it on prod
+    - [x] add auth
 - [ ] boring stuff (cookies, privacy policy, etc)
 
 BEFORE RELEASE:
@@ -33,3 +33,4 @@ AFTER RELEASE:
     - [ ] on contest close
     - [ ] migration
 - [ ] abort solve on escape
+- [ ] make admins "capable" of everything
