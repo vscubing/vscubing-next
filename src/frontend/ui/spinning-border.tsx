@@ -21,7 +21,8 @@ export function SpinningBorder({
 }) {
   const { ref, ratio } = useSpinningBorderRatio()
 
-  if (!enabled) return children
+  if (!enabled)
+    return <Slot className='border-2 border-transparent'>{children}</Slot>
   return (
     <div
       style={
