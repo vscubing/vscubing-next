@@ -6,6 +6,9 @@ WORKDIR /app
 COPY package.json bun.lock ./
 RUN bun install --no-save --frozen-lockfile
 
+FROM base as base-with-curl
+RUN apt-get update && apt-get install curl -y
+
 # Stage 2: Build the application
 FROM base AS builder
 WORKDIR /app
@@ -14,7 +17,7 @@ COPY . .
 RUN bun run build
 
 # Stage 3: Production server
-FROM base AS runner
+FROM base-with-curl AS runner
 WORKDIR /app
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
@@ -22,7 +25,6 @@ COPY --from=builder /app/.next/static ./.next/static
 COPY scripts ./scripts
 COPY drizzle ./drizzle
 COPY drizzle.config.ts ./drizzle.config.ts
-RUN apt-get update && apt-get install curl -y
 
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
