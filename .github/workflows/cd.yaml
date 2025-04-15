@@ -41,6 +41,7 @@ jobs:
           TELEGRAM_CONTEST_MANAGEMENT_THREAD_ID=${{ secrets.TELEGRAM_CONTEST_MANAGEMENT_THREAD_ID }}
           CONTEST_CREATION_WEBHOOK_SECRET=${{ secrets.CONTEST_CREATION_WEBHOOK_SECRET }}
           TNOODLE_URL=${{ vars.TNOODLE_URL }}
+          TNOODLE_SECRET=${{ secrets.TNOODLE_SECRET }}
           EOF
 
       - name: Set Docker timestamp tag
