@@ -3,7 +3,7 @@ import dayjs from 'dayjs'
 import { eq, desc } from 'drizzle-orm'
 import { db } from '../db'
 import { contestTable, roundTable, scrambleTable } from '../db/schema'
-import { generateScrambles } from './generate-scrambles'
+// import { generateScrambles } from './generate-scrambles'
 import { env } from '@/env'
 import { posthogClient } from '../posthog'
 
@@ -93,9 +93,10 @@ export async function createNewContest({
     discipline: Discipline
   })[] = []
   for (const { id, discipline } of createdRounds) {
-    const scrambles = easyScrambles
-      ? generateEasyScrambles(7)
-      : await generateScrambles(discipline, 7)
+    const scrambles = generateEasyScrambles(7)
+    // const scrambles = easyScrambles
+    //   ? generateEasyScrambles(7)
+    //   : await generateScrambles(discipline, 7) // TODO:use vscubing-tnoodle here
     for (const [idx, scramble] of scrambles.entries()) {
       scrambleRows.push({
         roundId: id,

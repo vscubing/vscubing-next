@@ -20,8 +20,7 @@
     "lint:check": "next lint",
     "lint:write": "next lint --fix",
     "type:check": "tsc --noEmit",
-    "test": "bun test --timeout 10000",
-    "vendor": "./scripts/install-vendor.sh"
+    "test": "bun test"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",

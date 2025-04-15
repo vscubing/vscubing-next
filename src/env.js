@@ -19,7 +19,6 @@ export const env = createEnv({
     TELEGRAM_CHAT_ID: z.number(),
     TELEGRAM_CONTEST_MANAGEMENT_THREAD_ID: z.number(),
     CONTEST_CREATION_WEBHOOK_SECRET: z.string(),
-    CONTEST_CREATION_WEBHOOK_URL: z.string().url(),
   },
 
   /**
@@ -59,7 +58,6 @@ export const env = createEnv({
     ),
     CONTEST_CREATION_WEBHOOK_SECRET:
       process.env.CONTEST_CREATION_WEBHOOK_SECRET,
-    CONTEST_CREATION_WEBHOOK_URL: process.env.CONTEST_CREATION_WEBHOOK_URL,
     NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
   },
   /**
