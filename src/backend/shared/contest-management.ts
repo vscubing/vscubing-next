@@ -6,6 +6,7 @@ import { contestTable, roundTable, scrambleTable } from '../db/schema'
 // import { generateScrambles } from './generate-scrambles'
 import { env } from '@/env'
 import { posthogClient } from '../posthog'
+import { generateScrambles } from './generate-scrambles'
 
 const PREFIX = '[CONTEST_MANAGEMENT]'
 export const NO_ONGOING_CONTEST_ERROR_MESSAGE = `${PREFIX} no ongoing contest. Please create one manually from the developer tools`
@@ -93,10 +94,9 @@ export async function createNewContest({
     discipline: Discipline
   })[] = []
   for (const { id, discipline } of createdRounds) {
-    const scrambles = generateEasyScrambles(7)
-    // const scrambles = easyScrambles
-    //   ? generateEasyScrambles(7)
-    //   : await generateScrambles(discipline, 7) // TODO:use vscubing-tnoodle here
+    const scrambles = easyScrambles
+      ? generateEasyScrambles(7)
+      : await generateScrambles(discipline, 7)
     for (const [idx, scramble] of scrambles.entries()) {
       scrambleRows.push({
         roundId: id,
