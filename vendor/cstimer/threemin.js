@@ -4142,4 +4142,4 @@ var cancelRequestAnimFrame = (function () {
   )
 })()
 
-window.THREE = THREE
+export default THREE

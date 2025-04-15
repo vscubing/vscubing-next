@@ -53,6 +53,7 @@
     "dayjs": "^1.11.10",
     "drizzle-orm": "^0.41.0",
     "jotai": "^2.7.0",
+    "jquery": "^3.7.1",
     "next": "^15.3.0",
     "node-telegram-bot-api": "^0.66.0",
     "oslo": "^1.2.1",
