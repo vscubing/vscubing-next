@@ -19,6 +19,10 @@ export const env = createEnv({
     TELEGRAM_CHAT_ID: z.number(),
     TELEGRAM_CONTEST_MANAGEMENT_THREAD_ID: z.number(),
     CONTEST_CREATION_WEBHOOK_SECRET: z.string(),
+    TNOODLE_URL:
+      process.env.NEXT_PUBLIC_APP_ENV === 'development'
+        ? z.string().url().optional()
+        : z.string().url(),
   },
 
   /**
@@ -50,7 +54,6 @@ export const env = createEnv({
     AUTH_WCA_CLIENT_ID: process.env.AUTH_WCA_CLIENT_ID,
     AUTH_WCA_CLIENT_SECRET: process.env.AUTH_WCA_CLIENT_SECRET,
     AUTH_WCA_URL: process.env.AUTH_WCA_URL,
-    NEXT_PUBLIC_APP_ENV: process.env.NEXT_PUBLIC_APP_ENV,
     TELEGRAM_TOKEN: process.env.TELEGRAM_TOKEN,
     TELEGRAM_CHAT_ID: Number(process.env.TELEGRAM_CHAT_ID),
     TELEGRAM_CONTEST_MANAGEMENT_THREAD_ID: Number(
@@ -58,6 +61,8 @@ export const env = createEnv({
     ),
     CONTEST_CREATION_WEBHOOK_SECRET:
       process.env.CONTEST_CREATION_WEBHOOK_SECRET,
+    TNOODLE_URL: process.env.TNOODLE_URL,
+    NEXT_PUBLIC_APP_ENV: process.env.NEXT_PUBLIC_APP_ENV,
     NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
   },
   /**
