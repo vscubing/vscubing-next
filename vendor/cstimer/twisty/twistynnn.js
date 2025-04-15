@@ -1,10 +1,8 @@
-/* eslint-disable */
-// prettier-ignore
-
 // NOTE: taken from https://github.com/cs0x7f/cstimer/blob/0c649629be49b99804e2a3ce114502a576543ed9/src/js/twisty/twistynnn.js
 
-import '../threemin'
-import '../cubeutil.js'
+import cubeutil from '../cubeutil'
+import THREE from '../threemin'
+import twistyjs from './twisty'
 ;(function () {
   twistyjs.registerTwisty('cube', createCubeTwisty)
 

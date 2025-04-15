@@ -6,6 +6,9 @@ WORKDIR /app
 COPY package.json bun.lock ./
 RUN bun install --no-save --frozen-lockfile
 
+FROM base as base-with-curl
+RUN apt-get update && apt-get install curl -y
+
 # Stage 2: Build the application
 FROM base AS builder
 WORKDIR /app
@@ -14,7 +17,7 @@ COPY . .
 RUN bun run build
 
 # Stage 3: Production server
-FROM base AS runner
+FROM base-with-curl AS runner
 WORKDIR /app
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
@@ -29,4 +32,4 @@ ENV HOSTNAME="0.0.0.0"
 EXPOSE 3000
 
 # curl is necessary for swarm health checks
-CMD apt update && apt install curl unzip -y && bun run vendor && rm package.json && bun install drizzle-kit drizzle-orm postgres && bunx drizzle-kit migrate && node server.js
+CMD bun install drizzle-kit drizzle-orm postgres && bunx drizzle-kit migrate && node server.js

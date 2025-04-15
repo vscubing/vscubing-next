@@ -1,9 +1,9 @@
-/* eslint-disable */
-// prettier-ignore
+'use strict'
 
 // NOTE: taken from https://github.com/cs0x7f/cstimer/blob/0c649629be49b99804e2a3ce114502a576543ed9/src/js/twisty/twisty.js
 
-import '../threemin'
+import $ from 'jquery'
+import THREE from '../threemin'
 
 /*
  * twisty.js
@@ -12,8 +12,6 @@ import '../threemin'
  * Made classy by Jeremy Fleischman, October 7, 2011 during the flight to worlds
  *
  */
-;
-;('use strict')
 
 THREE.Ploy = function (points) {
   THREE.Geometry.call(this)
@@ -35,7 +33,7 @@ THREE.Ploy = function (points) {
 THREE.Ploy.prototype = new THREE.Geometry()
 THREE.Ploy.prototype.constructor = THREE.Ploy
 
-window.twistyjs = (function () {
+const twistyjs = (function () {
   /****************
    *
    * Twisty Plugins
@@ -617,3 +615,5 @@ window.twistyjs = (function () {
   }
   return twistyjs
 })()
+
+export default twistyjs

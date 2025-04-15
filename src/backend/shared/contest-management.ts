@@ -3,9 +3,10 @@ import dayjs from 'dayjs'
 import { eq, desc } from 'drizzle-orm'
 import { db } from '../db'
 import { contestTable, roundTable, scrambleTable } from '../db/schema'
-import { generateScrambles } from './generate-scrambles'
+// import { generateScrambles } from './generate-scrambles'
 import { env } from '@/env'
 import { posthogClient } from '../posthog'
+import { generateScrambles } from './generate-scrambles'
 
 const PREFIX = '[CONTEST_MANAGEMENT]'
 export const NO_ONGOING_CONTEST_ERROR_MESSAGE = `${PREFIX} no ongoing contest. Please create one manually from the developer tools`
@@ -168,6 +169,7 @@ export function getNextContestSlug(lastContestSlug: string) {
 }
 
 function generateEasyScrambles(count: number) {
+  console.log(`${PREFIX} generating easy scrambles...`)
   if (env.NEXT_PUBLIC_APP_ENV === 'production') {
     console.error('attempted to generate easy scrambles in production!')
     throw new Error('attempted to generate easy scrambles in production!')

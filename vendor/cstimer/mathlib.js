@@ -1,13 +1,10 @@
-/* eslint-disable */
-// prettier-ignore
-
 // NOTE: taken from https://github.com/cs0x7f/cstimer/blob/0c649629be49b99804e2a3ce114502a576543ed9/src/js/lib/mathlib.js
 
-"use strict";
+'use strict'
 
-import './mersennetwister'
+import MersenneTwisterObject from './mersennetwister'
 
-window.mathlib = (function () {
+const mathlib = (function () {
   var Cnk = [],
     fact = [1]
   for (var i = 0; i < 32; ++i) {
@@ -1984,3 +1981,5 @@ window.mathlib = (function () {
     setSeed: randGen.setSeed,
   }
 })()
+
+export default mathlib

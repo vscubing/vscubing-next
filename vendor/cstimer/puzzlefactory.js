@@ -2,8 +2,9 @@
 
 // NOTE: taken from https://github.com/cs0x7f/cstimer/blob/0c649629be49b99804e2a3ce114502a576543ed9/src/js/lib/puzzlefactory.js
 
-import './twisty/twisty'
+import twistyjs from './twisty/twisty'
 import './twisty/twistynnn'
+import $ from 'jquery'
 
 var twistyScene
 

@@ -14,8 +14,9 @@ This is a fullstack port of [@vscubing](https://github.com/vscubing) that is mea
     ```bash
     pg_restore -d $DATABASE_URL --no-owner path/to/backup.sql
     ```
-4. (Optional) Scramble generation relies on [tnoodle-cli](https://github.com/SpeedcuberOSS/tnoodle-cli). To be able to generate scrambles locally, you need to install it with `bun run vendor` first.
+<!-- 4. (Optional) Scramble generation relies on [tnoodle-cli](https://github.com/SpeedcuberOSS/tnoodle-cli). To be able to generate scrambles locally, you need to install it with `bun run vendor` first. --> <!-- TODO: update with vscubing-tnoodle -->
 5. Run the project: `bun run dev`
+<!-- TODO: vscubing-cron -->
 
 ## Deploying
 

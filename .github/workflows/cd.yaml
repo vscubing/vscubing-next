@@ -15,7 +15,7 @@ env:
 jobs:
   CD:
     environment: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
-    runs-on: blacksmith-2vcpu-ubuntu-2204
+    runs-on: blacksmith-8vcpu-ubuntu-2204
     permissions:
       contents: read
       packages: write
@@ -29,6 +29,7 @@ jobs:
           NEXT_PUBLIC_APP_ENV=${{ vars.NEXT_PUBLIC_APP_ENV }}
           NEXT_PUBLIC_POSTHOG_KEY=${{ vars.NEXT_PUBLIC_POSTHOG_KEY }}
           DATABASE_URL=${{ secrets.DATABASE_URL }}
+          GH_DOKPLOY_WEBHOOK_URL=${{ secrets.GH_DOKPLOY_WEBHOOK_URL }}
           AUTH_SECRET=${{ secrets.AUTH_SECRET }}
           AUTH_GOOGLE_CLIENT_ID=${{ secrets.AUTH_GOOGLE_CLIENT_ID }}
           AUTH_GOOGLE_CLIENT_SECRET=${{ secrets.AUTH_GOOGLE_CLIENT_SECRET }}
@@ -40,7 +41,8 @@ jobs:
           TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_CHAT_ID }}
           TELEGRAM_CONTEST_MANAGEMENT_THREAD_ID=${{ secrets.TELEGRAM_CONTEST_MANAGEMENT_THREAD_ID }}
           CONTEST_CREATION_WEBHOOK_SECRET=${{ secrets.CONTEST_CREATION_WEBHOOK_SECRET }}
-          CONTEST_CREATION_WEBHOOK_URL=${{ vars.CONTEST_CREATION_WEBHOOK_URL }}
+          TNOODLE_URL=${{ vars.TNOODLE_URL }}
+          TNOODLE_SECRET=${{ secrets.TNOODLE_SECRET }}
           EOF
 
       - name: Set Docker timestamp tag
@@ -64,7 +66,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v6
+        uses: useblacksmith/build-push-action@v1
         with:
           context: .
           push: true
@@ -74,4 +76,4 @@ jobs:
 
       - name: Deploy to Dokploy
         run: | 
-          curl --request GET '${{ secrets.DOKPLOY_WEBHOOK }}'
+          curl --fail-with-body --request GET '${{ secrets.GH_DOKPLOY_WEBHOOK_URL }}'

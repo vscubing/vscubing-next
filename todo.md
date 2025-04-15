@@ -14,8 +14,12 @@
 - [x] toast adjust "single personal best" text
 - [x] rework logo homepage/landing link
 - [x] use node-cron 
-- [ ] boring stuff (cookies, privacy policy, etc)
 - [ ] make vendor/twisty a microservice 
+    - [x] scaffold the microservice
+    - [ ] connect it to staging
+    - [ ] connect it on prod
+    - [ ] add auth
+- [ ] boring stuff (cookies, privacy policy, etc)
 
 BEFORE RELEASE:
 - [ ] new posthog project
@@ -28,3 +32,4 @@ AFTER RELEASE:
 - [ ] delete round sessions with no results & dnf round sessions with too little results
     - [ ] on contest close
     - [ ] migration
+- [ ] abort solve on escape

@@ -1,44 +1,12 @@
+import { env } from '@/env'
 import type { Discipline } from '@/types'
-import { tryCatch } from '@/utils/try-catch'
-import childProcess from 'child_process'
-import path from 'path'
-import { promisify } from 'util'
+import { z } from 'zod'
 
-const execFile = promisify(childProcess.execFile)
-export async function generateScrambles(
-  discipline: Discipline,
-  quantity: number,
-) {
-  const binaryPath = path.join(
-    process.cwd(),
-    'vendor',
-    'tnoodle-cli-1.1.1',
-    'bin',
-    'tnoodle',
+export async function generateScrambles(discipline: Discipline, count: number) {
+  if (!env.TNOODLE_URL) throw new Error('TNOODLE_URL missing in .env')
+  return await fetch(
+    `${env.TNOODLE_URL}?discipline=${discipline}&count=${count}&secret=${env.TNOODLE_SECRET}`,
   )
-  const { data, error } = await tryCatch(
-    execFile(binaryPath, [
-      'scramble',
-      '--puzzle',
-      TNOODLE_DISCIPLINE_MAP[discipline],
-      '--count',
-      String(quantity),
-    ]),
-  )
-  if (error) {
-    error.message = `[TNOODLE] ${error.message}`
-    throw error
-  }
-  if (typeof data.stdout !== 'string') throw new Error()
-  const scrambles = data.stdout.trim().split('\n')
-  if (scrambles.length !== quantity)
-    throw new Error(
-      `[TNOODLE] Something went wrong during the scramble generation. Expected ${quantity} scrambles, received ${scrambles.length}`,
-    )
-  return scrambles
+    .then((res) => res.json())
+    .then((json) => z.array(z.string()).length(count).parse(json))
 }
-
-const TNOODLE_DISCIPLINE_MAP: Record<Discipline, string> = {
-  '3by3': 'three',
-  '2by2': 'two',
-} as const

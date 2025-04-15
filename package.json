@@ -4,10 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "preview": "next build && next start",
-    "build": "next build",
-    "start": "next start",
+    "dev": "next dev --turbo",
+    "build": "next build --turbo",
+    "preview": "next build --turbo && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/ && bun .next/standalone/server.js",
     "db:migrate": "drizzle-kit migrate",
     "db:migrate-no-legacy": "./scripts/migrate-no-legacy.sh",
     "db:generate": "drizzle-kit generate",
@@ -21,8 +20,7 @@
     "lint:check": "next lint",
     "lint:write": "next lint --fix",
     "type:check": "tsc --noEmit",
-    "test": "bun test --timeout 10000",
-    "vendor": "./scripts/install-vendor.sh"
+    "test": "bun test"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
@@ -54,6 +52,7 @@
     "dayjs": "^1.11.10",
     "drizzle-orm": "^0.41.0",
     "jotai": "^2.7.0",
+    "jquery": "^3.7.1",
     "next": "^15.3.0",
     "node-telegram-bot-api": "^0.66.0",
     "oslo": "^1.2.1",

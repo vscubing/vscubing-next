@@ -5,9 +5,9 @@
 
 "use strict";
 
-import './mathlib'
+import mathlib from './mathlib'
 
-window.cubeutil = (function () {
+const cubeutil = (function () {
   function toEqus(facelet) {
     var col2equ = {}
     for (var i = 0; i < facelet.length; i++) {
@@ -530,3 +530,5 @@ window.cubeutil = (function () {
     getIdentData: getIdentData,
   }
 })()
+
+export default cubeutil

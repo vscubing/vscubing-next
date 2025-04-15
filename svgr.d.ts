@@ -1,4 +1,4 @@
-declare module '*.svg?inline' {
+declare module '*.icon.svg' {
   import { type FC, type SVGProps } from 'react'
   const content: FC<SVGProps<SVGElement>>
   export default content

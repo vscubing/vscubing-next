@@ -4,7 +4,7 @@ import {
   type TwistySimulatorMoveListener,
   type TwistySimulatorPuzzle,
   initTwistySimulator,
-} from '@/../vendor/cstimer'
+} from 'vendor/cstimer'
 import { type RefObject, useEffect, useState } from 'react'
 
 export type Move = (typeof MOVES)[number]
