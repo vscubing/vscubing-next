@@ -19,13 +19,14 @@
     - [x] connect it to staging
     - [x] connect it on prod
     - [x] add auth
-- [ ] solve on mobile
+- [x] solve on mobile
 - [ ] abort solve on escape
 - [ ] dnf all solves for admins
 - [ ] make admins "capable" of everything
 - [ ] boring stuff (cookies, privacy policy, etc)
 - [ ] devtools to skip session
 - [ ] see what we can do with redirect on discipline change between results/solve page
+- [ ] dev page with all solves
 
 BEFORE RELEASE:
 - [ ] new posthog project

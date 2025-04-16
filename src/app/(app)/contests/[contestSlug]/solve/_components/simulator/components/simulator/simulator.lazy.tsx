@@ -226,6 +226,9 @@ export default function Simulator({
       />
       <style>
         {`
+        body {
+          overscroll-behavior: none;
+        }
         .touchcube {
           position: absolute;
           text-align: center;
