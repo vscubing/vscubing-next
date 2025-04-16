@@ -15,7 +15,6 @@ import type { userSimulatorSettingsTable } from '@/backend/db/schema'
 import type { SimulatorCameraPosition } from 'vendor/cstimer'
 import { useIsTouchDevice } from '@/frontend/utils/use-media-query'
 import { cn } from '@/frontend/utils/cn'
-import './touchcube.css'
 
 export type InitSolveData = { scramble: string; discipline: string }
 
@@ -225,6 +224,36 @@ export default function Simulator({
         href='https://fonts.googleapis.com/css2?family=M+PLUS+1+Code&display=swap'
         rel='stylesheet'
       />
+      <style>
+        {`
+        body {
+          overscroll-behavior: none;
+        }
+        .touchcube {
+          position: absolute;
+          text-align: center;
+          user-select: none;
+        }
+        .touchcube tr td {
+          width: 33%;
+          height: 33%;
+        }
+        .touchcube.active {
+          background-color: #6666;
+          color: #fffa;
+        }
+        .touchcube.active td.touchto {
+          background-color: #0f0a;
+        }
+        .touchcube.active td.touchfrom {
+          background-color: #f00a;
+        }
+        .touchcube.board td {
+          border: 2px solid #6666;
+          border: 0.15rem solid #6666;
+        }
+        `}
+      </style>
       <div
         className='relative flex h-full items-center justify-center'
         onTouchStart={touchStartHandler}
