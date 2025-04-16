@@ -126,7 +126,7 @@ async function PageContent({
 
   return (
     <div className='flex-1 rounded-2xl bg-black-80'>
-      <div className='relative flex h-full flex-col pb-8 pt-7 xl-short:pb-6 xl-short:pt-4 sm:py-6'>
+      <div className='relative flex h-full flex-col pb-8 pt-7 xl-short:pb-6 xl-short:pt-4 sm:py-3'>
         <div className='absolute right-4 top-4 flex items-center gap-4 sm:right-2 sm:top-2'>
           <Dialog>
             <KeyMapDialogTrigger className='touch:hidden' />
@@ -142,7 +142,7 @@ async function PageContent({
           </SecondaryButton>
         </div>
 
-        <p className='title-h2 mb-6 text-center text-secondary-20'>
+        <p className='title-h2 mb-6 px-16 text-center text-secondary-20'>
           {getSplashText({ contestSlug, discipline })}
         </p>
 
