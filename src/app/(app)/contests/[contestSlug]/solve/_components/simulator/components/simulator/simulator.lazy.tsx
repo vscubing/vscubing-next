@@ -15,6 +15,7 @@ import type { userSimulatorSettingsTable } from '@/backend/db/schema'
 import type { SimulatorCameraPosition } from 'vendor/cstimer'
 import { useIsTouchDevice } from '@/frontend/utils/use-media-query'
 import { cn } from '@/frontend/utils/cn'
+import './touchcube.css'
 
 export type InitSolveData = { scramble: string; discipline: string }
 
