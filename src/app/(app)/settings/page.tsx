@@ -19,7 +19,7 @@ export default async function SettingsPage() {
     <>
       <NavigateBackButton />
       <LayoutHeaderTitlePortal>Simulator settings</LayoutHeaderTitlePortal>
-      <div className='flex h-full flex-col gap-6 rounded-2xl bg-black-80 p-6 sm:p-3'>
+      <div className='flex h-full flex-col gap-6 rounded-2xl bg-black-80 p-6 lg:p-4 sm:p-3'>
         <SettingsList initialData={initialData} />
         <WcaSignIn />
       </div>

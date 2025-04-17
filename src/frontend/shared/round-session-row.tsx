@@ -39,7 +39,7 @@ export function RoundSessionRow({
   session,
   ref,
   className,
-  podiumColors = true,
+  podiumColors = false,
   onPlaceClick,
 }: RoundSessionRowProps & { ref?: RefObject<HTMLLIElement | null> }) {
   return (
@@ -101,6 +101,7 @@ function RoundSessionRowTablet({
   withContestLink,
   place,
   discipline,
+  podiumColors,
   isFirstOnPage,
   className,
   onPlaceClick,
@@ -127,6 +128,7 @@ function RoundSessionRowTablet({
               <Accordion.Header className='flex w-full flex-1 items-center sm:grid sm:grid-flow-col sm:grid-cols-[min-content_1fr_min-content] sm:grid-rows-[repeat(2,min-content)] sm:gap-x-3 sm:gap-y-1'>
                 <PlaceLabel
                   onClick={onPlaceClick}
+                  podiumColors={podiumColors}
                   className={cn('mr-3 sm:mr-0', {
                     'cursor-pointer': onPlaceClick,
                   })}

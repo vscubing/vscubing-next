@@ -3,7 +3,7 @@ import type { ComponentPropsWithRef } from 'react'
 
 export function PlaceLabel({
   children: place,
-  podiumColors,
+  podiumColors = false,
   className,
   onClick,
   ...props
