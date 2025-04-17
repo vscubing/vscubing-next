@@ -28,6 +28,7 @@ type RoundSessionRowProps = {
   isFirstOnPage: boolean
   place: number
   className?: string
+  podiumColors?: boolean
   onPlaceClick?: () => void
 }
 export function RoundSessionRow({
@@ -38,6 +39,7 @@ export function RoundSessionRow({
   session,
   ref,
   className,
+  podiumColors = true,
   onPlaceClick,
 }: RoundSessionRowProps & { ref?: RefObject<HTMLLIElement | null> }) {
   return (
@@ -47,6 +49,7 @@ export function RoundSessionRow({
         discipline={discipline}
         isFirstOnPage={isFirstOnPage}
         withContestLink={withContestLink}
+        podiumColors={podiumColors}
         place={place}
         session={session}
         onPlaceClick={onPlaceClick}
@@ -56,6 +59,7 @@ export function RoundSessionRow({
         discipline={discipline}
         isFirstOnPage={isFirstOnPage}
         withContestLink={withContestLink}
+        podiumColors={podiumColors}
         place={place}
         session={session}
         onPlaceClick={onPlaceClick}
@@ -211,6 +215,7 @@ function RoundSessionRowDesktop({
   withContestLink,
   isFirstOnPage,
   discipline,
+  podiumColors,
   className,
   onPlaceClick,
 }: RoundSessionRowProps) {
@@ -233,6 +238,7 @@ function RoundSessionRowDesktop({
         >
           <PlaceLabel
             onClick={onPlaceClick}
+            podiumColors={podiumColors}
             className={cn('mr-3', { 'cursor-pointer': onPlaceClick })}
           >
             {place}

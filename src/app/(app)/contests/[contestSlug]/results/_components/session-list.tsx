@@ -69,6 +69,7 @@ export function SessionList({
             session={session}
             place={idx + 1}
             discipline={discipline}
+            podiumColors
             isFirstOnPage={false}
             className={cn('rounded-xl', {
               'sticky bottom-[-2px] top-[calc(var(--layout-section-header-height)-2px)] z-10':
