@@ -1,5 +1,6 @@
 BEFORE RELEASE:
-- [ ] autofocus extra textfield, send extra on ctrl enter
+- [x] own reconstruction - highlight
+- [x] autofocus extra textfield, send extra on ctrl enter
 - [ ] abort solve on escape
 - [ ] posthog cookies
 - [ ] persist solve method (touch/keyboard)
@@ -27,3 +28,6 @@ AFTER RELEASE:
 - [ ] devtools to skip session
 - [ ] dev page with all solves
 - [ ] complete the keymap
+- [ ] try using redirects for /ongoing, contest/slug/solve|results, type default discipline
+- [ ] you must first solve this round before viewing the solve
+- [ ] jwt or something as anticheat 
