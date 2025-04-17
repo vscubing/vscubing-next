@@ -9,6 +9,8 @@ import {
 import { useMatchesScreen } from '../frontend/utils/tailwind'
 import img500 from '@/../public/images/500.svg'
 import Layout from './(app)/layout'
+import { useEffect } from 'react'
+import * as Sentry from '@sentry/nextjs'
 
 export default function Error({
   error,
@@ -17,6 +19,10 @@ export default function Error({
   error: Error & { digest?: string }
   reset: () => void
 }) {
+  useEffect(() => {
+    Sentry.captureException(error)
+  }, [error])
+
   const isSmScreen = useMatchesScreen('sm')
 
   if (env.NEXT_PUBLIC_APP_ENV === 'development') {
