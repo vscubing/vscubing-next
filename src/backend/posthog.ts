@@ -6,5 +6,4 @@ export const posthogClient = new PostHog(env.NEXT_PUBLIC_POSTHOG_KEY, {
   flushAt: 1,
   flushInterval: 0,
   disabled: env.NEXT_PUBLIC_POSTHOG_KEY === 'DISABLED',
-  persistence: 'memory',
 })
