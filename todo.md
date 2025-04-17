@@ -12,7 +12,6 @@ BEFORE RELEASE:
 - [ ] fix setSimulatorSettings firing unnecessarily
 - [ ] figure out the annoying auth bug
 - [ ] new posthog project
-- [ ] setup sentry i guess (test with invalid move)
 
 AFTER RELEASE:
 - [ ] file for google auth verification
