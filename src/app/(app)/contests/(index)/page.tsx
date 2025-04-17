@@ -7,7 +7,7 @@ import {
   isDiscipline,
   type Discipline,
 } from '@/types'
-import { LayoutPageTitleMobile } from '@/frontend/shared/layout-page-title-mobile'
+import { LayoutPageTitleMobile } from '@/app/(app)/_layout/layout-page-title-mobile'
 import { NavigateBackButton } from '@/frontend/shared/navigate-back-button'
 import { redirect } from 'next/navigation'
 import { api } from '@/trpc/server'
@@ -84,7 +84,7 @@ async function PageContent({ discipline }: { discipline: Discipline }) {
 
 function ContestListShell({ children }: { children: ReactNode }) {
   return (
-    <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 sm:p-3'>
+    <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 lg:p-4 sm:p-3'>
       <div className='flex justify-between bg-black-80 pl-3 text-grey-40 sm:hidden'>
         <span className='mr-3'>Type</span>
         <span className='mr-8 flex-1'>Contest name</span>

@@ -49,7 +49,7 @@ export function Navbar({ variant }: NavbarProps) {
     return (
       <nav className='flex flex-col gap-4 sm:gap-0'>
         {getNavbarLinks(ongoingContest, devToolsEnabled).map(
-          ({ children, href, route, disabled }) => (
+          ({ icon, name, href, route, disabled }) => (
             <Link
               key={href ?? route}
               href={(href ?? route) as Route}
@@ -61,7 +61,7 @@ export function Navbar({ variant }: NavbarProps) {
                 }
               }}
               className={cn(
-                'title-h3 after-border-bottom transition-base outline-ring flex items-center gap-4 px-4 py-2 text-grey-20 after:origin-[0%_50%] after:bg-primary-80 hover:text-primary-60 active:text-primary-80 sm:gap-3 sm:p-3',
+                'title-h3 after-border-bottom transition-base outline-ring flex items-center gap-4 px-4 py-2 text-grey-20 after:origin-[0%_50%] after:bg-primary-80 hover:text-primary-60 active:text-primary-80 lg:justify-center sm:justify-normal sm:gap-3 sm:p-3',
                 {
                   'text-primary-80 after:h-[1.5px] after:scale-x-100 hover:text-primary-80':
                     activeRoute === route,
@@ -71,7 +71,8 @@ export function Navbar({ variant }: NavbarProps) {
               )}
               aria-disabled={disabled}
             >
-              {children}
+              {icon}
+              <span className='lg:sr-only sm:not-sr-only'>{name}</span>
             </Link>
           ),
         )}
@@ -83,7 +84,7 @@ export function Navbar({ variant }: NavbarProps) {
     return (
       <nav className='flex justify-between gap-2 overflow-y-auto px-1 py-2'>
         {getNavbarLinks(ongoingContest, devToolsEnabled).map(
-          ({ children, route, href, disabled }) => (
+          ({ icon, name, route, href, disabled }) => (
             <Link
               key={href ?? route}
               href={(href ?? route) as Route}
@@ -105,7 +106,8 @@ export function Navbar({ variant }: NavbarProps) {
               )}
               aria-disabled={disabled}
             >
-              {children}
+              {icon}
+              <span>{name}</span>
             </Link>
           ),
         )}
@@ -149,47 +151,32 @@ function getNavbarLinks(
   devToolsEnabled: boolean,
 ) {
   const links: {
-    children: ReactNode
+    icon: ReactNode
+    name: string
     route: NavbarRoute
     href?: string
     disabled?: boolean
   }[] = [
     {
-      children: (
-        <>
-          <DashboardIcon />
-          <span>Dashboard</span>
-        </>
-      ),
+      icon: <DashboardIcon />,
+      name: 'Dashboard',
       route: '/',
     },
     {
-      children: (
-        <>
-          <LeaderboardIcon />
-          <span>Leaderboard</span>
-        </>
-      ),
+      icon: <LeaderboardIcon />,
+      name: 'Leaderboard',
       route: '/leaderboard',
       href: `/leaderboard?discipline=${DEFAULT_DISCIPLINE}&type=single`,
     },
     {
-      children: (
-        <>
-          <AllContestsIcon />
-          <span>All contests</span>
-        </>
-      ),
+      icon: <AllContestsIcon />,
+      name: 'All contests',
       route: '/contests',
       href: `/contests?discipline=${DEFAULT_DISCIPLINE}`,
     },
     {
-      children: (
-        <>
-          <OngoingContestIcon />
-          <span>Ongoing contest</span>
-        </>
-      ),
+      icon: <OngoingContestIcon />,
+      name: 'Ongoing contest',
       route: '/contests/ongoing',
       href: getOngoingLink(ongoingContest),
       disabled: ongoingContest === null,
@@ -198,12 +185,8 @@ function getNavbarLinks(
 
   if (devToolsEnabled) {
     links.push({
-      children: (
-        <>
-          <CodeIcon />
-          <span>Developer tools</span>
-        </>
-      ),
+      icon: <CodeIcon />,
+      name: 'Developer tools',
       route: '/dev',
     })
   }

@@ -33,33 +33,33 @@ import {
   useSimulatorSettings,
   useSimulatorSettingsMutation,
 } from '@/app/(app)/settings'
-import { useEventListener } from 'usehooks-ts'
+import { useDebounceValue, useEventListener } from 'usehooks-ts'
 const Simulator = lazy(() => import('./simulator/simulator.lazy'))
 
 export function SimulatorProvider({ children }: { children: React.ReactNode }) {
   const { data: settings } = useSimulatorSettings()
   const { mutate: mutateSettings } = useSimulatorSettingsMutation()
 
-  // debounce cameraPosition
-  const [queuedCameraPosition, setQueuedCameraPosition] =
-    useState<SimulatorCameraPosition>()
+  const [debouncedCameraPosition, updateDebouncedCameraPosition] =
+    useDebounceValue<SimulatorCameraPosition | undefined>(undefined, 500)
+
   useEffect(() => {
-    if (!queuedCameraPosition) return
-    const timeout = setTimeout(
-      () =>
-        mutateSettings({
-          cameraPositionTheta: queuedCameraPosition.theta,
-          cameraPositionPhi: queuedCameraPosition.phi,
-        }),
-      500,
-    )
-    return () => clearTimeout(timeout)
-  }, [queuedCameraPosition, mutateSettings])
+    const noChanges =
+      debouncedCameraPosition?.theta === settings?.cameraPositionTheta &&
+      debouncedCameraPosition?.phi === settings?.cameraPositionPhi
+
+    if (!debouncedCameraPosition || noChanges) return
+    mutateSettings({
+      cameraPositionTheta: debouncedCameraPosition.theta,
+      cameraPositionPhi: debouncedCameraPosition.phi,
+    })
+  }, [debouncedCameraPosition, mutateSettings, settings])
+
   const cameraPosition = {
     cameraPositionTheta:
-      queuedCameraPosition?.theta ?? settings?.cameraPositionTheta ?? 0,
+      debouncedCameraPosition?.theta ?? settings?.cameraPositionTheta ?? 0,
     cameraPositionPhi:
-      queuedCameraPosition?.phi ?? settings?.cameraPositionPhi ?? 6,
+      debouncedCameraPosition?.phi ?? settings?.cameraPositionPhi ?? 6,
   }
 
   const [solveState, setSolveState] = useState<{
@@ -175,7 +175,7 @@ export function SimulatorProvider({ children }: { children: React.ReactNode }) {
                       inspectionVoiceAlert:
                         settings?.inspectionVoiceAlert ?? 'Male',
                     }}
-                    setCameraPosition={setQueuedCameraPosition}
+                    setCameraPosition={updateDebouncedCameraPosition}
                   />
                 )}
               </Suspense>

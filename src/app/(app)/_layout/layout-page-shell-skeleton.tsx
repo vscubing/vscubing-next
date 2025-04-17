@@ -1,7 +1,7 @@
 import { LoadingSpinner } from '@/frontend/ui'
 import { NavigateBackButton } from '@/frontend/shared/navigate-back-button'
 import { LayoutSectionHeader } from './layout-section-header'
-import { LayoutPageTitleMobileFallback } from '@/frontend/shared/layout-page-title-mobile'
+import { LayoutPageTitleMobileFallback } from '@/app/(app)/_layout/layout-page-title-mobile'
 
 export function LayoutPageShellSkeleton({
   spinner = false,
