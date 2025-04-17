@@ -260,7 +260,10 @@ export const contestRouter = createTRPCRouter({
           scramble: scrambleTable.moves,
           position: scrambleTable.position,
           solution: solveTable.solution,
-          username: userTable.name,
+          user: {
+            name: userTable.name,
+            id: userTable.id,
+          },
           timeMs: solveTable.timeMs,
           discipline: roundTable.disciplineSlug,
           roundSessionId: roundSessionTable.id,
@@ -287,6 +290,7 @@ export const contestRouter = createTRPCRouter({
         ...solve,
         solution: solve.solution, // reassign to make typescript infer non-nullability
         timeMs: solve.timeMs,
+        isOwn: solve.user.id === ctx.session?.user.id,
       }
     }),
 })

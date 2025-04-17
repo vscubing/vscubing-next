@@ -12,6 +12,9 @@ import { NavigateBackButton } from '@/frontend/shared/navigate-back-button'
 import { formatSolveTime } from '@/utils/format-solve-time'
 import Link from 'next/link'
 import { ShareSolveButton } from './_components/share-button'
+import { SpinningBorder } from '@/frontend/ui/spinning-border'
+import tailwindConfig from 'tailwind.config'
+import { cn } from '@/frontend/utils/cn'
 
 type PathParams = { contestSlug: string; solveId: string }
 export default async function WatchSolvePage({
@@ -59,9 +62,10 @@ async function PageContentWithShell({ solveId, contestSlug }: PathParams) {
       discipline={solve.discipline}
       roundSessionId={solve.roundSessionId}
       contestSlug={contestSlug}
-      username={solve.username}
+      username={solve.user.name}
       timeMs={solve.timeMs}
       scramblePosition={expandScramblePosition(solve.position)}
+      isOwn={solve.isOwn}
     >
       <TwistySection
         solution={solve.solution}
@@ -80,6 +84,7 @@ function PageShell({
   scramblePosition,
   contestSlug,
   roundSessionId,
+  isOwn,
   children,
 }: {
   discipline: Discipline
@@ -89,6 +94,7 @@ function PageShell({
   timeMs: number
   username: string
   children: ReactNode
+  isOwn?: boolean
 }) {
   return (
     <section className='flex flex-1 flex-col gap-3'>
@@ -109,13 +115,26 @@ function PageShell({
             <p className='text-large'>Scramble {scramblePosition}</p>
           </div>
         </LayoutSectionHeader>
-        <div className='flex items-center justify-between rounded-2xl bg-black-80 px-4 py-2'>
-          <div className='sm:min-h-14'>
-            <p className='title-h3 mb-1'>{username}</p>
-            <p className='text-large text-grey-20'>{formatSolveTime(timeMs)}</p>
+        <SpinningBorder
+          color={tailwindConfig.theme.colors.secondary[60]}
+          enabled={isOwn ?? false}
+          className='rounded-2xl'
+        >
+          <div
+            className={cn(
+              'flex h-full items-center justify-between rounded-2xl px-4 py-2',
+              isOwn ? 'bg-secondary-80' : 'bg-black-80',
+            )}
+          >
+            <div className='sm:min-h-14'>
+              <p className='title-h3 mb-1'>{username}</p>
+              <p className='text-large text-grey-20'>
+                {formatSolveTime(timeMs)}
+              </p>
+            </div>
+            <ShareSolveButton />
           </div>
-          <ShareSolveButton />
-        </div>
+        </SpinningBorder>
 
         {children}
       </div>
