@@ -26,10 +26,6 @@ jobs:
       - name: Install Dependencies
         run: bun install
 
-      - name: Copy .env.example files
-        shell: bash
-        run: find . -type f -name ".env.example" -exec sh -c 'cp "$1" "${1%.*}"' _ {} \;
-
       - name: Create next-env.d.ts
         run: echo -e '/// <reference types="next" />\n/// <reference types="next/image-types/global" />' > src/next-env.d.ts
 
@@ -42,4 +38,5 @@ jobs:
       - name: Lint check
         run: bun run lint:check
 
-# TODO: also run tests here
+      - name: Tests
+        run: bun run test
