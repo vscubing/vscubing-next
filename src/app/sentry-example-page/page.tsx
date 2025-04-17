@@ -3,9 +3,17 @@
 import Head from 'next/head'
 import * as Sentry from '@sentry/nextjs'
 import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useTRPC } from '@/trpc/react'
+import { notFound } from 'next/navigation'
 
 export default function Page() {
   const [hasSentError, setHasSentError] = useState(false)
+
+  const trpc = useTRPC()
+  const { data: isAdmin } = useQuery(trpc.admin.authorized.queryOptions())
+  if (isAdmin === undefined) return
+  if (isAdmin === false) return notFound()
 
   return (
     <div>
