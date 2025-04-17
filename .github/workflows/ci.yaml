@@ -13,6 +13,8 @@ concurrency:
 
 jobs:
   CI:
+    env:
+      SKIP_ENV_VALIDATION: TRUE
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
