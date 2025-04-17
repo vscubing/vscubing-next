@@ -67,6 +67,7 @@ async function PageContentWithShell({ solveId, contestSlug }: PathParams) {
         solution={solve.solution}
         scramble={solve.scramble}
         discipline={solve.discipline}
+        timeMs={solve.timeMs}
       />
     </PageShell>
   )
