@@ -21,7 +21,13 @@ export function AbortPrompt({
     <Dialog open={isVisible}>
       <DialogPortal>
         <DialogOverlay onClick={onCancel} />
-        <DialogContent onEscapeKeyDown={onCancel} aria-describedby={undefined}>
+        <DialogContent
+          onEscapeKeyDown={(e) => {
+            e.stopPropagation()
+            onCancel()
+          }}
+          aria-describedby={undefined}
+        >
           <DialogTitle>If you quit now your result will be DFNed</DialogTitle>
           <DialogFooter>
             <DialogClose version='secondary' onClick={onConfirm}>

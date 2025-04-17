@@ -31,6 +31,10 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_APP_ENV === 'development'
         ? z.string().optional()
         : z.string(),
+    DEV_ARTIFICIAL_DELAY:
+      process.env.NEXT_PUBLIC_APP_ENV === 'development'
+        ? z.literal('ENABLED').optional()
+        : z.undefined(),
   },
 
   /**
@@ -47,6 +51,7 @@ export const env = createEnv({
             message:
               'NEXT_PUBLIC_POSTHOG_KEY must contain the key in production or DISABLED otherwise',
           }),
+    NEXT_PUBLIC_SOLVE_SECRET: z.string(),
   },
 
   /**
@@ -55,6 +60,7 @@ export const env = createEnv({
    */
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
+    DEV_ARTIFICIAL_DELAY: process.env.DEV_ARTIFICIAL_DELAY,
     GH_DOKPLOY_WEBHOOK_URL: process.env.GH_DOKPLOY_WEBHOOK_URL,
     AUTH_SECRET: process.env.AUTH_SECRET,
     AUTH_GOOGLE_CLIENT_ID: process.env.AUTH_GOOGLE_CLIENT_ID,
@@ -74,6 +80,7 @@ export const env = createEnv({
     TNOODLE_SECRET: process.env.TNOODLE_SECRET,
     NEXT_PUBLIC_APP_ENV: process.env.NEXT_PUBLIC_APP_ENV,
     NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
+    NEXT_PUBLIC_SOLVE_SECRET: process.env.NEXT_PUBLIC_SOLVE_SECRET,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

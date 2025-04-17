@@ -8,13 +8,13 @@ import { Alg, LineComment } from '@vscubing/cubing/alg'
 import type { Discipline } from '@/types'
 import { formatSolveTime } from '@/utils/format-solve-time'
 import { removeSolutionComments } from '@/utils/remove-solution-comments'
+import { isRotation } from '@/utils/is-rotation'
 
 // TODO: simultaneous moves???
 export async function doEverything(
   scramble: string,
   solutionWithTimings: string,
   discipline: Discipline,
-  timeMs?: number,
 ): Promise<{ solution: Alg; animLeaves?: AnimationTimelineLeaf[] }> {
   const timestamps = parseTimestamps(solutionWithTimings)
 
@@ -23,7 +23,6 @@ export async function doEverything(
   const signaturesWithDurations = embedDurations(rawSignatures, timestamps)
 
   solution = annotateMoves(solution, signaturesWithDurations)
-  solution = appendTpsAndMovecount(solution, timeMs)
 
   if (!timestamps) {
     return { solution }
@@ -88,30 +87,6 @@ function annotateMoves(
     }
   })
   return new Alg(res)
-}
-
-function appendTpsAndMovecount(solution: Alg, timeMs?: number) {
-  if (!timeMs) return solution
-
-  const res = Array.from(solution.childAlgNodes())
-  const movecount = getMovecount(solution)
-  const timeSec = timeMs / 1000
-  const tps = (movecount / timeSec).toFixed(3)
-  res.push(
-    new LineComment(` TPS: ${tps} (${movecount} moves / ${timeSec} seconds)`),
-  )
-  res.push(new Newline())
-  return new Alg(res)
-}
-
-function getMovecount(solution: Alg) {
-  const moveNodes = Array.from(solution.childAlgNodes()).filter((node) =>
-    node.is(Move),
-  )
-
-  const solveStartIdx = moveNodes.findIndex((move) => !isRotation(move))
-
-  return moveNodes.length - solveStartIdx
 }
 
 function parseTimestamps(solutionWithTimestamps: string): number[] | undefined {
@@ -188,6 +163,3 @@ const ANALYZER_MAP: Record<Discipline, Analyzer> = {
 }
 
 const INSPECTION_SIGNATURE = 'Inspection'
-function isRotation(node: AlgNode): boolean {
-  return ['x', 'y', 'z'].includes(node.toString()[0]!)
-}

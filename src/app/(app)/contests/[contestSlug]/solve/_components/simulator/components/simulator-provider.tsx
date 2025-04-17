@@ -33,6 +33,7 @@ import {
   useSimulatorSettings,
   useSimulatorSettingsMutation,
 } from '@/app/(app)/settings'
+import { useEventListener } from 'usehooks-ts'
 const Simulator = lazy(() => import('./simulator/simulator.lazy'))
 
 export function SimulatorProvider({ children }: { children: React.ReactNode }) {
@@ -73,6 +74,7 @@ export function SimulatorProvider({ children }: { children: React.ReactNode }) {
       initSolveData: InitSolveData,
       solveCallback: SimulatorSolveFinishCallback,
     ) => {
+      setIsAbortPromptVisible(false)
       setSolveState({
         initSolveData,
         solveCallback,
@@ -132,6 +134,11 @@ export function SimulatorProvider({ children }: { children: React.ReactNode }) {
   )
 
   const isModalOpen = !!solveState
+
+  useEventListener('keydown', (e) => {
+    if (isModalOpen && e.key === 'Escape') abortOrShowPrompt()
+  })
+
   return (
     <>
       <DialogPrimitive.Root open={isModalOpen}>

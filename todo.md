@@ -1,44 +1,22 @@
-- [x] posthog analytics
-- [x] stop using NODE_ENV
-- [x] pb
-- [x] DNF avg in contest leaderboard
-- [x] refactor getPersonalBestSubquery
-- [x] avg leaderboard
-- [x] fancy white glowing outline effect on own result / after jumping to a solve
-- [x] make contest row height same as other rows
-- [x] add indexes for timeMs and avgMs
-- [x] fix scroll and glow
-- [x] admin on prod
-    - [x] implement
-    - [x] are you ABSOLUTELY SURE?
-- [x] toast adjust "single personal best" text
-- [x] rework logo homepage/landing link
-- [x] use node-cron 
-- [x] make vendor/twisty a microservice 
-    - [x] scaffold the microservice
-    - [x] connect it to staging
-    - [x] connect it on prod
-    - [x] add auth
-- [x] solve on mobile
-- [ ] abort solve on escape
-- [ ] autofocus extra textfield, send extra on ctrl enter
-- [ ] fix setSimulatorSettings firing unnecessarily
-- [ ] make admins "capable" of everything
-- [ ] boring stuff (cookies, privacy policy, etc)
-- [ ] devtools to skip session
-- [ ] see what we can do with redirect on discipline change between results/solve page
-- [ ] dev page with all solves
+BEFORE RELEASE:
+- [x] own reconstruction - highlight
+- [x] autofocus extra textfield, send extra on ctrl enter
+- [x] abort solve on escape
+- [x] disable posthog cookies
+- [x] jwt or something as anticheat 
+- [ ] move TPS to time solve time on /watch
 - [ ] persist solve method (touch/keyboard)
 - [ ] update readme.md
-- [ ] complete the keymap
 - [ ] license
-
-BEFORE RELEASE:
+- [ ] add db ping in the health check
+- [ ] setup sentry i guess (test with invalid move)
+- [ ] fix setSimulatorSettings firing unnecessarily
 - [ ] figure out the annoying auth bug
 - [ ] new posthog project
 - [ ] setup sentry i guess (test with invalid move)
 
 AFTER RELEASE:
+- [ ] file for google auth verification
 - [ ] include ongoing in leaderboard if capabilities=view_results
 - [ ] average personal best toast & avg 
 - [ ] fix discipline: string everywhere
@@ -46,3 +24,12 @@ AFTER RELEASE:
 - [ ] delete round sessions with no results & dnf round sessions with too little results
     - [ ] on contest close
     - [ ] migration
+- [ ] add "amount of solves so far" 
+- [ ] see what we can do with redirect on discipline change between results/solve page
+- [ ] make admins "capable" of everything
+- [ ] boring stuff (posthog cookies, privacy policy, etc)
+- [ ] devtools to skip session
+- [ ] dev page with all solves
+- [ ] complete the keymap
+- [ ] try using redirects for /ongoing, contest/slug/solve|results, type default discipline
+- [ ] you must first solve this round before viewing the solve

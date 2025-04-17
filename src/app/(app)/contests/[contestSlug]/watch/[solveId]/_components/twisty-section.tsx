@@ -20,18 +20,15 @@ export function TwistySection({
   scramble,
   solution,
   discipline,
-  timeMs,
 }: {
   solution: string
   scramble: string
   discipline: Discipline
-  timeMs: number
 }) {
   const player = useTwistyPlayer({
     solution,
     scramble,
     discipline,
-    timeMs,
   })
   if (!player) return null
 

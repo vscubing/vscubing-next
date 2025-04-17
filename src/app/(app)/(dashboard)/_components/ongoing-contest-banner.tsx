@@ -48,7 +48,7 @@ function BannerContent({
             className,
           )}
         >
-          <p className='title-h3 text-center'>Type</p>
+          <p className='title-h3 text-center'>Events</p>
           <Disciplines ongoing={ongoing} />
         </div>
         <Divider className='absolute -right-32 top-0 h-full w-36' />

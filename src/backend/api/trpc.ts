@@ -14,8 +14,8 @@ import { ZodError } from 'zod'
 import { auth } from '@/backend/auth'
 import { db } from '@/backend/db'
 import { posthogClient } from '../posthog'
-import { env } from 'process'
 import type { User } from '@/types'
+import { env } from '@/env'
 
 /**
  * 1. CONTEXT
@@ -91,9 +91,8 @@ export const createTRPCRouter = t.router
 const timingMiddleware = t.middleware(async ({ next, path }) => {
   const start = Date.now()
 
-  if (t._config.isDev) {
-    // artificial delay in dev
-    const waitMs = Math.floor(Math.random() * 400) + 200
+  if (env.DEV_ARTIFICIAL_DELAY === 'ENABLED') {
+    const waitMs = Math.floor(Math.random() * 400) + 500
     await new Promise((resolve) => setTimeout(resolve, waitMs))
   }
 
