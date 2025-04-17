@@ -13,10 +13,10 @@ export const env = createEnv({
         ? z.undefined()
         : z.string().url(),
     SENTRY_AUTH_TOKEN:
-      process.env.NEXT_PUBLIC_APP_ENV === 'development'
+      process.env.SENTRY_AUTH_TOKEN === 'development'
         ? z.literal('DISABLED', {
             message:
-              'NEXT_PUBLIC_APP_ENV must be DISABLED in development or set otherwise',
+              'SENTRY_AUTH_TOKEN must be DISABLED in development or set otherwise',
           })
         : z.string().refine((val) => val !== 'DISABLED'),
     AUTH_SECRET: z.string(),
