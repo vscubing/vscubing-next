@@ -16,6 +16,7 @@ import { useLocalStorage } from 'usehooks-ts'
 import { toast, type Toast } from '@/frontend/ui'
 import { TRPCError } from '@trpc/server'
 import { SolveTimeLinkOrDnf } from '@/frontend/shared/solve-time-button'
+import { signSolve } from '@/utils/solve-signature'
 
 export function SolveContestForm({
   contestSlug,
@@ -83,15 +84,16 @@ export function SolveContestForm({
   const { initSolve } = useSimulator()
 
   function handleInitSolve() {
-    if (!state) throw new Error('handleInitSolve called with no round state')
-    initSolve({ discipline, scramble: state.currentScramble.moves }, (solve) =>
-      postSolveResult({
-        result: solve.result,
-        solution: solve.solution,
-        scrambleId: state.currentScramble.id,
-        contestSlug,
-        discipline,
-      }),
+    initSolve(
+      { discipline, scramble: state.currentScramble.moves },
+      (solve) => {
+        return postSolveResult({
+          solve: signSolve(solve),
+          scrambleId: state.currentScramble.id,
+          contestSlug,
+          discipline,
+        })
+      },
     )
   }
 
@@ -100,7 +102,6 @@ export function SolveContestForm({
       | { type: 'changed_to_extra'; reason: string }
       | { type: 'submitted' },
   ) {
-    if (!state) throw new Error('handleSubmitSolve called with no round state')
     submitSolve({
       contestSlug,
       discipline,
@@ -211,7 +212,7 @@ export function SolveContestForm({
 const SOLVE_REJECTED_TOAST = {
   title: 'Uh-oh! Solve rejected by the server',
   description:
-    "Under normal circumstances this shouldn't happen, but the solution didn't match the scramble for some reason. Feel free to take an extra.",
+    "Under normal circumstances this shouldn't happen. Feel free to take an extra.",
   duration: 'infinite',
   contactUsButton: true,
 } satisfies Toast

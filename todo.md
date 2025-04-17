@@ -3,7 +3,8 @@ BEFORE RELEASE:
 - [x] autofocus extra textfield, send extra on ctrl enter
 - [x] abort solve on escape
 - [x] disable posthog cookies
-- [ ] jwt or something as anticheat 
+- [x] jwt or something as anticheat 
+- [ ] move TPS to time solve time on /watch
 - [ ] persist solve method (touch/keyboard)
 - [ ] update readme.md
 - [ ] license

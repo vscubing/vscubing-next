@@ -17,6 +17,7 @@ import { getContestUserCapabilities } from '../../shared/get-contest-user-capabi
 import { removeSolutionComments } from '@/utils/remove-solution-comments'
 import { getPersonalBestSolveSubquery } from '@/backend/shared/personal-best-subquery'
 import type { db } from '@/backend/db'
+import { decodeSolve } from '@/utils/solve-signature'
 
 const EXTRAS_PER_ROUND = 2
 const ROUND_ATTEMPTS_QTY = 5
@@ -188,12 +189,19 @@ export const roundSessionRouter = createTRPCRouter({
   postSolve: roundSessionAuthProcedure
     .input(
       z.object({
-        result: resultDnfish,
-        solution: z.string(),
+        solve: z.string(),
         scrambleId: z.number(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const { solve: payload, signatureMatches } = decodeSolve(input.solve)
+      if (!signatureMatches)
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message:
+            'You are probably trying to do something nasty, please stop.',
+        })
+
       const [scramble] = await ctx.db
         .select({
           moves: scrambleTable.moves,
@@ -204,18 +212,18 @@ export const roundSessionRouter = createTRPCRouter({
         .where(eq(scrambleTable.id, input.scrambleId))
       if (!scramble) throw new TRPCError({ code: 'NOT_FOUND' })
 
-      let isDnf = input.result.isDnf
+      let isDnf = payload.result.isDnf
       let isValid = true
 
       if (!isDnf) {
         const { isValid: _isValid, error } = await validateSolve({
           discipline: scramble.discipline,
           scramble: scramble.moves,
-          solution: removeSolutionComments(input.solution),
+          solution: removeSolutionComments(payload.solution),
         })
         if (error || !_isValid) {
           console.error(
-            `[SOLVE] invalid solve: ${JSON.stringify(scramble)}\n ${JSON.stringify(input.solution)}\n ${JSON.stringify(error)}`,
+            `[SOLVE] invalid solve: ${JSON.stringify(scramble)}\n ${JSON.stringify(payload.solution)}\n ${JSON.stringify(error)}`,
           )
           isValid = false
           isDnf = true
@@ -232,8 +240,8 @@ export const roundSessionRouter = createTRPCRouter({
         activePersonalBest?.timeMs &&
         !isDnf &&
         isValid &&
-        input.result.timeMs &&
-        input.result.timeMs < activePersonalBest.timeMs
+        payload.result.timeMs &&
+        payload.result.timeMs < activePersonalBest.timeMs
       )
 
       const [solve] = await ctx.db
@@ -241,8 +249,8 @@ export const roundSessionRouter = createTRPCRouter({
         .values({
           roundSessionId: ctx.roundSession.id,
           isDnf,
-          timeMs: input.result.timeMs,
-          solution: input.solution,
+          timeMs: payload.result.timeMs,
+          solution: payload.solution,
           status: 'pending',
           scrambleId: input.scrambleId,
         })
@@ -255,7 +263,7 @@ export const roundSessionRouter = createTRPCRouter({
         distinctId: ctx.session.user.id,
         properties: {
           isValid,
-          timeMs: input.result.timeMs,
+          timeMs: payload.result.timeMs,
           isDnf,
           id: solve.id,
         },
