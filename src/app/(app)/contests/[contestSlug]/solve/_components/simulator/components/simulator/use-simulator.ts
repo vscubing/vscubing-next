@@ -130,6 +130,7 @@ const SIMULATOR_DISCIPLINES_MAP = {
 function parseCstimerMove(moveCstimer: string): Move {
   const move = moveCstimer
     .replace(/@(\d+)/g, '/*$1*/')
+    .replace(/2-2Rw2/g, 'M2')
     .replace(/2-2Lw|2-2Rw'/g, 'M')
     .replace(/2-2Rw/g, "M'")
     .replace(/2-2Fw/g, 'S')
