@@ -7,6 +7,7 @@ import { cn } from '../frontend/utils/cn'
 import { env } from '@/env'
 import { PostHogProvider } from '../frontend/post-hog-provider'
 import { TRPCReactProvider } from '@/trpc/react'
+import { TooltipProvider } from '@/frontend/ui/tooltip'
 
 export const metadata: Metadata = {
   title: 'vscubing',
@@ -41,7 +42,9 @@ export default async function RootLayout({
     <html lang='en' className={cn(hind.className, kanit.className)}>
       <body>
         <TRPCReactProvider>
-          <PostHogProvider>{children}</PostHogProvider>
+          <TooltipProvider delayDuration={0}>
+            <PostHogProvider>{children}</PostHogProvider>
+          </TooltipProvider>
         </TRPCReactProvider>
       </body>
     </html>
