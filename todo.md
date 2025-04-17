@@ -4,9 +4,8 @@ BEFORE RELEASE:
 - [x] abort solve on escape
 - [x] disable posthog cookies
 - [x] jwt or something as anticheat 
-- [ ] move TPS to time solve time on /watch
-- [ ] persist solve method (touch/keyboard)
-- [ ] update readme.md
+- [x] move TPS to time solve time on /watch
+- [x] update readme.md
 - [ ] license
 - [ ] add db ping in the health check
 - [ ] setup sentry i guess (test with invalid move)

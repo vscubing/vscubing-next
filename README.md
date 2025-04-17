@@ -8,19 +8,19 @@ This is a fullstack port of [@vscubing](https://github.com/vscubing) that is mea
 
 ### Local setup
 
-1. Add environment variables to `.env` (use `.env.example`, some of the variables are already set there)
+1. Add environment variables to `.env` (see `.env.example`)
 2. You need a local DB to run the project locally. Run `bun run db:local` to create a docker container for it. This script automatically sources `.env`. Make sure to have started a docker daemon, e.g. `Docker Desktop`. After spinning up a local database you can run `bun run db:migrate-no-legacy` for the initial migrations.
 3. (Optional) Alternatively you can migrate with `bun run db:migrate`, but you would have to import a database backup first:
     ```bash
     pg_restore -d $DATABASE_URL --no-owner path/to/backup.sql
     ```
-<!-- 4. (Optional) Scramble generation relies on [tnoodle-cli](https://github.com/SpeedcuberOSS/tnoodle-cli). To be able to generate scrambles locally, you need to install it with `bun run vendor` first. --> <!-- TODO: update with vscubing-tnoodle -->
+4. (Optional) [vscubing/vscubing-tnoodle](https://github.com/vscubing/vscubing-tnoodle) is required for scramble generation. Alternatively, you could opt into "easy scrambles" on scramble creation
+4. (Optional) [vscubing/vscubing-cron](https://github.com/vscubing/vscubing-cron) is required for cron jobs (e.g. scheduled contest creation).
 5. Run the project: `bun run dev`
-<!-- TODO: vscubing-cron -->
 
 ## Deploying
 
-We deploy on a `DigitalOcean` Droplet with `Dokploy`. 
+The application is hosted on a `DigitalOcean` Droplet with `Dokploy`. 
 
 ### Environments
 
@@ -29,11 +29,14 @@ We deploy on a `DigitalOcean` Droplet with `Dokploy`.
         + new contests are automatically published weekly via `./github/workflows/contest-management.yaml`
     * postgres db
         + S3 backups (daily)
+    * [vscubing/vscubing-tnoodle](https://github.com/vscubing/vscubing-tnoodle)
+    * [vscubing/vscubing-cron](https://github.com/vscubing/vscubing-cron)
+
 - staging: deployed from `dev`
     * Next.js app
     * postgres db
+    * [vscubing/vscubing-tnoodle](https://github.com/vscubing/vscubing-tnoodle)
 
 ### Notes
 
 - apparently, ghcr.io doesn't support fine-grained access tokens, so you have to create a "Classic" token 
-- post-deployment: `bun run db:migrate && bun run start`
