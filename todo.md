@@ -6,8 +6,8 @@ BEFORE RELEASE:
 - [x] jwt or something as anticheat 
 - [x] move TPS to time solve time on /watch
 - [x] update readme.md
-- [ ] license
-- [ ] add db ping in the health check
+- [x] license
+- [x] add db ping in the health check
 - [ ] setup sentry i guess (test with invalid move)
 - [ ] fix setSimulatorSettings firing unnecessarily
 - [ ] figure out the annoying auth bug
