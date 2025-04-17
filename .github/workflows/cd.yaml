@@ -29,6 +29,7 @@ jobs:
           NEXT_PUBLIC_APP_ENV=${{ vars.NEXT_PUBLIC_APP_ENV }}
           NEXT_PUBLIC_POSTHOG_KEY=${{ vars.NEXT_PUBLIC_POSTHOG_KEY }}
           NEXT_PUBLIC_SOLVE_SECRET=${{ vars.NEXT_PUBLIC_SOLVE_SECRET }}
+          SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
           DATABASE_URL=${{ secrets.DATABASE_URL }}
           GH_DOKPLOY_WEBHOOK_URL=${{ secrets.GH_DOKPLOY_WEBHOOK_URL }}
           AUTH_SECRET=${{ secrets.AUTH_SECRET }}
