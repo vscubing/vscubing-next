@@ -19,12 +19,29 @@
     - [x] connect it to staging
     - [x] connect it on prod
     - [x] add auth
-- [ ] boring stuff (cookies, privacy policy, etc)
+- [x] solve on mobile
+- [ ] abort solve on escape
+- [ ] autofocus extra textfield, send extra on ctrl enter
+- [ ] fix setSimulatorSettings firing unnecessarily
+- [ ] make admins "capable" of everything
+- [ ] boring stuff (posthog cookies, privacy policy, etc)
+- [ ] devtools to skip session
+- [ ] see what we can do with redirect on discipline change between results/solve page
+- [ ] dev page with all solves
+- [ ] persist solve method (touch/keyboard)
+- [ ] update readme.md
+- [ ] complete the keymap
+- [ ] license
+- [ ] add db ping in the health check
+- [ ] setup sentry i guess (test with invalid move)
+- [ ] add "amount of solves so far" 
 
 BEFORE RELEASE:
+- [ ] figure out the annoying auth bug
 - [ ] new posthog project
 
 AFTER RELEASE:
+- [ ] file for google auth verification
 - [ ] include ongoing in leaderboard if capabilities=view_results
 - [ ] average personal best toast & avg 
 - [ ] fix discipline: string everywhere
@@ -32,5 +49,3 @@ AFTER RELEASE:
 - [ ] delete round sessions with no results & dnf round sessions with too little results
     - [ ] on contest close
     - [ ] migration
-- [ ] abort solve on escape
-- [ ] make admins "capable" of everything
