@@ -15,6 +15,10 @@ import { ShareSolveButton } from './_components/share-button'
 import { SpinningBorder } from '@/frontend/ui/spinning-border'
 import tailwindConfig from 'tailwind.config'
 import { cn } from '@/frontend/utils/cn'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/frontend/ui/tooltip'
+import { Alg } from '@vscubing/cubing/alg'
+import { isRotation } from '@/utils/is-rotation'
+import { removeSolutionComments } from '@/utils/remove-solution-comments'
 
 type PathParams = { contestSlug: string; solveId: string }
 export default async function WatchSolvePage({
@@ -34,7 +38,6 @@ export default async function WatchSolvePage({
           discipline={castDiscipline(discipline)}
           contestSlug={contestSlug}
           username='...'
-          timeMs={0}
           scramblePosition='...'
         >
           <div className='col-span-full flex items-center justify-center rounded-2xl bg-black-80'>
@@ -66,12 +69,12 @@ async function PageContentWithShell({ solveId, contestSlug }: PathParams) {
       timeMs={solve.timeMs}
       scramblePosition={expandScramblePosition(solve.position)}
       isOwn={solve.isOwn}
+      solution={solve.solution}
     >
       <TwistySection
         solution={solve.solution}
         scramble={solve.scramble}
         discipline={solve.discipline}
-        timeMs={solve.timeMs}
       />
     </PageShell>
   )
@@ -85,13 +88,15 @@ function PageShell({
   contestSlug,
   roundSessionId,
   isOwn,
+  solution,
   children,
 }: {
   discipline: Discipline
   contestSlug: string
   roundSessionId?: number
   scramblePosition: string
-  timeMs: number
+  timeMs?: number
+  solution?: string
   username: string
   children: ReactNode
   isOwn?: boolean
@@ -129,7 +134,10 @@ function PageShell({
             <div className='sm:min-h-14'>
               <p className='title-h3 mb-1'>{username}</p>
               <p className='text-large text-grey-20'>
-                {formatSolveTime(timeMs)}
+                {formatSolveTime(timeMs ?? 0)}{' '}
+                <span className='text-grey-40'>
+                  / <SolveTPS solution={solution} timeMs={timeMs} />
+                </span>
               </p>
             </div>
             <ShareSolveButton />
@@ -139,6 +147,33 @@ function PageShell({
         {children}
       </div>
     </section>
+  )
+}
+
+function SolveTPS({
+  solution,
+  timeMs,
+}: {
+  solution?: string
+  timeMs?: number
+}) {
+  if (!timeMs || !solution) return
+
+  const timeSeconds = timeMs / 1000
+  const turnCount = Array.from(
+    new Alg(removeSolutionComments(solution)).childAlgNodes(),
+  ).filter((node) => !isRotation(node)).length
+  const tps = (turnCount / timeSeconds).toFixed(3)
+
+  return (
+    <>
+      <Tooltip>
+        <TooltipTrigger>{tps} TPS</TooltipTrigger>
+        <TooltipContent>
+          {turnCount} turns / {timeSeconds.toFixed(3)} seconds
+        </TooltipContent>
+      </Tooltip>
+    </>
   )
 }
 
