@@ -20,7 +20,7 @@ export function Contest({ contest, discipline, className }: ContestProps) {
     >
       <div
         className={cn(
-          'flex min-h-16 items-center justify-between gap-8 rounded-xl bg-grey-100 pl-4',
+          'flex h-16 items-center justify-between gap-8 rounded-xl bg-grey-100 pl-4',
           contest.isOngoing ? 'bg-secondary-80' : 'bg-grey-100',
           className,
         )}

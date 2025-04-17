@@ -94,12 +94,12 @@ function SolveRow({ solve, isFirstOnPage }: SolveProps) {
       >
         <div
           className={cn(
-            'rounded-xl',
+            'flex h-16 rounded-xl',
             solve.isOwn ? 'bg-secondary-80' : 'bg-grey-100',
           )}
         >
           <div
-            className={cn('flex items-center rounded-xl pl-3', {
+            className={cn('flex w-full items-center rounded-xl pl-3', {
               'bg-secondary-80': solve.isOwn,
             })}
           >
