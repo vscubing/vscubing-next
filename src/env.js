@@ -31,6 +31,10 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_APP_ENV === 'development'
         ? z.string().optional()
         : z.string(),
+    DEV_ARTIFICIAL_DELAY:
+      process.env.NEXT_PUBLIC_APP_ENV === 'development'
+        ? z.literal('ENABLED').optional()
+        : z.undefined(),
   },
 
   /**
@@ -55,6 +59,7 @@ export const env = createEnv({
    */
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
+    DEV_ARTIFICIAL_DELAY: process.env.DEV_ARTIFICIAL_DELAY,
     GH_DOKPLOY_WEBHOOK_URL: process.env.GH_DOKPLOY_WEBHOOK_URL,
     AUTH_SECRET: process.env.AUTH_SECRET,
     AUTH_GOOGLE_CLIENT_ID: process.env.AUTH_GOOGLE_CLIENT_ID,
