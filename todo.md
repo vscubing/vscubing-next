@@ -21,15 +21,22 @@
     - [x] add auth
 - [x] solve on mobile
 - [ ] abort solve on escape
-- [ ] dnf all solves for admins
+- [ ] autofocus extra textfield, send extra on ctrl enter
+- [ ] fix setSimulatorSettings firing unnecessarily
 - [ ] make admins "capable" of everything
 - [ ] boring stuff (cookies, privacy policy, etc)
 - [ ] devtools to skip session
 - [ ] see what we can do with redirect on discipline change between results/solve page
 - [ ] dev page with all solves
+- [ ] persist solve method (touch/keyboard)
+- [ ] update readme.md
+- [ ] complete the keymap
+- [ ] license
 
 BEFORE RELEASE:
+- [ ] figure out the annoying auth bug
 - [ ] new posthog project
+- [ ] setup sentry i guess (test with invalid move)
 
 AFTER RELEASE:
 - [ ] include ongoing in leaderboard if capabilities=view_results
