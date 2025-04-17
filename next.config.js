@@ -29,15 +29,15 @@ const config = {
     return [
       {
         source: '/ingest/static/:path*',
-        destination: 'https://google.com',
+        destination: 'https://eu-assets.i.posthog.com/static/:path*',
       },
       {
         source: '/ingest/:path*',
-        destination: 'https://facebook.com',
+        destination: 'https://eu.i.posthog.com/:path*',
       },
       {
         source: '/ingest/decide',
-        destination: 'https://instagram.com',
+        destination: 'https://eu.i.posthog.com/decide',
       },
     ]
   },
