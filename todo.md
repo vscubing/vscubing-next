@@ -9,6 +9,9 @@ BEFORE RELEASE:
 - [x] license
 - [x] add db ping in the health check
 - [x] fix setSimulatorSettings firing unnecessarily
+- [ ] fix discipline: string everywhere
+- [ ] skip preinspection
+- [ ] wca auth
 - [ ] figure out the annoying auth bug
 - [ ] new posthog project
 
@@ -16,7 +19,6 @@ AFTER RELEASE:
 - [ ] file for google auth verification
 - [ ] include ongoing in leaderboard if capabilities=view_results
 - [ ] average personal best toast & avg 
-- [ ] fix discipline: string everywhere
 - [ ] skip inspection by default and play the solve automatically
 - [ ] delete round sessions with no results & dnf round sessions with too little results
     - [ ] on contest close
