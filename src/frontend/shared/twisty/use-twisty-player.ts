@@ -7,10 +7,12 @@ export function useTwistyPlayer({
   scramble,
   solution: rawSolution,
   discipline,
+  timeMs,
 }: {
   scramble: string
   solution: string
   discipline: Discipline
+  timeMs?: number
 }) {
   const [player, setPlayer] = useState<TwistyPlayer | null>(null)
 
@@ -20,6 +22,7 @@ export function useTwistyPlayer({
         scramble,
         rawSolution,
         discipline,
+        timeMs,
       )
 
       const newPlayer = new TwistyPlayer({
