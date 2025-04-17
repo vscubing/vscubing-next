@@ -1,8 +1,9 @@
 BEFORE RELEASE:
 - [x] own reconstruction - highlight
 - [x] autofocus extra textfield, send extra on ctrl enter
-- [ ] abort solve on escape
-- [ ] posthog cookies
+- [x] abort solve on escape
+- [x] disable posthog cookies
+- [ ] jwt or something as anticheat 
 - [ ] persist solve method (touch/keyboard)
 - [ ] update readme.md
 - [ ] license
@@ -30,4 +31,3 @@ AFTER RELEASE:
 - [ ] complete the keymap
 - [ ] try using redirects for /ongoing, contest/slug/solve|results, type default discipline
 - [ ] you must first solve this round before viewing the solve
-- [ ] jwt or something as anticheat 
