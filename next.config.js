@@ -28,18 +28,6 @@ const config = {
   async rewrites() {
     return [
       {
-        source: '/debug/static/:path*',
-        destination: 'https://facebook.com',
-      },
-      {
-        source: '/debug/:path*',
-        destination: 'https://google.com',
-      },
-      {
-        source: '/debug/decide',
-        destination: 'https://instagram.com',
-      },
-      {
         source: '/ingest/static/:path*',
         destination: 'https://eu-assets.i.posthog.com/static/:path*',
       },

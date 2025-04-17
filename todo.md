@@ -8,8 +8,6 @@ BEFORE RELEASE:
 - [x] update readme.md
 - [x] license
 - [x] add db ping in the health check
-- [ ] setup axiom
-- [ ] fix setSimulatorSettings firing unnecessarily
 - [ ] figure out the annoying auth bug
 - [ ] new posthog project
 
