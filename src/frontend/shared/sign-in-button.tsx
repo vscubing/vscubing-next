@@ -36,10 +36,10 @@ export function SignInButton({ variant, className }: SignInButtonProps) {
         className={cn('h-12 gap-3 px-4 text-[1.125rem] sm:h-12', className)}
         asChild
       >
-        <Link href={href} onClick={signIn}>
+        <a href={href} onClick={signIn}>
           <GoogleIcon />
           Sign in with Google
-        </Link>
+        </a>
       </PrimaryButton>
     )
   }
@@ -52,13 +52,13 @@ export function SignInButton({ variant, className }: SignInButtonProps) {
       )}
       asChild
     >
-      <Link href={href} onClick={signIn}>
+      <a href={href} onClick={signIn}>
         <span className='contents sm:hidden'>
           <GoogleIcon />
           <span>Sign in with Google</span>
         </span>
         <span className='hidden text-[0.875rem] sm:contents'>Sign in</span>
-      </Link>
+      </a>
     </GhostButton>
   )
 }
