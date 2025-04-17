@@ -8,8 +8,7 @@ BEFORE RELEASE:
 - [x] update readme.md
 - [x] license
 - [x] add db ping in the health check
-- [ ] setup axiom
-- [ ] fix setSimulatorSettings firing unnecessarily
+- [x] fix setSimulatorSettings firing unnecessarily
 - [ ] figure out the annoying auth bug
 - [ ] new posthog project
 - [ ] setup sentry i guess (test with invalid move)
