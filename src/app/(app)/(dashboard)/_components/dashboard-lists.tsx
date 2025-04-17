@@ -37,13 +37,13 @@ export function DashboardLists() {
   }
 
   return (
-    <div className='flex flex-grow gap-3 md:flex-grow-0 md:flex-col sm:gap-2'>
+    <div className='flex flex-grow gap-3 md:flex-col sm:flex-grow-0 sm:gap-2'>
       <LatestContests
         className='h-full basis-[calc(40%-0.75rem/2)]'
         contests={latestContests?.items?.filter(({ isOngoing }) => !isOngoing)}
       />
       <BestSolves
-        className='h-full basis-[calc(60%-0.75rem/2)]'
+        className='h-full flex-grow basis-[calc(60%-0.75rem/2)]'
         solves={bestSolves}
       />
     </div>

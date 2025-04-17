@@ -90,7 +90,7 @@ export function SessionList({
 
 export function SessionListShell({ children }: { children: ReactNode }) {
   return (
-    <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 sm:p-3'>
+    <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 lg:p-4 sm:p-3'>
       <RoundSessionHeader />
 
       <ul className='flex flex-1 flex-col gap-2'>{children}</ul>

@@ -32,7 +32,7 @@ import { withSuspense } from '@/frontend/utils/with-suspense'
 import {
   LayoutPageTitleMobile,
   LayoutPageTitleMobileFallback,
-} from '@/frontend/shared/layout-page-title-mobile'
+} from '@/app/(app)/_layout/layout-page-title-mobile'
 import { formatContestDuration } from '@/utils/format-date'
 import { NavigateBackButton } from '@/frontend/shared/navigate-back-button'
 

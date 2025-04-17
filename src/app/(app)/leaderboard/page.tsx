@@ -12,7 +12,7 @@ import { NavigateBackButton } from '@/frontend/shared/navigate-back-button'
 import {
   LayoutPageTitleMobile,
   LayoutPageTitleMobileFallback,
-} from '@/frontend/shared/layout-page-title-mobile'
+} from '@/app/(app)/_layout/layout-page-title-mobile'
 import {
   LayoutHeaderTitlePortal,
   LayoutHeaderTitlePortalFallback,

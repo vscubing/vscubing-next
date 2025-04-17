@@ -234,7 +234,7 @@ export function SingleResultSkeleton() {
 
 export function SingleResultListShell({ children }: { children: ReactNode }) {
   return (
-    <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 sm:p-3'>
+    <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 lg:p-4 sm:p-3'>
       <div className='flex whitespace-nowrap pl-2 text-grey-40 md:hidden'>
         <span className='mr-2 w-11 text-center'>Place</span>
         <span className='mr-2'>Type</span>
