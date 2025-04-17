@@ -7,7 +7,6 @@ import {
   PopoverCloseButton,
   PopoverContent,
 } from '../ui'
-import { useIsTouchDevice } from '../utils/use-media-query'
 import { useLocalStorage } from '../utils/use-local-storage'
 
 type WatchSolveHintPopoverProps = {
@@ -19,7 +18,6 @@ export function WatchSolveHintPopover({
   children,
   disabled,
 }: WatchSolveHintPopoverProps) {
-  const isTouchDevice = useIsTouchDevice()
   const [seenHint, setSeenHint] = useLocalStorage(
     'vs-seenWatchSolveHint',
     false,
@@ -33,9 +31,12 @@ export function WatchSolveHintPopover({
     <Popover open={!seenHint && !disabled}>
       <PopoverContent aria-label='Tap on a time result to watch the solution'>
         <p>
-          {isTouchDevice
-            ? 'Tap on a time result to watch the solution'
-            : 'Click on a time result to watch the solution'}
+          <span className='touch:hidden'>
+            Click on a time result to watch the solution
+          </span>
+          <span className='hidden touch:inline'>
+            Tap on a time result to watch the solution
+          </span>
         </p>
         <PopoverCloseButton onClick={handleClose} />
       </PopoverContent>

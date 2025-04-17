@@ -16,6 +16,7 @@ type CameraPositionListener = (pos: CameraPosition) => void
 type Options = {
   puzzle: 'cube2' | 'cube3'
   animationDuration: number
+  allowDragging: boolean
 }
 export type CameraPosition = { theta: number; phi: number }
 

@@ -105,7 +105,9 @@ export const contestRouter = createTRPCRouter({
       endDate: ongoing.endDate,
       disciplines: rows.map(({ discipline }) => ({
         slug: discipline.slug,
-        roundSessionFinished: discipline.roundSessionFinished ?? false,
+        capabilities: discipline.roundSessionFinished
+          ? ('results' as const)
+          : ('solve' as const),
       })),
     }
   }),
