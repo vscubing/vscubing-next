@@ -12,6 +12,13 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_APP_ENV === 'development'
         ? z.undefined()
         : z.string().url(),
+    SENTRY_AUTH_TOKEN:
+      process.env.NEXT_PUBLIC_APP_ENV === 'development'
+        ? z.literal('DISABLED', {
+            message:
+              'SENTRY_AUTH_TOKEN must be DISABLED in development or set otherwise',
+          })
+        : z.string().refine((val) => val !== 'DISABLED'),
     AUTH_SECRET: z.string(),
     AUTH_GOOGLE_CLIENT_ID: z.string(),
     AUTH_GOOGLE_CLIENT_SECRET: z.string(),
@@ -62,6 +69,7 @@ export const env = createEnv({
     DATABASE_URL: process.env.DATABASE_URL,
     DEV_ARTIFICIAL_DELAY: process.env.DEV_ARTIFICIAL_DELAY,
     GH_DOKPLOY_WEBHOOK_URL: process.env.GH_DOKPLOY_WEBHOOK_URL,
+    SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN,
     AUTH_SECRET: process.env.AUTH_SECRET,
     AUTH_GOOGLE_CLIENT_ID: process.env.AUTH_GOOGLE_CLIENT_ID,
     AUTH_GOOGLE_CLIENT_SECRET: process.env.AUTH_GOOGLE_CLIENT_SECRET,

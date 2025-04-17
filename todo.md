@@ -1,29 +1,32 @@
 BEFORE RELEASE:
+
 - [x] own reconstruction - highlight
 - [x] autofocus extra textfield, send extra on ctrl enter
 - [x] abort solve on escape
 - [x] disable posthog cookies
-- [x] jwt or something as anticheat 
+- [x] jwt or something as anticheat
 - [x] move TPS to time solve time on /watch
 - [x] update readme.md
-- [ ] license
-- [ ] add db ping in the health check
-- [ ] setup sentry i guess (test with invalid move)
+- [x] license
+- [x] add db ping in the health check
+- [x] setup sentry i guess (test with invalid move)
+- [ ] setup axiom for logs
 - [ ] fix setSimulatorSettings firing unnecessarily
 - [ ] figure out the annoying auth bug
 - [ ] new posthog project
 - [ ] setup sentry i guess (test with invalid move)
 
 AFTER RELEASE:
+
 - [ ] file for google auth verification
 - [ ] include ongoing in leaderboard if capabilities=view_results
-- [ ] average personal best toast & avg 
+- [ ] average personal best toast & avg
 - [ ] fix discipline: string everywhere
 - [ ] skip inspection by default and play the solve automatically
 - [ ] delete round sessions with no results & dnf round sessions with too little results
-    - [ ] on contest close
-    - [ ] migration
-- [ ] add "amount of solves so far" 
+  - [ ] on contest close
+  - [ ] migration
+- [ ] add "amount of solves so far"
 - [ ] see what we can do with redirect on discipline change between results/solve page
 - [ ] make admins "capable" of everything
 - [ ] boring stuff (posthog cookies, privacy policy, etc)
