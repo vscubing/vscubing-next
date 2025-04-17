@@ -134,9 +134,9 @@ function PageShell({
             <div className='sm:min-h-14'>
               <p className='title-h3 mb-1'>{username}</p>
               <p className='text-large text-grey-20'>
-                {formatSolveTime(timeMs ?? 0)}{' '}
+                <span className='mr-1'>{formatSolveTime(timeMs ?? 0)} </span>
                 <span className='text-grey-40'>
-                  / <SolveTPS solution={solution} timeMs={timeMs} />
+                  <SolveTPS solution={solution} timeMs={timeMs} />
                 </span>
               </p>
             </div>
@@ -163,17 +163,16 @@ function SolveTPS({
   const turnCount = Array.from(
     new Alg(removeSolutionComments(solution)).childAlgNodes(),
   ).filter((node) => !isRotation(node)).length
-  const tps = (turnCount / timeSeconds).toFixed(3)
+  const tps = (turnCount / timeSeconds).toFixed(1)
 
   return (
-    <>
+    <span>
+      {turnCount} turns, {tps} {''}
       <Tooltip>
-        <TooltipTrigger>{tps} TPS</TooltipTrigger>
-        <TooltipContent>
-          {turnCount} turns / {timeSeconds.toFixed(3)} seconds
-        </TooltipContent>
+        <TooltipTrigger>TPS</TooltipTrigger>
+        <TooltipContent>Turns per second</TooltipContent>
       </Tooltip>
-    </>
+    </span>
   )
 }
 
