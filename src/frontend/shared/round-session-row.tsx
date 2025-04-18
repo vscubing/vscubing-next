@@ -8,13 +8,12 @@ import {
 } from '@/frontend/ui'
 import { cn } from '@/frontend/utils/cn'
 import * as Accordion from '@radix-ui/react-accordion'
-import { ExtraLabel } from '@/frontend/shared/extra-label'
 import { PlaceLabel } from '@/frontend/shared/place-label'
 import {
   SolveTimeLabel,
   SolveTimeLinkOrDnf,
 } from '@/frontend/shared/solve-time-button'
-import type { Discipline, RoundSession } from '@/types'
+import { getExtraNumber, type Discipline, type RoundSession } from '@/types'
 import { SpinningBorder } from '@/frontend/ui/spinning-border'
 import { tailwindConfig } from '@/frontend/utils/tailwind'
 import type { RefObject } from 'react'
@@ -178,11 +177,8 @@ function RoundSessionRowTablet({
                                 ? 'worst'
                                 : undefined
                           }
-                        />
-
-                        <ExtraLabel
-                          scramblePosition={solve.position}
-                          className='absolute -top-2 right-[1.1rem] sm:-top-1'
+                          displayExtra
+                          extraNumber={getExtraNumber(solve.position)}
                         />
                       </span>
                     </li>
@@ -276,14 +272,8 @@ function RoundSessionRowDesktop({
                           ? 'worst'
                           : undefined
                     }
-                  />
-
-                  <ExtraLabel
-                    scramblePosition={solve.position}
-                    className={cn('absolute -top-2 right-[1.1rem] z-10', {
-                      'text-white-100 [text-shadow:_1px_1px_2px_black]':
-                        solve.isPersonalBest,
-                    })}
+                    displayExtra
+                    extraNumber={getExtraNumber(solve.position)}
                   />
                 </span>
               </li>

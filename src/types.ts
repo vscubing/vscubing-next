@@ -15,6 +15,15 @@ export type ScramblePosition = (typeof SCRAMBLE_POSITIONS)[number]
 export function isExtra(position: ScramblePosition) {
   return position.startsWith('E')
 }
+export function getExtraNumber(
+  position: ScramblePosition,
+): '1' | '2' | undefined {
+  if (!isExtra(position)) return
+  const number = position[1]
+  if (number !== '1' && number !== '2')
+    throw new Error(`invalid scramble position: ${position}`)
+  return number
+}
 
 export const SOLVE_STATUSES = [
   'pending',
@@ -24,11 +33,22 @@ export const SOLVE_STATUSES = [
 export type SolveStatus = (typeof SOLVE_STATUSES)[number]
 
 export type ResultDnfish = ResultSuccess | ResultDnf
-type ResultSuccess = { timeMs: number; isDnf: false }
-type ResultDnf = { timeMs: null | number; isDnf: true }
+type ResultSuccess = { timeMs: number; isDnf: false; plusTwoIncluded: boolean }
+type ResultDnf = {
+  timeMs: null | number
+  isDnf: true
+  plusTwoIncluded: boolean
+}
 
 export const resultDnfish = z.custom<ResultDnfish>(
-  ({ isDnf, timeMs }: { isDnf: boolean; timeMs: number | null }) => {
+  ({
+    isDnf,
+    timeMs,
+  }: {
+    isDnf: boolean
+    timeMs: number | null
+    plusTwoIncluded: boolean
+  }) => {
     if ((isDnf === false && timeMs !== null) || isDnf === true) return true
     return false
   },

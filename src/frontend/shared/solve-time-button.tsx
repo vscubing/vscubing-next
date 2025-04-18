@@ -4,12 +4,13 @@ import { type ComponentProps } from 'react'
 import { formatSolveTime } from '../../utils/format-solve-time'
 import { cn } from '../utils/cn'
 import { WatchSolveHintPopover } from './watch-solve-hint-popover.client'
-import type { Discipline, ResultDnfish } from '../../types'
+import { type Discipline, type ResultDnfish } from '../../types'
 import confettiImg from '@/../public/images/confetti-solve-time-link.svg'
 import Image from 'next/image'
+import { ExtraLabel } from './extra-label'
 
 const solveTimeLinkOrDnfVariants = cva(
-  'transition-base outline-ring after-border-bottom vertical-alignment-fix relative inline-flex h-8 min-w-24 items-center justify-center hover:after:scale-x-100',
+  'transition-base outline-ring after-border-bottom vertical-alignment-fix inline-flex h-8 min-w-24 items-center justify-center hover:after:scale-x-100',
   {
     variants: {
       variant: {
@@ -33,6 +34,7 @@ type SolveTimeLinkOrDnfProps = VariantProps<
   discipline: Discipline
   canShowHint: boolean
   isFestive?: boolean
+  extraNumber?: '1' | '2'
   className?: string
 }
 
@@ -44,6 +46,7 @@ export function SolveTimeLinkOrDnf({
   solveId,
   canShowHint,
   isFestive = false,
+  extraNumber,
   discipline,
 }: SolveTimeLinkOrDnfProps) {
   if (result.isDnf) {
@@ -62,7 +65,22 @@ export function SolveTimeLinkOrDnf({
             className='pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2'
           />
         )}
-        {formatSolveTime(result.timeMs)}
+        <span className='relative'>
+          <span className='absolute top-[-0.9rem] flex min-w-full items-center'>
+            {extraNumber !== undefined && (
+              <ExtraLabel
+                extraNumber={extraNumber}
+                className='-ml-1 rounded bg-secondary-80 px-1 text-white-100'
+              />
+            )}
+            {result.plusTwoIncluded && (
+              <span className='caption -mr-1 ml-auto rounded bg-secondary-80 px-1'>
+                (+2)
+              </span>
+            )}
+          </span>
+          <span>{formatSolveTime(result.timeMs)}</span>
+        </span>
       </Link>
     </WatchSolveHintPopover>
   )
