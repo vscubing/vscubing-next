@@ -159,15 +159,15 @@ async function PageContent({
 }
 
 const SPLASH_TEXTS = [
-  'You have five attempts to solve the contest.',
+  'You have five attempts to solve the contest',
   'GLHF!',
   'No DNFs today, huh?',
   "It's not a +2 if no one is watching, right?",
   'The cube just popped!',
   'Shaky hands?',
   'These are TNoodle scrambles btw',
-  '8 seconds! 12 seconds! Go! Just kidding.',
-  "Feliks Zemdegs would've been proud of you.",
+  '8 seconds! 12 seconds! Go! Just kidding',
+  "Feliks Zemdegs would've been proud of you",
   <>
     Check out{' '}
     <Link
