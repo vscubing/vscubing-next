@@ -26,10 +26,17 @@ import {
   DialogTitle,
   DialogFooter,
   DialogClose,
+  GhostButton,
+  SecondaryButton,
+  WcaLogoIcon,
 } from '@/frontend/ui'
 import { LoadingDots } from '@/frontend/ui/loading-dots'
-import type { User } from '@/types'
-import { useLogout, useUser } from '@/frontend/shared/use-user'
+import { type User } from '@/types'
+import {
+  useLogout,
+  useRemoveWcaAccount,
+  useUser,
+} from '@/frontend/shared/use-user'
 
 export function UserDropdownOrSignIn() {
   const { user, isLoading } = useUser()
@@ -80,7 +87,7 @@ function UserDropdown({
           {user.name}
         </DropdownMenu.Label>
         <DropdownMenu.Label className='mb-6 border-b border-b-grey-100 pb-2 text-grey-20'>
-          {user.email}
+          <WcaSignIn className='-ml-2' wcaId={user.wcaId} />
         </DropdownMenu.Label>
         <DropdownMenu.Group className='-ml-2 flex flex-col gap-2'>
           <DropdownButton className='w-full cursor-pointer' asChild>
@@ -173,5 +180,44 @@ function DropdownButton({
     >
       {children}
     </Comp>
+  )
+}
+
+function WcaSignIn({
+  wcaId,
+  className,
+}: {
+  wcaId: string | null
+  className?: string
+}) {
+  const { removeWcaAccount } = useRemoveWcaAccount()
+
+  if (!wcaId)
+    return (
+      <div className={className}>
+        <GhostButton className='w-full justify-start' asChild size='lg'>
+          <Link href='/api/auth/wca?redirectTo=/settings'>
+            <WcaLogoIcon />
+            Sign in with WCA
+          </Link>
+        </GhostButton>
+      </div>
+    )
+
+  return (
+    <div className={cn('flex items-center gap-2 pl-2', className)}>
+      <p className='vertical-alignment-fix'>
+        <Link
+          href={`https://worldcubeassociation.org/persons/${wcaId}`}
+          className='flex gap-2 text-secondary-20 underline'
+        >
+          <WcaLogoIcon />
+          <span className='btn-lg'>{wcaId}</span>
+        </Link>
+      </p>
+      <SecondaryButton size='sm' onClick={removeWcaAccount}>
+        Remove
+      </SecondaryButton>
+    </div>
   )
 }

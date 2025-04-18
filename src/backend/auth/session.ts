@@ -1,19 +1,20 @@
 import { db } from '../db'
 import {
-  type User,
   type Session,
   authSessionTable,
   userTable,
+  accountTable,
 } from '../db/schema/account'
 import {
   encodeBase32LowerCaseNoPadding,
   encodeHexLowerCase,
 } from '@oslojs/encoding'
 import { sha256 } from '@oslojs/crypto/sha2'
-import { eq } from 'drizzle-orm'
+import { eq, and, getTableColumns } from 'drizzle-orm'
 import { cookies } from 'next/headers'
 import { cache } from 'react'
 import { env } from '@/env'
+import type { User } from '@/types'
 
 export function generateSessionToken(): string {
   const bytes = new Uint8Array(20)
@@ -42,9 +43,23 @@ export async function validateSessionToken(
   const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)))
 
   const [result] = await db
-    .select({ user: userTable, session: authSessionTable })
+
+    .select({
+      user: {
+        ...getTableColumns(userTable),
+        wcaId: accountTable.providerAccountId,
+      },
+      session: authSessionTable,
+    })
     .from(authSessionTable)
     .innerJoin(userTable, eq(authSessionTable.userId, userTable.id))
+    .leftJoin(
+      accountTable,
+      and(
+        eq(accountTable.userId, userTable.id),
+        eq(accountTable.provider, 'wca'),
+      ),
+    )
     .where(eq(authSessionTable.id, sessionId))
   if (!result) {
     return null

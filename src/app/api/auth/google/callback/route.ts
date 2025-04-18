@@ -88,6 +88,7 @@ export async function GET(request: Request): Promise<Response> {
       providerAccountId: googleUserId,
       access_token: tokens.accessToken(),
       expires_at: BigInt(tokens.accessTokenExpiresAt().getTime()),
+      email,
     })
   }
 

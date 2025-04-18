@@ -10,7 +10,7 @@ export async function GET(request: NextRequest): Promise<Response> {
   const url = await wcaOauthClient.createAuthorizationURL({
     state,
     codeVerifier,
-    scopes: ['public'],
+    scopes: ['public', 'email'],
   })
 
   const cookieStore = await cookies()

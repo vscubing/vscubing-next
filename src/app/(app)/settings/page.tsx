@@ -4,12 +4,6 @@ import { auth } from '@/backend/auth'
 import { LayoutHeaderTitlePortal } from '../_layout/layout-header'
 import { SettingsList } from './_page-content'
 import { api } from '@/trpc/server'
-import { PrimaryButton } from '@/frontend/ui'
-import Link from 'next/link'
-import { db } from '@/backend/db'
-import { accountTable } from '@/backend/db/schema'
-import { and, eq } from 'drizzle-orm'
-import { revalidatePath } from 'next/cache'
 
 export default async function SettingsPage() {
   const session = await auth()
@@ -22,56 +16,7 @@ export default async function SettingsPage() {
       <LayoutHeaderTitlePortal>Simulator settings</LayoutHeaderTitlePortal>
       <div className='flex h-full flex-col gap-6 rounded-2xl bg-black-80 p-6 lg:p-4 sm:p-3'>
         <SettingsList initialData={initialData} />
-        <WcaSignIn />
       </div>
     </>
-  )
-}
-
-async function WcaSignIn() {
-  const session = await auth()
-  if (!session) return <HintSignInSection />
-
-  const [wcaInfo] = await db
-    .select({ wcaId: accountTable.providerAccountId })
-    .from(accountTable)
-    .where(
-      and(
-        eq(accountTable.provider, 'wca'),
-        eq(accountTable.userId, session.user.id),
-      ),
-    )
-  return wcaInfo ? (
-    <div>
-      <p className='title-h3 mb-2'>
-        WCA ID:{' '}
-        <Link
-          href={`https://worldcubeassociation.org/persons/${wcaInfo.wcaId}`}
-          className='text-secondary-20 underline'
-        >
-          {wcaInfo.wcaId}
-        </Link>
-      </p>
-      <form
-        action={async () => {
-          'use server'
-          await db
-            .delete(accountTable)
-            .where(
-              and(
-                eq(accountTable.provider, 'wca'),
-                eq(accountTable.providerAccountId, wcaInfo.wcaId),
-              ),
-            )
-          revalidatePath('/settings')
-        }}
-      >
-        <PrimaryButton>Remove WCA account</PrimaryButton>
-      </form>
-    </div>
-  ) : (
-    <PrimaryButton asChild>
-      <Link href='/api/auth/wca?redirectTo=/settings'>Sign in with WCA</Link>
-    </PrimaryButton>
   )
 }

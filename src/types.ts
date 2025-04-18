@@ -8,7 +8,7 @@ import { z } from 'zod'
 export type User = Pick<
   UserSchema,
   'name' | 'id' | 'email' | 'finishedRegistration' | 'role'
->
+> & { wcaId: string | null }
 
 export const SCRAMBLE_POSITIONS = ['1', '2', '3', '4', '5', 'E1', 'E2'] as const
 export type ScramblePosition = (typeof SCRAMBLE_POSITIONS)[number]

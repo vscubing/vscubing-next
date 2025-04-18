@@ -69,6 +69,7 @@ export async function GET(request: Request): Promise<Response> {
     expires_at: BigInt(token.created_at) + BigInt(token.expires_in),
     provider: 'wca',
     providerAccountId: claims.wca_id,
+    email: claims.email,
   })
 
   return new Response(null, {
@@ -114,6 +115,7 @@ const meSchema = z.object({
     // class: z.string(),
     // teams: z.array(z.any()), // Can be replaced with a stricter type if teams structure is known
     // avatar: avatarSchema,
+    email: z.string().email(),
   }),
 })
 
