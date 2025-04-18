@@ -1,0 +1,1 @@
+ALTER TABLE "round_session" ADD CONSTRAINT "round_id_contestant_id" UNIQUE("round_id","contestant_id");
