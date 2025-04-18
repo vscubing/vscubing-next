@@ -13,14 +13,15 @@ export function useTwistyPlayer({
   discipline: Discipline
 }) {
   const [player, setPlayer] = useState<TwistyPlayer | null>(null)
+  const [startIndex, setStartIndex] = useState(0)
 
   useEffect(() => {
     void (async () => {
-      const { solution, animLeaves } = await doEverything(
-        scramble,
-        rawSolution,
-        discipline,
-      )
+      const {
+        solution,
+        animLeaves,
+        startIndex: _startIndex,
+      } = await doEverything(scramble, rawSolution, discipline)
 
       const newPlayer = new TwistyPlayer({
         controlPanel: 'none',
@@ -40,11 +41,15 @@ export function useTwistyPlayer({
       }
 
       setPlayer(newPlayer)
-      return () => setPlayer(null)
+      setStartIndex(_startIndex)
+      return () => {
+        setPlayer(null)
+        setStartIndex(0)
+      }
     })()
   }, [scramble, rawSolution, discipline])
 
-  return player
+  return { player, startIndex }
 }
 
 const TWISTY_PUZZLE_MAP: Record<Discipline, PuzzleID> = {

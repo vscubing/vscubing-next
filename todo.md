@@ -11,7 +11,8 @@ BEFORE RELEASE:
 - [x] fix setSimulatorSettings firing unnecessarily
 - [x] scroll to own result on round finish
 - [x] fix discipline: string everywhere
-- [ ] skip preinspection
+- [x] skip preinspection
+- [ ] pb confetti in reconstruction
 - [ ] wca auth
 - [ ] figure out the annoying auth bug
 - [ ] new posthog project
