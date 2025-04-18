@@ -15,10 +15,10 @@ import { ShareSolveButton } from './_components/share-button'
 import { SpinningBorder } from '@/frontend/ui/spinning-border'
 import tailwindConfig from 'tailwind.config'
 import { cn } from '@/frontend/utils/cn'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/frontend/ui/tooltip'
 import { Alg } from '@vscubing/cubing/alg'
 import { isRotation } from '@/utils/is-rotation'
 import { removeSolutionComments } from '@/utils/remove-solution-comments'
+import { TpsHintPopover } from './_components/tps-hint-popover'
 
 type PathParams = { contestSlug: string; solveId: string }
 export default async function WatchSolvePage({
@@ -167,11 +167,8 @@ function SolveTPS({
 
   return (
     <span>
-      {turnCount} turns, {tps} {''}
-      <Tooltip>
-        <TooltipTrigger>TPS</TooltipTrigger>
-        <TooltipContent>Turns per second</TooltipContent>
-      </Tooltip>
+      {turnCount} turns, {tps} TPS {''}
+      <TpsHintPopover>(?)</TpsHintPopover>
     </span>
   )
 }
