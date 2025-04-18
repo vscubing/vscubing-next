@@ -36,6 +36,7 @@ type SolveTimeLinkOrDnfProps = VariantProps<
   isFestive?: boolean
   extraNumber?: '1' | '2'
   className?: string
+  backgroundColorClass?: string
 }
 
 export function SolveTimeLinkOrDnf({
@@ -48,6 +49,7 @@ export function SolveTimeLinkOrDnf({
   isFestive = false,
   extraNumber,
   discipline,
+  backgroundColorClass,
 }: SolveTimeLinkOrDnfProps) {
   if (result.isDnf) {
     return <SolveTimeLabel isDnf className={className} />
@@ -70,11 +72,16 @@ export function SolveTimeLinkOrDnf({
             {extraNumber !== undefined && (
               <ExtraLabel
                 extraNumber={extraNumber}
-                className='-ml-1 rounded bg-secondary-80 px-1 text-white-100'
+                className={cn('-ml-1 rounded px-1', backgroundColorClass)}
               />
             )}
             {result.plusTwoIncluded && (
-              <span className='caption -mr-1 ml-auto rounded bg-secondary-80 px-1'>
+              <span
+                className={cn(
+                  'caption -mr-1 ml-auto rounded px-1',
+                  backgroundColorClass,
+                )}
+              >
                 (+2)
               </span>
             )}

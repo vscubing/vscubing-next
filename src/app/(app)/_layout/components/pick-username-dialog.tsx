@@ -76,6 +76,7 @@ export function PickUsernameDialog() {
                 error={!!errors.username}
                 type='text'
                 maxLength={24}
+                autoFocus
                 {...register('username')}
               />
               <span className='caption'>{errors.username?.message}</span>

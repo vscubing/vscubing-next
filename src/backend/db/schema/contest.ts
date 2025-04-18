@@ -108,7 +108,7 @@ export const solveTable = pgTable(
     status: d.text('status').$type<SolveStatus>().notNull().default('pending'),
     timeMs: d.integer('time_ms'),
     isDnf: d.boolean('is_dnf').notNull(),
-    plusTwoIncluded: d.boolean('plus_two_included'),
+    plusTwoIncluded: d.boolean('plus_two_included').notNull(),
     solution: d.varchar('solution', { length: 10000 }),
   }),
   (t) => [

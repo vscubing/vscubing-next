@@ -177,8 +177,10 @@ function RoundSessionRowTablet({
                                 ? 'worst'
                                 : undefined
                           }
-                          displayExtra
                           extraNumber={getExtraNumber(solve.position)}
+                          backgroundColorClass={
+                            session.isOwn ? 'bg-secondary-80' : 'bg-grey-100'
+                          }
                         />
                       </span>
                     </li>
@@ -272,8 +274,10 @@ function RoundSessionRowDesktop({
                           ? 'worst'
                           : undefined
                     }
-                    displayExtra
                     extraNumber={getExtraNumber(solve.position)}
+                    backgroundColorClass={
+                      session.isOwn ? 'bg-secondary-80' : 'bg-grey-100'
+                    }
                   />
                 </span>
               </li>

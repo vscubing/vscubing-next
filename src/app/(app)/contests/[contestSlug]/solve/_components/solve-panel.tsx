@@ -99,6 +99,7 @@ function TimeSection({
       isFestive={isPersonalBest}
       result={result}
       discipline={discipline}
+      backgroundColorClass='bg-grey-100'
     />
   )
 }
