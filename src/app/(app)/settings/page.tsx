@@ -9,6 +9,7 @@ import Link from 'next/link'
 import { db } from '@/backend/db'
 import { accountTable } from '@/backend/db/schema'
 import { and, eq } from 'drizzle-orm'
+import { revalidatePath } from 'next/cache'
 
 export default async function SettingsPage() {
   const session = await auth()
@@ -41,23 +42,36 @@ async function WcaSignIn() {
       ),
     )
   return wcaInfo ? (
-    <p className='title-h3'>
-      WCA ID:{' '}
-      <Link
-        href={`https://worldcubeassociation.org/persons/${wcaInfo.wcaId}`}
-        className='text-secondary-20 underline'
+    <div>
+      <p className='title-h3 mb-2'>
+        WCA ID:{' '}
+        <Link
+          href={`https://worldcubeassociation.org/persons/${wcaInfo.wcaId}`}
+          className='text-secondary-20 underline'
+        >
+          {wcaInfo.wcaId}
+        </Link>
+      </p>
+      <form
+        action={async () => {
+          'use server'
+          await db
+            .delete(accountTable)
+            .where(
+              and(
+                eq(accountTable.provider, 'wca'),
+                eq(accountTable.providerAccountId, wcaInfo.wcaId),
+              ),
+            )
+          revalidatePath('/settings')
+        }}
       >
-        {wcaInfo.wcaId}
-      </Link>
-    </p>
+        <PrimaryButton>Remove WCA account</PrimaryButton>
+      </form>
+    </div>
   ) : (
-    <PrimaryButton
-      className='pointer-events-none bg-grey-40 text-grey-60'
-      asChild
-    >
-      <Link href='/api/auth/wca?redirectTo=/settings'>
-        Sign in with WCA (currently disabled)
-      </Link>
+    <PrimaryButton asChild>
+      <Link href='/api/auth/wca?redirectTo=/settings'>Sign in with WCA</Link>
     </PrimaryButton>
   )
 }
