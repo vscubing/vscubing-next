@@ -37,7 +37,7 @@ import AverageIcon from '@/../public/icons/average.icon.svg'
 import SingleIcon from '@/../public/icons/single.icon.svg'
 import VscubingIcon from '@/../public/icons/vscubing.icon.svg'
 
-import { isDiscipline } from '@/types'
+import { type Discipline } from '@/types'
 import { cn } from '@/frontend/utils/cn'
 import { type HTMLAttributes } from 'react'
 
@@ -81,7 +81,7 @@ export {
 }
 
 type DisciplineIconProps = HTMLAttributes<SVGSVGElement> & {
-  discipline: string
+  discipline: Discipline
 }
 
 const ICONS = {
@@ -96,12 +96,8 @@ export function DisciplineIcon({
 }: DisciplineIconProps & {
   ref?: React.RefObject<SVGSVGElement>
 }) {
-  const Comp = isDiscipline(discipline) ? ICONS[discipline] : PlaceholderIcon
+  const Icon = ICONS[discipline]
   return (
-    <Comp {...props} ref={ref} className={cn('h-[27px] w-[27px]', className)} />
+    <Icon {...props} ref={ref} className={cn('h-[27px] w-[27px]', className)} />
   )
-}
-
-function PlaceholderIcon({ className }: { className?: string }) {
-  return <svg className={cn('animate-pulse bg-grey-60', className)}></svg>
 }

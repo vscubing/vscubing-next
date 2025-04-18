@@ -2,7 +2,6 @@
 
 import { cn } from '@/frontend/utils/cn'
 import { GhostButton, GoogleIcon, PrimaryButton, toast } from '@/frontend/ui'
-import Link from 'next/link'
 import { useEffect, type MouseEventHandler } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { GOOGLE_AUTH_ERROR_SEARCH_PARAM } from '../../app/api/auth/google/error-search-param'

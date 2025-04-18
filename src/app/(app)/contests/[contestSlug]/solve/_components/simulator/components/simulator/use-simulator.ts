@@ -1,4 +1,4 @@
-import { isDiscipline, type SimulatorSettings } from '@/types'
+import { type Discipline, type SimulatorSettings } from '@/types'
 import {
   type SimulatorCameraPosition,
   type TwistySimulatorMoveListener,
@@ -30,14 +30,11 @@ export function useTwistySimulator({
   containerRef: RefObject<HTMLElement | null>
   onMove: SimulatorMoveListener
   scramble: string | undefined
-  discipline: string
+  discipline: Discipline
   settings: SimulatorSettings
   touchCubeEnabled: boolean
   setCameraPosition: (pos: SimulatorCameraPosition) => void
 }) {
-  if (!isDiscipline(discipline))
-    throw new Error(`[SIMULATOR] unsupported discipline: ${discipline}`)
-
   const [puzzle, setPuzzle] = useState<TwistySimulatorPuzzle | undefined>()
 
   useEffect(() => {
