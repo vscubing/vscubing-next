@@ -100,7 +100,7 @@ export function SimulatorProvider({ children }: { children: React.ReactNode }) {
   const shouldDNFOnPageLeave = !!solveState && solveState.wasInspectionStarted
   useConditionalBeforeUnload(shouldDNFOnPageLeave, () =>
     handleSolveFinish({
-      result: { isDnf: true, timeMs: null },
+      result: { isDnf: true, timeMs: null, plusTwoIncluded: false },
       solution: '',
     }),
   )
@@ -117,7 +117,7 @@ export function SimulatorProvider({ children }: { children: React.ReactNode }) {
   const confirmAbort = useCallback(() => {
     setIsAbortPromptVisible(false)
     handleSolveFinish({
-      result: { isDnf: true, timeMs: null },
+      result: { isDnf: true, timeMs: null, plusTwoIncluded: false },
       solution: '',
     })
   }, [handleSolveFinish])

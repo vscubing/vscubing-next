@@ -170,7 +170,6 @@ export const contestRouter = createTRPCRouter({
           code: 'UNAUTHORIZED',
           message: CONTEST_UNAUTHORIZED_MESSAGE,
         })
-
       if (userCapabilities === 'SOLVE')
         throw new TRPCError({
           code: 'FORBIDDEN',
@@ -194,6 +193,7 @@ export const contestRouter = createTRPCRouter({
           solve: {
             timeMs: solveTable.timeMs,
             isDnf: solveTable.isDnf,
+            plusTwoIncluded: solveTable.plusTwoIncluded,
             id: solveTable.id,
             position: scrambleTable.position,
             personalBestId: bestSolveSubquery.id,
@@ -235,10 +235,19 @@ export const contestRouter = createTRPCRouter({
         },
         solves: sortWithRespectToExtras(
           session.map(
-            ({ solve: { id, personalBestId, position, isDnf, timeMs } }) => ({
+            ({
+              solve: {
+                id,
+                personalBestId,
+                position,
+                isDnf,
+                timeMs,
+                plusTwoIncluded,
+              },
+            }) => ({
               id,
               position,
-              result: resultDnfish.parse({ timeMs, isDnf }),
+              result: resultDnfish.parse({ timeMs, isDnf, plusTwoIncluded }),
               isPersonalBest: id === personalBestId,
             }),
           ),

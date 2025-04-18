@@ -1,17 +1,14 @@
 import { cn } from '@/frontend/utils/cn'
-import { isExtra, type ScramblePosition } from '../../types'
-
 export function ExtraLabel({
-  scramblePosition,
+  extraNumber,
   className,
 }: {
-  scramblePosition: ScramblePosition
+  extraNumber?: '1' | '2'
   className?: string
 }) {
-  if (!isExtra(scramblePosition)) {
+  if (extraNumber === undefined) {
     return null
   }
-  const extraNumber = scramblePosition[1]
   return (
     <span className={cn('caption-sm text-nowrap text-red-80', className)}>
       Extra {extraNumber}

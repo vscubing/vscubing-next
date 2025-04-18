@@ -3,11 +3,11 @@ import { calculateAvg } from './calculate-avg'
 
 test('5 successes', async () => {
   const res = calculateAvg([
-    { isDnf: false, timeMs: 1 },
-    { isDnf: false, timeMs: 2 },
-    { isDnf: false, timeMs: 3 },
-    { isDnf: false, timeMs: 4 },
-    { isDnf: false, timeMs: 5 },
+    { isDnf: false, timeMs: 1, plusTwoIncluded: false },
+    { isDnf: false, timeMs: 2, plusTwoIncluded: false },
+    { isDnf: false, timeMs: 3, plusTwoIncluded: false },
+    { isDnf: false, timeMs: 4, plusTwoIncluded: false },
+    { isDnf: false, timeMs: 5, plusTwoIncluded: false },
   ])
   expect(res.isDnf === false)
   expect(res.timeMs === 3)
@@ -15,11 +15,11 @@ test('5 successes', async () => {
 
 test('4 successes best dnf', async () => {
   const res = calculateAvg([
-    { isDnf: true, timeMs: 1 },
-    { isDnf: false, timeMs: 2 },
-    { isDnf: false, timeMs: 3 },
-    { isDnf: false, timeMs: 4 },
-    { isDnf: false, timeMs: 5 },
+    { isDnf: true, timeMs: 1, plusTwoIncluded: false },
+    { isDnf: false, timeMs: 2, plusTwoIncluded: false },
+    { isDnf: false, timeMs: 3, plusTwoIncluded: false },
+    { isDnf: false, timeMs: 4, plusTwoIncluded: false },
+    { isDnf: false, timeMs: 5, plusTwoIncluded: false },
   ])
   expect(res.isDnf === false)
   expect(res.timeMs === 4)
@@ -27,11 +27,11 @@ test('4 successes best dnf', async () => {
 
 test('4 successes worst dnf', async () => {
   const res = calculateAvg([
-    { isDnf: false, timeMs: 1 },
-    { isDnf: false, timeMs: 2 },
-    { isDnf: false, timeMs: 3 },
-    { isDnf: false, timeMs: 4 },
-    { isDnf: true, timeMs: 5 },
+    { isDnf: false, timeMs: 1, plusTwoIncluded: false },
+    { isDnf: false, timeMs: 2, plusTwoIncluded: false },
+    { isDnf: false, timeMs: 3, plusTwoIncluded: false },
+    { isDnf: false, timeMs: 4, plusTwoIncluded: false },
+    { isDnf: true, timeMs: 5, plusTwoIncluded: false },
   ])
   expect(res.isDnf === false)
   expect(res.timeMs === 3)
@@ -39,11 +39,11 @@ test('4 successes worst dnf', async () => {
 
 test('3 successes', async () => {
   const res = calculateAvg([
-    { isDnf: true, timeMs: 1 },
-    { isDnf: true, timeMs: 2 },
-    { isDnf: false, timeMs: 3 },
-    { isDnf: false, timeMs: 4 },
-    { isDnf: false, timeMs: 5 },
+    { isDnf: true, timeMs: 1, plusTwoIncluded: false },
+    { isDnf: true, timeMs: 2, plusTwoIncluded: false },
+    { isDnf: false, timeMs: 3, plusTwoIncluded: false },
+    { isDnf: false, timeMs: 4, plusTwoIncluded: false },
+    { isDnf: false, timeMs: 5, plusTwoIncluded: false },
   ])
   expect(res.isDnf === true)
   expect(res.timeMs === null)

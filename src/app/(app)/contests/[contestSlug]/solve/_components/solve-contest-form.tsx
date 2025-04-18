@@ -1,6 +1,6 @@
 'use client'
 
-import type { Discipline } from '@/types'
+import type { Discipline, ResultDnfish } from '@/types'
 import { CurrentSolve } from './current-solve'
 import { Progress } from './progress'
 import { SolvePanel } from './solve-panel'
@@ -129,30 +129,29 @@ export function SolveContestForm({
     }
   }
 
-  function handlePersonalBest(previousPersonalBest: {
+  function handlePersonalBest(previousPersonalBest?: {
     id: number
-    timeMs: number
+    result: ResultDnfish
     contestSlug: string
   }) {
     toast({
       title: 'Wow, new personal best single!',
-      description: (
+      description: previousPersonalBest ? (
         <>
           Previous personal best:{' '}
           {
             <SolveTimeLinkOrDnf
               className='h-auto min-w-0'
               canShowHint={false}
-              result={{
-                isDnf: false,
-                timeMs: previousPersonalBest.timeMs,
-              }}
+              result={previousPersonalBest.result}
               discipline={discipline}
               contestSlug={previousPersonalBest.contestSlug}
               solveId={previousPersonalBest.id}
             />
           }
         </>
+      ) : (
+        'You can check out the reconstruction by clicking on the solve time.'
       ),
       variant: 'festive',
     })

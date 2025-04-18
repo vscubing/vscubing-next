@@ -134,7 +134,10 @@ export default function Simulator({
       setHeard12sAlert(true)
     }
     if (elapsedInspectionMs > INSPECTION_DNF_THRESHHOLD_MS) {
-      onSolveFinish({ result: { isDnf: true, timeMs: null }, solution: '' })
+      onSolveFinish({
+        result: { isDnf: true, timeMs: null, plusTwoIncluded: false },
+        solution: '',
+      })
       setStatus('idle')
     }
   }, [
@@ -180,8 +183,7 @@ export default function Simulator({
 
     const totalInspectionMs = solveStartTimestamp - inspectionStartTimestamp
     const rawSolveTimeMs = lastMoveTimestamp - solveStartTimestamp
-    const penalty =
-      totalInspectionMs > INSPECTION_PLUS_TWO_THRESHHOLD_MS ? 2_000 : 0
+    const plusTwoPenalty = totalInspectionMs > INSPECTION_PLUS_TWO_THRESHHOLD_MS
 
     const solutionStr = solution
       .map(
@@ -191,8 +193,9 @@ export default function Simulator({
       .join(' ')
     onSolveFinish({
       result: {
-        timeMs: rawSolveTimeMs + penalty,
+        timeMs: rawSolveTimeMs + (plusTwoPenalty ? 2_000 : 0),
         isDnf: false,
+        plusTwoIncluded: plusTwoPenalty,
       },
       solution: solutionStr,
     })

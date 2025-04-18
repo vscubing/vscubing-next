@@ -4,7 +4,12 @@ import {
   SolveTimeLabel,
   SolveTimeLinkOrDnf,
 } from '@/frontend/shared/solve-time-button'
-import type { ScramblePosition, ResultDnfish, Discipline } from '@/types'
+import {
+  type ScramblePosition,
+  type ResultDnfish,
+  type Discipline,
+  getExtraNumber,
+} from '@/types'
 import { type ReactNode } from 'react'
 
 export function SolvePanel({
@@ -34,7 +39,7 @@ export function SolvePanel({
         <span className='sm:hidden'>No {number}</span>
         <span className='hidden sm:inline'>{number}.</span>
         <ExtraLabel
-          scramblePosition={position}
+          extraNumber={getExtraNumber(position)}
           className='absolute right-0 top-0 sm:left-0 sm:right-auto'
         />
       </span>
@@ -94,6 +99,7 @@ function TimeSection({
       isFestive={isPersonalBest}
       result={result}
       discipline={discipline}
+      backgroundColorClass='bg-grey-100'
     />
   )
 }

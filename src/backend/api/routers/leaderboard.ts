@@ -83,6 +83,7 @@ export const leaderboardRouter = createTRPCRouter({
           solve: {
             timeMs: solveTable.timeMs,
             isDnf: solveTable.isDnf,
+            plusTwoIncluded: solveTable.plusTwoIncluded,
             id: solveTable.id,
             position: scrambleTable.position,
           },
@@ -116,12 +117,16 @@ export const leaderboardRouter = createTRPCRouter({
             isOwn: session[0]!.user.id === ctx.session?.user.id,
           },
           solves: sortWithRespectToExtras(
-            session.map(({ solve: { id, position, isDnf, timeMs } }) => ({
-              id,
-              position,
-              result: resultDnfish.parse({ timeMs, isDnf }),
-              isPersonalBest: false,
-            })),
+            session.map(
+              ({
+                solve: { id, position, isDnf, timeMs, plusTwoIncluded },
+              }) => ({
+                id,
+                position,
+                result: resultDnfish.parse({ timeMs, isDnf, plusTwoIncluded }),
+                isPersonalBest: false,
+              }),
+            ),
           ),
           contestSlug: session[0]!.contestSlug,
           nickname: session[0]!.user.name,
