@@ -16,11 +16,13 @@ export function SessionList({
   discipline,
   initialData,
   scrollToId,
+  scrollToOwn,
 }: {
   contestSlug: string
   discipline: Discipline
   initialData?: RouterOutputs['contest']['getContestResults']
   scrollToId?: number
+  scrollToOwn?: boolean
 }) {
   const trpc = useTRPC()
   const { data: sessions } = useSuspenseQuery(
@@ -44,6 +46,11 @@ export function SessionList({
     },
     [containerRef, performScrollToIdx],
   )
+
+  useEffect(() => {
+    if (scrollToOwn)
+      scrollAndGlow(sessions.findIndex((result) => result.session.isOwn))
+  }, [scrollToOwn, sessions, scrollAndGlow])
 
   useEffect(() => {
     if (scrollToId)

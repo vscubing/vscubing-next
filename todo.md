@@ -9,6 +9,7 @@ BEFORE RELEASE:
 - [x] license
 - [x] add db ping in the health check
 - [x] fix setSimulatorSettings firing unnecessarily
+- [x] scroll to own result on round finish
 - [ ] fix discipline: string everywhere
 - [ ] skip preinspection
 - [ ] wca auth

@@ -41,7 +41,7 @@ export function SolveContestForm({
     },
     {
       retry: (_, err) =>
-        err.data?.code !== 'FORBIDDEN' && err.data?.code !== 'UNAUTHORIZED', // TODO: why does removing unauthorized result in server errors
+        err.data?.code !== 'FORBIDDEN' && err.data?.code !== 'UNAUTHORIZED', // TODO: why does removing unauthorized result in server errors?
       initialData,
     },
   )
@@ -50,11 +50,13 @@ export function SolveContestForm({
     isFetching: isStateFetching,
     error,
   } = useSuspenseQuery(stateQuery)
-  if (error?.data?.code === 'FORBIDDEN')
+  if (error?.data?.code === 'FORBIDDEN') {
+    console.log(state)
     redirect(
-      `/contests/${contestSlug}/results?discipline=${discipline}`,
+      `/contests/${contestSlug}/results?discipline=${discipline}&scrollToOwn=true`,
       RedirectType.replace,
     )
+  }
 
   if (error)
     throw new TRPCError({ message: error.message, code: error.data!.code })

@@ -22,7 +22,7 @@ export default async function ContestResultsPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
   const { contestSlug } = await params
-  const { discipline, scrollToId } = await searchParams
+  const { discipline, scrollToId, scrollToOwn } = await searchParams
   if (!isDiscipline(discipline))
     redirect(
       `/contests/${contestSlug}/results?discipline=${DEFAULT_DISCIPLINE}`,
@@ -70,6 +70,7 @@ export default async function ContestResultsPage({
           contestSlug={contestSlug}
           discipline={discipline}
           scrollToId={Number(scrollToId)}
+          scrollToOwn={Boolean(scrollToOwn)}
         />
       </Suspense>
     </>
@@ -80,10 +81,12 @@ async function PageContent({
   contestSlug,
   discipline,
   scrollToId,
+  scrollToOwn,
 }: {
   contestSlug: string
   discipline: Discipline
   scrollToId?: number
+  scrollToOwn?: boolean
 }) {
   const { data: initialData, error } = await tryCatchTRPC(
     api.contest.getContestResults({
@@ -106,6 +109,7 @@ async function PageContent({
       contestSlug={contestSlug}
       discipline={discipline}
       scrollToId={scrollToId}
+      scrollToOwn={scrollToOwn}
     />
   )
 }
