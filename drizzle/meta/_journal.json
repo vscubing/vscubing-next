@@ -43,6 +43,13 @@
       "when": 1744956548790,
       "tag": "0005_useful_pyro",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1744975714767,
+      "tag": "0006_tiny_doctor_faustus",
+      "breakpoints": true
     }
   ]
 }

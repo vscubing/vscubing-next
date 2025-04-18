@@ -1,0 +1,1 @@
+ALTER TABLE "solve" ADD COLUMN "plus_two_included" boolean;
