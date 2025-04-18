@@ -69,7 +69,7 @@ export function SolveTimeLinkOrDnf({
 }
 
 const solveTimeLabelVariants = cva(
-  'vertical-alignment-fix inline-flex h-8 min-w-24 items-center justify-center',
+  'vertical-alignment-fix relative inline-flex h-8 min-w-24 items-center justify-center',
   {
     variants: {
       variant: { average: 'text-yellow-100', dnf: 'text-red-80' },
@@ -80,6 +80,7 @@ type SolveTimeLabelProps = {
   timeMs?: number // this is loosely typed without ResultDnfish because isPlaceholder and isAverage are tricky
   isDnf?: boolean
   isPlaceholder?: boolean
+  isFestive?: boolean
   isAverage?: boolean
 } & Omit<ComponentProps<'span'>, 'children'>
 export function SolveTimeLabel({
@@ -87,6 +88,7 @@ export function SolveTimeLabel({
   timeMs,
   isDnf = false,
   isPlaceholder = false,
+  isFestive = false,
   isAverage,
   className,
   ...props
@@ -116,6 +118,13 @@ export function SolveTimeLabel({
       className={cn(solveTimeLabelVariants({ variant, className }))}
       ref={ref}
     >
+      {isFestive && (
+        <Image
+          src={confettiImg}
+          alt=''
+          className='pointer-events-none absolute left-1/2 top-1/2 max-w-none -translate-x-1/2 -translate-y-1/2'
+        />
+      )}
       {content}
     </span>
   )

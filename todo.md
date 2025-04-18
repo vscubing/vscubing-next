@@ -12,7 +12,7 @@ BEFORE RELEASE:
 - [x] scroll to own result on round finish
 - [x] fix discipline: string everywhere
 - [x] skip preinspection
-- [ ] pb confetti in reconstruction
+- [x] pb confetti in reconstruction
 - [ ] wca auth
 - [ ] figure out the annoying auth bug
 - [ ] new posthog project
