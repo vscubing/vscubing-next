@@ -1,7 +1,6 @@
 'use client'
 
 import {
-  Ellipsis,
   PlusIcon,
   MinusIcon,
   SecondaryButton,
@@ -19,6 +18,7 @@ import * as Accordion from '@radix-ui/react-accordion'
 import Link from 'next/link'
 import { type ReactNode } from 'react'
 import tailwindConfig from 'tailwind.config'
+import WcaBadgeLink from '@/frontend/shared/wca-badge-link'
 
 // HACK: we can't just use useMatchesScreen for switching between Desktop and Tablet because then it won't be SSRed properly
 type SingleResultProps = {
@@ -56,21 +56,13 @@ export function SingleResult({
 }
 
 function SingleResultDesktop({
-  result: {
-    result,
-    id,
-    createdAt,
-    contestSlug,
-    nickname,
-    isOwn,
-    roundSessionId,
-  },
+  result: { result, id, createdAt, contestSlug, user, isOwn, roundSessionId },
   discipline,
   place,
   className,
   onPlaceClick,
 }: SingleResultProps & { className: string }) {
-  let displayedNickname = nickname
+  let displayedNickname = user.name
   if (isOwn) {
     displayedNickname = displayedNickname + ' (you)'
   }
@@ -95,9 +87,10 @@ function SingleResultDesktop({
             {place}
           </PlaceLabel>
           <DisciplineIcon className='mr-3' discipline={discipline} />
-          <Ellipsis className='vertical-alignment-fix flex-1'>
-            {displayedNickname}
-          </Ellipsis>
+          <span className='vertical-alignment-fix flex flex-1 items-start'>
+            <span>{displayedNickname}</span>
+            {user.wcaId && <WcaBadgeLink className='ml-2' wcaId={user.wcaId} />}
+          </span>
           <SolveTimeLinkOrDnf
             className='mr-6'
             canShowHint={place === 1}
@@ -129,21 +122,13 @@ function SingleResultDesktop({
 }
 
 function SingleResultTablet({
-  result: {
-    result,
-    id,
-    createdAt,
-    contestSlug,
-    nickname,
-    isOwn,
-    roundSessionId,
-  },
+  result: { result, id, createdAt, contestSlug, user, isOwn, roundSessionId },
   discipline,
   place,
   className,
   onPlaceClick,
 }: SingleResultProps & { className: string }) {
-  let displayedNickname = nickname
+  let displayedNickname = user.name
   if (isOwn) {
     displayedNickname = displayedNickname + ' (you)'
   }
@@ -176,9 +161,12 @@ function SingleResultTablet({
                   className='mr-3 sm:mr-0'
                   discipline={discipline}
                 />
-                <Ellipsis className='vertical-alignment-fix flex-1 sm:col-span-2 sm:w-auto'>
-                  {displayedNickname}
-                </Ellipsis>
+                <span className='vertical-alignment-fix flex flex-1 items-start sm:col-span-2 sm:w-auto'>
+                  <span>{displayedNickname}</span>
+                  {user.wcaId && (
+                    <WcaBadgeLink className='ml-2' wcaId={user.wcaId} />
+                  )}
+                </span>
                 <span className='mr-10 sm:mr-0 sm:flex sm:items-center'>
                   <span className='sm:vertical-alignment-fix mb-1 block text-center text-grey-40 sm:mb-0'>
                     Single time

@@ -12,14 +12,14 @@ type EllipsisProps = Omit<HTMLAttributes<HTMLSpanElement>, 'children'> & {
   children: string
 }
 
-const Ellipsis = ({
+function Ellipsis({
   ref,
   children: text,
   className,
   ...props
 }: EllipsisProps & {
   ref?: React.RefObject<HTMLSpanElement>
-}) => {
+}) {
   const innerRef = useRef<HTMLSpanElement>(null)
   useEffect(() => {
     const abortSignal = new AbortController()

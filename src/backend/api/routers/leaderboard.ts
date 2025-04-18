@@ -16,6 +16,7 @@ import {
 } from '@/backend/shared/personal-best-subquery'
 import { sortWithRespectToExtras } from '@/backend/shared/sort-with-respect-to-extras'
 import { groupBy } from '@/utils/group-by'
+import { getWcaIdSubquery } from '@/backend/shared/wca-id-subquery'
 
 export const leaderboardRouter = createTRPCRouter({
   bySingle: publicProcedure
@@ -30,6 +31,7 @@ export const leaderboardRouter = createTRPCRouter({
         discipline: input.discipline,
         includeOngoing: false,
       })
+      const wcaIdSubquery = getWcaIdSubquery({ db: ctx.db })
 
       const rows = await ctx.db
         .select({
@@ -39,6 +41,11 @@ export const leaderboardRouter = createTRPCRouter({
             isDnf: bestSolveSubquery.isDnf,
           },
           createdAt: bestSolveSubquery.createdAt,
+          user: {
+            name: userTable.name,
+            id: userTable.id,
+            wcaId: wcaIdSubquery.wcaId,
+          },
           nickname: userTable.name,
           userId: userTable.id,
           contestSlug: roundTable.contestSlug,
@@ -51,10 +58,15 @@ export const leaderboardRouter = createTRPCRouter({
         )
         .innerJoin(roundTable, eq(roundTable.id, roundSessionTable.roundId))
         .innerJoin(userTable, eq(userTable.id, roundSessionTable.contestantId))
+        .leftJoin(wcaIdSubquery, eq(wcaIdSubquery.userId, userTable.id))
         .orderBy(bestSolveSubquery.timeMs)
 
       return rows.map((row) => ({
-        ...row,
+        user: row.user,
+        id: row.id,
+        createdAt: row.createdAt,
+        contestSlug: row.contestSlug,
+        roundSessionId: row.roundSessionId,
         result: resultDnfish.parse(row.result),
         isOwn: ctx.session?.user?.id === row.userId,
       }))
@@ -72,6 +84,7 @@ export const leaderboardRouter = createTRPCRouter({
         discipline: input.discipline,
         includeOngoing: false,
       })
+      const wcaIdSubquery = getWcaIdSubquery({ db: ctx.db })
 
       const rows = await ctx.db
         .select({
@@ -83,12 +96,14 @@ export const leaderboardRouter = createTRPCRouter({
           solve: {
             timeMs: solveTable.timeMs,
             isDnf: solveTable.isDnf,
+            plusTwoIncluded: solveTable.plusTwoIncluded,
             id: solveTable.id,
             position: scrambleTable.position,
           },
           user: {
             name: userTable.name,
             id: userTable.id,
+            wcaId: wcaIdSubquery.wcaId,
           },
           contestSlug: roundTable.contestSlug,
         })
@@ -103,6 +118,7 @@ export const leaderboardRouter = createTRPCRouter({
           userTable,
           eq(userTable.id, bestSessionSubquery.contestantId),
         )
+        .leftJoin(wcaIdSubquery, eq(wcaIdSubquery.userId, userTable.id))
         .where(eq(solveTable.status, 'submitted'))
         .orderBy(bestSessionSubquery.avgMs)
 
@@ -116,15 +132,22 @@ export const leaderboardRouter = createTRPCRouter({
             isOwn: session[0]!.user.id === ctx.session?.user.id,
           },
           solves: sortWithRespectToExtras(
-            session.map(({ solve: { id, position, isDnf, timeMs } }) => ({
-              id,
-              position,
-              result: resultDnfish.parse({ timeMs, isDnf }),
-              isPersonalBest: false,
-            })),
+            session.map(
+              ({
+                solve: { id, position, isDnf, timeMs, plusTwoIncluded },
+              }) => ({
+                id,
+                position,
+                result: resultDnfish.parse({ timeMs, isDnf, plusTwoIncluded }),
+                isPersonalBest: false,
+              }),
+            ),
           ),
           contestSlug: session[0]!.contestSlug,
-          nickname: session[0]!.user.name,
+          user: {
+            name: session[0]!.user.name,
+            wcaId: session[0]!.user.wcaId,
+          },
         }
       })
     }),

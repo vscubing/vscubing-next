@@ -1,7 +1,6 @@
 'use client'
 
 import {
-  Ellipsis,
   SecondaryButton,
   ArrowRightIcon,
   UnderlineButton,
@@ -13,12 +12,13 @@ import { DISCIPLINES, type Discipline, type ResultDnfish } from '@/types'
 import { cn } from '@/frontend/utils/cn'
 import { tailwindConfig } from '@/frontend/utils/tailwind'
 import Link from 'next/link'
+import WcaBadgeLink from '@/frontend/shared/wca-badge-link'
 
 type Solve = {
   result: ResultDnfish
   isOwn: boolean
   id: number
-  nickname: string
+  user: { name: string; wcaId: string | null }
   discipline: Discipline
   contestSlug: string
 }
@@ -105,8 +105,14 @@ function SolveRow({ solve, isFirstOnPage }: SolveProps) {
           >
             <span className='relative mr-3 flex flex-1 items-center pr-2 after:absolute after:right-0 after:top-1/2 after:block after:h-6 after:w-px after:-translate-y-1/2 after:bg-grey-60 sm:mr-0 sm:flex-col sm:items-start'>
               <DisciplineIcon className='mr-3' discipline={solve.discipline} />
-              <span className='flex w-full'>
-                <Ellipsis className='flex-1'>{solve.nickname}</Ellipsis>
+              <span className='flex items-center'>
+                <span>{solve.user.name}</span>
+                {solve.user.wcaId && (
+                  <WcaBadgeLink
+                    className='-mt-1 ml-2'
+                    wcaId={solve.user.wcaId}
+                  />
+                )}
               </span>
             </span>
             <span className='mr-4 sm:mr-0'>

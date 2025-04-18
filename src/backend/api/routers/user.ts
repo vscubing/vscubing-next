@@ -5,8 +5,8 @@ import {
   protectedProcedure,
   publicProcedure,
 } from '@/backend/api/trpc'
-import { userTable } from '@/backend/db/schema'
-import { eq } from 'drizzle-orm'
+import { accountTable, userTable } from '@/backend/db/schema'
+import { and, eq } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
 import {
   deleteSessionTokenCookie,
@@ -24,6 +24,7 @@ export const userRouter = createTRPCRouter({
       email: session.user.email,
       role: session.user.role,
       finishedRegistration: session.user.finishedRegistration,
+      wcaId: session.user.wcaId,
     } satisfies User
   }),
   logout: protectedProcedure.mutation(async ({ ctx: { session } }) => {
@@ -73,4 +74,17 @@ export const userRouter = createTRPCRouter({
         .set({ name: input.username, finishedRegistration: true })
         .where(eq(userTable.id, user.id))
     }),
+  removeWcaAccount: protectedProcedure.mutation(async ({ ctx }) => {
+    const wcaId = ctx.session.user.wcaId
+    if (!wcaId) throw new TRPCError({ code: 'PRECONDITION_FAILED' })
+
+    await ctx.db
+      .delete(accountTable)
+      .where(
+        and(
+          eq(accountTable.provider, 'wca'),
+          eq(accountTable.providerAccountId, wcaId),
+        ),
+      )
+  }),
 })

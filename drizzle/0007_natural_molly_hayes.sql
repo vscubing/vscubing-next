@@ -1,0 +1,1 @@
+ALTER TABLE "solve" ALTER COLUMN "plus_two_included" SET NOT NULL;

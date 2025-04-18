@@ -8,12 +8,21 @@ import { z } from 'zod'
 export type User = Pick<
   UserSchema,
   'name' | 'id' | 'email' | 'finishedRegistration' | 'role'
->
+> & { wcaId: string | null }
 
 export const SCRAMBLE_POSITIONS = ['1', '2', '3', '4', '5', 'E1', 'E2'] as const
 export type ScramblePosition = (typeof SCRAMBLE_POSITIONS)[number]
 export function isExtra(position: ScramblePosition) {
   return position.startsWith('E')
+}
+export function getExtraNumber(
+  position: ScramblePosition,
+): '1' | '2' | undefined {
+  if (!isExtra(position)) return
+  const number = position[1]
+  if (number !== '1' && number !== '2')
+    throw new Error(`invalid scramble position: ${position}`)
+  return number
 }
 
 export const SOLVE_STATUSES = [
@@ -24,11 +33,22 @@ export const SOLVE_STATUSES = [
 export type SolveStatus = (typeof SOLVE_STATUSES)[number]
 
 export type ResultDnfish = ResultSuccess | ResultDnf
-type ResultSuccess = { timeMs: number; isDnf: false }
-type ResultDnf = { timeMs: null | number; isDnf: true }
+type ResultSuccess = { timeMs: number; isDnf: false; plusTwoIncluded: boolean }
+type ResultDnf = {
+  timeMs: null | number
+  isDnf: true
+  plusTwoIncluded: boolean
+}
 
 export const resultDnfish = z.custom<ResultDnfish>(
-  ({ isDnf, timeMs }: { isDnf: boolean; timeMs: number | null }) => {
+  ({
+    isDnf,
+    timeMs,
+  }: {
+    isDnf: boolean
+    timeMs: number | null
+    plusTwoIncluded: boolean
+  }) => {
     if ((isDnf === false && timeMs !== null) || isDnf === true) return true
     return false
   },
@@ -75,7 +95,10 @@ export type RoundSession = {
     isPersonalBest: boolean
   }[]
   contestSlug: string
-  nickname: string
+  user: {
+    name: string
+    wcaId: string | null
+  }
 }
 
 export const CONTEST_UNAUTHORIZED_MESSAGE =

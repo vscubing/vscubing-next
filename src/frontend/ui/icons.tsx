@@ -36,6 +36,7 @@ import CodeIcon from '@/../public/icons/code.icon.svg'
 import AverageIcon from '@/../public/icons/average.icon.svg'
 import SingleIcon from '@/../public/icons/single.icon.svg'
 import VscubingIcon from '@/../public/icons/vscubing.icon.svg'
+import WcaLogoIcon from '@/../public/icons/wca-logo.icon.svg'
 
 import { type Discipline } from '@/types'
 import { cn } from '@/frontend/utils/cn'
@@ -78,6 +79,7 @@ export {
   AverageIcon,
   SingleIcon,
   VscubingIcon,
+  WcaLogoIcon,
 }
 
 type DisciplineIconProps = HTMLAttributes<SVGSVGElement> & {

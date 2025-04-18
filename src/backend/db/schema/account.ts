@@ -41,6 +41,7 @@ export const accountTable = pgTable(
     access_token: d.text('access_token'),
     expires_at: d.bigint('expires_at', { mode: 'bigint' }),
     token_type: d.varchar('token_type', { length: 255 }),
+    email: d.text().notNull(),
   }),
   (t) => [
     primaryKey({ columns: [t.provider, t.providerAccountId] }),

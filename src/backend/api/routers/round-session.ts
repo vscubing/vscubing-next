@@ -122,6 +122,7 @@ export const roundSessionRouter = createTRPCRouter({
         result: {
           isDnf: solveTable.isDnf,
           timeMs: solveTable.timeMs,
+          plusTwoIncluded: solveTable.plusTwoIncluded,
         },
         id: solveTable.id,
         status: solveTable.status,
@@ -236,13 +237,12 @@ export const roundSessionRouter = createTRPCRouter({
         input.discipline,
       )
 
-      const setNewPersonalBest = !!(
-        activePersonalBest?.timeMs &&
+      const setNewPersonalBest =
         !isDnf &&
-        isValid &&
-        payload.result.timeMs &&
-        payload.result.timeMs < activePersonalBest.timeMs
-      )
+        (!activePersonalBest?.result ||
+          activePersonalBest.result.isDnf ||
+          (payload.result.timeMs &&
+            payload.result.timeMs < activePersonalBest.result.timeMs))
 
       const [solve] = await ctx.db
         .insert(solveTable)
@@ -250,6 +250,7 @@ export const roundSessionRouter = createTRPCRouter({
           roundSessionId: ctx.roundSession.id,
           isDnf,
           timeMs: payload.result.timeMs,
+          plusTwoIncluded: payload.result.plusTwoIncluded,
           solution: payload.solution,
           status: 'pending',
           scrambleId: input.scrambleId,
@@ -282,10 +283,9 @@ export const roundSessionRouter = createTRPCRouter({
       if (setNewPersonalBest)
         return {
           setNewPersonalBest,
-          previousPersonalBest: {
-            ...activePersonalBest,
-            timeMs: activePersonalBest.timeMs!,
-          },
+          previousPersonalBest: activePersonalBest?.result.isDnf
+            ? undefined
+            : activePersonalBest,
         }
     }),
 
@@ -382,7 +382,11 @@ async function getPersonalBestSolveIncludingOngoing(
   const [activeBest] = await _db
     .select({
       id: subquery.id,
-      timeMs: subquery.timeMs,
+      result: {
+        timeMs: subquery.timeMs,
+        isDnf: subquery.isDnf,
+        plusTwoIncluded: subquery.plusTwoIncluded,
+      },
       contestSlug: roundTable.contestSlug,
     })
     .from(subquery)
@@ -393,5 +397,10 @@ async function getPersonalBestSolveIncludingOngoing(
     .innerJoin(roundTable, eq(roundTable.id, roundSessionTable.roundId))
     .where(eq(roundSessionTable.contestantId, userId))
 
-  return activeBest
+  return activeBest?.result
+    ? {
+        ...activeBest,
+        result: resultDnfish.parse(activeBest?.result),
+      }
+    : undefined
 }

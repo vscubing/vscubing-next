@@ -37,14 +37,9 @@ export async function getUserAccount(user: User, provider: 'google') {
   return account ?? null
 }
 
-export async function createUserAccount(params: {
-  provider: 'google' | 'wca'
-  providerAccountId: string
-  userId: string
-  refresh_token?: string
-  access_token: string
-  expires_at: bigint
-}) {
+export async function createUserAccount(
+  params: typeof accountTable.$inferInsert,
+) {
   const [account] = await db
     .insert(accountTable)
     .values([params])

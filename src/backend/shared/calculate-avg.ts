@@ -11,10 +11,12 @@ export function calculateAvg(results: ResultDnfish[]): ResultDnfish {
 
   counting.shift()
   if (counting.length > COUNTING_RESULTS) counting.pop()
-  if (counting.length < COUNTING_RESULTS) return { timeMs: null, isDnf: true }
+  if (counting.length < COUNTING_RESULTS)
+    return { timeMs: null, isDnf: true, plusTwoIncluded: false }
 
   return {
     timeMs: Math.floor(counting.reduce((a, b) => a + b, 0) / COUNTING_RESULTS),
     isDnf: false,
+    plusTwoIncluded: false,
   }
 }

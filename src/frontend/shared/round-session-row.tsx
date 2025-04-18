@@ -1,6 +1,5 @@
 import {
   DisciplineIcon,
-  Ellipsis,
   PlusIcon,
   MinusIcon,
   ArrowRightIcon,
@@ -8,17 +7,17 @@ import {
 } from '@/frontend/ui'
 import { cn } from '@/frontend/utils/cn'
 import * as Accordion from '@radix-ui/react-accordion'
-import { ExtraLabel } from '@/frontend/shared/extra-label'
 import { PlaceLabel } from '@/frontend/shared/place-label'
 import {
   SolveTimeLabel,
   SolveTimeLinkOrDnf,
 } from '@/frontend/shared/solve-time-button'
-import type { Discipline, RoundSession } from '@/types'
+import { getExtraNumber, type Discipline, type RoundSession } from '@/types'
 import { SpinningBorder } from '@/frontend/ui/spinning-border'
 import { tailwindConfig } from '@/frontend/utils/tailwind'
 import type { RefObject } from 'react'
 import Link from 'next/link'
+import WcaBadgeLink from './wca-badge-link'
 
 // HACK: we can't just use useMatchesScreen for switching between Desktop and Tablet because then it won't be SSRed properly
 type RoundSessionRowProps = {
@@ -97,7 +96,7 @@ export function RoundSessionHeader({
 }
 
 function RoundSessionRowTablet({
-  session: { solves, nickname, session, contestSlug },
+  session: { solves, user, session, contestSlug },
   withContestLink,
   place,
   discipline,
@@ -139,8 +138,12 @@ function RoundSessionRowTablet({
                   className='mr-3 sm:mr-0'
                   discipline={discipline}
                 />
-                <Ellipsis className='vertical-alignment-fix flex-1 sm:col-span-2 sm:w-auto'>{`${nickname}${currentUserLabel}`}</Ellipsis>
-
+                <span className='vertical-alignment-fix flex flex-1 items-start sm:col-span-2 sm:w-auto'>
+                  <span>{`${user.name}${currentUserLabel}`}</span>
+                  {user.wcaId && (
+                    <WcaBadgeLink className='ml-2' wcaId={user.wcaId} />
+                  )}
+                </span>
                 <span className='mr-10 sm:mr-0 sm:flex sm:items-center'>
                   <span className='sm:vertical-alignment-fix block text-center text-grey-40'>
                     Average time
@@ -178,11 +181,10 @@ function RoundSessionRowTablet({
                                 ? 'worst'
                                 : undefined
                           }
-                        />
-
-                        <ExtraLabel
-                          scramblePosition={solve.position}
-                          className='absolute -top-2 right-[1.1rem] sm:-top-1'
+                          extraNumber={getExtraNumber(solve.position)}
+                          backgroundColorClass={
+                            session.isOwn ? 'bg-secondary-80' : 'bg-grey-100'
+                          }
                         />
                       </span>
                     </li>
@@ -212,7 +214,7 @@ function RoundSessionRowTablet({
 }
 
 function RoundSessionRowDesktop({
-  session: { solves, nickname, session, contestSlug },
+  session: { solves, user, session, contestSlug },
   place,
   withContestLink,
   isFirstOnPage,
@@ -246,7 +248,10 @@ function RoundSessionRowDesktop({
             {place}
           </PlaceLabel>
           <DisciplineIcon className='mr-3' discipline={discipline} />
-          <Ellipsis className='vertical-alignment-fix flex-1'>{`${nickname}${currentUserLabel}`}</Ellipsis>
+          <span className='vertical-alignment-fix flex flex-1 items-start'>
+            <span>{`${user.name}${currentUserLabel}`}</span>
+            {user.wcaId && <WcaBadgeLink className='ml-2' wcaId={user.wcaId} />}
+          </span>
 
           <SolveTimeLabel
             timeMs={session.result.timeMs ?? undefined}
@@ -276,14 +281,10 @@ function RoundSessionRowDesktop({
                           ? 'worst'
                           : undefined
                     }
-                  />
-
-                  <ExtraLabel
-                    scramblePosition={solve.position}
-                    className={cn('absolute -top-2 right-[1.1rem] z-10', {
-                      'text-white-100 [text-shadow:_1px_1px_2px_black]':
-                        solve.isPersonalBest,
-                    })}
+                    extraNumber={getExtraNumber(solve.position)}
+                    backgroundColorClass={
+                      session.isOwn ? 'bg-secondary-80' : 'bg-grey-100'
+                    }
                   />
                 </span>
               </li>
