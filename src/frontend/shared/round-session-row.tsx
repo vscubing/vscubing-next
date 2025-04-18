@@ -1,6 +1,5 @@
 import {
   DisciplineIcon,
-  Ellipsis,
   PlusIcon,
   MinusIcon,
   ArrowRightIcon,
@@ -18,6 +17,7 @@ import { SpinningBorder } from '@/frontend/ui/spinning-border'
 import { tailwindConfig } from '@/frontend/utils/tailwind'
 import type { RefObject } from 'react'
 import Link from 'next/link'
+import WcaBadgeLink from './wca-badge-link'
 
 // HACK: we can't just use useMatchesScreen for switching between Desktop and Tablet because then it won't be SSRed properly
 type RoundSessionRowProps = {
@@ -96,7 +96,7 @@ export function RoundSessionHeader({
 }
 
 function RoundSessionRowTablet({
-  session: { solves, nickname, session, contestSlug },
+  session: { solves, user, session, contestSlug },
   withContestLink,
   place,
   discipline,
@@ -138,8 +138,12 @@ function RoundSessionRowTablet({
                   className='mr-3 sm:mr-0'
                   discipline={discipline}
                 />
-                <Ellipsis className='vertical-alignment-fix flex-1 sm:col-span-2 sm:w-auto'>{`${nickname}${currentUserLabel}`}</Ellipsis>
-
+                <span className='vertical-alignment-fix flex flex-1 items-start sm:col-span-2 sm:w-auto'>
+                  <span>{`${user.name}${currentUserLabel}`}</span>
+                  {user.wcaId && (
+                    <WcaBadgeLink className='ml-2' wcaId={user.wcaId} />
+                  )}
+                </span>
                 <span className='mr-10 sm:mr-0 sm:flex sm:items-center'>
                   <span className='sm:vertical-alignment-fix block text-center text-grey-40'>
                     Average time
@@ -210,7 +214,7 @@ function RoundSessionRowTablet({
 }
 
 function RoundSessionRowDesktop({
-  session: { solves, nickname, session, contestSlug },
+  session: { solves, user, session, contestSlug },
   place,
   withContestLink,
   isFirstOnPage,
@@ -244,7 +248,10 @@ function RoundSessionRowDesktop({
             {place}
           </PlaceLabel>
           <DisciplineIcon className='mr-3' discipline={discipline} />
-          <Ellipsis className='vertical-alignment-fix flex-1'>{`${nickname}${currentUserLabel}`}</Ellipsis>
+          <span className='vertical-alignment-fix flex flex-1 items-start'>
+            <span>{`${user.name}${currentUserLabel}`}</span>
+            {user.wcaId && <WcaBadgeLink className='ml-2' wcaId={user.wcaId} />}
+          </span>
 
           <SolveTimeLabel
             timeMs={session.result.timeMs ?? undefined}

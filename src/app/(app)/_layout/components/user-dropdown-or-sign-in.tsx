@@ -87,7 +87,9 @@ function UserDropdown({
           {user.name}
         </DropdownMenu.Label>
         <DropdownMenu.Label className='mb-6 border-b border-b-grey-100 pb-2 text-grey-20'>
-          <WcaSignIn className='-ml-2' wcaId={user.wcaId} />
+          <div className='-ml-2'>
+            <WcaSignIn wcaId={user.wcaId} />
+          </div>
         </DropdownMenu.Label>
         <DropdownMenu.Group className='-ml-2 flex flex-col gap-2'>
           <DropdownButton className='w-full cursor-pointer' asChild>

@@ -95,7 +95,10 @@ export type RoundSession = {
     isPersonalBest: boolean
   }[]
   contestSlug: string
-  nickname: string
+  user: {
+    name: string
+    wcaId: string | null
+  }
 }
 
 export const CONTEST_UNAUTHORIZED_MESSAGE =

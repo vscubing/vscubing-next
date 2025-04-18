@@ -1,20 +1,16 @@
 import { db } from '../db'
-import {
-  type Session,
-  authSessionTable,
-  userTable,
-  accountTable,
-} from '../db/schema/account'
+import { type Session, authSessionTable, userTable } from '../db/schema/account'
 import {
   encodeBase32LowerCaseNoPadding,
   encodeHexLowerCase,
 } from '@oslojs/encoding'
 import { sha256 } from '@oslojs/crypto/sha2'
-import { eq, and, getTableColumns } from 'drizzle-orm'
+import { eq, getTableColumns } from 'drizzle-orm'
 import { cookies } from 'next/headers'
 import { cache } from 'react'
 import { env } from '@/env'
 import type { User } from '@/types'
+import { getWcaIdSubquery } from '../shared/wca-id-subquery'
 
 export function generateSessionToken(): string {
   const bytes = new Uint8Array(20)
@@ -42,24 +38,20 @@ export async function validateSessionToken(
 ): Promise<SessionValidationResult> {
   const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)))
 
+  const wcaIdSubquery = getWcaIdSubquery({ db })
+
   const [result] = await db
 
     .select({
       user: {
         ...getTableColumns(userTable),
-        wcaId: accountTable.providerAccountId,
+        wcaId: wcaIdSubquery.wcaId,
       },
       session: authSessionTable,
     })
     .from(authSessionTable)
     .innerJoin(userTable, eq(authSessionTable.userId, userTable.id))
-    .leftJoin(
-      accountTable,
-      and(
-        eq(accountTable.userId, userTable.id),
-        eq(accountTable.provider, 'wca'),
-      ),
-    )
+    .leftJoin(wcaIdSubquery, eq(wcaIdSubquery.userId, userTable.id))
     .where(eq(authSessionTable.id, sessionId))
   if (!result) {
     return null

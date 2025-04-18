@@ -18,6 +18,7 @@ import { groupBy } from '@/utils/group-by'
 import { sortWithRespectToExtras } from '../../shared/sort-with-respect-to-extras'
 import { getContestUserCapabilities } from '../../shared/get-contest-user-capabilities'
 import { getPersonalBestSolveSubquery } from '@/backend/shared/personal-best-subquery'
+import { getWcaIdSubquery } from '@/backend/shared/wca-id-subquery'
 
 export const contestRouter = createTRPCRouter({
   getAllContests: publicProcedure
@@ -182,6 +183,7 @@ export const contestRouter = createTRPCRouter({
         discipline: input.discipline,
         includeOngoing: true,
       })
+      const wcaIdSubquery = getWcaIdSubquery({ db: ctx.db })
 
       const queryRes = await ctx.db
         .select({
@@ -201,6 +203,7 @@ export const contestRouter = createTRPCRouter({
           user: {
             name: userTable.name,
             id: userTable.id,
+            wcaId: wcaIdSubquery.wcaId,
           },
         })
         .from(roundTable)
@@ -215,6 +218,7 @@ export const contestRouter = createTRPCRouter({
         .innerJoin(scrambleTable, eq(scrambleTable.id, solveTable.scrambleId))
         .innerJoin(userTable, eq(userTable.id, roundSessionTable.contestantId))
         .leftJoin(bestSolveSubquery, eq(bestSolveSubquery.id, solveTable.id))
+        .leftJoin(wcaIdSubquery, eq(wcaIdSubquery.userId, userTable.id))
         .where(
           and(
             eq(roundTable.contestSlug, input.contestSlug),
@@ -252,7 +256,7 @@ export const contestRouter = createTRPCRouter({
             }),
           ),
         ),
-        nickname: session[0]!.user.name,
+        user: session[0]!.user,
         contestSlug: input.contestSlug,
       }))
     }),

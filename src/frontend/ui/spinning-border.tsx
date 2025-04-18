@@ -6,9 +6,9 @@ import {
   type ComponentPropsWithoutRef,
   type CSSProperties,
   useRef,
-  useState,
   useEffect,
 } from 'react'
+import { useDebounceValue } from 'usehooks-ts'
 
 export function SpinningBorder({
   color,
@@ -46,7 +46,7 @@ export function SpinningBorder({
 
 function useSpinningBorderRatio() {
   const ref = useRef<HTMLDivElement>(null)
-  const [ratio, setRatio] = useState<number | undefined>()
+  const [ratio, setRatio] = useDebounceValue<number | undefined>(undefined, 200)
   useEffect(() => {
     const node = ref.current
     if (!node) return
