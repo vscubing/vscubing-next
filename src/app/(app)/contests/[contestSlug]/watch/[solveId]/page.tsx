@@ -9,16 +9,16 @@ import { Suspense, type ReactNode } from 'react'
 import { LayoutSectionHeader } from '@/app/(app)/_layout'
 import { LayoutHeaderTitlePortal } from '@/app/(app)/_layout/layout-header'
 import { NavigateBackButton } from '@/frontend/shared/navigate-back-button'
-import { formatSolveTime } from '@/utils/format-solve-time'
 import Link from 'next/link'
 import { ShareSolveButton } from './_components/share-button'
 import { SpinningBorder } from '@/frontend/ui/spinning-border'
 import tailwindConfig from 'tailwind.config'
 import { cn } from '@/frontend/utils/cn'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/frontend/ui/tooltip'
 import { Alg } from '@vscubing/cubing/alg'
 import { isRotation } from '@/utils/is-rotation'
 import { removeSolutionComments } from '@/utils/remove-solution-comments'
+import { TpsHintPopover } from './_components/tps-hint-popover'
+import { SolveTimeLabel } from '@/frontend/shared/solve-time-button'
 
 type PathParams = { contestSlug: string; solveId: string }
 export default async function WatchSolvePage({
@@ -69,6 +69,7 @@ async function PageContentWithShell({ solveId, contestSlug }: PathParams) {
       timeMs={solve.timeMs}
       scramblePosition={expandScramblePosition(solve.position)}
       isOwn={solve.isOwn}
+      isPersonalBest={solve.isPersonalBest}
       solution={solve.solution}
     >
       <TwistySection
@@ -90,6 +91,7 @@ function PageShell({
   isOwn,
   solution,
   children,
+  isPersonalBest,
 }: {
   discipline: Discipline
   contestSlug: string
@@ -100,6 +102,7 @@ function PageShell({
   username: string
   children: ReactNode
   isOwn?: boolean
+  isPersonalBest?: boolean
 }) {
   return (
     <section className='flex flex-1 flex-col gap-3'>
@@ -134,9 +137,13 @@ function PageShell({
             <div className='sm:min-h-14'>
               <p className='title-h3 mb-1'>{username}</p>
               <p className='text-large text-grey-20'>
-                <span className='mr-1'>{formatSolveTime(timeMs ?? 0)} </span>
+                <SolveTimeLabel
+                  timeMs={timeMs ?? 0}
+                  className='mr-4 min-w-0'
+                  isFestive={isPersonalBest}
+                ></SolveTimeLabel>
                 <span className='text-grey-40'>
-                  <SolveTPS solution={solution} timeMs={timeMs} />
+                  <SolveTps solution={solution} timeMs={timeMs} />
                 </span>
               </p>
             </div>
@@ -150,7 +157,7 @@ function PageShell({
   )
 }
 
-function SolveTPS({
+function SolveTps({
   solution,
   timeMs,
 }: {
@@ -167,11 +174,8 @@ function SolveTPS({
 
   return (
     <span>
-      {turnCount} turns, {tps} {''}
-      <Tooltip>
-        <TooltipTrigger>TPS</TooltipTrigger>
-        <TooltipContent>Turns per second</TooltipContent>
-      </Tooltip>
+      {turnCount} turns, {tps} TPS {''}
+      <TpsHintPopover>(?)</TpsHintPopover>
     </span>
   )
 }

@@ -15,17 +15,29 @@ export async function doEverything(
   scramble: string,
   solutionWithTimings: string,
   discipline: Discipline,
-): Promise<{ solution: Alg; animLeaves?: AnimationTimelineLeaf[] }> {
+): Promise<{
+  solution: Alg
+  animLeaves?: AnimationTimelineLeaf[]
+  startIndex: number
+}> {
   const timestamps = parseTimestamps(solutionWithTimings)
 
   let solution = new Alg(removeSolutionComments(solutionWithTimings))
+
+  const startIndex = Math.max(
+    Array.from(solution.childAlgNodes()).findIndex(
+      (node) => !isRotation(node),
+    ) - 1,
+    0,
+  )
+
   const rawSignatures = await ANALYZER_MAP[discipline](scramble, solution)
   const signaturesWithDurations = embedDurations(rawSignatures, timestamps)
 
   solution = annotateMoves(solution, signaturesWithDurations)
 
   if (!timestamps) {
-    return { solution }
+    return { solution, startIndex }
   }
 
   const animatableNodes = Array.from(solution.childAlgNodes()).filter((node) =>
@@ -34,7 +46,7 @@ export async function doEverything(
 
   if (animatableNodes.length !== timestamps?.length) {
     console.error('[TWISTY] animatableNodes.length !== leafSlots.length')
-    return { solution: solution }
+    return { solution: solution, startIndex }
   }
 
   const animLeaves: AnimationTimelineLeaf[] = animatableNodes.map(
@@ -45,7 +57,7 @@ export async function doEverything(
     }),
   )
 
-  return { solution, animLeaves }
+  return { solution, animLeaves, startIndex }
 }
 
 function embedDurations(

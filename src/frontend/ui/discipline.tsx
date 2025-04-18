@@ -1,9 +1,10 @@
 import { cn } from '@/frontend/utils/cn'
 import { type HTMLAttributes } from 'react'
 import { DisciplineIcon } from './icons'
+import type { Discipline } from '@/types'
 
-type DisciplineBadgeProps = HTMLAttributes<HTMLDivElement> & {
-  discipline: string
+type DisciplineBadgeProps = HTMLAttributes<HTMLSpanElement> & {
+  discipline: Discipline
 }
 export function DisciplineBadge({
   ref,

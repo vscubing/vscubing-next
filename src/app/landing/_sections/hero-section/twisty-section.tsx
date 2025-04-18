@@ -9,7 +9,7 @@ import {
 import { useEffect } from 'react'
 
 export default function TwistySection() {
-  const player = useTwistyPlayer(VALK_474_WR)
+  const { player } = useTwistyPlayer(VALK_474_WR)
 
   useEffect(() => player?.play(), [player])
 

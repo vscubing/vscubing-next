@@ -25,21 +25,29 @@ export function TwistySection({
   scramble: string
   discipline: Discipline
 }) {
-  const player = useTwistyPlayer({
+  const { player, startIndex } = useTwistyPlayer({
     solution,
     scramble,
     discipline,
   })
   if (!player) return null
 
-  return <TwistySectionContent player={player} scramble={scramble} />
+  return (
+    <TwistySectionContent
+      startIndex={startIndex}
+      player={player}
+      scramble={scramble}
+    />
+  )
 }
 
 function TwistySectionContent({
   player,
+  startIndex,
   scramble,
 }: {
   player: Player
+  startIndex: number
   scramble: string
 }) {
   const movesWrapperRef = useRef<HTMLDivElement | null>(null)
@@ -94,7 +102,10 @@ function TwistySectionContent({
           <AccordionItem title='Solve' className='flex-1'>
             <div className='flex h-full flex-col border-t border-grey-60 pt-2'>
               <div className='scrollbar -ml-1 -mt-1 flex-grow basis-0 overflow-y-auto pl-1 pr-2 pt-1 md:overflow-y-visible'>
-                <TwistyAlgViewer twistyPlayer={player} />
+                <TwistyAlgViewer
+                  twistyPlayer={player}
+                  startIndex={startIndex}
+                />
               </div>
             </div>
           </AccordionItem>

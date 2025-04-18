@@ -56,7 +56,7 @@ export function BestSolves({
           <span className='hidden flex-1 sm:block'>Type/Nickname</span>
           <span className='mr-4 w-24 text-center sm:mr-0'>Single time</span>
           <div aria-hidden className='invisible h-0'>
-            <OpenLeaderboardButton discipline='3x3' />
+            <OpenLeaderboardButton discipline='3by3' />
           </div>
         </div>
 
@@ -126,7 +126,7 @@ function SolveRow({ solve, isFirstOnPage }: SolveProps) {
   )
 }
 
-function OpenLeaderboardButton({ discipline }: { discipline: string }) {
+function OpenLeaderboardButton({ discipline }: { discipline: Discipline }) {
   const ariaLabel = `leaderboard`
   const ariaDescription = `Open leaderboard for ${discipline}`
   return (

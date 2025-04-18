@@ -86,7 +86,10 @@ export const roundSessionTable = pgTable(
     isDnf: d.boolean('is_dnf'),
     isFinished: d.boolean('is_finished').default(false).notNull(),
   }),
-  (t) => [index('avg_ms_idx').on(t.avgMs)],
+  (t) => [
+    index('avg_ms_idx').on(t.avgMs),
+    unique('round_id_contestant_id').on(t.roundId, t.contestantId),
+  ],
 )
 
 export const solveTable = pgTable(

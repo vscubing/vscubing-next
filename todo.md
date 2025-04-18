@@ -9,8 +9,10 @@ BEFORE RELEASE:
 - [x] license
 - [x] add db ping in the health check
 - [x] fix setSimulatorSettings firing unnecessarily
-- [ ] fix discipline: string everywhere
-- [ ] skip preinspection
+- [x] scroll to own result on round finish
+- [x] fix discipline: string everywhere
+- [x] skip preinspection
+- [x] pb confetti in reconstruction
 - [ ] wca auth
 - [ ] figure out the annoying auth bug
 - [ ] new posthog project
