@@ -16,7 +16,7 @@ BEFORE RELEASE:
 - [x] skip inspection by default 
 - [x] wca auth
 - [x] fix squished avg leaderboard rows on tablet
-- [ ] admin badges
+- [x] admin badges
 - [ ] wca auth fix redirectTo
 - [ ] wca auth error handling
 - [ ] include ongoing in leaderboards => auth on solve reconstruction
