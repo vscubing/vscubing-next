@@ -17,12 +17,14 @@ BEFORE RELEASE:
 - [x] wca auth
 - [x] fix squished avg leaderboard rows on tablet
 - [x] admin badges
-- [ ] wca auth fix redirectTo
+- [x] wca auth fix redirectTo
 - [ ] wca auth error handling
 - [ ] include ongoing in leaderboards => auth on solve reconstruction
 - [ ] merge results script
+- [ ] vscubing record toast
 
 AFTER RELEASE:
+- [ ] solution NULL instead of ''
 - [ ] file for google auth verification
 - [ ] include ongoing in leaderboard if capabilities=view_results
 - [ ] average personal best toast & avg 
