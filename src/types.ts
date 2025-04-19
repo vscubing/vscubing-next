@@ -99,6 +99,8 @@ export type RoundSession = {
     name: string
     wcaId: string | null
     role: 'admin' | null
+    singleRecords: number
+    averageRecords: number
   }
 }
 

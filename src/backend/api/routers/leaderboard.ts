@@ -7,9 +7,8 @@ import {
   solveTable,
   userTable,
   scrambleTable,
-  contestTable,
 } from '@/backend/db/schema'
-import { and, eq, getTableColumns, sql } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 import { DEFAULT_DISCIPLINE } from '@/types'
 import {
   getPersonalBestSolveSubquery as getBestSolveSubquery,
@@ -18,6 +17,10 @@ import {
 import { sortWithRespectToExtras } from '@/backend/shared/sort-with-respect-to-extras'
 import { groupBy } from '@/utils/group-by'
 import { getWcaIdSubquery } from '@/backend/shared/wca-id-subquery'
+import {
+  averageRecordSubquery,
+  singleRecordSubquery,
+} from '@/backend/shared/record-subquery'
 
 export const leaderboardRouter = createTRPCRouter({
   bySingle: publicProcedure
@@ -47,6 +50,17 @@ export const leaderboardRouter = createTRPCRouter({
             id: userTable.id,
             wcaId: wcaIdSubquery.wcaId,
             role: userTable.role,
+            singleRecords: ctx.db.$count(
+              singleRecordSubquery,
+              eq(singleRecordSubquery.round_session.contestantId, userTable.id),
+            ),
+            averageRecords: ctx.db.$count(
+              averageRecordSubquery,
+              eq(
+                averageRecordSubquery.round_session.contestantId,
+                userTable.id,
+              ),
+            ),
           },
           contestSlug: roundTable.contestSlug,
           roundSessionId: roundSessionTable.id,
@@ -105,6 +119,17 @@ export const leaderboardRouter = createTRPCRouter({
             id: userTable.id,
             wcaId: wcaIdSubquery.wcaId,
             role: userTable.role,
+            singleRecords: ctx.db.$count(
+              singleRecordSubquery,
+              eq(singleRecordSubquery.round_session.contestantId, userTable.id),
+            ),
+            averageRecords: ctx.db.$count(
+              averageRecordSubquery,
+              eq(
+                averageRecordSubquery.round_session.contestantId,
+                userTable.id,
+              ),
+            ),
           },
           contestSlug: roundTable.contestSlug,
         })
@@ -149,66 +174,4 @@ export const leaderboardRouter = createTRPCRouter({
         }
       })
     }),
-
-  recordHolders: publicProcedure.query(async ({ ctx }) => {
-    const averageSubquery = ctx.db
-      .selectDistinctOn([roundTable.disciplineSlug])
-      .from(roundSessionTable)
-      .innerJoin(roundTable, eq(roundTable.id, roundSessionTable.roundId))
-      .innerJoin(contestTable, eq(contestTable.slug, roundTable.contestSlug))
-      .where(
-        and(
-          eq(roundSessionTable.isFinished, true),
-          eq(contestTable.isOngoing, false), // TODO: remove this when we make leaderboards to update immediately and not after a contest ends
-        ),
-      )
-      .orderBy(
-        roundTable.disciplineSlug,
-        roundSessionTable.isDnf,
-        roundSessionTable.avgMs,
-      )
-      .as('average_subquery')
-
-    const singleSubquery = ctx.db
-      .selectDistinctOn([roundTable.disciplineSlug])
-      .from(solveTable)
-      .innerJoin(
-        roundSessionTable,
-        eq(roundSessionTable.id, solveTable.roundSessionId),
-      )
-      .innerJoin(roundTable, eq(roundTable.id, roundSessionTable.roundId))
-      .innerJoin(contestTable, eq(contestTable.slug, roundTable.contestSlug))
-      .where(
-        and(
-          eq(solveTable.status, 'submitted'),
-          eq(contestTable.isOngoing, false), // TODO: remove this when we make leaderboards to update immediately and not after a contest ends
-        ),
-      )
-      .orderBy(roundTable.disciplineSlug, solveTable.isDnf, solveTable.timeMs)
-      .as('single_subquery')
-
-    const [average, single] = await Promise.all([
-      ctx.db
-        .select({
-          userId: userTable.id,
-          discipline: averageSubquery.round.disciplineSlug,
-        })
-        .from(averageSubquery)
-        .innerJoin(
-          userTable,
-          eq(userTable.id, averageSubquery.round_session.contestantId),
-        ),
-      ctx.db
-        .select({
-          userId: userTable.id,
-          discipline: singleSubquery.round.disciplineSlug,
-        })
-        .from(singleSubquery)
-        .innerJoin(
-          userTable,
-          eq(userTable.id, singleSubquery.round_session.contestantId),
-        ),
-    ])
-    return { average, single }
-  }),
 })

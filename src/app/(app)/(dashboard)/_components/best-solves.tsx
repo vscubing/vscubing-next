@@ -18,7 +18,13 @@ type Solve = {
   result: ResultDnfish
   isOwn: boolean
   id: number
-  user: { name: string; wcaId: string | null; role: 'admin' | null }
+  user: {
+    name: string
+    wcaId: string | null
+    role: 'admin' | null
+    singleRecords: number
+    averageRecords: number
+  }
   discipline: Discipline
   contestSlug: string
 }
