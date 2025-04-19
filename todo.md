@@ -17,7 +17,10 @@ BEFORE RELEASE:
 - [x] wca auth
 - [x] fix squished avg leaderboard rows on tablet
 - [ ] admin badges
-- [ ] fix redirectTo for wca auth
+- [ ] wca auth fix redirectTo
+- [ ] wca auth error handling
+- [ ] include ongoing in leaderboards => auth on solve reconstruction
+- [ ] merge results script
 
 AFTER RELEASE:
 - [ ] file for google auth verification
