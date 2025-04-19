@@ -138,7 +138,7 @@ function PageShell({
               <p className='text-large text-grey-20'>
                 <SolveTimeLabel
                   timeMs={timeMs ?? 0}
-                  className='mr-4 min-w-0'
+                  className='mr-4 min-w-0 lg:min-w-0'
                   isFestive={isPersonalBest}
                 ></SolveTimeLabel>
                 <span className='text-grey-40'>
