@@ -29,9 +29,9 @@ function WcaBadgeLink({ wcaId }: { wcaId: string }) {
 
 function RecordHolderBadge({ records }: { records: number }) {
   return (
-    <span className='text-amber-400 relative -mt-1 inline-flex h-5 w-5'>
+    <span className='relative -mt-1 inline-flex h-5 w-5 text-amber-400'>
       <TrophyIcon color='currentColor' />
-      <span className='bg-amber-400 absolute -right-1 top-[-0.2rem] flex h-[14px] min-w-[14px] items-center justify-center rounded-full px-[2px] font-kanit text-[12px] font-medium text-grey-80'>
+      <span className='absolute -right-1 top-[-0.2rem] flex h-[14px] min-w-[14px] items-center justify-center rounded-full bg-amber-400 px-[2px] font-kanit text-[12px] font-medium text-grey-80'>
         {records}
       </span>
     </span>
