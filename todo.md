@@ -13,20 +13,21 @@ BEFORE RELEASE:
 - [x] fix discipline: string everywhere
 - [x] skip preinspection
 - [x] pb confetti in reconstruction
-- [ ] wca auth
-- [ ] figure out the annoying auth bug
-- [ ] new posthog project
+- [x] skip inspection by default 
+- [x] wca auth
+- [x] fix squished avg leaderboard rows on tablet
+- [ ] admin badges
+- [ ] fix redirectTo for wca auth
 
 AFTER RELEASE:
 - [ ] file for google auth verification
 - [ ] include ongoing in leaderboard if capabilities=view_results
 - [ ] average personal best toast & avg 
-- [ ] skip inspection by default and play the solve automatically
 - [ ] delete round sessions with no results & dnf round sessions with too little results
     - [ ] on contest close
     - [ ] migration
 - [ ] add "amount of solves so far" 
-- [ ] see what we can do with redirect on discipline change between results/solve page
+- [ ] see what we can do with redirect on discipline change between results/solve page (nextjs middleware?)
 - [ ] make admins "capable" of everything
 - [ ] boring stuff (posthog cookies, privacy policy, etc)
 - [ ] devtools to skip session

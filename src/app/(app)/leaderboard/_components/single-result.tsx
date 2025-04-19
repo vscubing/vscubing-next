@@ -186,7 +186,7 @@ function SingleResultTablet({
               </Accordion.Header>
               <Accordion.Content className='w-full overflow-y-clip data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down sm:mt-3'>
                 <span className='flex items-center justify-between border-t border-grey-60 pt-4'>
-                  <span className='vertical-alignment-fix min-w-24 border-l border-none border-grey-60 pt-0 text-center sm:min-w-0'>
+                  <span className='vertical-alignment-fix w-20 border-l border-none border-grey-60 pt-0 text-center sm:min-w-0'>
                     <span className='mb-2 block text-center text-grey-40'>
                       Solve date
                     </span>
@@ -227,7 +227,7 @@ export function SingleResultListShell({ children }: { children: ReactNode }) {
         <span className='mr-2 w-11 text-center'>Place</span>
         <span className='mr-2'>Type</span>
         <span className='flex-1'>Nickname</span>
-        <span className='mr-6 w-24 text-center'>Single time</span>
+        <span className='mr-6 w-24 text-center lg:w-20'>Single time</span>
         <span className='w-36 text-center'>Solve date</span>
         <SecondaryButton
           aria-hidden

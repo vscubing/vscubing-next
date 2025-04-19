@@ -54,7 +54,9 @@ export function BestSolves({
           <span className='mr-3 sm:hidden'>Type</span>
           <span className='flex-1 sm:hidden'>Nickname</span>
           <span className='hidden flex-1 sm:block'>Type/Nickname</span>
-          <span className='mr-4 w-24 text-center sm:mr-0'>Single time</span>
+          <span className='mr-4 w-24 text-center lg:w-20 sm:mr-0'>
+            Single time
+          </span>
           <div aria-hidden className='invisible h-0'>
             <OpenLeaderboardButton discipline='3by3' />
           </div>

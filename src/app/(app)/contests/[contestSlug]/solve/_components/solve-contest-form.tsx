@@ -165,7 +165,9 @@ export function SolveContestForm({
           <span className='w-16 text-center text-grey-40 sm:hidden'>
             Attempt
           </span>
-          <span className='w-24 text-center text-grey-40'>Single time</span>
+          <span className='w-24 text-center text-grey-40 lg:w-20'>
+            Single time
+          </span>
           <span className='text-grey-40'>Scramble</span>
         </div>
         <Progress

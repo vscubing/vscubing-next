@@ -6,8 +6,8 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     screens: {
-      'xl-short': { raw: '(min-width: 1280px) and (max-height: 850px)' },
-      lg: { max: '1280px' },
+      'xl-short': { raw: '(min-width: 1365px) and (max-height: 850px)' },
+      lg: { max: '1365px' },
       md: { max: '1023px' },
       sm: { max: '767px' },
       touch: { raw: '(pointer:coarse)' },

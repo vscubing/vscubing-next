@@ -83,14 +83,16 @@ export function RoundSessionHeader({
       <span className='mr-2 w-11 text-center'>Place</span>
       <span className='mr-2'>Type</span>
       <span className='flex-1'>Nickname</span>
-      <span className='mr-4 w-24 text-center'>Average time</span>
-      {Array.from({ length: 5 }, (_, index) => (
-        <span key={index} className='mr-2 w-24 text-center'>
-          Attempt {index + 1}
-        </span>
-      ))}
+      <span className='mr-4 w-24 text-center lg:w-20'>Average time</span>
+      <span className='mr-2 flex gap-2 lg:gap-1'>
+        {Array.from({ length: 5 }, (_, index) => (
+          <span key={index} className='w-24 text-center lg:w-20'>
+            Attempt {index + 1}
+          </span>
+        ))}
+      </span>
 
-      {withContestLink && <div className='w-[9.25rem]' />}
+      {withContestLink && <div className='w-[9.25rem] lg:w-28' />}
     </div>
   )
 }
@@ -160,7 +162,7 @@ function RoundSessionRowTablet({
                 </Accordion.Trigger>
               </Accordion.Header>
               <Accordion.Content className='w-full overflow-y-clip data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down'>
-                <ul className='grid grid-flow-col grid-cols-[repeat(5,min-content)] grid-rows-2 justify-end gap-x-2 border-t border-grey-60 pt-4 sm:grid-flow-row sm:grid-cols-2 sm:grid-rows-none sm:items-center sm:pl-2 sm:pt-3'>
+                <ul className='grid grid-flow-col grid-cols-[repeat(5,min-content)] grid-rows-[min-content_min-content] justify-end gap-x-2 gap-y-1 border-t border-grey-60 pt-4 sm:grid-flow-row sm:grid-cols-2 sm:grid-rows-none sm:items-center sm:gap-y-0 sm:pl-2 sm:pt-3'>
                   {solves.map((solve, index) => (
                     <li key={solve.id} className='contents'>
                       <span className='text-center text-grey-40 sm:text-left'>
@@ -260,12 +262,10 @@ function RoundSessionRowDesktop({
             className='relative mr-4 after:absolute after:-right-2 after:top-1/2 after:h-6 after:w-px after:-translate-y-1/2 after:bg-grey-60'
           />
 
-          <ul className='mr-2 grid grid-cols-[repeat(5,min-content)] gap-x-2'>
+          <ul className='mr-2 grid grid-cols-[repeat(5,min-content)] gap-x-2 lg:gap-x-1'>
             {solves.map((solve, index) => (
               <li key={solve.id} className='contents'>
-                <span className='hidden text-center text-grey-40'>
-                  Attempt {index + 1}
-                </span>
+                <span className='sr-only'>Attempt {index + 1}</span>
                 <span className='relative'>
                   <SolveTimeLinkOrDnf
                     canShowHint={isFirstOnPage && index === 0}
@@ -294,13 +294,13 @@ function RoundSessionRowDesktop({
             <SecondaryButton
               asChild
               size='lg'
-              className='w-[9.25rem] justify-between px-[1.3rem]'
+              className='w-[9.25rem] flex-shrink-0 justify-between px-[1.3rem] lg:w-28'
             >
               <Link
                 href={`/contests/${contestSlug}/results?discipline=${discipline}&scrollToId=${session.id}`}
               >
                 <span>Contest {contestSlug}</span>
-                <ArrowRightIcon className='inline-block' />
+                <ArrowRightIcon className='inline-block lg:hidden' />
               </Link>
             </SecondaryButton>
           )}

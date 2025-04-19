@@ -67,7 +67,7 @@ export function ExtraPrompt({
             <DialogTitle className='mb-4'>Need an Extra attempt?</DialogTitle>
             <DialogDescription className='mb-8 text-center text-[0.875rem] leading-[1.5] text-grey-20 sm:mb-4'>
               To request an extra attempt, please tell us what went wrong. This
-              helps ensure extras are used thoughtfully
+              helps ensure extras are used thoughtfully.
             </DialogDescription>
             <label className='mb-8 block md:mb-4'>
               <TextArea
