@@ -98,6 +98,7 @@ export type RoundSession = {
   user: {
     name: string
     wcaId: string | null
+    role: 'admin' | null
   }
 }
 

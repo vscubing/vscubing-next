@@ -10,7 +10,7 @@ import Image from 'next/image'
 import { ExtraLabel } from './extra-label'
 
 const solveTimeLinkOrDnfVariants = cva(
-  'transition-base outline-ring after-border-bottom vertical-alignment-fix inline-flex h-8 min-w-24 items-center justify-center hover:after:scale-x-100',
+  'transition-base outline-ring after-border-bottom vertical-alignment-fix inline-flex h-8 min-w-24 items-center justify-center hover:after:scale-x-100 lg:min-w-20',
   {
     variants: {
       variant: {
@@ -94,7 +94,7 @@ export function SolveTimeLinkOrDnf({
 }
 
 const solveTimeLabelVariants = cva(
-  'vertical-alignment-fix relative inline-flex h-8 min-w-24 items-center justify-center',
+  'vertical-alignment-fix relative inline-flex h-8 min-w-24 items-center justify-center lg:min-w-20',
   {
     variants: {
       variant: { average: 'text-yellow-100', dnf: 'text-red-80' },

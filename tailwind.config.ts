@@ -6,8 +6,8 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     screens: {
-      'xl-short': { raw: '(min-width: 1280px) and (max-height: 850px)' },
-      lg: { max: '1280px' },
+      'xl-short': { raw: '(min-width: 1365px) and (max-height: 850px)' },
+      lg: { max: '1365px' },
       md: { max: '1023px' },
       sm: { max: '767px' },
       touch: { raw: '(pointer:coarse)' },
@@ -49,6 +49,12 @@ export default {
       },
       white: {
         100: '#F9F9F9',
+      },
+      emerald: {
+        400: 'oklch(76.5% 0.177 163.223)',
+      },
+      amber: {
+        400: 'oklch(0.769 0.188 70.08)',
       },
     },
     extend: {

@@ -12,13 +12,13 @@ import { DISCIPLINES, type Discipline, type ResultDnfish } from '@/types'
 import { cn } from '@/frontend/utils/cn'
 import { tailwindConfig } from '@/frontend/utils/tailwind'
 import Link from 'next/link'
-import WcaBadgeLink from '@/frontend/shared/wca-badge-link'
+import { UserBadges } from '@/frontend/shared/wca-badge-link'
 
 type Solve = {
   result: ResultDnfish
   isOwn: boolean
   id: number
-  user: { name: string; wcaId: string | null }
+  user: { name: string; wcaId: string | null; role: 'admin' | null }
   discipline: Discipline
   contestSlug: string
 }
@@ -54,7 +54,9 @@ export function BestSolves({
           <span className='mr-3 sm:hidden'>Type</span>
           <span className='flex-1 sm:hidden'>Nickname</span>
           <span className='hidden flex-1 sm:block'>Type/Nickname</span>
-          <span className='mr-4 w-24 text-center sm:mr-0'>Single time</span>
+          <span className='mr-4 w-24 text-center lg:w-20 sm:mr-0'>
+            Single time
+          </span>
           <div aria-hidden className='invisible h-0'>
             <OpenLeaderboardButton discipline='3by3' />
           </div>
@@ -105,14 +107,9 @@ function SolveRow({ solve, isFirstOnPage }: SolveProps) {
           >
             <span className='relative mr-3 flex flex-1 items-center pr-2 after:absolute after:right-0 after:top-1/2 after:block after:h-6 after:w-px after:-translate-y-1/2 after:bg-grey-60 sm:mr-0 sm:flex-col sm:items-start'>
               <DisciplineIcon className='mr-3' discipline={solve.discipline} />
-              <span className='flex items-center'>
+              <span className='flex items-center gap-2'>
                 <span>{solve.user.name}</span>
-                {solve.user.wcaId && (
-                  <WcaBadgeLink
-                    className='-mt-1 ml-2'
-                    wcaId={solve.user.wcaId}
-                  />
-                )}
+                <UserBadges user={solve.user} />
               </span>
             </span>
             <span className='mr-4 sm:mr-0'>

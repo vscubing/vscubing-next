@@ -9,14 +9,18 @@ export function useScrollToIndex() {
     if (!listContainer) throw new Error('containerElem is null!')
 
     const children = listContainer.children
-    const item = children[idx - 1]
-    if (!item) return
+    const prevItem = children[idx - 1]
+
     const scrollContainer = getScrollContainer()
+
+    const top = prevItem
+      ? prevItem.getBoundingClientRect().top +
+        prevItem.clientHeight -
+        scrollContainer.clientHeight / 2
+      : 0
+
     scrollContainer.scroll({
-      top:
-        item.getBoundingClientRect().top +
-        item.clientHeight -
-        scrollContainer.clientHeight / 2,
+      top,
       behavior: 'smooth',
     })
   }, [])

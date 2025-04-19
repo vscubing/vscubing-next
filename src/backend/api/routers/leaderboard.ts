@@ -45,6 +45,7 @@ export const leaderboardRouter = createTRPCRouter({
             name: userTable.name,
             id: userTable.id,
             wcaId: wcaIdSubquery.wcaId,
+            role: userTable.role,
           },
           nickname: userTable.name,
           userId: userTable.id,
@@ -104,6 +105,7 @@ export const leaderboardRouter = createTRPCRouter({
             name: userTable.name,
             id: userTable.id,
             wcaId: wcaIdSubquery.wcaId,
+            role: userTable.role,
           },
           contestSlug: roundTable.contestSlug,
         })
@@ -144,10 +146,7 @@ export const leaderboardRouter = createTRPCRouter({
             ),
           ),
           contestSlug: session[0]!.contestSlug,
-          user: {
-            name: session[0]!.user.name,
-            wcaId: session[0]!.user.wcaId,
-          },
+          user: session[0]!.user,
         }
       })
     }),

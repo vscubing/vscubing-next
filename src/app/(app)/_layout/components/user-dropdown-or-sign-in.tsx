@@ -200,7 +200,7 @@ function WcaSignIn({
         <GhostButton className='w-full justify-start' asChild size='lg'>
           <Link href='/api/auth/wca?redirectTo=/settings'>
             <WcaLogoIcon />
-            Sign in with WCA
+            Connect a WCA account
           </Link>
         </GhostButton>
       </div>

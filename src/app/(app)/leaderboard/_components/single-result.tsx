@@ -18,7 +18,7 @@ import * as Accordion from '@radix-ui/react-accordion'
 import Link from 'next/link'
 import { type ReactNode } from 'react'
 import tailwindConfig from 'tailwind.config'
-import WcaBadgeLink from '@/frontend/shared/wca-badge-link'
+import { UserBadges } from '@/frontend/shared/wca-badge-link'
 
 // HACK: we can't just use useMatchesScreen for switching between Desktop and Tablet because then it won't be SSRed properly
 type SingleResultProps = {
@@ -62,11 +62,6 @@ function SingleResultDesktop({
   className,
   onPlaceClick,
 }: SingleResultProps & { className: string }) {
-  let displayedNickname = user.name
-  if (isOwn) {
-    displayedNickname = displayedNickname + ' (you)'
-  }
-
   return (
     <div className={className}>
       <SpinningBorder
@@ -87,9 +82,9 @@ function SingleResultDesktop({
             {place}
           </PlaceLabel>
           <DisciplineIcon className='mr-3' discipline={discipline} />
-          <span className='vertical-alignment-fix flex flex-1 items-start'>
-            <span>{displayedNickname}</span>
-            {user.wcaId && <WcaBadgeLink className='ml-2' wcaId={user.wcaId} />}
+          <span className='vertical-alignment-fix flex flex-1 items-start gap-2'>
+            <span>{user.name}</span>
+            <UserBadges user={user} />
           </span>
           <SolveTimeLinkOrDnf
             className='mr-6'
@@ -128,11 +123,6 @@ function SingleResultTablet({
   className,
   onPlaceClick,
 }: SingleResultProps & { className: string }) {
-  let displayedNickname = user.name
-  if (isOwn) {
-    displayedNickname = displayedNickname + ' (you)'
-  }
-
   return (
     <Accordion.Root type='single' collapsible asChild>
       <Accordion.Item value='result' asChild>
@@ -161,11 +151,9 @@ function SingleResultTablet({
                   className='mr-3 sm:mr-0'
                   discipline={discipline}
                 />
-                <span className='vertical-alignment-fix flex flex-1 items-start sm:col-span-2 sm:w-auto'>
-                  <span>{displayedNickname}</span>
-                  {user.wcaId && (
-                    <WcaBadgeLink className='ml-2' wcaId={user.wcaId} />
-                  )}
+                <span className='vertical-alignment-fix flex flex-1 items-start gap-2 sm:col-span-2 sm:w-auto'>
+                  <span>{user.name}</span>
+                  <UserBadges user={user} />
                 </span>
                 <span className='mr-10 sm:mr-0 sm:flex sm:items-center'>
                   <span className='sm:vertical-alignment-fix mb-1 block text-center text-grey-40 sm:mb-0'>
@@ -186,7 +174,7 @@ function SingleResultTablet({
               </Accordion.Header>
               <Accordion.Content className='w-full overflow-y-clip data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down sm:mt-3'>
                 <span className='flex items-center justify-between border-t border-grey-60 pt-4'>
-                  <span className='vertical-alignment-fix min-w-24 border-l border-none border-grey-60 pt-0 text-center sm:min-w-0'>
+                  <span className='vertical-alignment-fix w-20 border-l border-none border-grey-60 pt-0 text-center sm:min-w-0'>
                     <span className='mb-2 block text-center text-grey-40'>
                       Solve date
                     </span>
@@ -227,7 +215,7 @@ export function SingleResultListShell({ children }: { children: ReactNode }) {
         <span className='mr-2 w-11 text-center'>Place</span>
         <span className='mr-2'>Type</span>
         <span className='flex-1'>Nickname</span>
-        <span className='mr-6 w-24 text-center'>Single time</span>
+        <span className='mr-6 w-24 text-center lg:w-20'>Single time</span>
         <span className='w-36 text-center'>Solve date</span>
         <SecondaryButton
           aria-hidden
