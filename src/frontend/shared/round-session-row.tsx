@@ -107,8 +107,6 @@ function RoundSessionRowTablet({
   className,
   onPlaceClick,
 }: RoundSessionRowProps) {
-  const currentUserLabel = session.isOwn ? ' (you)' : ''
-
   const { bestId, worstId } = getBestAndWorstIds(solves)
 
   return (
@@ -141,7 +139,7 @@ function RoundSessionRowTablet({
                   discipline={discipline}
                 />
                 <span className='vertical-alignment-fix flex flex-1 items-start sm:col-span-2 sm:w-auto'>
-                  <span>{`${user.name}${currentUserLabel}`}</span>
+                  <span>{user.name}</span>
                   {user.wcaId && (
                     <WcaBadgeLink className='ml-2' wcaId={user.wcaId} />
                   )}
@@ -225,8 +223,6 @@ function RoundSessionRowDesktop({
   className,
   onPlaceClick,
 }: RoundSessionRowProps) {
-  const currentUserLabel = session.isOwn ? ' (you)' : ''
-
   const { bestId, worstId } = getBestAndWorstIds(solves)
 
   return (
@@ -250,8 +246,8 @@ function RoundSessionRowDesktop({
             {place}
           </PlaceLabel>
           <DisciplineIcon className='mr-3' discipline={discipline} />
-          <span className='vertical-alignment-fix flex flex-1 items-start'>
-            <span>{`${user.name}${currentUserLabel}`}</span>
+          <span className='vertical-alignment-fix flex min-w-0 flex-1 items-start overflow-x-clip text-ellipsis text-nowrap'>
+            <span>{user.name}</span>
             {user.wcaId && <WcaBadgeLink className='ml-2' wcaId={user.wcaId} />}
           </span>
 
@@ -294,7 +290,7 @@ function RoundSessionRowDesktop({
             <SecondaryButton
               asChild
               size='lg'
-              className='w-[9.25rem] flex-shrink-0 justify-between px-[1.3rem] lg:w-28'
+              className='w-[9.25rem] justify-between px-[1.3rem] lg:w-28'
             >
               <Link
                 href={`/contests/${contestSlug}/results?discipline=${discipline}&scrollToId=${session.id}`}

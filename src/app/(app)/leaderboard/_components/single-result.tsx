@@ -62,11 +62,6 @@ function SingleResultDesktop({
   className,
   onPlaceClick,
 }: SingleResultProps & { className: string }) {
-  let displayedNickname = user.name
-  if (isOwn) {
-    displayedNickname = displayedNickname + ' (you)'
-  }
-
   return (
     <div className={className}>
       <SpinningBorder
@@ -88,7 +83,7 @@ function SingleResultDesktop({
           </PlaceLabel>
           <DisciplineIcon className='mr-3' discipline={discipline} />
           <span className='vertical-alignment-fix flex flex-1 items-start'>
-            <span>{displayedNickname}</span>
+            <span>{user.name}</span>
             {user.wcaId && <WcaBadgeLink className='ml-2' wcaId={user.wcaId} />}
           </span>
           <SolveTimeLinkOrDnf
@@ -128,11 +123,6 @@ function SingleResultTablet({
   className,
   onPlaceClick,
 }: SingleResultProps & { className: string }) {
-  let displayedNickname = user.name
-  if (isOwn) {
-    displayedNickname = displayedNickname + ' (you)'
-  }
-
   return (
     <Accordion.Root type='single' collapsible asChild>
       <Accordion.Item value='result' asChild>
@@ -162,7 +152,7 @@ function SingleResultTablet({
                   discipline={discipline}
                 />
                 <span className='vertical-alignment-fix flex flex-1 items-start sm:col-span-2 sm:w-auto'>
-                  <span>{displayedNickname}</span>
+                  <span>{user.name}</span>
                   {user.wcaId && (
                     <WcaBadgeLink className='ml-2' wcaId={user.wcaId} />
                   )}
