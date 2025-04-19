@@ -50,9 +50,6 @@ export default {
       white: {
         100: '#F9F9F9',
       },
-      emerald: {
-        400: 'oklch(76.5% 0.177 163.223)',
-      },
       amber: {
         400: 'oklch(0.769 0.188 70.08)',
       },
