@@ -15,10 +15,8 @@ export function PlaceLabel({
     <span
       onClick={onClick}
       className={cn(
-        'flex h-11 w-11 items-center justify-center rounded-full sm:h-9 sm:w-9 sm:py-0',
-        'vertical-alignment-fix text-large border border-primary-60',
+        'vertical-alignment-fix flex h-11 w-11 items-center justify-center rounded-full border border-primary-60 text-[1rem] text-white-100 sm:h-9 sm:w-9 sm:py-0 sm:text-[0.875rem]',
         {
-          'text-large text-white-100': !podiumColors || place > 3,
           'border-2 border-[#e0c84a]': podiumColors && place === 1,
           'border-2 border-[#9daebf]': podiumColors && place === 2,
           'border-2 border-[#d27c45]': podiumColors && place === 3,
