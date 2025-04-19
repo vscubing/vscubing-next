@@ -1,6 +1,6 @@
-# 🚧 WIP 🚧  <img src="https://vscubing.com/favicon.svg" width="35px" /> vscubing next
+# <img src="https://vscubing.com/favicon.svg" width="35px" /> vscubing next
 
-This is a fullstack port of [@vscubing](https://github.com/vscubing) that is meant to replace [@vscubing/vscubing-frontend](https://github.com/vscubing/vscubing-frontend) and [@vscubing/vscubing-backend](https://github.com/vscubing/vscubing-backend).
+This repository is home to [@vscubing](https://github.com/vscubing)'s fullstack app.
 
 [vscubing.com](https://vscubing.com): The platform for competing in virtual speedcubing: the art of solving twisty puzzles (like the Rubik's Cube) via a computer emulator controlled from the keyboard as fast as possible. For more detailed information refer to the [landing page](https://vscubing.com/landing).
 
@@ -26,11 +26,11 @@ The application is hosted on a `DigitalOcean` Droplet with `Dokploy`.
 
 - production: deployed from `main` (pushing directly is restricted, only PRs are allowed, which require CI checks to pass)
     * Next.js app
-        + new contests are automatically published weekly via `./github/workflows/contest-management.yaml`
     * postgres db
         + S3 backups (daily)
     * [vscubing/vscubing-tnoodle](https://github.com/vscubing/vscubing-tnoodle)
     * [vscubing/vscubing-cron](https://github.com/vscubing/vscubing-cron)
+        + automatic publishing of new weekly contests
 
 - staging: deployed from `dev`
     * Next.js app
@@ -41,5 +41,5 @@ The application is hosted on a `DigitalOcean` Droplet with `Dokploy`.
 
 - apparently, ghcr.io doesn't support fine-grained access tokens, so you have to create a "Classic" token 
 - when setting up a S3 Destination in Dockploy, use the format "region.digitaloceanspaces.com" for the endpoint
-- when setting up Provider(docker image) with ghcr in Dockploy, set Docker Image to "ghcr.io/vscubing/vscubing-next" and registry url to "ghcr.io"
+- when setting up Provider (docker image) with ghcr in Dockploy, set Docker Image to `ghcr.io/vscubing/vscubing-next` and registry url to `ghcr.io`
 - when setting up a staging db next to the production one, make sure to use different ports
