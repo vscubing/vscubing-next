@@ -1,3 +1,7 @@
+import { type Discipline } from '@/types'
+import { cn } from '@/frontend/utils/cn'
+import { type HTMLAttributes } from 'react'
+
 import Discipline3by3Icon from '@/../public/icons/discipline-3by3.icon.svg'
 import Discipline2by2Icon from '@/../public/icons/discipline-2by2.icon.svg'
 import AllContestsIcon from '@/../public/icons/all-contests.icon.svg'
@@ -32,15 +36,10 @@ import EllipsisIcon from '@/../public/icons/ellipsis.icon.svg'
 import PlusIcon from '@/../public/icons/plus.icon.svg'
 import MinusIcon from '@/../public/icons/minus.icon.svg'
 import SettingIcon from '@/../public/icons/setting.icon.svg'
-import CodeIcon from '@/../public/icons/code.icon.svg'
 import AverageIcon from '@/../public/icons/average.icon.svg'
 import SingleIcon from '@/../public/icons/single.icon.svg'
 import VscubingIcon from '@/../public/icons/vscubing.icon.svg'
 import WcaLogoIcon from '@/../public/icons/wca-logo.icon.svg'
-
-import { type Discipline } from '@/types'
-import { cn } from '@/frontend/utils/cn'
-import { type HTMLAttributes } from 'react'
 
 export {
   AllContestsIcon,
@@ -75,12 +74,12 @@ export {
   PlusIcon,
   MinusIcon,
   SettingIcon,
-  CodeIcon,
   AverageIcon,
   SingleIcon,
   VscubingIcon,
   WcaLogoIcon,
 }
+export { CodeXml as CodeXmlIcon, Trophy as TrophyIcon } from 'lucide-react'
 
 type DisciplineIconProps = HTMLAttributes<SVGSVGElement> & {
   discipline: Discipline

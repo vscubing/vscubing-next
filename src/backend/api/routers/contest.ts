@@ -204,6 +204,7 @@ export const contestRouter = createTRPCRouter({
             name: userTable.name,
             id: userTable.id,
             wcaId: wcaIdSubquery.wcaId,
+            role: userTable.role,
           },
         })
         .from(roundTable)

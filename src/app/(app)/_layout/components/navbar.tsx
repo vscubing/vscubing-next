@@ -14,7 +14,7 @@ import {
   LeaderboardIcon,
   AllContestsIcon,
   OngoingContestIcon,
-  CodeIcon,
+  CodeXmlIcon,
 } from '@/frontend/ui'
 import { DEFAULT_DISCIPLINE } from '@/types'
 
@@ -185,7 +185,7 @@ function getNavbarLinks(
 
   if (devToolsEnabled) {
     links.push({
-      icon: <CodeIcon />,
+      icon: <CodeXmlIcon strokeWidth={3} />,
       name: 'Developer tools',
       route: '/dev',
     })

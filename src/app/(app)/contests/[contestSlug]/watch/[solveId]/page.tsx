@@ -3,7 +3,7 @@ import { TwistySection } from './_components/twisty-section'
 import { api } from '@/trpc/server'
 import { tryCatchTRPC } from '@/utils/try-catch'
 import { notFound } from 'next/navigation'
-import { DisciplineBadge, LoadingSpinner } from '@/frontend/ui'
+import { DisciplineBadge, HoverPopover, LoadingSpinner } from '@/frontend/ui'
 import { type Discipline, castDiscipline } from '@/types'
 import { Suspense, type ReactNode } from 'react'
 import { LayoutSectionHeader } from '@/app/(app)/_layout'
@@ -17,7 +17,6 @@ import { cn } from '@/frontend/utils/cn'
 import { Alg } from '@vscubing/cubing/alg'
 import { isRotation } from '@/utils/is-rotation'
 import { removeSolutionComments } from '@/utils/remove-solution-comments'
-import { TpsHintPopover } from './_components/tps-hint-popover'
 import { SolveTimeLabel } from '@/frontend/shared/solve-time-button'
 
 type PathParams = { contestSlug: string; solveId: string }
@@ -175,7 +174,7 @@ function SolveTps({
   return (
     <span>
       {turnCount} turns, {tps} TPS {''}
-      <TpsHintPopover>(?)</TpsHintPopover>
+      <HoverPopover content='Turns per second'>(?)</HoverPopover>
     </span>
   )
 }

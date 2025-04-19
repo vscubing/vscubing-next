@@ -2,7 +2,7 @@
 
 import * as PopoverPrimitive from '@radix-ui/react-popover'
 import { cn } from '@/frontend/utils/cn'
-import { type ComponentPropsWithRef } from 'react'
+import { useState, type ComponentPropsWithRef, type ReactNode } from 'react'
 import { UnderlineButton } from '../buttons'
 
 const Popover = PopoverPrimitive.Root
@@ -48,6 +48,45 @@ function PopoverCloseButton({
         {children}
       </UnderlineButton>
     </PopoverPrimitive.Close>
+  )
+}
+
+export function HoverPopover({
+  children: trigger,
+  asChild,
+  content,
+}: {
+  children: ReactNode
+  asChild?: boolean
+  content: ReactNode
+}) {
+  const [open, setOpen] = useState(false)
+  const handleMouseEnter = () => {
+    setOpen(true)
+  }
+  const handleMouseLeave = () => {
+    setOpen(false)
+  }
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        className='outline-none'
+        asChild={asChild}
+      >
+        {trigger}
+      </PopoverTrigger>
+      <PopoverPrimitive.PopoverPortal>
+        <PopoverContent
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          {content}
+        </PopoverContent>
+      </PopoverPrimitive.PopoverPortal>
+    </Popover>
   )
 }
 
