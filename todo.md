@@ -18,6 +18,8 @@ BEFORE RELEASE:
 - [x] fix squished avg leaderboard rows on tablet
 - [x] admin badges
 - [x] wca auth fix redirectTo
+- [ ] why does cron not autodeploy
+- [ ] wca record badge
 - [ ] wca auth error handling
 - [ ] include ongoing in leaderboards => auth on solve reconstruction
 - [ ] merge results script
