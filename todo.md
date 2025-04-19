@@ -21,6 +21,7 @@ BEFORE RELEASE:
 - [ ] wca auth error handling
 - [ ] include ongoing in leaderboards => auth on solve reconstruction
 - [ ] merge results script
+- [ ] vscubing record toast
 
 AFTER RELEASE:
 - [ ] file for google auth verification

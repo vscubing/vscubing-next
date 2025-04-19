@@ -7,8 +7,9 @@ import {
   solveTable,
   userTable,
   scrambleTable,
+  contestTable,
 } from '@/backend/db/schema'
-import { eq } from 'drizzle-orm'
+import { and, eq, getTableColumns, sql } from 'drizzle-orm'
 import { DEFAULT_DISCIPLINE } from '@/types'
 import {
   getPersonalBestSolveSubquery as getBestSolveSubquery,
@@ -47,8 +48,6 @@ export const leaderboardRouter = createTRPCRouter({
             wcaId: wcaIdSubquery.wcaId,
             role: userTable.role,
           },
-          nickname: userTable.name,
-          userId: userTable.id,
           contestSlug: roundTable.contestSlug,
           roundSessionId: roundSessionTable.id,
         })
@@ -69,7 +68,7 @@ export const leaderboardRouter = createTRPCRouter({
         contestSlug: row.contestSlug,
         roundSessionId: row.roundSessionId,
         result: resultDnfish.parse(row.result),
-        isOwn: ctx.session?.user?.id === row.userId,
+        isOwn: ctx.session?.user.id === row.user.id,
       }))
     }),
 
@@ -150,4 +149,66 @@ export const leaderboardRouter = createTRPCRouter({
         }
       })
     }),
+
+  recordHolders: publicProcedure.query(async ({ ctx }) => {
+    const averageSubquery = ctx.db
+      .selectDistinctOn([roundTable.disciplineSlug])
+      .from(roundSessionTable)
+      .innerJoin(roundTable, eq(roundTable.id, roundSessionTable.roundId))
+      .innerJoin(contestTable, eq(contestTable.slug, roundTable.contestSlug))
+      .where(
+        and(
+          eq(roundSessionTable.isFinished, true),
+          eq(contestTable.isOngoing, false), // TODO: remove this when we make leaderboards to update immediately and not after a contest ends
+        ),
+      )
+      .orderBy(
+        roundTable.disciplineSlug,
+        roundSessionTable.isDnf,
+        roundSessionTable.avgMs,
+      )
+      .as('average_subquery')
+
+    const singleSubquery = ctx.db
+      .selectDistinctOn([roundTable.disciplineSlug])
+      .from(solveTable)
+      .innerJoin(
+        roundSessionTable,
+        eq(roundSessionTable.id, solveTable.roundSessionId),
+      )
+      .innerJoin(roundTable, eq(roundTable.id, roundSessionTable.roundId))
+      .innerJoin(contestTable, eq(contestTable.slug, roundTable.contestSlug))
+      .where(
+        and(
+          eq(solveTable.status, 'submitted'),
+          eq(contestTable.isOngoing, false), // TODO: remove this when we make leaderboards to update immediately and not after a contest ends
+        ),
+      )
+      .orderBy(roundTable.disciplineSlug, solveTable.isDnf, solveTable.timeMs)
+      .as('single_subquery')
+
+    const [average, single] = await Promise.all([
+      ctx.db
+        .select({
+          userId: userTable.id,
+          discipline: averageSubquery.round.disciplineSlug,
+        })
+        .from(averageSubquery)
+        .innerJoin(
+          userTable,
+          eq(userTable.id, averageSubquery.round_session.contestantId),
+        ),
+      ctx.db
+        .select({
+          userId: userTable.id,
+          discipline: singleSubquery.round.disciplineSlug,
+        })
+        .from(singleSubquery)
+        .innerJoin(
+          userTable,
+          eq(userTable.id, singleSubquery.round_session.contestantId),
+        ),
+    ])
+    return { average, single }
+  }),
 })
