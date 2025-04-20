@@ -15,7 +15,7 @@ import { useForm } from 'react-hook-form'
 import { Input } from '@/frontend/ui'
 import { useTRPC } from '@/trpc/react'
 import { useMutation } from '@tanstack/react-query'
-import { useLogout, useUser } from '@/frontend/shared/use-user'
+import { useLogout, useUser } from '@/frontend/auth'
 
 export function PickUsernameDialog() {
   const { user, isLoading: isUserLoading } = useUser()

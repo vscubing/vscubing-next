@@ -43,7 +43,7 @@ function RecordHolderBadge({ records }: { records: number }) {
 function DeveloperBadge() {
   return (
     <HoverPopover content='vscubing developer' asChild>
-      <span className='inline-flex h-5 w-5 items-center justify-center gap-0.5 rounded-md border border-primary-60/20 bg-primary-60/10 p-0 text-xs font-semibold text-primary-60 drop-shadow-[0_0_3px_rgba(52,211,153,0.7)] transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2'>
+      <span className='inline-flex h-5 w-5 items-center justify-center gap-0.5 rounded-md border border-primary-60/20 bg-primary-60/10 p-0 text-xs font-semibold text-primary-60 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2'>
         <CodeXmlIcon />
       </span>
     </HoverPopover>

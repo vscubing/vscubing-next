@@ -15,7 +15,8 @@ export const settingsRouter = createTRPCRouter({
       .insert(userSimulatorSettingsTable)
       .values({ userId: ctx.session.user.id })
       .returning()
-    if (insertedSettings) throw new Error("couldn't create settings")
+
+    if (!insertedSettings) throw new Error("couldn't create settings")
     return insertedSettings
   }),
   setSimulatorSettings: protectedProcedure

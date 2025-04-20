@@ -32,11 +32,7 @@ import {
 } from '@/frontend/ui'
 import { LoadingDots } from '@/frontend/ui/loading-dots'
 import { type User } from '@/types'
-import {
-  useLogout,
-  useRemoveWcaAccount,
-  useUser,
-} from '@/frontend/shared/use-user'
+import { useLogout, useRemoveWcaAccount, useUser } from '@/frontend/auth'
 
 export function UserDropdownOrSignIn() {
   const { user, isLoading } = useUser()
@@ -198,7 +194,7 @@ function WcaSignIn({
     return (
       <div className={className}>
         <GhostButton className='w-full justify-start' asChild size='lg'>
-          <Link href='/api/auth/wca?redirectTo=/settings'>
+          <Link href={`/api/auth/wca?redirectTo=${window.location.toString()}`}>
             <WcaLogoIcon />
             Connect a WCA account
           </Link>
