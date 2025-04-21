@@ -45,7 +45,10 @@ function RecordHolderBadge({
   return (
     <HoverPopover
       content={<RecordHolderPopover records={records} name={name} />}
-      contentProps={{ className: 'border-b-2 border-amber-400' }}
+      contentProps={{
+        className:
+          'border-2 border-b-amber-400 border-t-grey-100 border-x-grey-100',
+      }}
       asChild
     >
       <span className='relative -mt-1 inline-flex h-5 w-5 text-amber-400'>
@@ -77,17 +80,18 @@ function RecordHolderPopover({
       {records.averages.map(({ contestSlug, discipline, roundSession }) => (
         <div key={roundSession.id} className='flex items-center'>
           <DisciplineIcon discipline={discipline} className='mr-3' />
-          <span className='-mr-2 flex w-20 items-center gap-1'>
+          <span className='-mr-2 flex w-20 items-center gap-1 text-secondary-20'>
             <AverageIcon className='text-sm' />
             <span className='vertical-alignment-fix'>Average</span>
           </span>
           <SolveTimeLabel
             timeMs={roundSession.result.timeMs ?? undefined}
+            isAverage
             className='mr-2'
           />
           <Link
             href={`/contests/${contestSlug}/results?discipline=${discipline}&scrollToId=${roundSession.id}`}
-            className='flex gap-1 whitespace-nowrap text-primary-60'
+            className='transition-base flex gap-1 whitespace-nowrap text-primary-60 hover:text-primary-80 active:text-primary-100'
           >
             Contest {contestSlug}
             <SquareArrowOutUpRight width='1em' height='1em' />
@@ -98,7 +102,7 @@ function RecordHolderPopover({
       {records.singles.map(({ contestSlug, discipline, solve }) => (
         <div key={solve.id} className='flex items-center'>
           <DisciplineIcon discipline={discipline} className='mr-3' />
-          <span className='-mr-2 flex w-20 items-center gap-1'>
+          <span className='-mr-2 flex w-20 items-center gap-1 text-secondary-20'>
             <SingleIcon className='text-sm' />
             <span className='vertical-alignment-fix'>Single</span>
           </span>
@@ -112,7 +116,7 @@ function RecordHolderPopover({
           />
           <Link
             href={`/contests/${contestSlug}/results?discipline=${discipline}&scrollToId=${solve.roundSessionId}`}
-            className='flex gap-1 whitespace-nowrap text-primary-60'
+            className='transition-base flex gap-1 whitespace-nowrap text-primary-60 hover:text-primary-80 active:text-primary-100'
           >
             Contest {contestSlug}
             <SquareArrowOutUpRight width='1em' height='1em' />
