@@ -1,1 +1,2 @@
 - [ ] rename ResultDnfish to ResultDnfable
+- [ ] rename PersonalBest to PersonalRecord

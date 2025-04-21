@@ -31,7 +31,7 @@ import {
   WcaLogoIcon,
 } from '@/frontend/ui'
 import { LoadingDots } from '@/frontend/ui/loading-dots'
-import { type User } from '@/types'
+import { type SessionUser } from '@/types'
 import { useLogout, useRemoveWcaAccount, useUser } from '@/frontend/auth'
 
 export function UserDropdownOrSignIn() {
@@ -54,7 +54,7 @@ function UserDropdown({
   className,
   logoutTransition,
 }: {
-  user: User
+  user: SessionUser
   className?: string
   logoutTransition: TransitionStartFunction
 }) {

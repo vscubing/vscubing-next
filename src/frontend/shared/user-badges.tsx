@@ -1,22 +1,28 @@
-import Link from 'next/link'
-import { CodeXmlIcon, HoverPopover, TrophyIcon, WcaLogoIcon } from '../ui'
+'use client'
 
-export function UserBadges({
-  user: { role, wcaId, averageRecords, singleRecords },
-}: {
-  user: {
-    wcaId: string | null
-    role: 'admin' | null
-    averageRecords: number
-    singleRecords: number
-  }
-}) {
-  const recordsTotal = averageRecords + singleRecords
+import Link from 'next/link'
+import {
+  AverageIcon,
+  CodeXmlIcon,
+  DisciplineIcon,
+  HoverPopover,
+  SingleIcon,
+  SquareArrowOutUpRight,
+  TrophyIcon,
+  WcaLogoIcon,
+} from '../ui'
+import type { UserGlobalRecords } from '@/backend/shared/record-subquery'
+import { SolveTimeLabel, SolveTimeLinkOrDnf } from './solve-time-button'
+import type { User } from '@/types'
+
+export function UserBadges({ user }: { user: User }) {
   return (
     <span className='flex items-center gap-2'>
-      {role === 'admin' && <DeveloperBadge />}
-      {recordsTotal > 0 && <RecordHolderBadge records={recordsTotal} />}
-      {wcaId && <WcaBadgeLink wcaId={wcaId} />}
+      {user.role === 'admin' && <DeveloperBadge />}
+      {user.globalRecords && (
+        <RecordHolderBadge records={user.globalRecords} name={user.name} />
+      )}
+      {user.wcaId && <WcaBadgeLink wcaId={user.wcaId} />}
     </span>
   )
 }
@@ -29,25 +35,92 @@ function WcaBadgeLink({ wcaId }: { wcaId: string }) {
   )
 }
 
-function RecordHolderBadge({ records }: { records: number }) {
+function RecordHolderBadge({
+  records,
+  name,
+}: {
+  records: UserGlobalRecords
+  name: string
+}) {
   return (
     <HoverPopover
-      content={<RecordHolderPopover />}
+      content={<RecordHolderPopover records={records} name={name} />}
       contentProps={{ className: 'border-b-2 border-amber-400' }}
       asChild
     >
       <span className='relative -mt-1 inline-flex h-5 w-5 text-amber-400'>
         <TrophyIcon color='currentColor' />
-        <span className='absolute -right-1 top-[-0.2rem] flex h-[14px] min-w-[14px] items-center justify-center rounded-full bg-amber-400 px-[2px] font-kanit text-[12px] font-medium text-grey-80'>
-          {records}
+        <span className='absolute -right-1 top-[-0.2rem] flex h-[14px] min-w-[14px] cursor-default items-center justify-center rounded-full bg-amber-400 px-[2px] font-kanit text-[12px] font-medium text-grey-80'>
+          {records.averages.length + records.singles.length}
         </span>
       </span>
     </HoverPopover>
   )
 }
 
-function RecordHolderPopover() {
-  return 'record holder'
+function RecordHolderPopover({
+  records,
+  name,
+}: {
+  records: UserGlobalRecords
+  name: string
+}) {
+  const recordCount = records.averages.length + records.singles.length
+  return (
+    <>
+      <p className='flex items-center gap-1'>
+        <TrophyIcon className='mb-2' width={18} />
+        <span>
+          {name} holds {recordCount} {recordCount > 1 ? 'records' : 'record'}
+        </span>
+      </p>
+      {records.averages.map(({ contestSlug, discipline, roundSession }) => (
+        <div key={roundSession.id} className='flex items-center'>
+          <DisciplineIcon discipline={discipline} className='mr-3' />
+          <span className='-mr-2 flex w-20 items-center gap-1'>
+            <AverageIcon className='text-sm' />
+            <span className='vertical-alignment-fix'>Average</span>
+          </span>
+          <SolveTimeLabel
+            timeMs={roundSession.result.timeMs ?? undefined}
+            className='mr-2'
+          />
+          <Link
+            href={`/contests/${contestSlug}/results?discipline=${discipline}&scrollToId=${roundSession.id}`}
+            className='flex gap-1 whitespace-nowrap text-primary-60'
+          >
+            Contest {contestSlug}
+            <SquareArrowOutUpRight width='1em' height='1em' />
+          </Link>
+        </div>
+      ))}
+
+      {records.singles.map(({ contestSlug, discipline, solve }) => (
+        <div key={solve.id} className='flex items-center'>
+          <DisciplineIcon discipline={discipline} className='mr-3' />
+          <span className='-mr-2 flex w-20 items-center gap-1'>
+            <SingleIcon className='text-sm' />
+            <span className='vertical-alignment-fix'>Single</span>
+          </span>
+          <SolveTimeLinkOrDnf
+            result={solve.result}
+            solveId={solve.id}
+            contestSlug={contestSlug}
+            discipline={discipline}
+            canShowHint={false}
+            className='mr-2'
+          />
+          <Link
+            href={`/contests/${contestSlug}/results?discipline=${discipline}&scrollToId=${solve.roundSessionId}`}
+            className='flex gap-1 whitespace-nowrap text-primary-60'
+          >
+            Contest {contestSlug}
+            <SquareArrowOutUpRight width='1em' height='1em' />
+          </Link>
+        </div>
+      ))}
+    </>
+  )
 }
 
 function DeveloperBadge() {

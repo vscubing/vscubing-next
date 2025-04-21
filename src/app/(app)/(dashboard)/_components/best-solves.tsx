@@ -8,7 +8,12 @@ import {
 } from '@/frontend/ui'
 import { SpinningBorder } from '@/frontend/ui/spinning-border'
 import { SolveTimeLinkOrDnf } from '@/frontend/shared/solve-time-button'
-import { DISCIPLINES, type Discipline, type ResultDnfish } from '@/types'
+import {
+  DISCIPLINES,
+  type Discipline,
+  type ResultDnfish,
+  type User,
+} from '@/types'
 import { cn } from '@/frontend/utils/cn'
 import { tailwindConfig } from '@/frontend/utils/tailwind'
 import Link from 'next/link'
@@ -18,13 +23,7 @@ type Solve = {
   result: ResultDnfish
   isOwn: boolean
   id: number
-  user: {
-    name: string
-    wcaId: string | null
-    role: 'admin' | null
-    singleRecords: number
-    averageRecords: number
-  }
+  user: User
   discipline: Discipline
   contestSlug: string
 }

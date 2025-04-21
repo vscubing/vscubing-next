@@ -17,10 +17,7 @@ import {
 import { sortWithRespectToExtras } from '@/backend/shared/sort-with-respect-to-extras'
 import { groupBy } from '@/utils/group-by'
 import { getWcaIdSubquery } from '@/backend/shared/wca-id-subquery'
-import {
-  averageRecordSubquery,
-  singleRecordSubquery,
-} from '@/backend/shared/record-subquery'
+import { getGlobalRecordsByUser } from '@/backend/shared/record-subquery'
 
 export const leaderboardRouter = createTRPCRouter({
   bySingle: publicProcedure
@@ -50,17 +47,6 @@ export const leaderboardRouter = createTRPCRouter({
             id: userTable.id,
             wcaId: wcaIdSubquery.wcaId,
             role: userTable.role,
-            singleRecords: ctx.db.$count(
-              singleRecordSubquery,
-              eq(singleRecordSubquery.round_session.contestantId, userTable.id),
-            ),
-            averageRecords: ctx.db.$count(
-              averageRecordSubquery,
-              eq(
-                averageRecordSubquery.round_session.contestantId,
-                userTable.id,
-              ),
-            ),
           },
           contestSlug: roundTable.contestSlug,
           roundSessionId: roundSessionTable.id,
@@ -75,15 +61,22 @@ export const leaderboardRouter = createTRPCRouter({
         .leftJoin(wcaIdSubquery, eq(wcaIdSubquery.userId, userTable.id))
         .orderBy(bestSolveSubquery.timeMs)
 
-      return rows.map((row) => ({
-        user: row.user,
-        id: row.id,
-        createdAt: row.createdAt,
-        contestSlug: row.contestSlug,
-        roundSessionId: row.roundSessionId,
-        result: resultDnfish.parse(row.result),
-        isOwn: ctx.session?.user.id === row.user.id,
-      }))
+      const globalRecordsByUser = await getGlobalRecordsByUser()
+
+      return rows.map((row) => {
+        return {
+          user: {
+            ...row.user,
+            globalRecords: globalRecordsByUser.get(row.user.id) ?? null,
+          },
+          id: row.id,
+          createdAt: row.createdAt,
+          contestSlug: row.contestSlug,
+          roundSessionId: row.roundSessionId,
+          result: resultDnfish.parse(row.result),
+          isOwn: ctx.session?.user.id === row.user.id,
+        }
+      })
     }),
 
   byAverage: publicProcedure
@@ -119,17 +112,6 @@ export const leaderboardRouter = createTRPCRouter({
             id: userTable.id,
             wcaId: wcaIdSubquery.wcaId,
             role: userTable.role,
-            singleRecords: ctx.db.$count(
-              singleRecordSubquery,
-              eq(singleRecordSubquery.round_session.contestantId, userTable.id),
-            ),
-            averageRecords: ctx.db.$count(
-              averageRecordSubquery,
-              eq(
-                averageRecordSubquery.round_session.contestantId,
-                userTable.id,
-              ),
-            ),
           },
           contestSlug: roundTable.contestSlug,
         })
@@ -149,6 +131,7 @@ export const leaderboardRouter = createTRPCRouter({
         .orderBy(bestSessionSubquery.avgMs)
 
       const solvesBySessionId = groupBy(rows, ({ session }) => session.id)
+      const globalRecordsByUser = await getGlobalRecordsByUser()
 
       return Array.from(solvesBySessionId.values()).map((session) => {
         return {
@@ -170,7 +153,10 @@ export const leaderboardRouter = createTRPCRouter({
             ),
           ),
           contestSlug: session[0]!.contestSlug,
-          user: session[0]!.user,
+          user: {
+            ...session[0]!.user,
+            globalRecords: globalRecordsByUser.get(session[0]!.user.id) ?? null,
+          },
         }
       })
     }),
