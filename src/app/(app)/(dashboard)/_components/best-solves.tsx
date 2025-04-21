@@ -12,7 +12,7 @@ import { DISCIPLINES, type Discipline, type ResultDnfish } from '@/types'
 import { cn } from '@/frontend/utils/cn'
 import { tailwindConfig } from '@/frontend/utils/tailwind'
 import Link from 'next/link'
-import { UserBadges } from '@/frontend/shared/wca-badge-link'
+import { UserBadges } from '@/frontend/shared/user-badges'
 
 type Solve = {
   result: ResultDnfish

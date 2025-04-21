@@ -174,7 +174,12 @@ function SolveTps({
   return (
     <span>
       {turnCount} turns, {tps} TPS {''}
-      <HoverPopover content='Turns per second'>(?)</HoverPopover>
+      <HoverPopover
+        content='Turns per second'
+        contentProps={{ className: 'border-b-2 border-primary-100' }}
+      >
+        (?)
+      </HoverPopover>
     </span>
   )
 }
