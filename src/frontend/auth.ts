@@ -1,6 +1,7 @@
 import { useTRPC } from '@/trpc/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
+// export const USER_QUERY_KEY = 'user'
 export function useUser() {
   const trpc = useTRPC()
   const { data: user, ...res } = useQuery(trpc.user.me.queryOptions())
@@ -21,8 +22,8 @@ export function useLogout() {
     ...mutation,
     logout: async () => {
       await mutateAsync()
-      await queryClient.invalidateQueries(trpc.user.me.queryOptions())
-      location.reload()
+      // await queryClient.resetQueries({ queryKey: [USER_QUERY_KEY] })
+      location.reload() // TODO: remove this once all user dependent queries have `USER_QUERY_KEY`
     },
   }
 }

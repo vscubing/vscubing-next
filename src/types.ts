@@ -1,14 +1,20 @@
 import type {
   contestTable,
-  User as UserSchema,
+  UserSchema as UserSchema,
   userSimulatorSettingsTable,
 } from '@/backend/db/schema'
 import { z } from 'zod'
+import type { UserGlobalRecords } from './backend/shared/record-subquery'
 
-export type User = Pick<
+export type SessionUser = Pick<
   UserSchema,
-  'name' | 'id' | 'email' | 'finishedRegistration' | 'role'
+  'name' | 'id' | 'finishedRegistration' | 'role'
 > & { wcaId: string | null }
+
+export type User = Pick<UserSchema, 'name' | 'id' | 'role'> & {
+  wcaId: string | null
+  globalRecords: UserGlobalRecords | null
+}
 
 export const SCRAMBLE_POSITIONS = ['1', '2', '3', '4', '5', 'E1', 'E2'] as const
 export type ScramblePosition = (typeof SCRAMBLE_POSITIONS)[number]
@@ -33,11 +39,11 @@ export const SOLVE_STATUSES = [
 export type SolveStatus = (typeof SOLVE_STATUSES)[number]
 
 export type ResultDnfish = ResultSuccess | ResultDnf
-type ResultSuccess = { timeMs: number; isDnf: false; plusTwoIncluded: boolean }
+type ResultSuccess = { timeMs: number; isDnf: false; plusTwoIncluded?: boolean }
 type ResultDnf = {
   timeMs: null | number
   isDnf: true
-  plusTwoIncluded: boolean
+  plusTwoIncluded?: boolean
 }
 
 export const resultDnfish = z.custom<ResultDnfish>(
@@ -95,11 +101,7 @@ export type RoundSession = {
     isPersonalBest: boolean
   }[]
   contestSlug: string
-  user: {
-    name: string
-    wcaId: string | null
-    role: 'admin' | null
-  }
+  user: User
 }
 
 export const CONTEST_UNAUTHORIZED_MESSAGE =

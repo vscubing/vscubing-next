@@ -19,6 +19,7 @@ import { sortWithRespectToExtras } from '../../shared/sort-with-respect-to-extra
 import { getContestUserCapabilities } from '../../shared/get-contest-user-capabilities'
 import { getPersonalBestSolveSubquery } from '@/backend/shared/personal-best-subquery'
 import { getWcaIdSubquery } from '@/backend/shared/wca-id-subquery'
+import { getGlobalRecordsByUser } from '@/backend/shared/record-subquery'
 
 export const contestRouter = createTRPCRouter({
   getAllContests: publicProcedure
@@ -231,6 +232,7 @@ export const contestRouter = createTRPCRouter({
         .orderBy(roundSessionTable.avgMs)
 
       const solvesBySessionId = groupBy(queryRes, ({ session }) => session.id)
+      const globalRecordsByUser = await getGlobalRecordsByUser()
 
       return Array.from(solvesBySessionId.values()).map((session) => ({
         session: {
@@ -257,7 +259,10 @@ export const contestRouter = createTRPCRouter({
             }),
           ),
         ),
-        user: session[0]!.user,
+        user: {
+          ...session[0]!.user,
+          globalRecords: globalRecordsByUser.get(session[0]!.user.id) ?? null,
+        },
         contestSlug: input.contestSlug,
       }))
     }),

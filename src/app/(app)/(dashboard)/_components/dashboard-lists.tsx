@@ -10,6 +10,8 @@ import type { Discipline } from '@/types'
 
 export function DashboardLists() {
   const trpc = useTRPC()
+
+  // NOTE: we don't fetch these two queries in separate RSCs because we need a combined fallback in case there is no data
   const { data: latestContests } = useQuery(
     trpc.contest.getAllContests.queryOptions({
       discipline: '3by3',
@@ -51,6 +53,7 @@ export function DashboardLists() {
 }
 
 function useBestSolvesQuery() {
+  // TODO: make a dedicated trpc query for this once record badges are done
   const trpc = useTRPC()
   const { data: best3by3, isLoading: isLoading3by3 } = useQuery(
     trpc.leaderboard.bySingle.queryOptions({ discipline: '3by3' }),

@@ -79,7 +79,7 @@ export {
   VscubingIcon,
   WcaLogoIcon,
 }
-export { CodeXml as CodeXmlIcon, Trophy as TrophyIcon } from 'lucide-react'
+export { CodeXmlIcon, TrophyIcon, SquareArrowOutUpRight } from 'lucide-react'
 
 type DisciplineIconProps = HTMLAttributes<SVGSVGElement> & {
   discipline: Discipline
