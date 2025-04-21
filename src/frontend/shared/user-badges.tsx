@@ -9,6 +9,7 @@ import {
   SingleIcon,
   SquareArrowOutUpRight,
   TrophyIcon,
+  MedalIcon,
   WcaLogoIcon,
 } from '../ui'
 import type { UserGlobalRecords } from '@/backend/shared/record-subquery'
@@ -52,10 +53,10 @@ function RecordHolderBadge({
       asChild
     >
       <span className='relative -mt-1 inline-flex h-5 w-5 text-amber-400'>
-        <TrophyIcon color='currentColor' />
-        <span className='absolute -right-1 top-[-0.2rem] flex h-[14px] min-w-[14px] cursor-default items-center justify-center rounded-full bg-amber-400 px-[2px] font-kanit text-[12px] font-medium text-grey-80'>
-          {records.averages.length + records.singles.length}
-        </span>
+        <TrophyIcon />
+        {/* <span className='absolute -right-1 top-[-0.2rem] flex h-[14px] min-w-[14px] cursor-default items-center justify-center rounded-full bg-amber-400 px-[2px] font-kanit text-[12px] font-medium text-grey-80'> */}
+        {/*   {records.averages.length + records.singles.length} */}
+        {/* </span> */}
       </span>
     </HoverPopover>
   )
@@ -72,7 +73,7 @@ function RecordHolderPopover({
   return (
     <>
       <p className='flex items-center gap-1'>
-        <TrophyIcon className='mb-2' width={18} />
+        <TrophyIcon />
         <span>
           {name} holds {recordCount} {recordCount > 1 ? 'records' : 'record'}
         </span>
@@ -134,7 +135,7 @@ function DeveloperBadge() {
       contentProps={{ className: 'border-b-2 border-primary-100' }}
       asChild
     >
-      <span className='inline-flex h-5 w-5 items-center justify-center gap-0.5 rounded-md border border-primary-60/20 bg-primary-60/10 p-0 text-xs font-semibold text-primary-60 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2'>
+      <span className='inline-flex h-5 w-5 items-center justify-center gap-0.5 rounded-md text-xs font-semibold text-primary-60 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2'>
         <CodeXmlIcon />
       </span>
     </HoverPopover>
