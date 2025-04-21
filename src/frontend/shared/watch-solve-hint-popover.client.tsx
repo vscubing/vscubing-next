@@ -29,11 +29,7 @@ export function WatchSolveHintPopover({
 
   return (
     <Popover open={!seenHint && !disabled}>
-      <PopoverContent
-        withArrow
-        aria-label='Tap on a time result to watch the solution'
-        className='max-w-[16rem]'
-      >
+      <PopoverContent aria-label='Tap on a time result to watch the solution'>
         <p>
           <span className='touch:hidden'>
             Click on a time result to watch the solution

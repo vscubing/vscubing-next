@@ -250,7 +250,7 @@ export const roundSessionRouter = createTRPCRouter({
           roundSessionId: ctx.roundSession.id,
           isDnf,
           timeMs: payload.result.timeMs,
-          plusTwoIncluded: payload.result.plusTwoIncluded ?? false,
+          plusTwoIncluded: payload.result.plusTwoIncluded,
           solution: payload.solution,
           status: 'pending',
           scrambleId: input.scrambleId,

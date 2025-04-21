@@ -1,9 +1,5 @@
 import { db } from '../db'
-import {
-  type SessionSchema,
-  authSessionTable,
-  userTable,
-} from '../db/schema/account'
+import { type Session, authSessionTable, userTable } from '../db/schema/account'
 import {
   encodeBase32LowerCaseNoPadding,
   encodeHexLowerCase,
@@ -13,7 +9,7 @@ import { eq, getTableColumns } from 'drizzle-orm'
 import { cookies } from 'next/headers'
 import { cache } from 'react'
 import { env } from '@/env'
-import type { SessionUser, User } from '@/types'
+import type { User } from '@/types'
 import { getWcaIdSubquery } from '../shared/wca-id-subquery'
 
 export function generateSessionToken(): string {
@@ -26,9 +22,9 @@ export function generateSessionToken(): string {
 export async function createSession(
   token: string,
   userId: string,
-): Promise<SessionSchema> {
+): Promise<Session> {
   const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)))
-  const session: SessionSchema = {
+  const session: Session = {
     id: sessionId,
     userId,
     expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
@@ -123,7 +119,4 @@ export const getCurrentSession = cache(
   },
 )
 
-export type SessionValidationResult = {
-  session: SessionSchema
-  user: SessionUser
-} | null
+export type SessionValidationResult = { session: Session; user: User } | null

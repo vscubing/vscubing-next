@@ -17,7 +17,6 @@ import {
 import { sortWithRespectToExtras } from '@/backend/shared/sort-with-respect-to-extras'
 import { groupBy } from '@/utils/group-by'
 import { getWcaIdSubquery } from '@/backend/shared/wca-id-subquery'
-import { getGlobalRecordsByUser } from '@/backend/shared/record-subquery'
 
 export const leaderboardRouter = createTRPCRouter({
   bySingle: publicProcedure
@@ -48,6 +47,8 @@ export const leaderboardRouter = createTRPCRouter({
             wcaId: wcaIdSubquery.wcaId,
             role: userTable.role,
           },
+          nickname: userTable.name,
+          userId: userTable.id,
           contestSlug: roundTable.contestSlug,
           roundSessionId: roundSessionTable.id,
         })
@@ -61,22 +62,15 @@ export const leaderboardRouter = createTRPCRouter({
         .leftJoin(wcaIdSubquery, eq(wcaIdSubquery.userId, userTable.id))
         .orderBy(bestSolveSubquery.timeMs)
 
-      const globalRecordsByUser = await getGlobalRecordsByUser()
-
-      return rows.map((row) => {
-        return {
-          user: {
-            ...row.user,
-            globalRecords: globalRecordsByUser.get(row.user.id) ?? null,
-          },
-          id: row.id,
-          createdAt: row.createdAt,
-          contestSlug: row.contestSlug,
-          roundSessionId: row.roundSessionId,
-          result: resultDnfish.parse(row.result),
-          isOwn: ctx.session?.user.id === row.user.id,
-        }
-      })
+      return rows.map((row) => ({
+        user: row.user,
+        id: row.id,
+        createdAt: row.createdAt,
+        contestSlug: row.contestSlug,
+        roundSessionId: row.roundSessionId,
+        result: resultDnfish.parse(row.result),
+        isOwn: ctx.session?.user?.id === row.userId,
+      }))
     }),
 
   byAverage: publicProcedure
@@ -131,7 +125,6 @@ export const leaderboardRouter = createTRPCRouter({
         .orderBy(bestSessionSubquery.avgMs)
 
       const solvesBySessionId = groupBy(rows, ({ session }) => session.id)
-      const globalRecordsByUser = await getGlobalRecordsByUser()
 
       return Array.from(solvesBySessionId.values()).map((session) => {
         return {
@@ -153,10 +146,7 @@ export const leaderboardRouter = createTRPCRouter({
             ),
           ),
           contestSlug: session[0]!.contestSlug,
-          user: {
-            ...session[0]!.user,
-            globalRecords: globalRecordsByUser.get(session[0]!.user.id) ?? null,
-          },
+          user: session[0]!.user,
         }
       })
     }),

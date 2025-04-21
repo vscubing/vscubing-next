@@ -8,22 +8,17 @@ import {
 } from '@/frontend/ui'
 import { SpinningBorder } from '@/frontend/ui/spinning-border'
 import { SolveTimeLinkOrDnf } from '@/frontend/shared/solve-time-button'
-import {
-  DISCIPLINES,
-  type Discipline,
-  type ResultDnfish,
-  type User,
-} from '@/types'
+import { DISCIPLINES, type Discipline, type ResultDnfish } from '@/types'
 import { cn } from '@/frontend/utils/cn'
 import { tailwindConfig } from '@/frontend/utils/tailwind'
 import Link from 'next/link'
-import { UserBadges } from '@/frontend/shared/user-badges'
+import { UserBadges } from '@/frontend/shared/wca-badge-link'
 
 type Solve = {
   result: ResultDnfish
   isOwn: boolean
   id: number
-  user: User
+  user: { name: string; wcaId: string | null; role: 'admin' | null }
   discipline: Discipline
   contestSlug: string
 }

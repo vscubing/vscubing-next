@@ -78,5 +78,5 @@ export const authSessionRelations = relations(authSessionTable, ({ one }) => ({
   }),
 }))
 
-export type UserSchema = InferSelectModel<typeof userTable>
-export type SessionSchema = InferSelectModel<typeof authSessionTable>
+export type User = InferSelectModel<typeof userTable>
+export type Session = InferSelectModel<typeof authSessionTable>

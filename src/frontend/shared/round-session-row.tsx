@@ -17,7 +17,7 @@ import { SpinningBorder } from '@/frontend/ui/spinning-border'
 import { tailwindConfig } from '@/frontend/utils/tailwind'
 import type { RefObject } from 'react'
 import Link from 'next/link'
-import { UserBadges } from './user-badges'
+import { UserBadges } from './wca-badge-link'
 
 // HACK: we can't just use useMatchesScreen for switching between Desktop and Tablet because then it won't be SSRed properly
 type RoundSessionRowProps = {

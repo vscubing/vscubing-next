@@ -14,7 +14,7 @@ import { ZodError } from 'zod'
 import { auth } from '@/backend/auth'
 import { db } from '@/backend/db'
 import { posthogClient } from '../posthog'
-import type { SessionUser } from '@/types'
+import type { User } from '@/types'
 import { env } from '@/env'
 
 /**
@@ -144,7 +144,7 @@ export const protectedProcedure = t.procedure
     })
   })
 
-export function isAdmin(user?: SessionUser) {
+export function isAdmin(user?: User) {
   return user?.role === 'admin' || env.NEXT_PUBLIC_APP_ENV !== 'production'
 }
 export const adminProcedure = publicProcedure.use(async ({ next, ctx }) => {

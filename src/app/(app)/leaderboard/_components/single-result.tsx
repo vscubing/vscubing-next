@@ -18,7 +18,7 @@ import * as Accordion from '@radix-ui/react-accordion'
 import Link from 'next/link'
 import { type ReactNode } from 'react'
 import tailwindConfig from 'tailwind.config'
-import { UserBadges } from '@/frontend/shared/user-badges'
+import { UserBadges } from '@/frontend/shared/wca-badge-link'
 
 // HACK: we can't just use useMatchesScreen for switching between Desktop and Tablet because then it won't be SSRed properly
 type SingleResultProps = {

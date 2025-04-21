@@ -1,8 +1,8 @@
 import { and, eq, getTableColumns } from 'drizzle-orm'
 import { db } from '../db'
-import { accountTable, userTable, type UserSchema } from '../db/schema'
+import { accountTable, userTable, type User } from '../db/schema'
 
-export async function createUser(email: string): Promise<UserSchema> {
+export async function createUser(email: string): Promise<User> {
   const [user] = await db
     .insert(userTable)
     .values({ email })
@@ -15,9 +15,7 @@ export async function createUser(email: string): Promise<UserSchema> {
   return user
 }
 
-export async function getUserFromEmail(
-  email: string,
-): Promise<UserSchema | null> {
+export async function getUserFromEmail(email: string): Promise<User | null> {
   const [user] = await db
     .select(getTableColumns(userTable))
     .from(userTable)
@@ -25,7 +23,7 @@ export async function getUserFromEmail(
   return user ?? null
 }
 
-export async function getUserAccount(user: UserSchema, provider: 'google') {
+export async function getUserAccount(user: User, provider: 'google') {
   const [account] = await db
     .select()
     .from(accountTable)
