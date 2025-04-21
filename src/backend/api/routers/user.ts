@@ -12,12 +12,20 @@ import {
   deleteSessionTokenCookie,
   invalidateSession,
 } from '@/backend/auth/session'
+import type { User } from '@/types'
 
 const USERNAME_LENGTH = { MIN: 3, MAX: 24 }
 export const userRouter = createTRPCRouter({
   me: publicProcedure.query(({ ctx: { session } }) => {
     if (!session) return null
-    return session.user
+    return {
+      name: session.user.name,
+      id: session.user.id,
+      email: session.user.email,
+      role: session.user.role,
+      finishedRegistration: session.user.finishedRegistration,
+      wcaId: session.user.wcaId,
+    } satisfies User
   }),
   logout: protectedProcedure.mutation(async ({ ctx: { session } }) => {
     await invalidateSession(session.id)
