@@ -15,7 +15,7 @@ env:
 jobs:
   CD:
     environment: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
-    runs-on: blacksmith-8vcpu-ubuntu-2204
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
@@ -67,7 +67,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Docker image
-        uses: useblacksmith/build-push-action@v1
+        uses: docker/build-push-action@v1
         with:
           context: .
           push: true
