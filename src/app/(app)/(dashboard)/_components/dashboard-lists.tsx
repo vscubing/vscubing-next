@@ -4,9 +4,9 @@ import { BestSolves } from './best-solves'
 import Image from 'next/image'
 import dashboardEmptyImg from '@/../public/images/dashboard-empty.svg'
 import { useTRPC } from '@/trpc/react'
-import { useQuery } from '@tanstack/react-query'
+import { useQueries, useQuery } from '@tanstack/react-query'
 import { LatestContests } from './latest-contests'
-import type { Discipline } from '@/types'
+import { DISCIPLINES } from '@/types'
 
 export function DashboardLists() {
   const trpc = useTRPC()
@@ -18,7 +18,7 @@ export function DashboardLists() {
       limit: 10,
     }),
   )
-  const bestSolves = useBestSolvesQuery()
+  const { data: bestSolves } = useBestSolvesQuery()
 
   if (latestContests?.items.length === 0 || bestSolves?.length === 0) {
     return (
@@ -46,29 +46,33 @@ export function DashboardLists() {
       />
       <BestSolves
         className='h-full flex-grow basis-[calc(60%-0.75rem/2)]'
-        solves={bestSolves}
+        solves={bestSolves ?? undefined}
       />
     </div>
   )
 }
 
 function useBestSolvesQuery() {
-  // TODO: make a dedicated trpc query for this once record badges are done
   const trpc = useTRPC()
-  const { data: best3by3, isLoading: isLoading3by3 } = useQuery(
-    trpc.leaderboard.bySingle.queryOptions({ discipline: '3by3' }),
-  )
-  const { data: best2by2, isLoading: isLoading2by2 } = useQuery(
-    trpc.leaderboard.bySingle.queryOptions({ discipline: '2by2' }),
-  )
-  if (isLoading2by2 || isLoading3by3) return undefined
+  return useQueries({
+    queries: DISCIPLINES.map((discipline) =>
+      trpc.leaderboard.bySingle.queryOptions({ discipline }),
+    ),
 
-  const res: (NonNullable<typeof best3by3>[number] & {
-    discipline: Discipline
-  })[] = []
+    combine: (results) => {
+      const isLoading = results.some(({ isLoading }) => isLoading)
+      if (isLoading) return { isLoading, data: null }
 
-  if (best3by3?.[0]) res.push({ ...best3by3[0], discipline: '3by3' as const })
-  if (best2by2?.[0]) res.push({ ...best2by2[0], discipline: '2by2' as const })
-
-  return res
+      const data = results
+        .map(({ data }, idx) => {
+          if (!data || !data[0]) return null
+          return {
+            ...data?.[0],
+            discipline: DISCIPLINES[idx]!,
+          }
+        })
+        .filter((x): x is NonNullable<typeof x> => Boolean(x))
+      return { isLoading, data }
+    },
+  })
 }
