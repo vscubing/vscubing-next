@@ -138,7 +138,7 @@ function RoundSessionRowTablet({
                   className='mr-3 sm:mr-0'
                   discipline={discipline}
                 />
-                <span className='vertical-alignment-fix flex flex-1 items-start gap-2 sm:col-span-2 sm:w-auto'>
+                <span className='vertical-alignment-fix flex flex-1 items-center gap-2 sm:col-span-2 sm:w-auto'>
                   <span>{user.name}</span>
                   <UserBadges user={user} />
                 </span>
@@ -244,7 +244,7 @@ function RoundSessionRowDesktop({
             {place}
           </PlaceLabel>
           <DisciplineIcon className='mr-3' discipline={discipline} />
-          <span className='vertical-alignment-fix flex min-w-0 flex-1 items-start gap-2 overflow-x-clip text-ellipsis text-nowrap'>
+          <span className='vertical-alignment-fix flex min-w-0 flex-1 items-center gap-2 overflow-x-clip text-ellipsis text-nowrap'>
             <span>{user.name}</span>
             <UserBadges user={user} />
           </span>
