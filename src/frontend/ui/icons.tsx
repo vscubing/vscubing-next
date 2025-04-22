@@ -40,6 +40,7 @@ import AverageIcon from '@/../public/icons/average.icon.svg'
 import SingleIcon from '@/../public/icons/single.icon.svg'
 import VscubingIcon from '@/../public/icons/vscubing.icon.svg'
 import WcaLogoIcon from '@/../public/icons/wca-logo.icon.svg'
+import TrophyIcon from '@/../public/icons/trophy.icon.svg'
 
 export {
   AllContestsIcon,
@@ -78,33 +79,9 @@ export {
   SingleIcon,
   VscubingIcon,
   WcaLogoIcon,
+  TrophyIcon,
 }
 export { CodeXmlIcon, SquareArrowOutUpRight } from 'lucide-react'
-export function TrophyIcon(props: ComponentPropsWithRef<'svg'>) {
-  // TODO: move this to an svg asset file once we have settled on the design
-  return (
-    <svg
-      xmlns='http://www.w3.org/2000/svg'
-      width='1.5em'
-      height='1.5em'
-      viewBox='0 0 24 24'
-      fill='none'
-      stroke='currentColor'
-      strokeWidth='1'
-      strokeLinecap='round'
-      strokeLinejoin='round'
-      {...props}
-    >
-      <path stroke='none' d='M0 0h24v24H0z' fill='none' />
-      <path d='M8 21l8 0' />
-      <path d='M12 17l0 4' />
-      <path d='M7 4l10 0' />
-      <path d='M17 4v8a5 5 0 0 1 -10 0v-8' />
-      <path d='M5 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0' />
-      <path d='M19 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0' />
-    </svg>
-  )
-}
 
 type DisciplineIconProps = HTMLAttributes<SVGSVGElement> & {
   discipline: Discipline
