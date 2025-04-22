@@ -9,7 +9,7 @@ import {
   contestTable,
 } from '../db/schema'
 
-export function getPersonalBestSolveSubquery({
+export function getPersonalRecordSolveSubquery({
   db: _db,
   discipline,
   includeOngoing,
@@ -44,7 +44,7 @@ export function getPersonalBestSolveSubquery({
     .as('personal_best_solve_subquery')
 }
 
-export function getPersonalBestSessionSubquery({
+export function getPersonalRecordSessionSubquery({
   db: _db,
   discipline,
   includeOngoing,

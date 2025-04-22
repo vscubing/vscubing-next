@@ -68,7 +68,7 @@ async function PageContentWithShell({ solveId, contestSlug }: PathParams) {
       timeMs={solve.timeMs}
       scramblePosition={expandScramblePosition(solve.position)}
       isOwn={solve.isOwn}
-      isPersonalBest={solve.isPersonalBest}
+      isPersonalRecord={solve.isPersonalRecord}
       solution={solve.solution}
     >
       <TwistySection
@@ -90,7 +90,7 @@ function PageShell({
   isOwn,
   solution,
   children,
-  isPersonalBest,
+  isPersonalRecord,
 }: {
   discipline: Discipline
   contestSlug: string
@@ -101,7 +101,7 @@ function PageShell({
   username: string
   children: ReactNode
   isOwn?: boolean
-  isPersonalBest?: boolean
+  isPersonalRecord?: boolean
 }) {
   return (
     <section className='flex flex-1 flex-col gap-3'>
@@ -139,7 +139,7 @@ function PageShell({
                 <SolveTimeLabel
                   timeMs={timeMs ?? 0}
                   className='mr-4 min-w-0 lg:min-w-0'
-                  isFestive={isPersonalBest}
+                  isFestive={isPersonalRecord}
                 ></SolveTimeLabel>
                 <span className='text-grey-40'>
                   <SolveTps solution={solution} timeMs={timeMs} />

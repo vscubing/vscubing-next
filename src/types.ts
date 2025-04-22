@@ -4,7 +4,7 @@ import type {
   userSimulatorSettingsTable,
 } from '@/backend/db/schema'
 import { z } from 'zod'
-import type { UserGlobalRecords } from './backend/shared/record-subquery'
+import type { UserGlobalRecords } from './backend/shared/global-record'
 
 // TODO: split this into multiple modules
 // TODO: document the difference between `SessionUser` and `User`
@@ -101,7 +101,7 @@ export type RoundSession = {
     id: number
     position: ScramblePosition
     result: ResultDnfable
-    isPersonalBest: boolean
+    isPersonalRecord: boolean
   }[]
   contestSlug: string
   user: User

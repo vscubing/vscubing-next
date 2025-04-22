@@ -1,2 +1,1 @@
-- [ ] rename PersonalBest to PersonalRecord
 - [ ] dedicated best-results query

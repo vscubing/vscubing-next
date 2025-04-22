@@ -17,9 +17,9 @@ import { resultDnfable, type RoundSession } from '@/types'
 import { groupBy } from '@/utils/group-by'
 import { sortWithRespectToExtras } from '../../shared/sort-with-respect-to-extras'
 import { getContestUserCapabilities } from '../../shared/get-contest-user-capabilities'
-import { getPersonalBestSolveSubquery } from '@/backend/shared/personal-best-subquery'
+import { getPersonalRecordSolveSubquery } from '@/backend/shared/personal-record'
 import { getWcaIdSubquery } from '@/backend/shared/wca-id-subquery'
-import { getGlobalRecordsByUser } from '@/backend/shared/record-subquery'
+import { getGlobalRecordsByUser } from '@/backend/shared/global-record'
 
 export const contestRouter = createTRPCRouter({
   getAllContests: publicProcedure
@@ -179,7 +179,7 @@ export const contestRouter = createTRPCRouter({
             "You can't see the results of an ongoing contest round before finishing it",
         })
 
-      const bestSolveSubquery = getPersonalBestSolveSubquery({
+      const bestSolveSubquery = getPersonalRecordSolveSubquery({
         db: ctx.db,
         discipline: input.discipline,
         includeOngoing: true,
@@ -199,7 +199,7 @@ export const contestRouter = createTRPCRouter({
             plusTwoIncluded: solveTable.plusTwoIncluded,
             id: solveTable.id,
             position: scrambleTable.position,
-            personalBestId: bestSolveSubquery.id,
+            personalRecordId: bestSolveSubquery.id,
           },
           user: {
             name: userTable.name,
@@ -245,7 +245,7 @@ export const contestRouter = createTRPCRouter({
             ({
               solve: {
                 id,
-                personalBestId,
+                personalRecordId,
                 position,
                 isDnf,
                 timeMs,
@@ -255,7 +255,7 @@ export const contestRouter = createTRPCRouter({
               id,
               position,
               result: resultDnfable.parse({ timeMs, isDnf, plusTwoIncluded }),
-              isPersonalBest: id === personalBestId,
+              isPersonalRecord: id === personalRecordId,
             }),
           ),
         ),
@@ -285,7 +285,7 @@ export const contestRouter = createTRPCRouter({
         .where(eq(solveTable.id, input.solveId))
       if (!round) throw new TRPCError({ code: 'NOT_FOUND' })
 
-      const personalBestSubquery = getPersonalBestSolveSubquery({
+      const personalRecordSubquery = getPersonalRecordSolveSubquery({
         db: ctx.db,
         discipline: round.discipline,
         includeOngoing: true,
@@ -296,7 +296,7 @@ export const contestRouter = createTRPCRouter({
           scramble: scrambleTable.moves,
           position: scrambleTable.position,
           solution: solveTable.solution,
-          personalBestId: personalBestSubquery.id,
+          personalRecordId: personalRecordSubquery.id,
           user: {
             name: userTable.name,
             id: userTable.id,
@@ -314,8 +314,8 @@ export const contestRouter = createTRPCRouter({
         .innerJoin(userTable, eq(userTable.id, roundSessionTable.contestantId))
         .innerJoin(roundTable, eq(roundTable.id, roundSessionTable.roundId))
         .leftJoin(
-          personalBestSubquery,
-          eq(personalBestSubquery.id, solveTable.id),
+          personalRecordSubquery,
+          eq(personalRecordSubquery.id, solveTable.id),
         )
         .where(eq(solveTable.id, input.solveId))
 
@@ -329,7 +329,7 @@ export const contestRouter = createTRPCRouter({
 
       return {
         ...solve,
-        isPersonalBest: solve.personalBestId !== null,
+        isPersonalRecord: solve.personalRecordId !== null,
         solution: solve.solution, // reassign to make typescript infer non-nullability
         timeMs: solve.timeMs,
         isOwn: solve.user.id === ctx.session?.user.id,

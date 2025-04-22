@@ -14,7 +14,7 @@ import { type ReactNode } from 'react'
 
 export function SolvePanel({
   number,
-  isPersonalBest,
+  isPersonalRecord,
   position,
   scramble,
   solveId,
@@ -24,7 +24,7 @@ export function SolvePanel({
   discipline,
 }: {
   number: number
-  isPersonalBest: boolean
+  isPersonalRecord: boolean
   solveId: number | null
   result: ResultDnfable | null
   position: ScramblePosition
@@ -46,7 +46,7 @@ export function SolvePanel({
       <TimeSection
         result={result}
         id={solveId}
-        isPersonalBest={isPersonalBest}
+        isPersonalRecord={isPersonalRecord}
         contestSlug={contestSlug}
         discipline={discipline}
       />
@@ -76,13 +76,13 @@ type TimeSectionProps = {
   discipline: Discipline
   id: number | null
   result: ResultDnfable | null
-  isPersonalBest: boolean
+  isPersonalRecord: boolean
 }
 function TimeSection({
   result,
   id,
   contestSlug,
-  isPersonalBest,
+  isPersonalRecord,
   discipline,
 }: TimeSectionProps) {
   if (!result || !id) {
@@ -96,7 +96,7 @@ function TimeSection({
       canShowHint={false}
       contestSlug={contestSlug}
       solveId={id}
-      isFestive={isPersonalBest}
+      isFestive={isPersonalRecord}
       result={result}
       discipline={discipline}
       backgroundColorClass='bg-grey-100'

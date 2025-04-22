@@ -11,7 +11,7 @@ export function CurrentSolve({
   result,
   solveId,
   scramble,
-  isPersonalBest,
+  isPersonalRecord,
   onChangeToExtra,
   onSolveInit,
   onSolveSubmit,
@@ -24,7 +24,7 @@ export function CurrentSolve({
   scramble: string
   position: ScramblePosition
   result: ResultDnfable | null
-  isPersonalBest: boolean
+  isPersonalRecord: boolean
   solveId: number | null
   onChangeToExtra: (reason: string) => void
   onSolveInit: () => void
@@ -40,7 +40,7 @@ export function CurrentSolve({
       scramble={scramble}
       position={position}
       result={result}
-      isPersonalBest={isPersonalBest}
+      isPersonalRecord={isPersonalRecord}
       solveId={solveId}
       renderAction={
         <SolveAction

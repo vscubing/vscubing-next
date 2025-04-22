@@ -11,13 +11,13 @@ import {
 import { eq } from 'drizzle-orm'
 import { DEFAULT_DISCIPLINE } from '@/types'
 import {
-  getPersonalBestSolveSubquery as getBestSolveSubquery,
-  getPersonalBestSessionSubquery,
-} from '@/backend/shared/personal-best-subquery'
+  getPersonalRecordSolveSubquery as getBestSolveSubquery,
+  getPersonalRecordSessionSubquery,
+} from '@/backend/shared/personal-record'
 import { sortWithRespectToExtras } from '@/backend/shared/sort-with-respect-to-extras'
 import { groupBy } from '@/utils/group-by'
 import { getWcaIdSubquery } from '@/backend/shared/wca-id-subquery'
-import { getGlobalRecordsByUser } from '@/backend/shared/record-subquery'
+import { getGlobalRecordsByUser } from '@/backend/shared/global-record'
 
 export const leaderboardRouter = createTRPCRouter({
   bySingle: publicProcedure
@@ -86,7 +86,7 @@ export const leaderboardRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }): Promise<RoundSession[]> => {
-      const bestSessionSubquery = getPersonalBestSessionSubquery({
+      const bestSessionSubquery = getPersonalRecordSessionSubquery({
         db: ctx.db,
         discipline: input.discipline,
         includeOngoing: false,
@@ -148,7 +148,7 @@ export const leaderboardRouter = createTRPCRouter({
                 id,
                 position,
                 result: resultDnfable.parse({ timeMs, isDnf, plusTwoIncluded }),
-                isPersonalBest: false,
+                isPersonalRecord: false,
               }),
             ),
           ),

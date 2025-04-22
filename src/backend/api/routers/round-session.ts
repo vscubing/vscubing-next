@@ -15,7 +15,7 @@ import { calculateAvg } from '../../shared/calculate-avg'
 import { validateSolve } from '@/backend/shared/validate-solve'
 import { getContestUserCapabilities } from '../../shared/get-contest-user-capabilities'
 import { removeSolutionComments } from '@/utils/remove-solution-comments'
-import { getPersonalBestSolveSubquery } from '@/backend/shared/personal-best-subquery'
+import { getPersonalRecordSolveSubquery } from '@/backend/shared/personal-record'
 import type { db } from '@/backend/db'
 import { decodeSolve } from '@/utils/solve-signature'
 
@@ -33,7 +33,7 @@ const submittedSolvesInvariant = z.array(
       id: z.number(),
       status: z.enum(SOLVE_STATUSES),
       result: resultDnfable,
-      isPersonalBest: z.boolean().default(false),
+      isPersonalRecord: z.boolean().default(false),
     },
     {
       message: '[SOLVE] invalid submitted solve invariant',
@@ -139,7 +139,7 @@ export const roundSessionRouter = createTRPCRouter({
       )
       .where(and(eq(roundSessionTable.id, ctx.roundSession.id)))
 
-    const activePersonalBest = await getPersonalBestSolveIncludingOngoing(
+    const activePersonalRecord = await getPersonalRecordSolveIncludingOngoing(
       ctx.db,
       ctx.session.user.id,
       input.discipline,
@@ -158,7 +158,7 @@ export const roundSessionRouter = createTRPCRouter({
           id: id!,
           status: status!,
           result: result && resultDnfable.parse(result),
-          isPersonalBest: activePersonalBest?.id === id,
+          isPersonalRecord: activePersonalRecord?.id === id,
         })),
     )
 
@@ -172,7 +172,7 @@ export const roundSessionRouter = createTRPCRouter({
     const currentSolve = currentSolveRow.id
       ? {
           id: currentSolveRow.id,
-          isPersonalBest: currentSolveRow.isPersonalBest,
+          isPersonalRecord: currentSolveRow.isPersonalRecord,
           result: resultDnfable.parse(currentSolveRow.result),
         }
       : null
@@ -231,18 +231,18 @@ export const roundSessionRouter = createTRPCRouter({
         }
       }
 
-      const activePersonalBest = await getPersonalBestSolveIncludingOngoing(
+      const activePersonalRecord = await getPersonalRecordSolveIncludingOngoing(
         ctx.db,
         ctx.session.user.id,
         input.discipline,
       )
 
-      const setNewPersonalBest =
+      const setNewPersonalRecord =
         !isDnf &&
-        (!activePersonalBest?.result ||
-          activePersonalBest.result.isDnf ||
+        (!activePersonalRecord?.result ||
+          activePersonalRecord.result.isDnf ||
           (payload.result.timeMs &&
-            payload.result.timeMs < activePersonalBest.result.timeMs))
+            payload.result.timeMs < activePersonalRecord.result.timeMs))
 
       const [solve] = await ctx.db
         .insert(solveTable)
@@ -280,12 +280,12 @@ export const roundSessionRouter = createTRPCRouter({
         throw new TRPCError({ code: 'BAD_REQUEST' })
       }
 
-      if (setNewPersonalBest)
+      if (setNewPersonalRecord)
         return {
-          setNewPersonalBest,
-          previousPersonalBest: activePersonalBest?.result.isDnf
+          setNewPersonalRecord,
+          previousPersonalRecord: activePersonalRecord?.result.isDnf
             ? undefined
-            : activePersonalBest,
+            : activePersonalRecord,
         }
     }),
 
@@ -369,12 +369,12 @@ export const roundSessionRouter = createTRPCRouter({
     }),
 })
 
-async function getPersonalBestSolveIncludingOngoing(
+async function getPersonalRecordSolveIncludingOngoing(
   _db: typeof db,
   userId: string,
   discipline: Discipline,
 ) {
-  const subquery = getPersonalBestSolveSubquery({
+  const subquery = getPersonalRecordSolveSubquery({
     db: _db,
     discipline,
     includeOngoing: true,

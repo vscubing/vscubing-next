@@ -171,7 +171,7 @@ function RoundSessionRowTablet({
                           solveId={solve.id}
                           discipline={discipline}
                           result={solve.result}
-                          isFestive={solve.isPersonalBest}
+                          isFestive={solve.isPersonalRecord}
                           variant={
                             solve.id === bestId
                               ? 'best'
@@ -267,7 +267,7 @@ function RoundSessionRowDesktop({
                     discipline={discipline}
                     solveId={solve.id}
                     result={solve.result}
-                    isFestive={solve.isPersonalBest}
+                    isFestive={solve.isPersonalRecord}
                     variant={
                       solve.id === bestId
                         ? 'best'

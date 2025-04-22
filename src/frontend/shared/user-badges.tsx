@@ -11,7 +11,7 @@ import {
   TrophyIcon,
   WcaLogoIcon,
 } from '../ui'
-import type { UserGlobalRecords } from '@/backend/shared/record-subquery'
+import type { UserGlobalRecords } from '@/backend/shared/global-record'
 import { SolveTimeLabel, SolveTimeLinkOrDnf } from './solve-time-button'
 import type { User } from '@/types'
 
