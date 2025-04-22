@@ -41,10 +41,7 @@ export async function GET(request: Request): Promise<Response> {
       storedState,
       codeVerifier,
     )
-    redirectTo.searchParams.append(
-      GOOGLE_AUTH_ERROR_SEARCH_PARAM,
-      'Something went wrong during the authorization.',
-    )
+    redirectTo.searchParams.append(GOOGLE_AUTH_ERROR_SEARCH_PARAM, 'true')
     return new Response(null, {
       status: 302,
       headers: {
@@ -59,10 +56,7 @@ export async function GET(request: Request): Promise<Response> {
   if (error) {
     error.message = '[GOOGLE AUTH] ' + error.message
     console.error(error)
-    redirectTo.searchParams.append(
-      GOOGLE_AUTH_ERROR_SEARCH_PARAM,
-      'Something went wrong during the authorization.',
-    )
+    redirectTo.searchParams.append(GOOGLE_AUTH_ERROR_SEARCH_PARAM, 'true')
     return new Response(null, {
       status: 302,
       headers: {

@@ -5,6 +5,7 @@ import { createUserAccount } from '@/backend/auth/user'
 import { auth } from '@/backend/auth'
 import { tryCatch } from '@/utils/try-catch'
 import { env } from '@/env'
+import { WCA_AUTH_SUCCESS_SEARCH_PARAM } from '../error-search-param'
 
 // TODO: redirect back on error
 // TODO: conflict handling
@@ -21,15 +22,27 @@ export async function GET(request: Request): Promise<Response> {
   const cookieStore = await cookies()
   const storedState = cookieStore.get('wca_oauth_state')?.value ?? null
   const codeVerifier = cookieStore.get('wca_code_verifier')?.value ?? null
-  const redirectTo = cookieStore.get('wca_redirect_to')?.value ?? '/'
+  const redirectTo = new URL(cookieStore.get('wca_redirect_to')?.value ?? '/')
+
   if (
     code === null ||
     state === null ||
     storedState === null ||
     codeVerifier === null
   ) {
+    console.error(
+      '[GOOGLE AUTH] no code/state/storedState/codeVerifier: ',
+      code,
+      state,
+      storedState,
+      codeVerifier,
+    )
+    redirectTo.searchParams.append(WCA_AUTH_SUCCESS_SEARCH_PARAM, 'false')
     return new Response(null, {
-      status: 400,
+      status: 302,
+      headers: {
+        Location: redirectTo.toString(),
+      },
     })
   }
   if (state !== storedState) {
@@ -45,8 +58,12 @@ export async function GET(request: Request): Promise<Response> {
   )
   if (tokenError) {
     console.error('[WCA] invalid token schema: ', tokenError)
+    redirectTo.searchParams.append(WCA_AUTH_SUCCESS_SEARCH_PARAM, 'false')
     return new Response(null, {
-      status: 400,
+      status: 302,
+      headers: {
+        Location: redirectTo.toString(),
+      },
     })
   }
 
@@ -72,10 +89,11 @@ export async function GET(request: Request): Promise<Response> {
     email: claims.email,
   })
 
+  redirectTo.searchParams.append(WCA_AUTH_SUCCESS_SEARCH_PARAM, 'true')
   return new Response(null, {
     status: 302,
     headers: {
-      Location: redirectTo,
+      Location: redirectTo.toString(),
     },
   })
 }
