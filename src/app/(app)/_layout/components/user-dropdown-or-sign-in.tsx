@@ -3,6 +3,7 @@
 import { cn } from '@/frontend/utils/cn'
 import Link from 'next/link'
 import {
+  useEffect,
   useState,
   useTransition,
   type ReactNode,
@@ -29,10 +30,14 @@ import {
   GhostButton,
   SecondaryButton,
   WcaLogoIcon,
+  toast,
 } from '@/frontend/ui'
 import { LoadingDots } from '@/frontend/ui/loading-dots'
 import { type SessionUser } from '@/types'
 import { useLogout, useRemoveWcaAccount, useUser } from '@/frontend/auth'
+import { WCA_AUTH_SUCCESS_SEARCH_PARAM } from '@/app/api/auth/wca/error-search-param'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useRemoveSearchParam } from '@/utils/user-remove-search-param'
 
 export function UserDropdownOrSignIn() {
   const { user, isLoading } = useUser()
@@ -59,6 +64,7 @@ function UserDropdown({
   logoutTransition: TransitionStartFunction
 }) {
   const [isOpen, setIsOpen] = useState(false)
+  useWcaSignInSuccessHandler({ setUserDropdownOpen: setIsOpen })
 
   return (
     <DropdownMenu.Root open={isOpen} onOpenChange={setIsOpen}>
@@ -75,38 +81,40 @@ function UserDropdown({
         <ChevronDownIcon className='group-data-[state=open]:rotate-180' />
       </DropdownMenu.Trigger>
 
-      <DropdownMenu.Content
-        align='end'
-        className='z-10 mt-1 min-w-[15.7rem] rounded-xl border border-black-80 bg-black-100 p-6 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-top-2'
-      >
-        <DropdownMenu.Label className='title-h3 text-white mb-1'>
-          {user.name}
-        </DropdownMenu.Label>
-        <DropdownMenu.Label className='mb-6 border-b border-b-grey-100 pb-2 text-grey-20'>
-          <div className='-ml-2'>
-            <WcaSignIn wcaId={user.wcaId} />
-          </div>
-        </DropdownMenu.Label>
-        <DropdownMenu.Group className='-ml-2 flex flex-col gap-2'>
-          <DropdownButton className='w-full cursor-pointer' asChild>
-            <DropdownMenu.Item asChild>
-              {/* DropdownMenu.Item must be a direct parent of Link for it to work */}
-              <Link href='/settings'>
-                <SettingIcon />
-                Settings
-              </Link>
+      <DropdownMenu.Portal>
+        <DropdownMenu.Content
+          align='end'
+          className='z-10 mt-1 min-w-[15.7rem] rounded-xl border border-black-80 bg-black-100 p-6 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-top-2'
+        >
+          <DropdownMenu.Label className='title-h3 text-white mb-1'>
+            {user.name}
+          </DropdownMenu.Label>
+          <DropdownMenu.Label className='mb-6 border-b border-b-grey-100 pb-2 text-grey-20'>
+            <div className='-ml-2'>
+              <WcaSignIn wcaId={user.wcaId} />
+            </div>
+          </DropdownMenu.Label>
+          <DropdownMenu.Group className='-ml-2 flex flex-col gap-2'>
+            <DropdownButton className='w-full cursor-pointer' asChild>
+              <DropdownMenu.Item asChild>
+                {/* DropdownMenu.Item must be a direct parent of Link for it to work */}
+                <Link href='/settings'>
+                  <SettingIcon />
+                  Settings
+                </Link>
+              </DropdownMenu.Item>
+            </DropdownButton>
+            <DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
+              {/* the dropdown is closed after dialog is closed because triggering dialogs from dropdowns in radix works weirdly */}
+              <LogoutButton
+                className='w-full'
+                onDialogClose={() => setIsOpen(false)}
+                logoutTransition={logoutTransition}
+              />
             </DropdownMenu.Item>
-          </DropdownButton>
-          <DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
-            {/* the dropdown is closed after dialog is closed because triggering dialogs from dropdowns in radix works weirdly */}
-            <LogoutButton
-              className='w-full'
-              onDialogClose={() => setIsOpen(false)}
-              logoutTransition={logoutTransition}
-            />
-          </DropdownMenu.Item>
-        </DropdownMenu.Group>
-      </DropdownMenu.Content>
+          </DropdownMenu.Group>
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
     </DropdownMenu.Root>
   )
 }
@@ -218,4 +226,28 @@ function WcaSignIn({
       </SecondaryButton>
     </div>
   )
+}
+
+function useWcaSignInSuccessHandler({
+  setUserDropdownOpen,
+}: {
+  setUserDropdownOpen: (open: boolean) => void
+}) {
+  const searchParams = useSearchParams()
+  const { removeSearchParam } = useRemoveSearchParam()
+  useEffect(() => {
+    const wcaAuthSuccessRaw = searchParams.get(WCA_AUTH_SUCCESS_SEARCH_PARAM)
+    if (!wcaAuthSuccessRaw) return
+
+    if (wcaAuthSuccessRaw === 'true') setUserDropdownOpen(true)
+    else
+      toast({
+        title: 'WCA autorization error',
+        description: 'Something went wrong during connecting your WCA account',
+        contactUsButton: true,
+        dedupId: 'wca-auth-error',
+      })
+
+    removeSearchParam(WCA_AUTH_SUCCESS_SEARCH_PARAM)
+  }, [searchParams, setUserDropdownOpen, removeSearchParam])
 }
