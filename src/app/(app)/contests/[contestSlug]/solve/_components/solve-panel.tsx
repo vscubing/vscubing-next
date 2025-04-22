@@ -6,7 +6,7 @@ import {
 } from '@/frontend/shared/solve-time-button'
 import {
   type ScramblePosition,
-  type ResultDnfish,
+  type ResultDnfable,
   type Discipline,
   getExtraNumber,
 } from '@/types'
@@ -14,7 +14,7 @@ import { type ReactNode } from 'react'
 
 export function SolvePanel({
   number,
-  isPersonalBest,
+  isPersonalRecord,
   position,
   scramble,
   solveId,
@@ -24,9 +24,9 @@ export function SolvePanel({
   discipline,
 }: {
   number: number
-  isPersonalBest: boolean
+  isPersonalRecord: boolean
   solveId: number | null
-  result: ResultDnfish | null
+  result: ResultDnfable | null
   position: ScramblePosition
   scramble: string
   renderAction?: ReactNode
@@ -46,7 +46,7 @@ export function SolvePanel({
       <TimeSection
         result={result}
         id={solveId}
-        isPersonalBest={isPersonalBest}
+        isPersonalRecord={isPersonalRecord}
         contestSlug={contestSlug}
         discipline={discipline}
       />
@@ -75,14 +75,14 @@ type TimeSectionProps = {
   contestSlug: string
   discipline: Discipline
   id: number | null
-  result: ResultDnfish | null
-  isPersonalBest: boolean
+  result: ResultDnfable | null
+  isPersonalRecord: boolean
 }
 function TimeSection({
   result,
   id,
   contestSlug,
-  isPersonalBest,
+  isPersonalRecord,
   discipline,
 }: TimeSectionProps) {
   if (!result || !id) {
@@ -96,7 +96,7 @@ function TimeSection({
       canShowHint={false}
       contestSlug={contestSlug}
       solveId={id}
-      isFestive={isPersonalBest}
+      isFestive={isPersonalRecord}
       result={result}
       discipline={discipline}
       backgroundColorClass='bg-grey-100'

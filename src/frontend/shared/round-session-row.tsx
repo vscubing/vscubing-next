@@ -17,7 +17,7 @@ import { SpinningBorder } from '@/frontend/ui/spinning-border'
 import { tailwindConfig } from '@/frontend/utils/tailwind'
 import type { RefObject } from 'react'
 import Link from 'next/link'
-import { UserBadges } from './wca-badge-link'
+import { UserBadges } from './user-badges'
 
 // HACK: we can't just use useMatchesScreen for switching between Desktop and Tablet because then it won't be SSRed properly
 type RoundSessionRowProps = {
@@ -138,7 +138,7 @@ function RoundSessionRowTablet({
                   className='mr-3 sm:mr-0'
                   discipline={discipline}
                 />
-                <span className='vertical-alignment-fix flex flex-1 items-start gap-2 sm:col-span-2 sm:w-auto'>
+                <span className='vertical-alignment-fix flex flex-1 items-center gap-2 sm:col-span-2 sm:w-auto'>
                   <span>{user.name}</span>
                   <UserBadges user={user} />
                 </span>
@@ -171,7 +171,7 @@ function RoundSessionRowTablet({
                           solveId={solve.id}
                           discipline={discipline}
                           result={solve.result}
-                          isFestive={solve.isPersonalBest}
+                          isFestive={solve.isPersonalRecord}
                           variant={
                             solve.id === bestId
                               ? 'best'
@@ -244,7 +244,7 @@ function RoundSessionRowDesktop({
             {place}
           </PlaceLabel>
           <DisciplineIcon className='mr-3' discipline={discipline} />
-          <span className='vertical-alignment-fix flex min-w-0 flex-1 items-start gap-2 overflow-x-clip text-ellipsis text-nowrap'>
+          <span className='vertical-alignment-fix flex min-w-0 flex-1 items-center gap-2 overflow-x-clip text-ellipsis text-nowrap'>
             <span>{user.name}</span>
             <UserBadges user={user} />
           </span>
@@ -267,7 +267,7 @@ function RoundSessionRowDesktop({
                     discipline={discipline}
                     solveId={solve.id}
                     result={solve.result}
-                    isFestive={solve.isPersonalBest}
+                    isFestive={solve.isPersonalRecord}
                     variant={
                       solve.id === bestId
                         ? 'best'

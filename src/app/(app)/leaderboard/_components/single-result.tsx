@@ -18,7 +18,7 @@ import * as Accordion from '@radix-ui/react-accordion'
 import Link from 'next/link'
 import { type ReactNode } from 'react'
 import tailwindConfig from 'tailwind.config'
-import { UserBadges } from '@/frontend/shared/wca-badge-link'
+import { UserBadges } from '@/frontend/shared/user-badges'
 
 // HACK: we can't just use useMatchesScreen for switching between Desktop and Tablet because then it won't be SSRed properly
 type SingleResultProps = {
@@ -82,7 +82,7 @@ function SingleResultDesktop({
             {place}
           </PlaceLabel>
           <DisciplineIcon className='mr-3' discipline={discipline} />
-          <span className='vertical-alignment-fix flex flex-1 items-start gap-2'>
+          <span className='vertical-alignment-fix flex flex-1 items-center gap-2'>
             <span>{user.name}</span>
             <UserBadges user={user} />
           </span>
@@ -151,7 +151,7 @@ function SingleResultTablet({
                   className='mr-3 sm:mr-0'
                   discipline={discipline}
                 />
-                <span className='vertical-alignment-fix flex flex-1 items-start gap-2 sm:col-span-2 sm:w-auto'>
+                <span className='vertical-alignment-fix flex flex-1 items-center gap-2 sm:col-span-2 sm:w-auto'>
                   <span>{user.name}</span>
                   <UserBadges user={user} />
                 </span>

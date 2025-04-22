@@ -1,11 +1,11 @@
 import { env } from '@/env'
-import { resultDnfish } from '@/types'
+import { resultDnfable } from '@/types'
 import jws from 'jws'
 import { z } from 'zod'
 
 const alg = 'HS256'
 
-const solveSchema = z.object({ result: resultDnfish, solution: z.string() })
+const solveSchema = z.object({ result: resultDnfable, solution: z.string() })
 type Solve = z.infer<typeof solveSchema>
 
 const JWS_SECRET = env.NEXT_PUBLIC_SOLVE_SECRET + "don't cheat please"

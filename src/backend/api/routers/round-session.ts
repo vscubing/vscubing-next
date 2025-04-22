@@ -9,13 +9,13 @@ import {
   scrambleTable,
   solveTable,
 } from '@/backend/db/schema'
-import { resultDnfish, SCRAMBLE_POSITIONS, SOLVE_STATUSES } from '@/types'
+import { resultDnfable, SCRAMBLE_POSITIONS, SOLVE_STATUSES } from '@/types'
 import { sortWithRespectToExtras } from '../../shared/sort-with-respect-to-extras'
 import { calculateAvg } from '../../shared/calculate-avg'
 import { validateSolve } from '@/backend/shared/validate-solve'
 import { getContestUserCapabilities } from '../../shared/get-contest-user-capabilities'
 import { removeSolutionComments } from '@/utils/remove-solution-comments'
-import { getPersonalBestSolveSubquery } from '@/backend/shared/personal-best-subquery'
+import { getPersonalRecordSolveSubquery } from '@/backend/shared/personal-record'
 import type { db } from '@/backend/db'
 import { decodeSolve } from '@/utils/solve-signature'
 
@@ -32,8 +32,8 @@ const submittedSolvesInvariant = z.array(
       }),
       id: z.number(),
       status: z.enum(SOLVE_STATUSES),
-      result: resultDnfish,
-      isPersonalBest: z.boolean().default(false),
+      result: resultDnfable,
+      isPersonalRecord: z.boolean().default(false),
     },
     {
       message: '[SOLVE] invalid submitted solve invariant',
@@ -139,7 +139,7 @@ export const roundSessionRouter = createTRPCRouter({
       )
       .where(and(eq(roundSessionTable.id, ctx.roundSession.id)))
 
-    const activePersonalBest = await getPersonalBestSolveIncludingOngoing(
+    const activePersonalRecord = await getPersonalRecordSolveIncludingOngoing(
       ctx.db,
       ctx.session.user.id,
       input.discipline,
@@ -157,8 +157,8 @@ export const roundSessionRouter = createTRPCRouter({
           position: scramble.position,
           id: id!,
           status: status!,
-          result: result && resultDnfish.parse(result),
-          isPersonalBest: activePersonalBest?.id === id,
+          result: result && resultDnfable.parse(result),
+          isPersonalRecord: activePersonalRecord?.id === id,
         })),
     )
 
@@ -172,8 +172,8 @@ export const roundSessionRouter = createTRPCRouter({
     const currentSolve = currentSolveRow.id
       ? {
           id: currentSolveRow.id,
-          isPersonalBest: currentSolveRow.isPersonalBest,
-          result: resultDnfish.parse(currentSolveRow.result),
+          isPersonalRecord: currentSolveRow.isPersonalRecord,
+          result: resultDnfable.parse(currentSolveRow.result),
         }
       : null
 
@@ -231,18 +231,18 @@ export const roundSessionRouter = createTRPCRouter({
         }
       }
 
-      const activePersonalBest = await getPersonalBestSolveIncludingOngoing(
+      const activePersonalRecord = await getPersonalRecordSolveIncludingOngoing(
         ctx.db,
         ctx.session.user.id,
         input.discipline,
       )
 
-      const setNewPersonalBest =
+      const setNewPersonalRecord =
         !isDnf &&
-        (!activePersonalBest?.result ||
-          activePersonalBest.result.isDnf ||
+        (!activePersonalRecord?.result ||
+          activePersonalRecord.result.isDnf ||
           (payload.result.timeMs &&
-            payload.result.timeMs < activePersonalBest.result.timeMs))
+            payload.result.timeMs < activePersonalRecord.result.timeMs))
 
       const [solve] = await ctx.db
         .insert(solveTable)
@@ -250,7 +250,7 @@ export const roundSessionRouter = createTRPCRouter({
           roundSessionId: ctx.roundSession.id,
           isDnf,
           timeMs: payload.result.timeMs,
-          plusTwoIncluded: payload.result.plusTwoIncluded,
+          plusTwoIncluded: payload.result.plusTwoIncluded ?? false,
           solution: payload.solution,
           status: 'pending',
           scrambleId: input.scrambleId,
@@ -280,12 +280,12 @@ export const roundSessionRouter = createTRPCRouter({
         throw new TRPCError({ code: 'BAD_REQUEST' })
       }
 
-      if (setNewPersonalBest)
+      if (setNewPersonalRecord)
         return {
-          setNewPersonalBest,
-          previousPersonalBest: activePersonalBest?.result.isDnf
+          setNewPersonalRecord,
+          previousPersonalRecord: activePersonalRecord?.result.isDnf
             ? undefined
-            : activePersonalBest,
+            : activePersonalRecord,
         }
     }),
 
@@ -319,7 +319,7 @@ export const roundSessionRouter = createTRPCRouter({
                   eq(solveTable.status, 'submitted'),
                 ),
               )
-          ).map((res) => resultDnfish.parse(res))
+          ).map((res) => resultDnfable.parse(res))
 
           const sessionFinished = submittedResults.length === ROUND_ATTEMPTS_QTY
           if (sessionFinished) {
@@ -369,12 +369,12 @@ export const roundSessionRouter = createTRPCRouter({
     }),
 })
 
-async function getPersonalBestSolveIncludingOngoing(
+async function getPersonalRecordSolveIncludingOngoing(
   _db: typeof db,
   userId: string,
   discipline: Discipline,
 ) {
-  const subquery = getPersonalBestSolveSubquery({
+  const subquery = getPersonalRecordSolveSubquery({
     db: _db,
     discipline,
     includeOngoing: true,
@@ -400,7 +400,7 @@ async function getPersonalBestSolveIncludingOngoing(
   return activeBest?.result
     ? {
         ...activeBest,
-        result: resultDnfish.parse(activeBest?.result),
+        result: resultDnfable.parse(activeBest?.result),
       }
     : undefined
 }

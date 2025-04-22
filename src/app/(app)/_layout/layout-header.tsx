@@ -11,7 +11,7 @@ const HEADER_TITLE_ID = 'header-title'
 
 export function LayoutHeader({ className }: { className?: string }) {
   return (
-    <header className={cn('z-40 flex bg-black-100 sm:pb-2 sm:pt-3', className)}>
+    <header className={cn('flex bg-black-100 sm:pb-2 sm:pt-3', className)}>
       <ControlMobileMenuButton
         mode={true}
         className='mr-2 hidden h-[4.375rem] w-[4.375rem] items-center justify-center rounded-2xl bg-black-80 sm:flex sm:h-14 sm:w-14'

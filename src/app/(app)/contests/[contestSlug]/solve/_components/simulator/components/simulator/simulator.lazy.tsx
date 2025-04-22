@@ -10,7 +10,7 @@ import {
   INSPECTION_DNF_THRESHHOLD_MS,
   INSPECTION_PLUS_TWO_THRESHHOLD_MS,
 } from './constants'
-import type { Discipline, ResultDnfish } from '@/types'
+import type { Discipline, ResultDnfable } from '@/types'
 import type { userSimulatorSettingsTable } from '@/backend/db/schema'
 import type { SimulatorCameraPosition } from 'vendor/cstimer'
 import { useIsTouchDevice } from '@/frontend/utils/use-media-query'
@@ -19,7 +19,7 @@ import { cn } from '@/frontend/utils/cn'
 export type InitSolveData = { scramble: string; discipline: Discipline }
 
 export type SimulatorSolve = {
-  result: ResultDnfish
+  result: ResultDnfable
   solution: string
 }
 export type SimulatorSolveFinishCallback = (solve: SimulatorSolve) => void

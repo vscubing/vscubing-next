@@ -40,6 +40,7 @@ import AverageIcon from '@/../public/icons/average.icon.svg'
 import SingleIcon from '@/../public/icons/single.icon.svg'
 import VscubingIcon from '@/../public/icons/vscubing.icon.svg'
 import WcaLogoIcon from '@/../public/icons/wca-logo.icon.svg'
+import TrophyIcon from '@/../public/icons/trophy.icon.svg'
 
 export {
   AllContestsIcon,
@@ -78,8 +79,9 @@ export {
   SingleIcon,
   VscubingIcon,
   WcaLogoIcon,
+  TrophyIcon,
 }
-export { CodeXml as CodeXmlIcon, Trophy as TrophyIcon } from 'lucide-react'
+export { CodeXmlIcon, SquareArrowOutUpRight } from 'lucide-react'
 
 type DisciplineIconProps = HTMLAttributes<SVGSVGElement> & {
   discipline: Discipline

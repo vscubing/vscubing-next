@@ -9,7 +9,7 @@ import {
   contestTable,
 } from '../db/schema'
 
-export function getPersonalBestSolveSubquery({
+export function getPersonalRecordSolveSubquery({
   db: _db,
   discipline,
   includeOngoing,
@@ -31,12 +31,10 @@ export function getPersonalBestSolveSubquery({
     .where(
       and(
         eq(roundTable.disciplineSlug, discipline),
-        includeOngoing
-          ? or(
-              eq(solveTable.status, 'submitted'),
-              eq(solveTable.status, 'pending'),
-            )
-          : eq(solveTable.status, 'submitted'),
+        or(
+          eq(solveTable.status, 'submitted'),
+          includeOngoing ? eq(solveTable.status, 'pending') : undefined,
+        ),
         includeOngoing ? undefined : eq(contestTable.isOngoing, false),
       ),
     )
@@ -44,7 +42,7 @@ export function getPersonalBestSolveSubquery({
     .as('personal_best_solve_subquery')
 }
 
-export function getPersonalBestSessionSubquery({
+export function getPersonalRecordSessionSubquery({
   db: _db,
   discipline,
   includeOngoing,

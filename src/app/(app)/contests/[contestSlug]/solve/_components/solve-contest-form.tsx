@@ -1,6 +1,6 @@
 'use client'
 
-import type { Discipline, ResultDnfish } from '@/types'
+import type { Discipline, ResultDnfable } from '@/types'
 import { CurrentSolve } from './current-solve'
 import { Progress } from './progress'
 import { SolvePanel } from './solve-panel'
@@ -65,8 +65,8 @@ export function SolveContestForm({
     useMutation(
       trpc.roundSession.postSolve.mutationOptions({
         onSuccess: (res) => {
-          if (res?.setNewPersonalBest)
-            handlePersonalBest(res.previousPersonalBest)
+          if (res?.setNewPersonalRecord)
+            handlePersonalRecord(res.previousPersonalRecord)
         },
         onSettled: () => queryClient.invalidateQueries(stateQuery),
         onError: (error) => {
@@ -129,24 +129,24 @@ export function SolveContestForm({
     }
   }
 
-  function handlePersonalBest(previousPersonalBest?: {
+  function handlePersonalRecord(previousPersonalRecord?: {
     id: number
-    result: ResultDnfish
+    result: ResultDnfable
     contestSlug: string
   }) {
     toast({
       title: 'Wow, new personal best single!',
-      description: previousPersonalBest ? (
+      description: previousPersonalRecord ? (
         <>
           Previous personal best:{' '}
           {
             <SolveTimeLinkOrDnf
               className='h-auto min-w-0'
               canShowHint={false}
-              result={previousPersonalBest.result}
+              result={previousPersonalRecord.result}
               discipline={discipline}
-              contestSlug={previousPersonalBest.contestSlug}
-              solveId={previousPersonalBest.id}
+              contestSlug={previousPersonalRecord.contestSlug}
+              solveId={previousPersonalRecord.id}
             />
           }
         </>
@@ -184,7 +184,7 @@ export function SolveContestForm({
               solveId={solve.id}
               position={solve.scramble.position}
               scramble={solve.scramble.moves}
-              isPersonalBest={solve.isPersonalBest}
+              isPersonalRecord={solve.isPersonalRecord}
               key={solve.id}
             />
           ))}
@@ -198,7 +198,7 @@ export function SolveContestForm({
             scramble={state.currentScramble.moves}
             solveId={state.currentSolve?.id ?? null}
             result={state.currentSolve?.result ?? null}
-            isPersonalBest={state.currentSolve?.isPersonalBest ?? false}
+            isPersonalRecord={state.currentSolve?.isPersonalRecord ?? false}
             onChangeToExtra={(reason) =>
               handleSubmitSolve({ type: 'changed_to_extra', reason })
             }
