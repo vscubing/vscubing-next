@@ -110,7 +110,7 @@ function SolveRow({ solve, isFirstOnPage }: SolveProps) {
               'bg-secondary-80': solve.isOwn,
             })}
           >
-            <span className='relative mr-3 flex flex-1 items-center pr-2 after:absolute after:right-0 after:top-1/2 after:block after:h-6 after:w-px after:-translate-y-1/2 after:bg-grey-60 sm:mr-0 sm:flex-col sm:items-center'>
+            <span className='relative mr-3 flex flex-1 items-center pr-2 after:absolute after:right-0 after:top-1/2 after:block after:h-6 after:w-px after:-translate-y-1/2 after:bg-grey-60 sm:mr-0 sm:flex-col sm:items-start'>
               <DisciplineIcon className='mr-3' discipline={solve.discipline} />
               <span className='flex items-center gap-2'>
                 <span>{solve.user.name}</span>
