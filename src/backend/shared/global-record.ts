@@ -24,7 +24,7 @@ export async function getGlobalRecords() {
     .where(
       and(
         eq(roundSessionTable.isFinished, true),
-        eq(contestTable.isOngoing, false), // TODO: remove this once we make leaderboards update immediately and not after a contest ends
+        eq(contestTable.isOngoing, false),
       ),
     )
     .orderBy(
@@ -51,7 +51,7 @@ export async function getGlobalRecords() {
     .where(
       and(
         eq(solveTable.status, 'submitted'),
-        eq(contestTable.isOngoing, false), // TODO: remove this once we make leaderboards update immediately and not after a contest ends
+        eq(contestTable.isOngoing, false),
       ),
     )
     .orderBy(roundTable.disciplineSlug, solveTable.isDnf, solveTable.timeMs)

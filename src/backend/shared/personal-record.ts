@@ -31,12 +31,10 @@ export function getPersonalRecordSolveSubquery({
     .where(
       and(
         eq(roundTable.disciplineSlug, discipline),
-        includeOngoing
-          ? or(
-              eq(solveTable.status, 'submitted'),
-              eq(solveTable.status, 'pending'),
-            )
-          : eq(solveTable.status, 'submitted'),
+        or(
+          eq(solveTable.status, 'submitted'),
+          includeOngoing ? eq(solveTable.status, 'pending') : undefined,
+        ),
         includeOngoing ? undefined : eq(contestTable.isOngoing, false),
       ),
     )

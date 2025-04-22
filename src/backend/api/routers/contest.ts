@@ -275,7 +275,10 @@ export const contestRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const [round] = await ctx.db
-        .select({ discipline: roundTable.disciplineSlug })
+        .select({
+          discipline: roundTable.disciplineSlug,
+          contestSlug: roundTable.contestSlug,
+        })
         .from(solveTable)
         .innerJoin(
           roundSessionTable,
@@ -284,6 +287,11 @@ export const contestRouter = createTRPCRouter({
         .innerJoin(roundTable, eq(roundTable.id, roundSessionTable.roundId))
         .where(eq(solveTable.id, input.solveId))
       if (!round) throw new TRPCError({ code: 'NOT_FOUND' })
+
+      const userCapabilities = await getContestUserCapabilities({
+        contestSlug: round.contestSlug,
+        discipline: round.discipline,
+      })
 
       const personalRecordSubquery = getPersonalRecordSolveSubquery({
         db: ctx.db,
@@ -328,11 +336,14 @@ export const contestRouter = createTRPCRouter({
         })
 
       return {
-        ...solve,
-        isPersonalRecord: solve.personalRecordId !== null,
-        solution: solve.solution, // reassign to make typescript infer non-nullability
-        timeMs: solve.timeMs,
-        isOwn: solve.user.id === ctx.session?.user.id,
+        userCapabilities,
+        solve: {
+          ...solve,
+          isPersonalRecord: solve.personalRecordId !== null,
+          solution: solve.solution, // reassign to make typescript infer non-nullability
+          timeMs: solve.timeMs,
+          isOwn: solve.user.id === ctx.session?.user.id,
+        },
       }
     }),
 })

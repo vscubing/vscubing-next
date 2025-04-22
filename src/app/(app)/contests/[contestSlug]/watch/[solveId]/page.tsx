@@ -20,21 +20,19 @@ import { removeSolutionComments } from '@/utils/remove-solution-comments'
 import { SolveTimeLabel } from '@/frontend/shared/solve-time-button'
 
 type PathParams = { contestSlug: string; solveId: string }
-export default async function WatchSolvePage({
-  params,
-  searchParams,
-}: {
+export default async function WatchSolvePage(props: {
   params: Promise<PathParams>
   searchParams: Promise<Record<string, string | undefined>>
 }) {
-  const { contestSlug, solveId } = await params
-  const { discipline } = await searchParams
+  const { contestSlug, solveId } = await props.params
+  const searchParams = await props.searchParams
+  const discipline = castDiscipline(searchParams.discipline)
 
   return (
     <Suspense
       fallback={
         <PageShell
-          discipline={castDiscipline(discipline)}
+          discipline={discipline}
           contestSlug={contestSlug}
           username='...'
           scramblePosition='...'
@@ -51,13 +49,18 @@ export default async function WatchSolvePage({
 }
 
 async function PageContentWithShell({ solveId, contestSlug }: PathParams) {
-  const { data: solve, error } = await tryCatchTRPC(
+  const { data, error } = await tryCatchTRPC(
     api.contest.getSolve({ solveId: Number(solveId) }),
   )
-  if (error) {
-    if (error.code === 'NOT_FOUND' || error.code === 'BAD_REQUEST') notFound()
-    throw error
-  }
+  if (error?.code === 'NOT_FOUND' || error?.code === 'BAD_REQUEST') notFound()
+  if (error) throw error
+  const { solve } = data
+  // if (error?.code === 'UNAUTHORIZED') // TODO: add a spoiler alert (the user hasn't participated in the ongoing round that the solve is from)
+  //   return (
+  //     <HintSignInSection description='This solve was made in the ongoing contest. Please sign in so that we can check if you have already solved this round and are thus allowed to watch this solve reconstruction.'></HintSignInSection>
+  //   )
+  // if (error?.code === 'FORBIDDEN')
+  //   return <HintSection>Please solve first</HintSection>
 
   return (
     <PageShell

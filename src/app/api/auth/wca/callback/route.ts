@@ -7,7 +7,6 @@ import { tryCatch } from '@/utils/try-catch'
 import { env } from '@/env'
 import { WCA_AUTH_SUCCESS_SEARCH_PARAM } from '../error-search-param'
 
-// TODO: redirect back on error
 // TODO: conflict handling
 export async function GET(request: Request): Promise<Response> {
   const session = await auth()
