@@ -11,7 +11,7 @@ import { SolveTimeLinkOrDnf } from '@/frontend/shared/solve-time-button'
 import {
   DISCIPLINES,
   type Discipline,
-  type ResultDnfish,
+  type ResultDnfable,
   type User,
 } from '@/types'
 import { cn } from '@/frontend/utils/cn'
@@ -20,7 +20,7 @@ import Link from 'next/link'
 import { UserBadges } from '@/frontend/shared/user-badges'
 
 type Solve = {
-  result: ResultDnfish
+  result: ResultDnfable
   isOwn: boolean
   id: number
   user: User

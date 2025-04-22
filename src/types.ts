@@ -6,6 +6,9 @@ import type {
 import { z } from 'zod'
 import type { UserGlobalRecords } from './backend/shared/record-subquery'
 
+// TODO: split this into multiple modules
+// TODO: document the difference between `SessionUser` and `User`
+
 export type SessionUser = Pick<
   UserSchema,
   'name' | 'id' | 'finishedRegistration' | 'role'
@@ -38,7 +41,7 @@ export const SOLVE_STATUSES = [
 ] as const
 export type SolveStatus = (typeof SOLVE_STATUSES)[number]
 
-export type ResultDnfish = ResultSuccess | ResultDnf
+export type ResultDnfable = ResultSuccess | ResultDnf
 type ResultSuccess = { timeMs: number; isDnf: false; plusTwoIncluded?: boolean }
 type ResultDnf = {
   timeMs: null | number
@@ -46,7 +49,7 @@ type ResultDnf = {
   plusTwoIncluded?: boolean
 }
 
-export const resultDnfish = z.custom<ResultDnfish>(
+export const resultDnfable = z.custom<ResultDnfable>(
   ({
     isDnf,
     timeMs,
@@ -59,7 +62,7 @@ export const resultDnfish = z.custom<ResultDnfish>(
     return false
   },
   {
-    message: 'Invalid resultDnfish',
+    message: 'Invalid resultDnfable',
   },
 )
 
@@ -90,14 +93,14 @@ export type ContestMetadata = Pick<
 
 export type RoundSession = {
   session: {
-    result: ResultDnfish
+    result: ResultDnfable
     id: number
     isOwn: boolean
   }
   solves: {
     id: number
     position: ScramblePosition
-    result: ResultDnfish
+    result: ResultDnfable
     isPersonalBest: boolean
   }[]
   contestSlug: string

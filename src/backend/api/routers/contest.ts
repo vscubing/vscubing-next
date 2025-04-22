@@ -13,7 +13,7 @@ import {
 import { DISCIPLINES, CONTEST_UNAUTHORIZED_MESSAGE } from '@/types'
 import { eq, desc, and, lte } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
-import { resultDnfish, type RoundSession } from '@/types'
+import { resultDnfable, type RoundSession } from '@/types'
 import { groupBy } from '@/utils/group-by'
 import { sortWithRespectToExtras } from '../../shared/sort-with-respect-to-extras'
 import { getContestUserCapabilities } from '../../shared/get-contest-user-capabilities'
@@ -236,7 +236,7 @@ export const contestRouter = createTRPCRouter({
 
       return Array.from(solvesBySessionId.values()).map((session) => ({
         session: {
-          result: resultDnfish.parse(session[0]!.session),
+          result: resultDnfable.parse(session[0]!.session),
           id: session[0]!.session.id,
           isOwn: session[0]!.user.id === ctx.session?.user.id,
         },
@@ -254,7 +254,7 @@ export const contestRouter = createTRPCRouter({
             }) => ({
               id,
               position,
-              result: resultDnfish.parse({ timeMs, isDnf, plusTwoIncluded }),
+              result: resultDnfable.parse({ timeMs, isDnf, plusTwoIncluded }),
               isPersonalBest: id === personalBestId,
             }),
           ),

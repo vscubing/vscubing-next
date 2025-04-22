@@ -4,7 +4,7 @@ import { type ComponentProps } from 'react'
 import { formatSolveTime } from '../../utils/format-solve-time'
 import { cn } from '../utils/cn'
 import { WatchSolveHintPopover } from './watch-solve-hint-popover.client'
-import { type Discipline, type ResultDnfish } from '../../types'
+import { type Discipline, type ResultDnfable } from '../../types'
 import confettiImg from '@/../public/images/confetti-solve-time-link.svg'
 import Image from 'next/image'
 import { ExtraLabel } from './extra-label'
@@ -28,7 +28,7 @@ const solveTimeLinkOrDnfVariants = cva(
 type SolveTimeLinkOrDnfProps = VariantProps<
   typeof solveTimeLinkOrDnfVariants
 > & {
-  result: ResultDnfish
+  result: ResultDnfable
   solveId: number
   contestSlug: string
   discipline: Discipline
@@ -102,7 +102,7 @@ const solveTimeLabelVariants = cva(
   },
 )
 type SolveTimeLabelProps = {
-  timeMs?: number // this is loosely typed without ResultDnfish because isPlaceholder and isAverage are tricky
+  timeMs?: number // this is loosely typed without ResultDnfable because isPlaceholder and isAverage are tricky
   isDnf?: boolean
   isPlaceholder?: boolean
   isFestive?: boolean

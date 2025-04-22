@@ -1,6 +1,6 @@
 'use client'
 
-import type { Discipline, ResultDnfish } from '@/types'
+import type { Discipline, ResultDnfable } from '@/types'
 import { CurrentSolve } from './current-solve'
 import { Progress } from './progress'
 import { SolvePanel } from './solve-panel'
@@ -131,7 +131,7 @@ export function SolveContestForm({
 
   function handlePersonalBest(previousPersonalBest?: {
     id: number
-    result: ResultDnfish
+    result: ResultDnfable
     contestSlug: string
   }) {
     toast({

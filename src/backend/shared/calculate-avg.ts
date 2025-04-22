@@ -1,8 +1,8 @@
-import type { ResultDnfish } from '@/types'
+import type { ResultDnfable } from '@/types'
 
 const COUNTING_RESULTS = 3
 
-export function calculateAvg(results: ResultDnfish[]): ResultDnfish {
+export function calculateAvg(results: ResultDnfable[]): ResultDnfable {
   const counting = results
     .filter(({ isDnf }) => !isDnf)
     .map(({ timeMs }) => timeMs!)

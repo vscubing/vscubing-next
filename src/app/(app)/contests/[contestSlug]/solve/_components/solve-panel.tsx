@@ -6,7 +6,7 @@ import {
 } from '@/frontend/shared/solve-time-button'
 import {
   type ScramblePosition,
-  type ResultDnfish,
+  type ResultDnfable,
   type Discipline,
   getExtraNumber,
 } from '@/types'
@@ -26,7 +26,7 @@ export function SolvePanel({
   number: number
   isPersonalBest: boolean
   solveId: number | null
-  result: ResultDnfish | null
+  result: ResultDnfable | null
   position: ScramblePosition
   scramble: string
   renderAction?: ReactNode
@@ -75,7 +75,7 @@ type TimeSectionProps = {
   contestSlug: string
   discipline: Discipline
   id: number | null
-  result: ResultDnfish | null
+  result: ResultDnfable | null
   isPersonalBest: boolean
 }
 function TimeSection({

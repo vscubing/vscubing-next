@@ -1,6 +1,6 @@
 import { SolvePanel } from './solve-panel'
 import { PrimaryButton, SecondaryButton } from '@/frontend/ui'
-import type { ScramblePosition, ResultDnfish, Discipline } from '@/types'
+import type { ScramblePosition, ResultDnfable, Discipline } from '@/types'
 import { ExtraPrompt } from './extra-prompt'
 
 export function CurrentSolve({
@@ -23,7 +23,7 @@ export function CurrentSolve({
   canChangeToExtra: boolean
   scramble: string
   position: ScramblePosition
-  result: ResultDnfish | null
+  result: ResultDnfable | null
   isPersonalBest: boolean
   solveId: number | null
   onChangeToExtra: (reason: string) => void
@@ -65,7 +65,7 @@ function SolveAction({
   onSolveSubmit,
 }: {
   disabled: boolean
-  result: ResultDnfish | null
+  result: ResultDnfable | null
   canChangeToExtra: boolean
   onSolveInit: () => void
   onSolveSubmit: () => void

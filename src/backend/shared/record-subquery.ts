@@ -7,7 +7,7 @@ import {
   solveTable,
   userTable,
 } from '../db/schema'
-import { resultDnfish, type Discipline, type ResultDnfish } from '@/types'
+import { resultDnfable, type Discipline, type ResultDnfable } from '@/types'
 
 export async function getGlobalRecords() {
   const averages = await db
@@ -68,7 +68,7 @@ export async function getGlobalRecordsByUser(): Promise<
     ...avg,
     roundSession: {
       ...avg.roundSession,
-      result: resultDnfish.parse({
+      result: resultDnfable.parse({
         timeMs: avg.roundSession.avgMs,
         isDnf: avg.roundSession.isDnf,
       }),
@@ -78,7 +78,7 @@ export async function getGlobalRecordsByUser(): Promise<
     ...single,
     solve: {
       ...single.solve,
-      result: resultDnfish.parse({
+      result: resultDnfable.parse({
         timeMs: single.solve.timeMs,
         isDnf: single.solve.isDnf,
         plusTwoIncluded: single.solve.plusTwoIncluded,
@@ -111,7 +111,7 @@ export type UserGlobalRecords = {
     solve: {
       id: number
       roundSessionId: number
-      result: ResultDnfish
+      result: ResultDnfable
     }
     userId: string
     discipline: Discipline
@@ -120,7 +120,7 @@ export type UserGlobalRecords = {
   averages: {
     roundSession: {
       id: number
-      result: ResultDnfish
+      result: ResultDnfable
     }
     userId: string
     discipline: Discipline

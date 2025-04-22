@@ -1,2 +1,2 @@
-- [ ] rename ResultDnfish to ResultDnfable
 - [ ] rename PersonalBest to PersonalRecord
+- [ ] dedicated best-results query

@@ -1,4 +1,4 @@
-import { DISCIPLINES, resultDnfish, type RoundSession } from '@/types'
+import { DISCIPLINES, resultDnfable, type RoundSession } from '@/types'
 import { z } from 'zod'
 import { createTRPCRouter, publicProcedure } from '../trpc'
 import {
@@ -73,7 +73,7 @@ export const leaderboardRouter = createTRPCRouter({
           createdAt: row.createdAt,
           contestSlug: row.contestSlug,
           roundSessionId: row.roundSessionId,
-          result: resultDnfish.parse(row.result),
+          result: resultDnfable.parse(row.result),
           isOwn: ctx.session?.user.id === row.user.id,
         }
       })
@@ -136,7 +136,7 @@ export const leaderboardRouter = createTRPCRouter({
       return Array.from(solvesBySessionId.values()).map((session) => {
         return {
           session: {
-            result: resultDnfish.parse(session[0]!.session),
+            result: resultDnfable.parse(session[0]!.session),
             id: session[0]!.session.id,
             isOwn: session[0]!.user.id === ctx.session?.user.id,
           },
@@ -147,7 +147,7 @@ export const leaderboardRouter = createTRPCRouter({
               }) => ({
                 id,
                 position,
-                result: resultDnfish.parse({ timeMs, isDnf, plusTwoIncluded }),
+                result: resultDnfable.parse({ timeMs, isDnf, plusTwoIncluded }),
                 isPersonalBest: false,
               }),
             ),

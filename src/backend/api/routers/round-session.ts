@@ -9,7 +9,7 @@ import {
   scrambleTable,
   solveTable,
 } from '@/backend/db/schema'
-import { resultDnfish, SCRAMBLE_POSITIONS, SOLVE_STATUSES } from '@/types'
+import { resultDnfable, SCRAMBLE_POSITIONS, SOLVE_STATUSES } from '@/types'
 import { sortWithRespectToExtras } from '../../shared/sort-with-respect-to-extras'
 import { calculateAvg } from '../../shared/calculate-avg'
 import { validateSolve } from '@/backend/shared/validate-solve'
@@ -32,7 +32,7 @@ const submittedSolvesInvariant = z.array(
       }),
       id: z.number(),
       status: z.enum(SOLVE_STATUSES),
-      result: resultDnfish,
+      result: resultDnfable,
       isPersonalBest: z.boolean().default(false),
     },
     {
@@ -157,7 +157,7 @@ export const roundSessionRouter = createTRPCRouter({
           position: scramble.position,
           id: id!,
           status: status!,
-          result: result && resultDnfish.parse(result),
+          result: result && resultDnfable.parse(result),
           isPersonalBest: activePersonalBest?.id === id,
         })),
     )
@@ -173,7 +173,7 @@ export const roundSessionRouter = createTRPCRouter({
       ? {
           id: currentSolveRow.id,
           isPersonalBest: currentSolveRow.isPersonalBest,
-          result: resultDnfish.parse(currentSolveRow.result),
+          result: resultDnfable.parse(currentSolveRow.result),
         }
       : null
 
@@ -319,7 +319,7 @@ export const roundSessionRouter = createTRPCRouter({
                   eq(solveTable.status, 'submitted'),
                 ),
               )
-          ).map((res) => resultDnfish.parse(res))
+          ).map((res) => resultDnfable.parse(res))
 
           const sessionFinished = submittedResults.length === ROUND_ATTEMPTS_QTY
           if (sessionFinished) {
@@ -400,7 +400,7 @@ async function getPersonalBestSolveIncludingOngoing(
   return activeBest?.result
     ? {
         ...activeBest,
-        result: resultDnfish.parse(activeBest?.result),
+        result: resultDnfable.parse(activeBest?.result),
       }
     : undefined
 }

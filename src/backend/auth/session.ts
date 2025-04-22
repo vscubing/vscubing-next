@@ -13,7 +13,7 @@ import { eq, getTableColumns } from 'drizzle-orm'
 import { cookies } from 'next/headers'
 import { cache } from 'react'
 import { env } from '@/env'
-import type { SessionUser, User } from '@/types'
+import type { SessionUser } from '@/types'
 import { getWcaIdSubquery } from '../shared/wca-id-subquery'
 
 export function generateSessionToken(): string {

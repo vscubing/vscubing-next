@@ -36,7 +36,7 @@ import { LoadingDots } from '@/frontend/ui/loading-dots'
 import { type SessionUser } from '@/types'
 import { useLogout, useRemoveWcaAccount, useUser } from '@/frontend/auth'
 import { WCA_AUTH_SUCCESS_SEARCH_PARAM } from '@/app/api/auth/wca/error-search-param'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { useRemoveSearchParam } from '@/utils/user-remove-search-param'
 
 export function UserDropdownOrSignIn() {
