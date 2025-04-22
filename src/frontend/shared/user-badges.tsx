@@ -52,11 +52,11 @@ function RecordHolderBadge({
       }}
       asChild
     >
-      <span className='relative -mt-1 inline-flex h-5 w-5 text-amber-400'>
-        <TrophyIcon />
-        {/* <span className='absolute -right-1 top-[-0.2rem] flex h-[14px] min-w-[14px] cursor-default items-center justify-center rounded-full bg-amber-400 px-[2px] font-kanit text-[12px] font-medium text-grey-80'> */}
-        {/*   {records.averages.length + records.singles.length} */}
-        {/* </span> */}
+      <span className='relative -mt-1 inline-flex text-amber-400'>
+        <TrophyIcon className='text-large' />
+        <span className='caption-sm pointer-events-none absolute left-1/2 top-1/2 mt-[-0.12rem] -translate-x-1/2 -translate-y-1/2 font-kanit font-medium'>
+          {records.averages.length + records.singles.length}
+        </span>
       </span>
     </HoverPopover>
   )
@@ -73,7 +73,7 @@ function RecordHolderPopover({
   return (
     <>
       <p className='flex items-center gap-1'>
-        <TrophyIcon />
+        <TrophyIcon className='-mt-1' />
         <span>
           {name} holds {recordCount} {recordCount > 1 ? 'records' : 'record'}
         </span>
