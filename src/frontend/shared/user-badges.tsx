@@ -9,7 +9,6 @@ import {
   SingleIcon,
   SquareArrowOutUpRight,
   TrophyIcon,
-  MedalIcon,
   WcaLogoIcon,
 } from '../ui'
 import type { UserGlobalRecords } from '@/backend/shared/record-subquery'
@@ -52,7 +51,7 @@ function RecordHolderBadge({
       }}
       asChild
     >
-      <span className='relative -mt-1 inline-flex text-amber-400'>
+      <span className='relative inline-flex text-amber-400'>
         <TrophyIcon className='text-large' />
         <span className='caption-sm pointer-events-none absolute left-1/2 top-1/2 mt-[-0.12rem] -translate-x-1/2 -translate-y-1/2 font-kanit font-medium'>
           {records.averages.length + records.singles.length}
