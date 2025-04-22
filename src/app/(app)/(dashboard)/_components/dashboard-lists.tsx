@@ -10,8 +10,6 @@ import { DISCIPLINES } from '@/types'
 
 export function DashboardLists() {
   const trpc = useTRPC()
-
-  // NOTE: we don't fetch these two queries in separate RSCs because we need a combined fallback in case there is no data
   const { data: latestContests } = useQuery(
     trpc.contest.getAllContests.queryOptions({
       discipline: '3by3',

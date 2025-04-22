@@ -1,6 +1,6 @@
 import { type Discipline } from '@/types'
 import { cn } from '@/frontend/utils/cn'
-import { type ComponentPropsWithRef, type HTMLAttributes } from 'react'
+import { type HTMLAttributes } from 'react'
 
 import Discipline3by3Icon from '@/../public/icons/discipline-3by3.icon.svg'
 import Discipline2by2Icon from '@/../public/icons/discipline-2by2.icon.svg'

@@ -8,16 +8,16 @@ import {
 } from '@/frontend/ui'
 import { SpinningBorder } from '@/frontend/ui/spinning-border'
 import { SolveTimeLinkOrDnf } from '@/frontend/shared/solve-time-button'
-import {
-  DISCIPLINES,
-  type Discipline,
-  type ResultDnfable,
-  type User,
-} from '@/types'
 import { cn } from '@/frontend/utils/cn'
 import { tailwindConfig } from '@/frontend/utils/tailwind'
 import Link from 'next/link'
 import { UserBadges } from '@/frontend/shared/user-badges'
+import {
+  type ResultDnfable,
+  type Discipline,
+  DISCIPLINES,
+  type User,
+} from '@/types'
 
 type Solve = {
   result: ResultDnfable

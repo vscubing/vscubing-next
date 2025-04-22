@@ -1,17 +1,14 @@
 import type {
   contestTable,
-  UserSchema as UserSchema,
+  UserSchema,
   userSimulatorSettingsTable,
 } from '@/backend/db/schema'
 import { z } from 'zod'
 import type { UserGlobalRecords } from './backend/shared/global-record'
 
-// TODO: split this into multiple modules
-// TODO: document the difference between `SessionUser` and `User`
-
 export type SessionUser = Pick<
   UserSchema,
-  'name' | 'id' | 'finishedRegistration' | 'role'
+  'name' | 'id' | 'email' | 'finishedRegistration' | 'role'
 > & { wcaId: string | null }
 
 export type User = Pick<UserSchema, 'name' | 'id' | 'role'> & {
@@ -56,7 +53,7 @@ export const resultDnfable = z.custom<ResultDnfable>(
   }: {
     isDnf: boolean
     timeMs: number | null
-    plusTwoIncluded: boolean
+    plusTwoIncluded?: boolean
   }) => {
     if ((isDnf === false && timeMs !== null) || isDnf === true) return true
     return false
