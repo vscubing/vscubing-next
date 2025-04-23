@@ -8,9 +8,11 @@ export const googleOauthClient = new Google(
   env.AUTH_GOOGLE_URL,
 )
 
+export const WCA_TOKEN_ENDPOINT =
+  'https://www.worldcubeassociation.org/oauth/token'
 export const wcaOauthClient = new OAuth2Client(
   env.AUTH_WCA_CLIENT_ID,
   'https://www.worldcubeassociation.org/oauth/authorize',
-  'https://www.worldcubeassociation.org/oauth/token',
+  WCA_TOKEN_ENDPOINT,
   { redirectURI: env.AUTH_WCA_URL },
 )

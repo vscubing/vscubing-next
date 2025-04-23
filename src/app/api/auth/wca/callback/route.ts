@@ -97,46 +97,41 @@ export async function GET(request: Request): Promise<Response> {
   })
 }
 
-// const countrySchema = z.object({
-//   id: z.string(),
-//   name: z.string(),
-//   continentId: z.string(),
-//   iso2: z.string(),
-// })
+const countrySchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  // continentId: z.string(),
+  iso2: z.string(),
+})
 
-// const avatarSchema = z.object({
-//   id: z.number(),
-//   status: z.string(),
-//   thumbnail_crop_x: z.number().nullable(),
-//   thumbnail_crop_y: z.number().nullable(),
-//   thumbnail_crop_w: z.number().nullable(),
-//   thumbnail_crop_h: z.number().nullable(),
-//   url: z.string().url(),
-//   thumb_url: z.string().url(),
-//   is_default: z.boolean(),
-//   can_edit_thumbnail: z.boolean(),
-// })
+export const avatarSchema = z.object({
+  id: z.number(),
+  status: z.string(),
+  url: z.string().url(),
+  thumb_url: z.string().url(),
+  is_default: z.boolean(),
+  can_edit_thumbnail: z.boolean(),
+})
 
-const meSchema = z.object({
+export const meSchema = z.object({
   me: z.object({
     // id: z.number(),
     // created_at: z.string().datetime(),
     // updated_at: z.string().datetime(),
-    // name: z.string(),
+    name: z.string(),
     wca_id: z.string(),
-    // gender: z.string(),
-    // // country_iso2: z.string(),
+    gender: z.string(),
     // url: z.string().url(),
-    // country: countrySchema,
-    // delegate_status: z.string().nullable(),
+    country: countrySchema,
+    delegate_status: z.string().nullable(),
     // class: z.string(),
     // teams: z.array(z.any()), // Can be replaced with a stricter type if teams structure is known
-    // avatar: avatarSchema,
+    avatar: avatarSchema,
     email: z.string().email(),
   }),
 })
 
-const tokenSchema = z.object({
+export const tokenSchema = z.object({
   access_token: z.string(),
   token_type: z.literal('Bearer'), // since it's always "Bearer"
   expires_in: z.number(),

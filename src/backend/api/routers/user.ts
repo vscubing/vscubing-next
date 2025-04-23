@@ -6,12 +6,20 @@ import {
   publicProcedure,
 } from '@/backend/api/trpc'
 import { accountTable, userTable } from '@/backend/db/schema'
-import { and, eq } from 'drizzle-orm'
+import { and, eq, getTableColumns } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
 import {
   deleteSessionTokenCookie,
   invalidateSession,
 } from '@/backend/auth/session'
+import {
+  refreshToken,
+  WCA_TOKEN_ENDPOINT,
+  wcaOauthClient,
+} from '@/backend/auth/oauth'
+import { env } from '@/env'
+import { db } from '@/backend/db'
+import { meSchema, tokenSchema } from '@/app/api/auth/wca/callback/route'
 
 const USERNAME_LENGTH = { MIN: 3, MAX: 24 }
 export const userRouter = createTRPCRouter({
@@ -19,10 +27,12 @@ export const userRouter = createTRPCRouter({
     if (!session) return null
     return session.user
   }),
+
   logout: protectedProcedure.mutation(async ({ ctx: { session } }) => {
     await invalidateSession(session.id)
     await deleteSessionTokenCookie()
   }),
+
   setUsername: protectedProcedure
     .input(
       z.object({
@@ -66,6 +76,7 @@ export const userRouter = createTRPCRouter({
         .set({ name: input.username, finishedRegistration: true })
         .where(eq(userTable.id, user.id))
     }),
+
   removeWcaAccount: protectedProcedure.mutation(async ({ ctx }) => {
     const wcaId = ctx.session.user.wcaId
     if (!wcaId) throw new TRPCError({ code: 'PRECONDITION_FAILED' })
@@ -79,4 +90,85 @@ export const userRouter = createTRPCRouter({
         ),
       )
   }),
+
+  wcaUserData: publicProcedure
+    .input(z.object({ wcaId: z.string() }))
+    .query(async ({ input }) => getWcaUserData({ wcaId: input.wcaId })),
+})
+
+async function getWcaUserData({ wcaId }: { wcaId: string }) {
+  const [account] = await db
+    .select(getTableColumns(accountTable))
+    .from(accountTable)
+    .where(
+      and(
+        eq(accountTable.providerAccountId, wcaId),
+        eq(accountTable.provider, 'wca'),
+      ),
+    )
+  if (!account) throw new TRPCError({ code: 'NOT_FOUND' })
+
+  let access_token: string
+
+  if (!account.expires_at || !account.access_token || !account.refresh_token)
+    throw new Error(`bad db row for wca id ${account.providerAccountId}`)
+
+  const stillValid = account.expires_at * BigInt(SECOND_IN_MS) < Date.now()
+  if (stillValid) {
+    access_token = account.access_token
+  } else {
+    const refreshed = await refreshWcaToken({
+      refresh_token: account.refresh_token,
+    })
+
+    await db
+      .update(accountTable)
+      .set({
+        access_token: refreshed.access_token,
+        refresh_token: refreshed.refresh_token,
+        expires_at: BigInt(refreshed.created_at + refreshed.expires_in),
+        token_type: refreshed.token_type,
+      })
+      .where(eq(accountTable.providerAccountId, account.providerAccountId))
+
+    access_token = refreshed.access_token
+  }
+
+  const { me } = await fetch('https://www.worldcubeassociation.org/api/v0/me', {
+    method: 'GET',
+    headers: { Authorization: `Bearer ${access_token}` },
+  })
+    .then((res) => res.json())
+    .then((json) => {
+      console.log(json)
+      return meSchema.parse(json)
+    })
+
+  return me
+}
+
+const SECOND_IN_MS = 1_000
+
+async function refreshWcaToken({ refresh_token }: { refresh_token: string }) {
+  const url = new URL(WCA_TOKEN_ENDPOINT)
+  url.searchParams.append('grant_type', 'refresh_token')
+  url.searchParams.append('refresh_token', refresh_token)
+  url.searchParams.append('client_id', env.AUTH_WCA_CLIENT_ID)
+  url.searchParams.append('client_secret', env.AUTH_WCA_CLIENT_SECRET)
+  const result = await fetch(url, {
+    method: 'POST',
+  })
+    .then((res) => res.json())
+    .then((json) => z.union([tokenSchema, oauthErrorSchema]).parse(json))
+
+  if ('error' in result) {
+    throw new Error(`WCA oauth error: ${JSON.stringify(result)}`)
+  }
+
+  return result
+}
+
+const oauthErrorSchema = z.object({
+  error: z.string(),
+  error_description: z.string(),
 })

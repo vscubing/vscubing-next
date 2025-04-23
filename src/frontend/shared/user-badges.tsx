@@ -14,6 +14,9 @@ import {
 import type { UserGlobalRecords } from '@/backend/shared/global-record'
 import { SolveTimeLabel, SolveTimeLinkOrDnf } from './solve-time-button'
 import type { User } from '@/types'
+import { useQuery } from '@tanstack/react-query'
+import { z } from 'zod'
+import { useTRPC } from '@/trpc/react'
 
 export function UserBadges({ user }: { user: User }) {
   return (
@@ -29,9 +32,35 @@ export function UserBadges({ user }: { user: User }) {
 
 function WcaBadgeLink({ wcaId }: { wcaId: string }) {
   return (
-    <Link href={`https://worldcubeassociation.org/persons/${wcaId}`}>
-      <WcaLogoIcon className='text-xs' />
-    </Link>
+    <HoverPopover
+      content={<WcaPopoverContent wcaId={wcaId} />}
+      contentProps={{
+        className:
+          'border-2 border-b-yellow-100 border-t-grey-100 border-x-grey-100',
+      }}
+      asChild
+    >
+      <Link href={`https://worldcubeassociation.org/persons/${wcaId}`}>
+        <WcaLogoIcon className='text-xs' />
+      </Link>
+    </HoverPopover>
+  )
+}
+
+function WcaPopoverContent({ wcaId }: { wcaId: string }) {
+  const trpc = useTRPC()
+  const { data: officialData } = useQuery(
+    trpc.user.wcaUserData.queryOptions({ wcaId }),
+  )
+  const { data: unofficialData } = useWcaUnofficialApi({ wcaId })
+  if (!officialData || !unofficialData) return 'Loading...'
+
+  // eslint-disable-next-line @next/next/no-img-element
+  return (
+    <>
+      <img src={officialData.avatar.thumb_url} alt={officialData.name} />
+      Comps: {unofficialData.numberOfCompetitions}
+    </>
   )
 }
 
@@ -137,3 +166,46 @@ function DeveloperBadge() {
     </HoverPopover>
   )
 }
+
+function useWcaUnofficialApi({ wcaId }: { wcaId: string }) {
+  return useQuery({
+    queryFn: async () => {
+      const res = await fetch(
+        `https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/master/api/persons/${wcaId}.json`,
+      )
+      return wcaUserSchema.parse(await res.json())
+    },
+    queryKey: ['wca-user-data', wcaId],
+  })
+}
+
+const rankSchema = z.object({
+  eventId: z.string(),
+  best: z.number(),
+  rank: z.object({
+    world: z.number(),
+    continent: z.number(),
+    country: z.number(),
+  }),
+})
+
+const wcaUserSchema = z.object({
+  country: z.string(),
+  numberOfCompetitions: z.number(),
+  // rank: z.object({
+  //   singles: z.array(rankSchema),
+  //   averages: z.array(rankSchema),
+  // }),
+  // records: z.object({
+  //   single: z.object({
+  //     WR: z.number(),
+  //     CR: z.number(),
+  //     NR: z.number(),
+  //   }),
+  //   average: z.object({
+  //     WR: z.number(),
+  //     CR: z.number(),
+  //     NR: z.number(),
+  //   }),
+  // }),
+})
