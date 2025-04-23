@@ -6,12 +6,14 @@ import {
   publicProcedure,
 } from '@/backend/api/trpc'
 import { accountTable, userTable } from '@/backend/db/schema'
-import { and, eq } from 'drizzle-orm'
+import { and, eq, getTableColumns } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
 import {
   deleteSessionTokenCookie,
   invalidateSession,
 } from '@/backend/auth/session'
+import { getWcaClaims, refreshWcaToken } from '@/backend/auth/oauth/wca'
+import { db } from '@/backend/db'
 
 const USERNAME_LENGTH = { MIN: 3, MAX: 24 }
 export const userRouter = createTRPCRouter({
@@ -19,10 +21,12 @@ export const userRouter = createTRPCRouter({
     if (!session) return null
     return session.user
   }),
+
   logout: protectedProcedure.mutation(async ({ ctx: { session } }) => {
     await invalidateSession(session.id)
     await deleteSessionTokenCookie()
   }),
+
   setUsername: protectedProcedure
     .input(
       z.object({
@@ -66,6 +70,7 @@ export const userRouter = createTRPCRouter({
         .set({ name: input.username, finishedRegistration: true })
         .where(eq(userTable.id, user.id))
     }),
+
   removeWcaAccount: protectedProcedure.mutation(async ({ ctx }) => {
     const wcaId = ctx.session.user.wcaId
     if (!wcaId) throw new TRPCError({ code: 'PRECONDITION_FAILED' })
@@ -79,4 +84,48 @@ export const userRouter = createTRPCRouter({
         ),
       )
   }),
+
+  wcaData: publicProcedure
+    .input(z.object({ wcaId: z.string() }))
+    .query(async ({ input }) => {
+      const [account] = await db
+        .select(getTableColumns(accountTable))
+        .from(accountTable)
+        .where(
+          and(
+            eq(accountTable.providerAccountId, input.wcaId),
+            eq(accountTable.provider, 'wca'),
+          ),
+        )
+      if (!account) throw new TRPCError({ code: 'NOT_FOUND' })
+
+      if (
+        !account.expires_at ||
+        !account.access_token ||
+        !account.refresh_token
+      )
+        throw new Error(`bad db row for wca id ${account.providerAccountId}`)
+
+      const stillValid = account.expires_at * BigInt(SECOND_IN_MS) > Date.now()
+      if (stillValid)
+        return getWcaClaims({ access_token: account.access_token })
+
+      const refreshed = await refreshWcaToken({
+        refresh_token: account.refresh_token,
+      })
+
+      await db
+        .update(accountTable)
+        .set({
+          access_token: refreshed.access_token,
+          refresh_token: refreshed.refresh_token,
+          expires_at: BigInt(refreshed.created_at + refreshed.expires_in),
+          token_type: refreshed.token_type,
+        })
+        .where(eq(accountTable.providerAccountId, account.providerAccountId))
+
+      return getWcaClaims({ access_token: refreshed.access_token })
+    }),
 })
+
+const SECOND_IN_MS = 1_000

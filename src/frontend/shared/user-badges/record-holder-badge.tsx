@@ -1,41 +1,16 @@
-'use client'
-
-import Link from 'next/link'
-import {
-  AverageIcon,
-  CodeXmlIcon,
-  DisciplineIcon,
-  HoverPopover,
-  SingleIcon,
-  SquareArrowOutUpRight,
-  TrophyIcon,
-  WcaLogoIcon,
-} from '../ui'
 import type { UserGlobalRecords } from '@/backend/shared/global-record'
-import { SolveTimeLabel, SolveTimeLinkOrDnf } from './solve-time-button'
-import type { User } from '@/types'
+import {
+  HoverPopover,
+  DisciplineIcon,
+  AverageIcon,
+  SingleIcon,
+  TrophyIcon,
+  SquareArrowOutUpRight,
+} from '@/frontend/ui'
+import { SolveTimeLabel, SolveTimeLinkOrDnf } from '../solve-time-button'
+import Link from 'next/link'
 
-export function UserBadges({ user }: { user: User }) {
-  return (
-    <span className='flex items-center gap-2'>
-      {user.role === 'admin' && <DeveloperBadge />}
-      {user.globalRecords && (
-        <RecordHolderBadge records={user.globalRecords} name={user.name} />
-      )}
-      {user.wcaId && <WcaBadgeLink wcaId={user.wcaId} />}
-    </span>
-  )
-}
-
-function WcaBadgeLink({ wcaId }: { wcaId: string }) {
-  return (
-    <Link href={`https://worldcubeassociation.org/persons/${wcaId}`}>
-      <WcaLogoIcon className='text-xs' />
-    </Link>
-  )
-}
-
-function RecordHolderBadge({
+export function RecordHolderBadge({
   records,
   name,
 }: {
@@ -121,19 +96,5 @@ function RecordHolderPopover({
         </div>
       ))}
     </>
-  )
-}
-
-function DeveloperBadge() {
-  return (
-    <HoverPopover
-      content='vscubing developer'
-      contentProps={{ className: 'border-b-2 border-primary-100' }}
-      asChild
-    >
-      <span className='inline-flex h-5 w-5 items-center justify-center gap-0.5 rounded-md text-xs font-semibold text-primary-60 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2'>
-        <CodeXmlIcon />
-      </span>
-    </HoverPopover>
   )
 }

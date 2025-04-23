@@ -1,5 +1,5 @@
 import { env } from '@/env'
-import { wcaOauthClient } from '@/backend/auth/oauth'
+import { createWcaAuthorizationURL } from '@/backend/auth/oauth/wca'
 import { generateState, generateCodeVerifier } from 'arctic'
 import { cookies } from 'next/headers'
 import type { NextRequest } from 'next/server'
@@ -7,10 +7,9 @@ import type { NextRequest } from 'next/server'
 export async function GET(request: NextRequest): Promise<Response> {
   const state = generateState()
   const codeVerifier = generateCodeVerifier()
-  const url = await wcaOauthClient.createAuthorizationURL({
+  const url = await createWcaAuthorizationURL({
     state,
     codeVerifier,
-    scopes: ['public', 'email'],
   })
 
   const cookieStore = await cookies()
