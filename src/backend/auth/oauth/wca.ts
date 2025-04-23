@@ -35,17 +35,11 @@ export async function validateWcaAuthorizationCode(code: string) {
 }
 
 export async function getWcaClaims({ access_token }: { access_token: string }) {
-  const { me } = await fetch(WCA_ME_ENDPOINT, {
+  const response = await fetch(WCA_ME_ENDPOINT, {
     method: 'GET',
     headers: { Authorization: `Bearer ${access_token}` },
   })
-    .then((res) => res.json())
-    .then((json) => {
-      console.log(json)
-      return meSchema.parse(json)
-    })
-
-  return me
+  return meSchema.parse(await response.json())
 }
 
 export async function refreshWcaToken({
