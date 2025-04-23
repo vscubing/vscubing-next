@@ -106,11 +106,12 @@ export const userRouter = createTRPCRouter({
       )
         throw new Error(`bad db row for wca id ${account.providerAccountId}`)
 
-      const stillValid = account.expires_at * BigInt(SECOND_IN_MS) < Date.now()
+      const stillValid = account.expires_at * BigInt(SECOND_IN_MS) > Date.now()
       if (stillValid) {
         console.log('still valid', account.expires_at)
         return getWcaClaims({ access_token: account.access_token })
       }
+      console.log('refreshing...')
 
       const refreshed = await refreshWcaToken({
         refresh_token: account.refresh_token,
