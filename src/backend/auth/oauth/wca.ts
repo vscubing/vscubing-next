@@ -40,7 +40,7 @@ export async function getWcaClaims({ access_token }: { access_token: string }) {
     headers: { Authorization: `Bearer ${access_token}` },
   })
   const json = (await response.json()) as unknown
-  return meSchema.safeParse(json)
+  return meSchema.safeParse(json).data.me
 }
 
 export async function refreshWcaToken({
