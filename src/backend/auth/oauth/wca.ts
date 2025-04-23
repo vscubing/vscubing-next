@@ -40,7 +40,10 @@ export async function getWcaClaims({ access_token }: { access_token: string }) {
     headers: { Authorization: `Bearer ${access_token}` },
   })
     .then((res) => res.json())
-    .then((json) => meSchema.parse(json))
+    .then((json) => {
+      console.log(json)
+      return meSchema.parse(json)
+    })
 
   return me
 }
