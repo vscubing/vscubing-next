@@ -39,7 +39,7 @@ export async function getWcaClaims({ access_token }: { access_token: string }) {
     method: 'GET',
     headers: { Authorization: `Bearer ${access_token}` },
   })
-  return meSchema.parse(await response.json())
+  return meSchema.parse(await response.json()).me
 }
 
 export async function refreshWcaToken({
