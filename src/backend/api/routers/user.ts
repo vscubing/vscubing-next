@@ -106,13 +106,17 @@ export const userRouter = createTRPCRouter({
       )
         throw new Error(`bad db row for wca id ${account.providerAccountId}`)
 
+      console.log(account)
       const stillValid = account.expires_at * BigInt(SECOND_IN_MS) < Date.now()
-      if (stillValid)
+      if (stillValid) {
+        console.log('still valid:')
         return getWcaClaims({ access_token: account.access_token })
+      }
 
       const refreshed = await refreshWcaToken({
         refresh_token: account.refresh_token,
       })
+      console.log('refreshed', refreshed.refresh_token)
 
       await db
         .update(accountTable)
@@ -124,6 +128,7 @@ export const userRouter = createTRPCRouter({
         })
         .where(eq(accountTable.providerAccountId, account.providerAccountId))
 
+      console.log('getWcaClaims2')
       return getWcaClaims({ access_token: refreshed.access_token })
     }),
 })
