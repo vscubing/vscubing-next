@@ -85,7 +85,7 @@ export const userRouter = createTRPCRouter({
       )
   }),
 
-  wcaUserData: publicProcedure
+  wcaData: publicProcedure
     .input(z.object({ wcaId: z.string() }))
     .query(async ({ input }) => {
       const [account] = await db
