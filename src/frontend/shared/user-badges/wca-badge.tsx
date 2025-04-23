@@ -8,25 +8,33 @@ import { z } from 'zod'
 
 export function WcaBadgeLink({ wcaId }: { wcaId: string }) {
   return (
-    <HoverPopover
-      content={<WcaPopoverContent wcaId={wcaId} />}
-      contentProps={{
-        className:
-          'border-2 border-b-yellow-100 border-t-grey-100 border-x-grey-100',
-      }}
-      asChild
+    <Link
+      href={`https://worldcubeassociation.org/persons/${wcaId}`}
+      className='touch:hidden'
     >
-      <div>
-        <WcaLogoIcon className='hidden text-xs touch:block' />
-        <Link
-          href={`https://worldcubeassociation.org/persons/${wcaId}`}
-          className='touch:hidden'
-        >
-          <WcaLogoIcon className='text-xs' />
-        </Link>
-      </div>
-    </HoverPopover>
+      <WcaLogoIcon className='text-xs' />
+    </Link>
   )
+  // return (
+  //   <HoverPopover
+  //     content={<WcaPopoverContent wcaId={wcaId} />}
+  //     contentProps={{
+  //       className:
+  //         'border-2 border-b-yellow-100 border-t-grey-100 border-x-grey-100',
+  //     }}
+  //     asChild
+  //   >
+  //     <div>
+  //       <WcaLogoIcon className='hidden text-xs touch:block' />
+  //       <Link
+  //         href={`https://worldcubeassociation.org/persons/${wcaId}`}
+  //         className='touch:hidden'
+  //       >
+  //         <WcaLogoIcon className='text-xs' />
+  //       </Link>
+  //     </div>
+  //   </HoverPopover>
+  // )
 }
 
 function WcaPopoverContent({ wcaId }: { wcaId: string }) {
