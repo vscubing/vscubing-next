@@ -71,6 +71,7 @@ export const userRouter = createTRPCRouter({
         .where(eq(userTable.id, user.id))
     }),
 
+  // NOTE: connecting a WCA account is done via `/api/auth/wca/callback`
   removeWcaAccount: protectedProcedure.mutation(async ({ ctx }) => {
     const wcaId = ctx.session.user.wcaId
     if (!wcaId) throw new TRPCError({ code: 'PRECONDITION_FAILED' })

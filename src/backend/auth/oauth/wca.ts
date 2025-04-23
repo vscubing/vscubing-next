@@ -40,7 +40,9 @@ export async function getWcaClaims({ access_token }: { access_token: string }) {
     headers: { Authorization: `Bearer ${access_token}` },
   })
   const json = (await response.json()) as unknown
-  return meSchema.parse(json).me
+  const { data, error } = meSchema.safeParse(json)
+  if (error) throw error
+  return data.me
 }
 
 export async function refreshWcaToken({
@@ -53,6 +55,7 @@ export async function refreshWcaToken({
   url.searchParams.append('refresh_token', refresh_token)
   url.searchParams.append('client_id', env.AUTH_WCA_CLIENT_ID)
   url.searchParams.append('client_secret', env.AUTH_WCA_CLIENT_SECRET)
+  console.log('refreshing', url)
   const result = await fetch(url, {
     method: 'POST',
   })
@@ -63,6 +66,9 @@ export async function refreshWcaToken({
     throw new Error(`WCA oauth error: ${JSON.stringify(result)}`)
   }
 
+  console.log(
+    `refreshed a WCA access_token with refresh_token ${refresh_token}\nreceived: ${JSON.stringify(result)}`,
+  )
   return result
 }
 
