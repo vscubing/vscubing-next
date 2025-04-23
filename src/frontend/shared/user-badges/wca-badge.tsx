@@ -52,7 +52,7 @@ function WcaPopoverContent({ wcaId }: { wcaId: string }) {
 
       <div className='flex flex-col text-left sm:items-center sm:text-center'>
         <h1 className='btn-lg flex items-center gap-2'>
-          <Flag iso={officialData.country.iso2} />
+          <CountryFlag iso={officialData.country.iso2} />
           <span>{officialData.name}</span>
         </h1>
         <div className='flex items-center gap-2'>
@@ -116,7 +116,7 @@ const wcaUnofficialUserSchema = z.object({
   ),
 })
 
-function Flag(props: { iso: string }) {
+function CountryFlag(props: { iso: string }) {
   const iso = props.iso.toLowerCase()
   return (
     <picture>
@@ -136,7 +136,7 @@ function Flag(props: { iso: string }) {
         src={`https://flagcdn.com/16x12/${iso}.png`}
         width='16'
         height='12'
-        alt='Ukraine'
+        alt={iso}
       />
     </picture>
   )
