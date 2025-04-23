@@ -86,7 +86,7 @@ const countrySchema = z.object({
   iso2: z.string(),
 })
 const avatarSchema = z.object({
-  id: z.number(),
+  id: z.number().nullable(),
   status: z.string(),
   url: z.string().url(),
   thumb_url: z.string().url(),

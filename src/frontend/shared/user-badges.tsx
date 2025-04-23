@@ -58,14 +58,17 @@ function WcaPopoverContent({ wcaId }: { wcaId: string }) {
   if (!officialData || !unofficialData) return <LoadingDots />
 
   const best3by3Results = getBest3by3Results(unofficialData)
+  const hasAvatar = officialData.avatar.id !== null
   return (
     <div className='flex gap-4 sm:flex-col sm:items-center'>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        className='max-h-48 max-w-48 grow basis-0 rounded-xl'
-        src={officialData.avatar.url}
-        alt={officialData.name}
-      />
+      {hasAvatar && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          className='max-h-48 max-w-48 grow basis-0 rounded-xl'
+          src={officialData.avatar.url}
+          alt={officialData.name}
+        />
+      )}
 
       <div className='flex flex-col text-left sm:items-center sm:text-center'>
         <h1 className='btn-lg flex items-center gap-2'>
