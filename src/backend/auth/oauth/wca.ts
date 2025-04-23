@@ -53,6 +53,7 @@ export async function refreshWcaToken({
   url.searchParams.append('refresh_token', refresh_token)
   url.searchParams.append('client_id', env.AUTH_WCA_CLIENT_ID)
   url.searchParams.append('client_secret', env.AUTH_WCA_CLIENT_SECRET)
+  console.log('refreshing', url)
   const result = await fetch(url, {
     method: 'POST',
   })
