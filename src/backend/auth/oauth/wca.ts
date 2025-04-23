@@ -40,7 +40,7 @@ export async function getWcaClaims({ access_token }: { access_token: string }) {
     headers: { Authorization: `Bearer ${access_token}` },
   })
   const json = (await response.json()) as unknown
-  return meSchema.parse(json).me
+  return meSchema.safeParse(json)
 }
 
 export async function refreshWcaToken({
@@ -63,6 +63,9 @@ export async function refreshWcaToken({
     throw new Error(`WCA oauth error: ${JSON.stringify(result)}`)
   }
 
+  console.log(
+    `refreshed a WCA access_token with refresh_token ${refresh_token}\nreceived: ${JSON.stringify(result)}`,
+  )
   return result
 }
 
