@@ -42,9 +42,15 @@ function WcaBadgeLink({ wcaId }: { wcaId: string }) {
       }}
       asChild
     >
-      <Link href={`https://worldcubeassociation.org/persons/${wcaId}`}>
-        <WcaLogoIcon className='text-xs' />
-      </Link>
+      <div>
+        <WcaLogoIcon className='hidden text-xs touch:block' />
+        <Link
+          href={`https://worldcubeassociation.org/persons/${wcaId}`}
+          className='touch:hidden'
+        >
+          <WcaLogoIcon className='text-xs' />
+        </Link>
+      </div>
     </HoverPopover>
   )
 }
