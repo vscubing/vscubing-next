@@ -17,6 +17,8 @@ import type { User } from '@/types'
 import { useQuery } from '@tanstack/react-query'
 import { z } from 'zod'
 import { useTRPC } from '@/trpc/react'
+import { formatSolveTime } from '@/utils/format-solve-time'
+import { LoadingDots } from '../ui/loading-dots'
 
 export function UserBadges({ user }: { user: User }) {
   return (
@@ -53,14 +55,41 @@ function WcaPopoverContent({ wcaId }: { wcaId: string }) {
     trpc.user.wcaUserData.queryOptions({ wcaId }),
   )
   const { data: unofficialData } = useWcaUnofficialApi({ wcaId })
-  if (!officialData || !unofficialData) return 'Loading...'
+  if (!officialData || !unofficialData) return <LoadingDots />
 
+  const best3by3Results = getBest3by3Results(unofficialData)
   return (
-    <>
+    <div className='flex gap-4 sm:flex-col sm:items-center'>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={officialData.avatar.thumb_url} alt={officialData.name} />
-      Comps: {unofficialData.numberOfCompetitions}
-    </>
+      <img
+        className='max-h-48 max-w-48 grow basis-0 rounded-xl'
+        src={officialData.avatar.url}
+        alt={officialData.name}
+      />
+
+      <div className='flex flex-col text-left sm:items-center sm:text-center'>
+        <h1 className='btn-lg flex items-center gap-2'>
+          <Flag iso={officialData.country.iso2} />
+          <span>{officialData.name}</span>
+        </h1>
+        <div className='flex items-center gap-2'>
+          <Link
+            href={`https://worldcubeassociation.org/persons/${wcaId}`}
+            className='text-secondary-20 underline'
+          >
+            <span>({wcaId})</span>
+          </Link>
+        </div>
+        <p>Competitions: {unofficialData.numberOfCompetitions}</p>
+        <p>Completed solves: {getTotalCompletedSolveNumber(unofficialData)}</p>
+        {best3by3Results.single && (
+          <p>Best 3x3 single: {formatSolveTime(best3by3Results.single)}</p>
+        )}
+        {best3by3Results.average && (
+          <p>Best 3x3 average: {formatSolveTime(best3by3Results.average)}</p>
+        )}
+      </div>
+    </div>
   )
 }
 
@@ -173,7 +202,8 @@ function useWcaUnofficialApi({ wcaId }: { wcaId: string }) {
       const res = await fetch(
         `https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/master/api/persons/${wcaId}.json`,
       )
-      return wcaUserSchema.parse(await res.json())
+      const json = (await res.json()) as unknown
+      return wcaUnofficialUserSchema.parse(json)
     },
     queryKey: ['wca-user-data', wcaId],
   })
@@ -189,23 +219,68 @@ const rankSchema = z.object({
   }),
 })
 
-const wcaUserSchema = z.object({
+const wcaUnofficialUserSchema = z.object({
   country: z.string(),
   numberOfCompetitions: z.number(),
   rank: z.object({
     singles: z.array(rankSchema),
     averages: z.array(rankSchema),
   }),
-  // records: z.object({
-  //   single: z.object({
-  //     WR: z.number(),
-  //     CR: z.number(),
-  //     NR: z.number(),
-  //   }),
-  //   average: z.object({
-  //     WR: z.number(),
-  //     CR: z.number(),
-  //     NR: z.number(),
-  //   }),
-  // }),
+  results: z.record(
+    z.string(),
+    z.record(z.string(), z.array(z.object({ solves: z.array(z.number()) }))),
+  ),
 })
+
+function Flag(props: { iso: string }) {
+  const iso = props.iso.toLowerCase()
+  return (
+    <picture>
+      <source
+        type='image/webp'
+        srcSet={`https://flagcdn.com/16x12/${iso}.webp,
+      https://flagcdn.com/32x24/${iso}.webp 2x,
+      https://flagcdn.com/48x36/${iso}.webp 3x`}
+      />
+      <source
+        type='image/png'
+        srcSet={`https://flagcdn.com/16x12/${iso}.png,
+      https://flagcdn.com/32x24/${iso}.png 2x,
+      https://flagcdn.com/48x36/${iso}.png 3x`}
+      />
+      <img
+        src={`https://flagcdn.com/16x12/${iso}.png`}
+        width='16'
+        height='12'
+        alt='Ukraine'
+      />
+    </picture>
+  )
+}
+
+function getTotalCompletedSolveNumber({
+  results,
+}: z.infer<typeof wcaUnofficialUserSchema>): number {
+  const solves = Object.values(results)
+    .flatMap((competition) =>
+      Object.values(competition).flatMap((discipline) =>
+        discipline.flatMap((d) => d.solves),
+      ),
+    )
+    .filter((time) => time > 0)
+  return solves.length
+}
+
+function getBest3by3Results({
+  rank,
+}: z.infer<typeof wcaUnofficialUserSchema>): {
+  average?: number
+  single?: number
+} {
+  const bestAvg = rank.averages.find(({ eventId }) => eventId === '333')?.best
+  const bestSingle = rank.singles.find(({ eventId }) => eventId === '333')?.best
+  return {
+    average: bestAvg && bestAvg * 10,
+    single: bestSingle && bestSingle * 10,
+  }
+}
