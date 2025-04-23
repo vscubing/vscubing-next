@@ -1,5 +1,5 @@
 import { env } from '@/env'
-import { googleOauthClient } from '@/backend/auth/oauth'
+import { googleOauthClient } from '@/backend/auth/oauth/google'
 import { generateState, generateCodeVerifier } from 'arctic'
 import { cookies } from 'next/headers'
 import type { NextRequest } from 'next/server'

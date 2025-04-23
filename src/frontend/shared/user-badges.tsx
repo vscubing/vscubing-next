@@ -55,9 +55,9 @@ function WcaPopoverContent({ wcaId }: { wcaId: string }) {
   const { data: unofficialData } = useWcaUnofficialApi({ wcaId })
   if (!officialData || !unofficialData) return 'Loading...'
 
-  // eslint-disable-next-line @next/next/no-img-element
   return (
     <>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={officialData.avatar.thumb_url} alt={officialData.name} />
       Comps: {unofficialData.numberOfCompetitions}
     </>
@@ -192,10 +192,10 @@ const rankSchema = z.object({
 const wcaUserSchema = z.object({
   country: z.string(),
   numberOfCompetitions: z.number(),
-  // rank: z.object({
-  //   singles: z.array(rankSchema),
-  //   averages: z.array(rankSchema),
-  // }),
+  rank: z.object({
+    singles: z.array(rankSchema),
+    averages: z.array(rankSchema),
+  }),
   // records: z.object({
   //   single: z.object({
   //     WR: z.number(),

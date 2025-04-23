@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers'
 import { decodeIdToken } from 'arctic'
 
-import { googleOauthClient } from '@/backend/auth/oauth'
+import { googleOauthClient } from '@/backend/auth/oauth/google'
 import {
   createSession,
   generateSessionToken,
