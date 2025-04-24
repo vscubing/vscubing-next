@@ -8,7 +8,7 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import type { SetStateAction } from 'jotai'
 import { useState, type Dispatch, type ReactNode } from 'react'
 
-export function AdminContestActions() {
+export function DangerousAdminActions() {
   const [dangerousConfirmed, setDangerousConfirmed] = useState(
     env.NEXT_PUBLIC_APP_ENV !== 'production',
   )
@@ -16,7 +16,7 @@ export function AdminContestActions() {
   return (
     <>
       {dangerousConfirmed ? (
-        <DangerousContestActionsContent />
+        <DangerousAdminActionsUnlocked />
       ) : (
         <form
           onSubmit={() => {
@@ -25,9 +25,8 @@ export function AdminContestActions() {
           }}
         >
           <p>
-            Manual contest management in production is dangerous. <br />
-            These actions are irreversible. If you're sure, please enter:
-            <br />
+            <DangerWarning />
+            <p>If you're sure, please enter:</p>
             <span className='font-mono'>I'm absolutely sure</span>
           </p>
           <Input
@@ -39,6 +38,30 @@ export function AdminContestActions() {
         </form>
       )}
     </>
+  )
+}
+
+function DangerWarning() {
+  return (
+    <>
+      <p className='title-h2 font-bold'>
+        <h1 className='text-red-80'>❗❗❗DANGER❗❗❗</h1>
+        <p>Using these admin actions in production is dangerous.</p>{' '}
+        <p className='text-red-80'>
+          Please make a DB backup before touching anything here.
+        </p>{' '}
+        <p>These actions are irreversible.</p>
+      </p>
+    </>
+  )
+}
+
+function DangerousAdminActionsUnlocked() {
+  return (
+    <div>
+      {env.NEXT_PUBLIC_APP_ENV === 'production' && <DangerWarning />}
+      <DangerousContestActionsContent />
+    </div>
   )
 }
 

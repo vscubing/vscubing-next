@@ -39,7 +39,7 @@ export const adminRouter = createTRPCRouter({
         .onConflictDoNothing()
     }),
   ),
-  validateSolveAction: adminProcedure
+  validateSolve: adminProcedure
     .input(
       z.object({
         scramble: z.string(),
@@ -47,7 +47,7 @@ export const adminRouter = createTRPCRouter({
         discipline: z.enum(DISCIPLINES),
       }),
     )
-    .query(async ({ input }) => {
+    .mutation(async ({ input }) => {
       const { isValid, error } = await validateSolve(input)
       if (isValid) return 'valid'
       else return `invalid. error: ${JSON.stringify(error)}`
