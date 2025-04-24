@@ -14,8 +14,6 @@ import {
 } from '@/backend/auth/session'
 import { getWcaClaims, refreshWcaToken } from '@/backend/auth/oauth/wca'
 import { db } from '@/backend/db'
-import * as cheerio from 'cheerio'
-import { unstable_cacheLife } from 'next/cache'
 
 const USERNAME_LENGTH = { MIN: 3, MAX: 24 }
 export const userRouter = createTRPCRouter({
@@ -133,38 +131,5 @@ export const userRouter = createTRPCRouter({
         .where(eq(accountTable.providerAccountId, account.providerAccountId))
 
       return getWcaClaims({ access_token: refreshed.access_token })
-    }),
-
-  wcaAvatar: publicProcedure // TODO: we can fetch this from the unofficial WCA API if https://github.com/robiningelbrecht/wca-rest-api/issues/1 gets resolved
-    .input(z.object({ wcaId: z.string() }))
-    .query(async ({ input }) => {
-      'use cache'
-      unstable_cacheLife({
-        stale: 60 * 5,
-        revalidate: 60 * 60, // revalidate in background after 1 hour on new requests
-        expire: Infinity,
-      })
-
-      const url = `https://www.worldcubeassociation.org/persons/${input.wcaId}`
-
-      const res = await fetch(url)
-      if (res.status === 400) throw new TRPCError({ code: 'NOT_FOUND' })
-      if (!res.ok) {
-        console.error(`Error fetching avatar for ${input.wcaId}:`, res)
-        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' })
-      }
-
-      const html = await res.text()
-
-      const $ = cheerio.load(html)
-      const avatarSrc = $('img.avatar').attr('src')
-
-      if (!avatarSrc) {
-        console.error(`Error retrieving avatarSrc for ${input.wcaId}`)
-        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' })
-      }
-      if (avatarSrc.includes('missing_avatar_thumb')) return null
-
-      return new URL(avatarSrc, url).href
     }),
 })

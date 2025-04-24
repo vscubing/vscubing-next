@@ -2,7 +2,6 @@
 
 import { HoverPopover, WcaLogoIcon } from '@/frontend/ui'
 import { LoadingDots } from '@/frontend/ui/loading-dots'
-import { useTRPC } from '@/trpc/react'
 import { formatSolveTime } from '@/utils/format-solve-time'
 import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
@@ -32,33 +31,48 @@ export function WcaBadgeLink({ wcaId }: { wcaId: string }) {
 }
 
 function WcaPopoverContent({ wcaId }: { wcaId: string }) {
-  const trpc = useTRPC()
-  const { data: wcaUser, isLoading: isDataLoading } = useWcaUnofficialApi({
+  const {
+    data: officialData,
+    isLoading: isOfficialDataLoading,
+    error: officialError,
+  } = useWcaUnofficialApi({
     wcaId,
   })
-  const { data: avatarSrc, isLoading: isAvatarLoading } = useQuery(
-    trpc.user.wcaAvatar.queryOptions({ wcaId }),
-  )
+  const {
+    data: avatarUrl,
+    isLoading: isAvatarLoading,
+    error: unoffucialError,
+  } = useWcaAvatarUrl({
+    wcaId,
+  })
 
-  if (isDataLoading || isAvatarLoading) return <LoadingDots />
-  if (!wcaUser) return 'Error'
+  if (isOfficialDataLoading || isAvatarLoading) return <LoadingDots />
+  if (officialError || unoffucialError) {
+    return (
+      <>
+        <p>Error:</p>
+        <p>{officialError?.message}</p> <p>{unoffucialError?.message}</p>
+      </>
+    )
+  }
+  if (!officialData) return 'Error'
 
-  const best3by3Results = getBest3by3Results(wcaUser)
+  const best3by3Results = getBest3by3Results(officialData)
   return (
     <div className='flex gap-4 sm:flex-col sm:items-center'>
-      {avatarSrc && (
+      {avatarUrl && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           className='max-h-48 max-w-48 grow basis-0 rounded-xl'
-          src={avatarSrc}
-          alt={wcaUser.name}
+          src={avatarUrl}
+          alt={officialData.name}
         />
       )}
 
       <div className='flex flex-col text-left sm:items-center sm:text-center'>
         <h1 className='btn-lg flex items-center gap-2'>
-          <CountryFlag iso={wcaUser.country} />
-          <span>{wcaUser.name}</span>
+          <CountryFlag iso={officialData.country} />
+          <span>{officialData.name}</span>
         </h1>
         <div className='flex items-center gap-2'>
           <Link
@@ -68,8 +82,8 @@ function WcaPopoverContent({ wcaId }: { wcaId: string }) {
             <span>({wcaId})</span>
           </Link>
         </div>
-        <p>Competitions: {wcaUser.numberOfCompetitions}</p>
-        <p>Completed solves: {getTotalCompletedSolveNumber(wcaUser)}</p>
+        <p>Competitions: {officialData.numberOfCompetitions}</p>
+        <p>Completed solves: {getTotalCompletedSolveNumber(officialData)}</p>
         {best3by3Results.single && (
           <p>
             Best 3x3 single: {formatSolveTime(best3by3Results.single, true)}
@@ -98,14 +112,29 @@ function useWcaUnofficialApi({ wcaId }: { wcaId: string }) {
   })
 }
 
-const rankSchema = z.object({
+function useWcaAvatarUrl({ wcaId }: { wcaId: string }) {
+  return useQuery({
+    queryFn: async () => {
+      const res = await fetch(
+        `https://www.worldcubeassociation.org/api/v0/persons/${wcaId}`,
+      )
+      const json = (await res.json()) as unknown
+      const parsed = z
+        .object({
+          person: z.object({ avatar: z.object({ url: z.string().url() }) }),
+        })
+        .parse(json)
+
+      const avatarUrl = parsed.person.avatar.url
+      return avatarUrl.includes('missing_avatar_thumb') ? null : avatarUrl
+    },
+    queryKey: ['wca-official-api', 'persons', wcaId],
+  })
+}
+
+const wcaUnofficialRankSchema = z.object({
   eventId: z.string(),
   best: z.number(),
-  rank: z.object({
-    world: z.number(),
-    continent: z.number(),
-    country: z.number(),
-  }),
 })
 
 const wcaUnofficialUserSchema = z.object({
@@ -113,8 +142,8 @@ const wcaUnofficialUserSchema = z.object({
   country: z.string(),
   numberOfCompetitions: z.number(),
   rank: z.object({
-    singles: z.array(rankSchema),
-    averages: z.array(rankSchema),
+    singles: z.array(wcaUnofficialRankSchema),
+    averages: z.array(wcaUnofficialRankSchema),
   }),
   results: z.record(
     z.string(),
