@@ -4,10 +4,12 @@
  */
 import './src/env.js'
 
-// NOTE: resourceQueries in rules don't work in turbopack yet :(
-
 /** @type {import("next").NextConfig} */
 const config = {
+  experimental: {
+    useCache: true,
+  },
+
   turbopack: {
     rules: {
       '*.icon.svg': {

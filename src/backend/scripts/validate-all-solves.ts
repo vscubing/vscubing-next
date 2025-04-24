@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm'
 import { db } from '../db'
 import { roundTable, scrambleTable, solveTable } from '../db/schema'
-import { validateSolve } from './validate-solve'
+import { validateSolve } from '../shared/validate-solve'
 
 // NOTE: this isn't used anywhere in the codebase, it's just for testing the valdation
 const solves = await db
