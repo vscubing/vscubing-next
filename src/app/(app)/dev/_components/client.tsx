@@ -3,10 +3,13 @@
 import { env } from '@/env'
 import { Input, PrimaryButton, SecondaryButton } from '@/frontend/ui'
 import { LoadingDots } from '@/frontend/ui/loading-dots'
-import { useTRPC } from '@/trpc/react'
+import { useTRPC, type RouterInputs } from '@/trpc/react'
+import { tryCatchTRPC } from '@/utils/try-catch'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import type { SetStateAction } from 'jotai'
-import { useState, type Dispatch, type ReactNode } from 'react'
+import { ArrowDownIcon } from 'lucide-react'
+import { useState, useTransition, type Dispatch, type ReactNode } from 'react'
+import { useForm } from 'react-hook-form'
 
 export function DangerousAdminActions() {
   const [dangerousConfirmed, setDangerousConfirmed] = useState(
@@ -58,14 +61,75 @@ function DangerWarning() {
 
 function DangerousAdminActionsUnlocked() {
   return (
-    <div>
+    <div className='space-y-8'>
       {env.NEXT_PUBLIC_APP_ENV === 'production' && <DangerWarning />}
-      <DangerousContestActionsContent />
+      <div className='border-y border-white-100 py-8'>
+        <DangerousContestActions />
+      </div>
+      <div className='border-b border-white-100 py-8'>
+        <DangerousTransferUserResults />
+      </div>
     </div>
   )
 }
 
-export function DangerousContestActionsContent() {
+function DangerousTransferUserResults() {
+  const { register, handleSubmit } =
+    useForm<RouterInputs['admin']['transferUserResults']>()
+  const trpc = useTRPC()
+  const { mutateAsync: transferUserResults } = useMutation(
+    trpc.admin.transferUserResults.mutationOptions(),
+  )
+  const [isPending, startTransition] = useTransition()
+  const [res, setRes] = useState<string | undefined>()
+
+  function onSubmit({
+    sourceUserName,
+    targetUserName,
+  }: RouterInputs['admin']['transferUserResults']) {
+    startTransition(async () => {
+      const { data, error } = await tryCatchTRPC(
+        transferUserResults({
+          sourceUserName,
+          targetUserName,
+        }),
+      )
+      if (error) setRes(JSON.stringify(error, null, 2))
+      else
+        setRes(
+          JSON.stringify(data.mergedMsg, null, 2) +
+            '\n\n' +
+            JSON.stringify(data.conflictMsg, null, 2),
+        )
+    })
+  }
+
+  return (
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className='flex w-[30rem] flex-col gap-2'
+    >
+      <h2 className='title-h2'>Transfer user results</h2>
+      <Input
+        placeholder='Source user name (will lose their results)'
+        required
+        {...register('sourceUserName')}
+      />
+      <ArrowDownIcon />
+      <Input
+        placeholder="Target user name (will receive source's results)"
+        required
+        {...register('targetUserName')}
+      />
+      <PrimaryButton disabled={isPending} type='submit' size='sm'>
+        Submit
+      </PrimaryButton>
+      <pre>{res}</pre>
+    </form>
+  )
+}
+
+function DangerousContestActions() {
   const trpc = useTRPC()
   const { data: latestContest, isLoading } = useQuery(
     trpc.admin.getLatestContest.queryOptions(),
