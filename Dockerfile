@@ -22,7 +22,7 @@ WORKDIR /app
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
-COPY scripts ./scripts
+COPY bin ./bin
 COPY drizzle ./drizzle
 COPY drizzle.config.ts ./drizzle.config.ts
 
