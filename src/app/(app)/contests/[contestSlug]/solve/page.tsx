@@ -168,6 +168,7 @@ const SPLASH_TEXTS = [
   'These are TNoodle scrambles btw',
   '8 seconds! 12 seconds! Go! Just kidding',
   "Feliks Zemdegs would've been proud of you",
+  'Crazy finger tricks!',
   <>
     Check out{' '}
     <Link
