@@ -1,16 +1,16 @@
 export * from './key-map-dialog'
 
-export const KEY_MAP = [
-  { keyName: '1' },
-  { keyName: '2' },
+export const KEY_MAP: { keyName: string; cubeMovement?: string }[] = [
+  { keyName: '1', cubeMovement: "S'" },
+  { keyName: '2', cubeMovement: 'E' },
   { keyName: '3' },
   { keyName: '4' },
   { keyName: '5', cubeMovement: 'M' },
   { keyName: '6', cubeMovement: 'M' },
   { keyName: '7' },
   { keyName: '8' },
-  { keyName: '9' },
-  { keyName: '10' },
+  { keyName: '9', cubeMovement: "E'" },
+  { keyName: '0', cubeMovement: 'S' },
   { keyName: 'Q', cubeMovement: "z'" },
   { keyName: 'W', cubeMovement: "B'" },
   { keyName: 'E', cubeMovement: "L'" },
