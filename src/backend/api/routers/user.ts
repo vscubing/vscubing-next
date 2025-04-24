@@ -92,6 +92,7 @@ export const userRouter = createTRPCRouter({
    * @deprecated NOTE: some of the `refresh_token`'s are invalid in production so we are using unofficial WCA api for now
    */
   wcaData: publicProcedure
+    // NOTE: production `refresh_token`s with `created_at` oder than 2025-04-24 are very likely to be invalid
     .input(z.object({ wcaId: z.string() }))
     .query(async ({ input }) => {
       const [account] = await db
