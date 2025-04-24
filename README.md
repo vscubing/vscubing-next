@@ -43,3 +43,4 @@ The application is hosted on a `DigitalOcean` Droplet with `Dokploy`.
 - when setting up a S3 Destination in Dockploy, use the format "region.digitaloceanspaces.com" for the endpoint
 - when setting up Provider (docker image) with ghcr in Dockploy, set Docker Image to `ghcr.io/vscubing/vscubing-next` and registry url to `ghcr.io`
 - when setting up a staging db next to the production one, make sure to use different ports
+- use `ssh -L REMOTE_PORT:localhost:LOCAL_PORT user@remote` to port to local a port from staging/production (for example, to debug a db via drizzle studio)
