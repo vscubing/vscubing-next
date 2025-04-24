@@ -9,8 +9,10 @@ import { AverageIcon, SingleIcon } from '../ui'
 
 export function LeaderboardTypeSwitcher({
   initialType,
+  className,
 }: {
   initialType?: LeaderboardType
+  className?: string
 }) {
   const [currentType, setCurrentType] = useState<LeaderboardType | undefined>(
     initialType,
@@ -30,7 +32,7 @@ export function LeaderboardTypeSwitcher({
   )
 
   return (
-    <div className='relative flex rounded-xl bg-grey-100'>
+    <div className={cn('relative flex rounded-xl bg-grey-100', className)}>
       <div
         className={cn(
           'transition-base absolute left-0 top-0 h-full w-[8.5rem] rounded-xl bg-secondary-20 sm:w-11',

@@ -24,6 +24,10 @@
   svg {
     @apply text-[1rem];
   }
+
+  [data-radix-popper-content-wrapper] {
+    min-width: auto !important;
+  }
 }
 
 @layer components {

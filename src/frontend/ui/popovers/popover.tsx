@@ -8,6 +8,7 @@ import { UnderlineButton } from '../buttons'
 const Popover = PopoverPrimitive.Root
 const PopoverTrigger = PopoverPrimitive.Trigger
 const PopoverAnchor = PopoverPrimitive.Anchor
+const PopoverPortal = PopoverPrimitive.Portal
 
 function PopoverContent({
   className,
@@ -22,9 +23,9 @@ function PopoverContent({
   return (
     <PopoverPrimitive.Content
       onOpenAutoFocus={(event) => event.preventDefault()}
-      collisionPadding={20}
+      collisionPadding={12}
       className={cn(
-        'relative z-20 flex flex-col items-center gap-2 whitespace-normal rounded-xl bg-black-100 p-4 text-center animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
+        'relative z-20 flex max-w-[calc(100vw-12px*2)] flex-col items-center gap-2 whitespace-normal rounded-xl bg-black-100 p-4 text-center animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
         {
           'mb-2 after:absolute after:-bottom-3 after:h-3 after:w-full':
             !withArrow,
@@ -91,7 +92,7 @@ export function HoverPopover({
       >
         {trigger}
       </PopoverTrigger>
-      <PopoverPrimitive.PopoverPortal>
+      <PopoverPortal>
         <PopoverContent
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
@@ -99,7 +100,7 @@ export function HoverPopover({
         >
           {content}
         </PopoverContent>
-      </PopoverPrimitive.PopoverPortal>
+      </PopoverPortal>
     </Popover>
   )
 }
@@ -110,4 +111,5 @@ export {
   PopoverAnchor,
   PopoverCloseButton,
   PopoverContent,
+  PopoverPortal,
 }

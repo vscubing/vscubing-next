@@ -5,10 +5,9 @@ import * as TooltipPrimitive from '@radix-ui/react-tooltip'
 import { cn } from '../utils/cn'
 
 const TooltipProvider = TooltipPrimitive.Provider
-
 const Tooltip = TooltipPrimitive.Root
-
 const TooltipTrigger = TooltipPrimitive.Trigger
+const TooltipPortal = TooltipPrimitive.Portal
 
 function TooltipContent({
   className,
@@ -31,4 +30,10 @@ function TooltipContent({
   )
 }
 
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }
+export {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+  TooltipPortal,
+}

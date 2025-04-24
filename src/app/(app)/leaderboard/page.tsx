@@ -33,6 +33,13 @@ import {
   AverageListShell,
   AverageResultSkeleton,
 } from './_components/average-list'
+import { ExclamationCircleIcon, HoverPopover } from '@/frontend/ui'
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipPortal,
+} from '@/frontend/ui/tooltip'
 
 export default async function LeaderboardPage({
   searchParams,
@@ -51,12 +58,31 @@ export default async function LeaderboardPage({
         <PageTitle type={type} />
       </Suspense>
       <NavigateBackButton />
-      <LayoutSectionHeader className='sticky top-0 z-10 flex justify-between'>
+      <LayoutSectionHeader className='sticky top-0 z-10 flex gap-10 md:gap-4'>
         <DisciplineSwitcher
           disciplines={DISCIPLINES}
           initialDiscipline={discipline}
         />
-        <LeaderboardTypeSwitcher initialType={type} />
+
+        <div className='flex flex-1 items-center gap-4 md:hidden'>
+          <ExclamationCircleIcon className='shrink-0' />
+          <p className='vertical-alignment-fix'>
+            The leaderboards are updated every time an ongoing contest ends.
+          </p>
+        </div>
+
+        <HoverPopover
+          content='The leaderboards are updated every time an ongoing contest ends.'
+          contentProps={{
+            className: 'border-b border-secondary-20 whitespace-normal',
+          }}
+        >
+          <span className='hidden md:block'>
+            <ExclamationCircleIcon />
+          </span>
+        </HoverPopover>
+
+        <LeaderboardTypeSwitcher initialType={type} className='ml-auto' />
       </LayoutSectionHeader>
 
       {type === 'single' && (
