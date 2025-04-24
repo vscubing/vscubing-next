@@ -63,6 +63,9 @@ export async function refreshWcaToken({
     .then((json) => z.union([wcaTokenSchema, wcaErrorSchema]).parse(json))
 
   if ('error' in result) {
+    console.log(
+      `WCA oauth error with refresh_token ${refresh_token}\n ${JSON.stringify(result)}`,
+    )
     throw new Error(`WCA oauth error: ${JSON.stringify(result)}`)
   }
 

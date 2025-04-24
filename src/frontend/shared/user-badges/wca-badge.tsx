@@ -45,29 +45,32 @@ export function WcaBadgeLink({ wcaId }: { wcaId: string }) {
 
 function WcaPopoverContent({ wcaId }: { wcaId: string }) {
   const trpc = useTRPC()
-  const { data: officialData } = useQuery(
-    trpc.user.wcaData.queryOptions({ wcaId }),
+  const { data: wcaUser, isLoading: isDataLoading } = useWcaUnofficialApi({
+    wcaId,
+  })
+  const { data: avatarSrc, isLoading: isAvatarLoading } = useQuery(
+    trpc.user.wcaAvatar.queryOptions({ wcaId }),
   )
-  const { data: unofficialData } = useWcaUnofficialApi({ wcaId })
-  if (!officialData || !unofficialData) return <LoadingDots />
 
-  const best3by3Results = getBest3by3Results(unofficialData)
-  const hasAvatar = officialData.avatar.id !== null
+  if (isDataLoading || isAvatarLoading) return <LoadingDots />
+  if (!wcaUser) return 'Error'
+
+  const best3by3Results = getBest3by3Results(wcaUser)
   return (
     <div className='flex gap-4 sm:flex-col sm:items-center'>
-      {hasAvatar && (
+      {avatarSrc && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           className='max-h-48 max-w-48 grow basis-0 rounded-xl'
-          src={officialData.avatar.url}
-          alt={officialData.name}
+          src={avatarSrc}
+          alt={wcaUser.name}
         />
       )}
 
       <div className='flex flex-col text-left sm:items-center sm:text-center'>
         <h1 className='btn-lg flex items-center gap-2'>
-          <CountryFlag iso={officialData.country.iso2} />
-          <span>{officialData.name}</span>
+          <CountryFlag iso={wcaUser.country} />
+          <span>{wcaUser.name}</span>
         </h1>
         <div className='flex items-center gap-2'>
           <Link
@@ -77,8 +80,8 @@ function WcaPopoverContent({ wcaId }: { wcaId: string }) {
             <span>({wcaId})</span>
           </Link>
         </div>
-        <p>Competitions: {unofficialData.numberOfCompetitions}</p>
-        <p>Completed solves: {getTotalCompletedSolveNumber(unofficialData)}</p>
+        <p>Competitions: {wcaUser.numberOfCompetitions}</p>
+        <p>Completed solves: {getTotalCompletedSolveNumber(wcaUser)}</p>
         {best3by3Results.single && (
           <p>
             Best 3x3 single: {formatSolveTime(best3by3Results.single, true)}
@@ -103,7 +106,7 @@ function useWcaUnofficialApi({ wcaId }: { wcaId: string }) {
       const json = (await res.json()) as unknown
       return wcaUnofficialUserSchema.parse(json)
     },
-    queryKey: ['wca-user-data', wcaId],
+    queryKey: ['wca-unofficial-api', 'persons', wcaId],
   })
 }
 
@@ -118,6 +121,7 @@ const rankSchema = z.object({
 })
 
 const wcaUnofficialUserSchema = z.object({
+  name: z.string(),
   country: z.string(),
   numberOfCompetitions: z.number(),
   rank: z.object({
