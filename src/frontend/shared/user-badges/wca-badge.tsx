@@ -9,18 +9,6 @@ import Link from 'next/link'
 import { z } from 'zod'
 
 export function WcaBadgeLink({ wcaId }: { wcaId: string }) {
-  const trpc = useTRPC()
-  const { data: isAdmin } = useQuery(trpc.admin.authorized.queryOptions())
-  if (!isAdmin)
-    return (
-      <Link
-        href={`https://worldcubeassociation.org/persons/${wcaId}`}
-        className='touch:hidden'
-      >
-        <WcaLogoIcon className='text-xs' />
-      </Link>
-    )
-
   return (
     <HoverPopover
       content={<WcaPopoverContent wcaId={wcaId} />}
