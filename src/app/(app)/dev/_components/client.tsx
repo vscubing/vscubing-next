@@ -3,12 +3,15 @@
 import { env } from '@/env'
 import { Input, PrimaryButton, SecondaryButton } from '@/frontend/ui'
 import { LoadingDots } from '@/frontend/ui/loading-dots'
-import { useTRPC } from '@/trpc/react'
+import { useTRPC, type RouterInputs } from '@/trpc/react'
+import { tryCatchTRPC } from '@/utils/try-catch'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import type { SetStateAction } from 'jotai'
-import { useState, type Dispatch, type ReactNode } from 'react'
+import { ArrowDownIcon } from 'lucide-react'
+import { useState, useTransition, type Dispatch, type ReactNode } from 'react'
+import { useForm } from 'react-hook-form'
 
-export function AdminContestActions() {
+export function DangerousAdminActions() {
   const [dangerousConfirmed, setDangerousConfirmed] = useState(
     env.NEXT_PUBLIC_APP_ENV !== 'production',
   )
@@ -16,7 +19,7 @@ export function AdminContestActions() {
   return (
     <>
       {dangerousConfirmed ? (
-        <DangerousContestActionsContent />
+        <DangerousAdminActionsUnlocked />
       ) : (
         <form
           onSubmit={() => {
@@ -25,9 +28,8 @@ export function AdminContestActions() {
           }}
         >
           <p>
-            Manual contest management in production is dangerous. <br />
-            These actions are irreversible. If you're sure, please enter:
-            <br />
+            <DangerWarning />
+            <p>If you're sure, please enter:</p>
             <span className='font-mono'>I'm absolutely sure</span>
           </p>
           <Input
@@ -42,7 +44,92 @@ export function AdminContestActions() {
   )
 }
 
-export function DangerousContestActionsContent() {
+function DangerWarning() {
+  return (
+    <>
+      <p className='title-h2 font-bold'>
+        <h1 className='text-red-80'>❗❗❗DANGER❗❗❗</h1>
+        <p>Using these admin actions in production is dangerous.</p>{' '}
+        <p className='text-red-80'>
+          Please make a DB backup before touching anything here.
+        </p>{' '}
+        <p>These actions are irreversible.</p>
+      </p>
+    </>
+  )
+}
+
+function DangerousAdminActionsUnlocked() {
+  return (
+    <div className='space-y-8'>
+      {env.NEXT_PUBLIC_APP_ENV === 'production' && <DangerWarning />}
+      <div className='border-y border-white-100 py-8'>
+        <DangerousContestActions />
+      </div>
+      <div className='border-b border-white-100 py-8'>
+        <DangerousTransferUserResults />
+      </div>
+    </div>
+  )
+}
+
+function DangerousTransferUserResults() {
+  const { register, handleSubmit } =
+    useForm<RouterInputs['admin']['transferUserResults']>()
+  const trpc = useTRPC()
+  const { mutateAsync: transferUserResults } = useMutation(
+    trpc.admin.transferUserResults.mutationOptions(),
+  )
+  const [isPending, startTransition] = useTransition()
+  const [res, setRes] = useState<string | undefined>()
+
+  function onSubmit({
+    sourceUserName,
+    targetUserName,
+  }: RouterInputs['admin']['transferUserResults']) {
+    startTransition(async () => {
+      const { data, error } = await tryCatchTRPC(
+        transferUserResults({
+          sourceUserName,
+          targetUserName,
+        }),
+      )
+      if (error) setRes(JSON.stringify(error, null, 2))
+      else
+        setRes(
+          JSON.stringify(data.mergedMsg, null, 2) +
+            '\n\n' +
+            JSON.stringify(data.conflictMsg, null, 2),
+        )
+    })
+  }
+
+  return (
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className='flex w-[30rem] flex-col gap-2'
+    >
+      <h2 className='title-h2'>Transfer user results</h2>
+      <Input
+        placeholder='Source user name (will lose their results)'
+        required
+        {...register('sourceUserName')}
+      />
+      <ArrowDownIcon />
+      <Input
+        placeholder="Target user name (will receive source's results)"
+        required
+        {...register('targetUserName')}
+      />
+      <PrimaryButton disabled={isPending} type='submit' size='sm'>
+        Submit
+      </PrimaryButton>
+      <pre>{res}</pre>
+    </form>
+  )
+}
+
+function DangerousContestActions() {
   const trpc = useTRPC()
   const { data: latestContest, isLoading } = useQuery(
     trpc.admin.getLatestContest.queryOptions(),

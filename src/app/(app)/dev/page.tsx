@@ -4,8 +4,7 @@ import { SolveValidator } from './_components/solve-validator'
 import { db } from '@/backend/db'
 import { roundTable, scrambleTable } from '@/backend/db/schema'
 import { and, eq, or } from 'drizzle-orm'
-import type { RouterInputs } from '@/trpc/react'
-import { AdminContestActions } from './_components/client'
+import { DangerousAdminActions } from './_components/client'
 
 export default async function DevPage() {
   const authorized = await api.admin.authorized()
@@ -19,16 +18,11 @@ export default async function DevPage() {
         This is indeed the latest app version (11)
         <h2 className='title-h2'>Ongoing contest</h2>
         <OngoingContestInfo />
-        <SolveValidator
-          validateSolveAction={async (
-            solve: RouterInputs['admin']['validateSolveAction'],
-          ) => {
-            'use server'
-            return api.admin.validateSolveAction(solve)
-          }}
-        />
+        <SolveValidator />
       </div>
-      <AdminContestActions />
+      <div>
+        <DangerousAdminActions />
+      </div>
     </div>
   )
 }

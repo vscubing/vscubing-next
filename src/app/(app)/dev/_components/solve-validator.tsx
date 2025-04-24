@@ -5,27 +5,28 @@ import { useForm } from 'react-hook-form'
 import { useState, useTransition } from 'react'
 import { removeSolutionComments } from '@/utils/remove-solution-comments'
 import type { Discipline } from '@/types'
-import type { RouterInputs } from '@/trpc/react'
+import { useTRPC, type RouterInputs } from '@/trpc/react'
+import { useMutation } from '@tanstack/react-query'
 
-type Solve = RouterInputs['admin']['validateSolveAction']
-export function SolveValidator({
-  validateSolveAction,
-}: {
-  validateSolveAction: (solve: Solve) => Promise<string>
-}) {
+type Solve = RouterInputs['admin']['validateSolve']
+export function SolveValidator() {
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors },
   } = useForm<Solve>()
+  const trpc = useTRPC()
+  const { mutateAsync: validateSolve } = useMutation(
+    trpc.admin.validateSolve.mutationOptions(),
+  )
   const [removeComments, setRemoveComments] = useState(false)
   const [isPending, startTransition] = useTransition()
 
   function onSubmit({ solution, scramble, discipline }: Solve) {
     startTransition(async () => {
       if (removeComments) solution = removeSolutionComments(solution)
-      const res = await validateSolveAction({
+      const res = await validateSolve({
         discipline: discipline.trim() as Discipline,
         scramble: scramble.trim(),
         solution: solution.trim(),
