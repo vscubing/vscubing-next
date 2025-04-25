@@ -34,11 +34,6 @@ function BannerContent({
   ongoing: NonNullable<RouterOutputs['contest']['getOngoing']>
   className?: string
 }) {
-  const defaultDisciplineCapabilities = ongoing.disciplines.find(
-    (d) => d.slug === DEFAULT_DISCIPLINE,
-  )?.capabilities
-  const defaultDisciplineLink = `/contests/${ongoing.slug}/${defaultDisciplineCapabilities}?discipline=${DEFAULT_DISCIPLINE}`
-
   return (
     <div className={cn('flex h-44', className)}>
       <div className='relative mr-32'>
@@ -62,9 +57,7 @@ function BannerContent({
               <p className='title-h3 mb-2'>Duration</p>
               <Duration ongoing={ongoing} />
             </div>
-            <PrimaryButton asChild>
-              <Link href={defaultDisciplineLink}>Solve now</Link>
-            </PrimaryButton>
+            <SolveOngoingLink ongoing={ongoing} />
           </div>
         </div>
         <Divider className='absolute -right-40 top-0 h-full w-36' />
@@ -85,8 +78,9 @@ function BannerContentMobile({
     <div
       className={cn('flex h-44 sm:h-32 sm:flex-col sm:px-3 sm:py-4', className)}
     >
-      <div className='relative z-10 py-4 pl-4 sm:flex sm:items-center sm:gap-4 sm:p-0'>
+      <div className='relative z-10 flex flex-col items-start gap-4 py-4 pl-4 sm:gap-4 sm:p-0'>
         <Title />
+        <SolveOngoingLink ongoing={ongoing} className='sm:hidden' />
       </div>
 
       <div className='relative flex-1 sm:hidden'>
@@ -115,6 +109,25 @@ function BannerOnMaintenance() {
       </div>
       <ForegroundCubes className='sm:hidden' />
     </div>
+  )
+}
+
+function SolveOngoingLink({
+  ongoing,
+  className,
+}: {
+  ongoing: NonNullable<RouterOutputs['contest']['getOngoing']>
+  className?: string
+}) {
+  const defaultDisciplineCapabilities = ongoing.disciplines.find(
+    (d) => d.slug === DEFAULT_DISCIPLINE,
+  )?.capabilities
+  const defaultDisciplineLink = `/contests/${ongoing.slug}/${defaultDisciplineCapabilities}?discipline=${DEFAULT_DISCIPLINE}`
+
+  return (
+    <PrimaryButton asChild className={className}>
+      <Link href={defaultDisciplineLink}>Solve now</Link>
+    </PrimaryButton>
   )
 }
 

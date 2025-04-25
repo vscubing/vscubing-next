@@ -1,5 +1,5 @@
 import { useTRPC } from '@/trpc/react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 
 export function useUser() {
   const trpc = useTRPC()
@@ -9,39 +9,26 @@ export function useUser() {
 
 export function useLogout() {
   const trpc = useTRPC()
-  const queryClient = useQueryClient()
   const { mutateAsync, ...mutation } = useMutation(
     trpc.user.logout.mutationOptions({
-      onSettled: () => {
-        void queryClient.invalidateQueries(trpc.user.me.queryOptions())
-      },
+      onSettled: () => location.reload(),
     }),
   )
   return {
     ...mutation,
-    logout: async () => {
-      await mutateAsync()
-      await queryClient.invalidateQueries(trpc.user.me.queryOptions())
-      location.reload()
-    },
+    logout: () => mutateAsync(),
   }
 }
 
 export function useRemoveWcaAccount() {
   const trpc = useTRPC()
-  const queryClient = useQueryClient()
   const { mutateAsync, ...mutation } = useMutation(
     trpc.user.removeWcaAccount.mutationOptions({
-      onSettled: () => {
-        void queryClient.invalidateQueries(trpc.user.me.queryOptions())
-      },
+      onSettled: () => location.reload(),
     }),
   )
   return {
     ...mutation,
-    removeWcaAccount: async () => {
-      await mutateAsync()
-      await queryClient.invalidateQueries(trpc.user.me.queryOptions())
-    },
+    removeWcaAccount: () => mutateAsync(),
   }
 }
