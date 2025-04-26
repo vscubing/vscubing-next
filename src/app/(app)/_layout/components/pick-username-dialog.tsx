@@ -59,7 +59,7 @@ export function PickUsernameDialog() {
     <AlertDialog open={isVisible}>
       <AlertDialogPortal>
         <AlertDialogOverlay />
-        <AlertDialogContent asChild>
+        <AlertDialogContent asChild className='gap-8 sm:gap-6'>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div>
               <AlertDialogTitle className='mb-4'>

@@ -149,7 +149,7 @@ function LogoutButton({
       </DropdownButton>
       <DialogPortal>
         <DialogOverlay />
-        <DialogContent aria-describedby={undefined}>
+        <DialogContent aria-describedby={undefined} className='gap-8 sm:gap-6'>
           <DialogTitle>Are you sure you want to log out?</DialogTitle>
           <DialogFooter className='sm:grid sm:grid-cols-2'>
             <DialogClose version='secondary'>Stay</DialogClose>
