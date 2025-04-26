@@ -5,6 +5,7 @@ import { roundSessionRouter } from './routers/round-session'
 import { leaderboardRouter } from './routers/leaderboard'
 import { settingsRouter } from './routers/settings'
 import { adminRouter } from './routers/admin'
+import { specialContestRouter } from './routers/custom-contest'
 
 /**
  * This is the primary router for your server.
@@ -15,6 +16,7 @@ export const appRouter = createTRPCRouter({
   user: userRouter,
   admin: adminRouter,
   contest: contestRouter,
+  specialContest: specialContestRouter,
   roundSession: roundSessionRouter,
   leaderboard: leaderboardRouter,
   settings: settingsRouter,

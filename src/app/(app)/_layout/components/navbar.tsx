@@ -129,9 +129,10 @@ function parsePathname(
     if (
       pathname === '/contests/ongoing' ||
       removePrefix(pathname, '/contests/').startsWith(ongoingContestSlug)
-    ) {
+    )
       return '/contests/ongoing'
-    }
+
+    if (pathname.startsWith('/contests/specials')) return '/contests/specials'
     return '/contests'
   }
 }
@@ -141,7 +142,7 @@ type NavbarRoute =
   | '/leaderboard'
   | '/contests'
   | '/contests/ongoing'
-  | '/contests/custom'
+  | '/contests/specials'
   | '/settings'
   | '/dev'
 
@@ -185,8 +186,8 @@ function getNavbarLinks(
     },
     {
       icon: <CircleDashed />,
-      name: 'Custom contests',
-      route: '/contests/custom',
+      name: 'Special contests',
+      route: '/contests/specials',
     },
   ]
 

@@ -64,6 +64,7 @@ export default async function ContestsIndexPage(props: {
 async function PageContent({ discipline }: { discipline: Discipline }) {
   const contests = await api.contest.getAllContests({
     discipline,
+    type: 'weekly',
   })
 
   if (contests.items?.length === 0) {

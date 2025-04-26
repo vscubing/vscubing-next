@@ -10,7 +10,11 @@ import {
   solveTable,
   userTable,
 } from '@/backend/db/schema'
-import { DISCIPLINES, CONTEST_UNAUTHORIZED_MESSAGE } from '@/types'
+import {
+  DISCIPLINES,
+  CONTEST_UNAUTHORIZED_MESSAGE,
+  CONTEST_TYPES,
+} from '@/types'
 import { eq, desc, and, lte } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
 import { resultDnfable, type RoundSession } from '@/types'
@@ -27,6 +31,7 @@ export const contestRouter = createTRPCRouter({
       z.object({
         discipline: z.enum(DISCIPLINES),
         cursor: z.string().optional(),
+        type: z.enum(CONTEST_TYPES),
         limit: z.number().min(1).default(15),
       }),
     )
@@ -51,6 +56,7 @@ export const contestRouter = createTRPCRouter({
         )
         .where(
           and(
+            eq(contestTable.type, input.type),
             eq(disciplineTable.slug, input.discipline),
             input.cursor
               ? lte(contestTable.startDate, input.cursor)

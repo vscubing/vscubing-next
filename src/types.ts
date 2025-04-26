@@ -111,3 +111,6 @@ export type SimulatorSettings = Omit<
   typeof userSimulatorSettingsTable.$inferSelect,
   'id' | 'createdAt' | 'updatedAt' | 'userId'
 >
+
+export type ContestType = (typeof CONTEST_TYPES)[number]
+export const CONTEST_TYPES = ['weekly', 'special'] as const

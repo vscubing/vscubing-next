@@ -29,7 +29,7 @@ const formSchema = z.object({
 })
 type FormSchema = z.infer<typeof formSchema>
 
-export default function CreateCustomContestDialog({
+export function SpecialContestCreationDialog({
   children,
 }: {
   children: ReactNode
@@ -57,7 +57,7 @@ export default function CreateCustomContestDialog({
         <DialogOverlay />
         <DialogContent aria-describedby={undefined} asChild className='gap-4'>
           <form onSubmit={handleSubmit}>
-            <DialogTitle>New custom contest</DialogTitle>
+            <DialogTitle>New special contest</DialogTitle>
 
             <Input placeholder='Contest name' {...register('name')} />
             <ul>

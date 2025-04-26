@@ -44,6 +44,7 @@ export const adminRouter = createTRPCRouter({
           expectedEndDate: dayjs().toISOString(),
           slug: '0',
           systemInitial: true,
+          type: 'weekly',
         })
         .onConflictDoNothing()
 
