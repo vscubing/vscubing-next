@@ -17,6 +17,7 @@ import {
   CodeXmlIcon,
 } from '@/frontend/ui'
 import { DEFAULT_DISCIPLINE } from '@/types'
+import { CircleDashed } from 'lucide-react'
 
 type NavbarProps = {
   variant: 'vertical' | 'horizontal'
@@ -140,6 +141,7 @@ type NavbarRoute =
   | '/leaderboard'
   | '/contests'
   | '/contests/ongoing'
+  | '/contests/custom'
   | '/settings'
   | '/dev'
 
@@ -180,6 +182,11 @@ function getNavbarLinks(
       route: '/contests/ongoing',
       href: getOngoingLink(ongoingContest),
       disabled: ongoingContest === null,
+    },
+    {
+      icon: <CircleDashed />,
+      name: 'Custom contests',
+      route: '/contests/custom',
     },
   ]
 
