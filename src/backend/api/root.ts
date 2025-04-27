@@ -5,7 +5,7 @@ import { roundSessionRouter } from './routers/round-session'
 import { leaderboardRouter } from './routers/leaderboard'
 import { settingsRouter } from './routers/settings'
 import { adminRouter } from './routers/admin'
-import { specialContestRouter } from './routers/custom-contest'
+import { specialContestRouter } from './routers/special-contest'
 
 /**
  * This is the primary router for your server.

@@ -3,33 +3,34 @@ import { z } from 'zod'
 import { createTRPCRouter, publicProcedure } from '@/backend/api/trpc'
 import {
   contestTable,
-  roundTable,
   disciplineTable,
   roundSessionTable,
+  roundTable,
   scrambleTable,
   solveTable,
   userTable,
 } from '@/backend/db/schema'
-import {
-  DISCIPLINES,
-  CONTEST_UNAUTHORIZED_MESSAGE,
-  CONTEST_TYPES,
-} from '@/types'
-import { eq, desc, and, lte } from 'drizzle-orm'
-import { TRPCError } from '@trpc/server'
-import { resultDnfable, type RoundSession } from '@/types'
-import { groupBy } from '@/utils/group-by'
-import { sortWithRespectToExtras } from '../../shared/sort-with-respect-to-extras'
-import { getContestUserCapabilities } from '../../shared/get-contest-user-capabilities'
+import { getGlobalRecordsByUser } from '@/backend/shared/global-record'
 import { getPersonalRecordSolveSubquery } from '@/backend/shared/personal-record'
 import { getWcaIdSubquery } from '@/backend/shared/wca-id-subquery'
-import { getGlobalRecordsByUser } from '@/backend/shared/global-record'
+import {
+  CONTEST_TYPES,
+  CONTEST_UNAUTHORIZED_MESSAGE,
+  DISCIPLINES,
+  resultDnfable,
+  type RoundSession,
+} from '@/types'
+import { groupBy } from '@/utils/group-by'
+import { TRPCError } from '@trpc/server'
+import { and, desc, eq, lte } from 'drizzle-orm'
+import { getContestUserCapabilities } from '../../shared/get-contest-user-capabilities'
+import { sortWithRespectToExtras } from '../../shared/sort-with-respect-to-extras'
 
 export const contestRouter = createTRPCRouter({
   getAllContests: publicProcedure
     .input(
       z.object({
-        discipline: z.enum(DISCIPLINES),
+        discipline: z.enum(DISCIPLINES).optional(),
         cursor: z.string().optional(),
         type: z.enum(CONTEST_TYPES),
         limit: z.number().min(1).default(15),
@@ -50,14 +51,12 @@ export const contestRouter = createTRPCRouter({
           disciplineTable,
           eq(roundTable.disciplineSlug, disciplineTable.slug),
         )
-        .innerJoin(
-          roundSessionTable,
-          eq(roundSessionTable.roundId, roundTable.id),
-        )
         .where(
           and(
             eq(contestTable.type, input.type),
-            eq(disciplineTable.slug, input.discipline),
+            input.discipline
+              ? eq(disciplineTable.slug, input.discipline)
+              : undefined,
             input.cursor
               ? lte(contestTable.startDate, input.cursor)
               : undefined,
@@ -100,7 +99,9 @@ export const contestRouter = createTRPCRouter({
         disciplineTable,
         eq(disciplineTable.slug, roundTable.disciplineSlug),
       )
-      .where(eq(contestTable.isOngoing, true))
+      .where(
+        and(eq(contestTable.isOngoing, true), eq(contestTable.type, 'weekly')),
+      )
       .orderBy(disciplineTable.createdAt)
 
     const ongoing = rows[0]

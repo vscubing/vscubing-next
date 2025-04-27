@@ -2,19 +2,24 @@
 
 import {
   Dialog,
-  DialogTrigger,
-  DialogPortal,
-  DialogOverlay,
-  DialogContent,
-  DialogTitle,
-  DialogFooter,
   DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogOverlay,
+  DialogPortal,
+  DialogTitle,
+  DialogTrigger,
   Input,
+  toast,
+  TOASTS_PRESETS,
 } from '@/frontend/ui'
 import { CheckboxWithLabel } from '@/frontend/ui/checkbox'
 import { BaseDialogButton } from '@/frontend/ui/popovers/base-dialog'
-import { DISCIPLINES, type Discipline } from '@/types'
+import { useTRPC } from '@/trpc/react'
+import { assertDiscipline, DISCIPLINES, type Discipline } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
+import { useRouter } from 'next/navigation'
 import { type ReactNode } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -37,6 +42,8 @@ export function SpecialContestCreationDialog({
   const {
     register,
     control,
+    setError,
+    formState: { errors },
     handleSubmit: hookFormSubmitWrapper,
   } = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
@@ -45,9 +52,29 @@ export function SpecialContestCreationDialog({
     },
   })
 
-  const handleSubmit = hookFormSubmitWrapper(({ name, disciplines }) => {
-    console.log('submitted')
-    console.log(name, disciplines)
+  const router = useRouter()
+  const trpc = useTRPC()
+  const { mutateAsync: createSpecial, isPending: isCreationPending } =
+    useMutation(trpc.specialContest.create.mutationOptions())
+
+  const handleSubmit = hookFormSubmitWrapper(async (contest) => {
+    const disciplines = Object.entries(contest.disciplines)
+      .filter(([, selected]) => selected)
+      .map(([discipline]) => assertDiscipline(discipline))
+    const { data, error } = await createSpecial({
+      disciplines,
+      name: contest.name,
+    })
+    if (error === 'CONFLICT') {
+      setError('name', { message: 'Contest name already exists' })
+      return
+    }
+    if (error || !data) {
+      toast(TOASTS_PRESETS.internalError)
+      return
+    }
+
+    void router.push(`/contests/${data.newContestSlug}`)
   })
 
   return (
@@ -60,6 +87,7 @@ export function SpecialContestCreationDialog({
             <DialogTitle>New special contest</DialogTitle>
 
             <Input placeholder='Contest name' {...register('name')} />
+            {errors.name && <span>{errors.name?.message}</span>}
             <ul>
               {DISCIPLINES.map((discipline) => (
                 <li key={discipline}>
@@ -80,7 +108,11 @@ export function SpecialContestCreationDialog({
 
             <DialogFooter className='sm:grid sm:grid-cols-2'>
               <DialogClose version='secondary'>Cancel</DialogClose>
-              <BaseDialogButton type='submit' version='primary'>
+              <BaseDialogButton
+                type='submit'
+                version='primary'
+                disabled={isCreationPending}
+              >
                 Create
               </BaseDialogButton>
             </DialogFooter>

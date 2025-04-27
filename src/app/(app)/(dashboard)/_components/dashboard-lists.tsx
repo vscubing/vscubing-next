@@ -12,6 +12,7 @@ export function DashboardLists() {
   const trpc = useTRPC()
   const { data: latestContests } = useQuery(
     trpc.contest.getAllContests.queryOptions({
+      type: 'weekly',
       discipline: '3by3',
       limit: 10,
     }),

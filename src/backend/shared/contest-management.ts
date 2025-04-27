@@ -1,4 +1,9 @@
-import { DISCIPLINES, SCRAMBLE_POSITIONS, type Discipline } from '@/types'
+import {
+  DISCIPLINES,
+  SCRAMBLE_POSITIONS,
+  type ContestType,
+  type Discipline,
+} from '@/types'
 import dayjs from 'dayjs'
 import { eq, desc } from 'drizzle-orm'
 import { db } from '../db'
@@ -22,6 +27,7 @@ export async function closeOngoingAndCreateNewContest(
     const ongoing = await closeOngoingContest(tx)
 
     return createNewContest({
+      type: 'weekly',
       slug: getNextContestSlug(ongoing.slug),
       tx,
       easyScrambles,
@@ -34,10 +40,12 @@ export type Transaction = Parameters<
 >[0]
 export async function createNewContest({
   slug,
+  type,
   tx = db,
   easyScrambles = false,
 }: {
   slug: string
+  type: ContestType
   tx?: Transaction | typeof db
   easyScrambles?: boolean
 }) {
@@ -45,6 +53,7 @@ export async function createNewContest({
   const now = dayjs()
   await tx.insert(contestTable).values({
     slug,
+    type,
     isOngoing: true,
     startDate: now.toISOString(),
     expectedEndDate: now.add(7, 'day').toISOString(),
