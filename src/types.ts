@@ -21,6 +21,7 @@ export type ScramblePosition = (typeof SCRAMBLE_POSITIONS)[number]
 export function isExtra(position: ScramblePosition) {
   return position.startsWith('E')
 }
+
 export function getExtraNumber(
   position: ScramblePosition,
 ): '1' | '2' | undefined {
@@ -93,9 +94,10 @@ export type ContestMetadata = Pick<
 
 export type RoundSession = {
   session: {
-    result: ResultDnfable
+    result: ResultDnfable | null
     id: number
     isOwn: boolean
+    isFinished: boolean
   }
   solves: {
     id: number

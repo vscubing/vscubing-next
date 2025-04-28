@@ -1,0 +1,3 @@
+- [x] always show results, without auth, even incomplete sessions
+- [ ] join/leave round
+- [ ] start/end rounds (+incomplete sessions warning)

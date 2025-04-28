@@ -1,17 +1,17 @@
 'use client'
 
 import { HintSection } from '@/frontend/shared/hint-section'
-import { type Discipline } from '@/types'
-import { useSuspenseQuery } from '@tanstack/react-query'
-import { useTRPC, type RouterOutputs } from '@/trpc/react'
-import { type ReactNode } from 'react'
 import {
-  RoundSessionRow,
   RoundSessionHeader,
+  RoundSessionRow,
   RoundSessionRowSkeleton,
 } from '@/frontend/shared/round-session-row'
-import { useScrollToIndex } from '@/frontend/utils/use-scroll-to-index'
 import { cn } from '@/frontend/utils/cn'
+import { useScrollToIndex } from '@/frontend/utils/use-scroll-to-index'
+import { useTRPC, type RouterOutputs } from '@/trpc/react'
+import { type Discipline } from '@/types'
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { type ReactNode } from 'react'
 
 export function AverageList({
   discipline,
@@ -35,7 +35,7 @@ export function AverageList({
   if (sessions.length === 0) {
     return (
       <HintSection>
-        <p>It seems no one participated in this round</p>
+        <p>There are not results here yet.</p>
       </HintSection>
     )
   }

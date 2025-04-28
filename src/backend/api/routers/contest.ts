@@ -15,7 +15,6 @@ import { getPersonalRecordSolveSubquery } from '@/backend/shared/personal-record
 import { getWcaIdSubquery } from '@/backend/shared/wca-id-subquery'
 import {
   CONTEST_TYPES,
-  CONTEST_UNAUTHORIZED_MESSAGE,
   DISCIPLINES,
   resultDnfable,
   type RoundSession,
@@ -167,25 +166,6 @@ export const contestRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }): Promise<RoundSession[]> => {
-      const userCapabilities = await getContestUserCapabilities({
-        contestSlug: input.contestSlug,
-        discipline: input.discipline,
-      })
-      if (userCapabilities === 'CONTEST_NOT_FOUND')
-        throw new TRPCError({ code: 'NOT_FOUND' })
-
-      if (userCapabilities === 'UNAUTHORIZED')
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: CONTEST_UNAUTHORIZED_MESSAGE,
-        })
-      if (userCapabilities === 'SOLVE')
-        throw new TRPCError({
-          code: 'FORBIDDEN',
-          message:
-            "You can't see the results of an ongoing contest round before finishing it",
-        })
-
       const bestSolveSubquery = getPersonalRecordSolveSubquery({
         db: ctx.db,
         discipline: input.discipline,
@@ -199,6 +179,7 @@ export const contestRouter = createTRPCRouter({
             id: roundSessionTable.id,
             timeMs: roundSessionTable.avgMs,
             isDnf: roundSessionTable.isDnf,
+            isFinished: roundSessionTable.isFinished,
           },
           solve: {
             timeMs: solveTable.timeMs,
@@ -232,7 +213,6 @@ export const contestRouter = createTRPCRouter({
           and(
             eq(roundTable.contestSlug, input.contestSlug),
             eq(roundTable.disciplineSlug, input.discipline),
-            eq(roundSessionTable.isFinished, true),
             eq(solveTable.status, 'submitted'),
           ),
         )
@@ -241,37 +221,35 @@ export const contestRouter = createTRPCRouter({
       const solvesBySessionId = groupBy(queryRes, ({ session }) => session.id)
       const globalRecordsByUser = await getGlobalRecordsByUser()
 
-      return Array.from(solvesBySessionId.values()).map((session) => ({
-        session: {
-          result: resultDnfable.parse(session[0]!.session),
-          id: session[0]!.session.id,
-          isOwn: session[0]!.user.id === ctx.session?.user.id,
-        },
-        solves: sortWithRespectToExtras(
-          session.map(
-            ({
-              solve: {
-                id,
-                personalRecordId,
-                position,
-                isDnf,
-                timeMs,
-                plusTwoIncluded,
-              },
-            }) => ({
-              id,
-              position,
-              result: resultDnfable.parse({ timeMs, isDnf, plusTwoIncluded }),
-              isPersonalRecord: id === personalRecordId,
-            }),
+      return Array.from(solvesBySessionId.values()).map((rows) => {
+        if (!rows[0]) throw new Error('no 1st row')
+        const { session, user } = rows[0]
+        return {
+          session: {
+            result: session.isFinished ? resultDnfable.parse(session) : null,
+            id: session.id,
+            isOwn: user.id === ctx.session?.user.id,
+            isFinished: session.isFinished,
+          },
+          solves: sortWithRespectToExtras(
+            rows.map(({ solve }) => ({
+              id: solve.id,
+              position: solve.position,
+              result: resultDnfable.parse({
+                timeMs: solve.timeMs,
+                isDnf: solve.isDnf,
+                plusTwoIncluded: solve.plusTwoIncluded,
+              }),
+              isPersonalRecord: solve.id === solve.personalRecordId,
+            })),
           ),
-        ),
-        user: {
-          ...session[0]!.user,
-          globalRecords: globalRecordsByUser.get(session[0]!.user.id) ?? null,
-        },
-        contestSlug: input.contestSlug,
-      }))
+          user: {
+            ...user,
+            globalRecords: globalRecordsByUser.get(user.id) ?? null,
+          },
+          contestSlug: input.contestSlug,
+        }
+      })
     }),
 
   getSolve: publicProcedure

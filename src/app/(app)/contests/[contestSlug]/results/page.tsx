@@ -1,18 +1,21 @@
-import { DEFAULT_DISCIPLINE, isDiscipline, type Discipline } from '@/types'
-import { api } from '@/trpc/server'
-import { DisciplineSwitcher } from '@/frontend/shared/discipline-switcher'
-import { NavigateBackButton } from '@/frontend/shared/navigate-back-button'
-import { LayoutPageTitleMobile } from '@/app/(app)/_layout/layout-page-title-mobile'
+import { LayoutSectionHeader } from '@/app/(app)/_layout'
 import { LayoutHeaderTitlePortal } from '@/app/(app)/_layout/layout-header'
+import { LayoutPageTitleMobile } from '@/app/(app)/_layout/layout-page-title-mobile'
+import { DisciplineSwitcher } from '@/frontend/shared/discipline-switcher'
+import { HintSignInSection } from '@/frontend/shared/hint-section'
+import { NavigateBackButton } from '@/frontend/shared/navigate-back-button'
+import { api } from '@/trpc/server'
+import {
+  CONTEST_UNAUTHORIZED_MESSAGE,
+  DEFAULT_DISCIPLINE,
+  isDiscipline,
+  type Discipline,
+} from '@/types'
+import { formatContestDuration } from '@/utils/format-date'
 import { tryCatchTRPC } from '@/utils/try-catch'
 import { redirect } from 'next/navigation'
-import { HintSignInSection } from '@/frontend/shared/hint-section'
-import { CONTEST_UNAUTHORIZED_MESSAGE } from '@/types'
-import { SessionList, SessionListShell } from './_components/session-list'
-import { LayoutSectionHeader } from '@/app/(app)/_layout'
 import { Suspense } from 'react'
-import { RoundSessionRowSkeleton } from '../../../../../frontend/shared/round-session-row'
-import { formatContestDuration } from '@/utils/format-date'
+import { SessionList } from './_components/session-list'
 
 export default async function ContestResultsPage({
   params,
@@ -57,13 +60,9 @@ export default async function ContestResultsPage({
       <Suspense
         key={discipline}
         fallback={
-          <SessionListShell>
-            <div className='space-y-2'>
-              {Array.from({ length: 20 }).map((_, idx) => (
-                <RoundSessionRowSkeleton key={idx} />
-              ))}
-            </div>
-          </SessionListShell>
+          <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 lg:p-4 sm:p-3'>
+            Loading...
+          </div>
         }
       >
         <PageContent
@@ -97,9 +96,6 @@ async function PageContent({
 
   if (error?.code === 'UNAUTHORIZED')
     return <HintSignInSection description={CONTEST_UNAUTHORIZED_MESSAGE} />
-
-  if (error?.code === 'FORBIDDEN')
-    redirect(`/contests/${contestSlug}/solve?discipline=${discipline}`)
 
   if (error) throw error
 

@@ -1,15 +1,14 @@
 'use client'
-import { HintSection } from '@/frontend/shared/hint-section'
+import {
+  RoundSessionHeader,
+  RoundSessionRow,
+} from '@/frontend/shared/round-session-row'
+import { cn } from '@/frontend/utils/cn'
+import { useScrollToIndex } from '@/frontend/utils/use-scroll-to-index'
+import { useTRPC, type RouterOutputs } from '@/trpc/react'
 import { type Discipline } from '@/types'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { useTRPC, type RouterOutputs } from '@/trpc/react'
-import { useCallback, useEffect, type ReactNode } from 'react'
-import {
-  RoundSessionRow,
-  RoundSessionHeader,
-} from '@/frontend/shared/round-session-row'
-import { useScrollToIndex } from '@/frontend/utils/use-scroll-to-index'
-import { cn } from '@/frontend/utils/cn'
+import { useCallback, useEffect } from 'react'
 
 export function SessionList({
   contestSlug,
@@ -59,17 +58,11 @@ export function SessionList({
       )
   }, [scrollToId, sessions, scrollAndGlow])
 
-  if (sessions.length === 0) {
-    return (
-      <HintSection>
-        <p>It seems no one participated in this round</p>
-      </HintSection>
-    )
-  }
-
-  const stickyItemIdx = sessions.findIndex((result) => result.session.isOwn)
+  const ownSessionIdx = sessions.findIndex((result) => result.session.isOwn)
   return (
-    <SessionListShell>
+    <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 lg:p-4 sm:p-3'>
+      <RoundSessionHeader />
+      {ownSessionIdx === -1 && <div>Join this round!</div>}
       <ul ref={containerRef} className='space-y-2'>
         {sessions.map((session, idx) => (
           <RoundSessionRow
@@ -77,30 +70,20 @@ export function SessionList({
             place={idx + 1}
             discipline={discipline}
             podiumColors
-            isFirstOnPage={false}
+            isFirstOnPage={idx === 0}
             className={cn('rounded-xl', {
               'sticky bottom-[-2px] top-[calc(var(--layout-section-header-height)-2px)] z-10':
-                idx === stickyItemIdx,
+                idx === ownSessionIdx,
             })}
             key={session.session.id}
             onPlaceClick={
-              idx === stickyItemIdx
-                ? () => scrollAndGlow(stickyItemIdx)
+              idx === ownSessionIdx
+                ? () => scrollAndGlow(ownSessionIdx)
                 : undefined
             }
           />
         ))}
       </ul>
-    </SessionListShell>
-  )
-}
-
-export function SessionListShell({ children }: { children: ReactNode }) {
-  return (
-    <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 lg:p-4 sm:p-3'>
-      <RoundSessionHeader />
-
-      <ul className='flex flex-1 flex-col gap-2'>{children}</ul>
     </div>
   )
 }

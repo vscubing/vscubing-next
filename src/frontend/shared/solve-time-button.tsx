@@ -97,7 +97,11 @@ const solveTimeLabelVariants = cva(
   'vertical-alignment-fix relative inline-flex h-8 min-w-24 items-center justify-center lg:min-w-20',
   {
     variants: {
-      variant: { average: 'text-yellow-100', dnf: 'text-red-80' },
+      variant: {
+        average: 'text-yellow-100',
+        dnf: 'text-red-80',
+        placeholder: 'text-grey-40',
+      },
     },
   },
 )
@@ -120,12 +124,14 @@ export function SolveTimeLabel({
 }: SolveTimeLabelProps & {
   ref?: React.RefObject<HTMLSpanElement>
 }) {
-  let variant: 'average' | 'dnf' | undefined
+  let variant: 'average' | 'dnf' | 'placeholder' | undefined
 
   if (isDnf) {
     variant = 'dnf'
   } else if (isAverage) {
     variant = 'average'
+  } else if (isPlaceholder) {
+    variant = 'placeholder'
   }
 
   let content = ''
