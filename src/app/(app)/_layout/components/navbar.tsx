@@ -181,7 +181,9 @@ function getNavbarLinks(
       icon: <OngoingContestIcon />,
       name: 'Ongoing contest',
       route: '/contests/ongoing',
-      href: getOngoingLink(ongoingContest),
+      href: ongoingContest
+        ? `/contests/${ongoingContest.slug}/results?discipline=${DEFAULT_DISCIPLINE}`
+        : undefined,
       disabled: ongoingContest === null,
     },
     {
@@ -204,15 +206,4 @@ function getNavbarLinks(
 
 function removePrefix(value: string, prefix: string) {
   return value.startsWith(prefix) ? value.slice(prefix.length) : value
-}
-
-function getOngoingLink(
-  ongoingContest: RouterOutputs['contest']['getOngoing'] | undefined,
-) {
-  if (!ongoingContest) return undefined
-  const page = ongoingContest?.disciplines.find(
-    (d) => d.slug === DEFAULT_DISCIPLINE,
-  )?.capabilities
-
-  return `/contests/${ongoingContest.slug}/${page}?discipline=${DEFAULT_DISCIPLINE}`
 }

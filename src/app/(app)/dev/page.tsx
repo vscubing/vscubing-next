@@ -38,8 +38,8 @@ export async function OngoingContestInfo() {
     .where(
       and(
         or(
-          ...ongoingContest.disciplines.map(({ slug }) =>
-            eq(roundTable.disciplineSlug, slug),
+          ...ongoingContest.disciplines.map((discipline) =>
+            eq(roundTable.disciplineSlug, discipline),
           ),
         ),
         eq(roundTable.contestSlug, ongoingContest.slug),
