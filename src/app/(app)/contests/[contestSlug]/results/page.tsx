@@ -13,7 +13,7 @@ import {
 } from '@/types'
 import { formatContestDuration } from '@/utils/format-date'
 import { tryCatchTRPC } from '@/utils/try-catch'
-import { redirect } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { Suspense } from 'react'
 import { SessionList } from './_components/session-list'
 
@@ -31,7 +31,13 @@ export default async function ContestResultsPage({
       `/contests/${contestSlug}/results?discipline=${DEFAULT_DISCIPLINE}`,
     )
 
-  const contest = await api.contest.getContestMetaData({ contestSlug })
+  const { data: contest, error } = await tryCatchTRPC(
+    api.contest.getContestMetaData({
+      contestSlug,
+    }),
+  )
+  if (error?.code === 'NOT_FOUND') notFound()
+  if (error) throw error
 
   let title = ''
   if (contest.isOngoing) {

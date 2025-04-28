@@ -6,7 +6,7 @@ import {
 } from '@/frontend/shared/round-session-row'
 import { SignInButton } from '@/frontend/shared/sign-in-button'
 import { useUser } from '@/frontend/shared/use-user'
-import { PrimaryButton } from '@/frontend/ui'
+import { GhostButton } from '@/frontend/ui'
 import { cn } from '@/frontend/utils/cn'
 import { useScrollToIndex } from '@/frontend/utils/use-scroll-to-index'
 import { useTRPC, type RouterOutputs } from '@/trpc/react'
@@ -16,6 +16,7 @@ import {
   useQueryClient,
   useSuspenseQuery,
 } from '@tanstack/react-query'
+import { LogInIcon } from 'lucide-react'
 import { useCallback, useEffect } from 'react'
 
 export function SessionList({
@@ -70,7 +71,7 @@ export function SessionList({
   const { mutate: createRoundSession } = useMutation(
     trpc.roundSession.create.mutationOptions({
       onSettled: () =>
-        queryClient.refetchQueries(
+        queryClient.invalidateQueries(
           // TODO: we probably should be revalidating queryKeys and not queries
           trpc.contest.getContestResults.queryOptions({
             contestSlug,
@@ -85,18 +86,6 @@ export function SessionList({
   return (
     <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 lg:p-4 sm:p-3'>
       <RoundSessionHeader />
-      {ownSessionIdx === -1 &&
-        (user ? (
-          <PrimaryButton
-            size='sm'
-            onClick={() => createRoundSession({ contestSlug, discipline })}
-            autoFocus
-          >
-            Join this round!
-          </PrimaryButton>
-        ) : (
-          <SignInButton variant='primary' />
-        ))}
       <ul ref={containerRef} className='space-y-2'>
         {sessions.map((session, idx) => (
           <RoundSessionRow
@@ -118,6 +107,26 @@ export function SessionList({
           />
         ))}
       </ul>
+      {ownSessionIdx === -1 && (
+        <div className='sticky bottom-0 flex w-full items-center gap-2 rounded-xl border border-secondary-20 bg-secondary-80 px-4 py-2'>
+          {user ? (
+            <GhostButton
+              onClick={() => createRoundSession({ contestSlug, discipline })}
+              size='sm'
+              autoFocus
+              className='text-lg'
+            >
+              Join this round!
+              <LogInIcon />
+            </GhostButton>
+          ) : (
+            <>
+              <span className='title-h3'>To participate in this round:</span>{' '}
+              <SignInButton variant='ghost' />
+            </>
+          )}
+        </div>
+      )}
     </div>
   )
 }

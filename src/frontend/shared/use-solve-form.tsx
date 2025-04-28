@@ -4,11 +4,7 @@ import { useSimulator } from '@/app/(app)/contests/[contestSlug]/solve/_componen
 import { useTRPC } from '@/trpc/react'
 import type { Discipline, ResultDnfable } from '@/types'
 import { signSolve } from '@/utils/solve-signature'
-import {
-  useQueryClient,
-  useSuspenseQuery,
-  useMutation,
-} from '@tanstack/react-query'
+import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query'
 import { TRPCError } from '@trpc/server'
 import { redirect, RedirectType } from 'next/navigation'
 import { useLocalStorage } from 'usehooks-ts'
@@ -44,7 +40,7 @@ export function useSolveForm({
     data: state,
     isFetching: isStateFetching,
     error,
-  } = useSuspenseQuery(stateQuery)
+  } = useQuery(stateQuery)
   if (error?.data?.code === 'FORBIDDEN') {
     redirect(
       `/contests/${contestSlug}/results?discipline=${discipline}&scrollToOwn=true`,
@@ -94,6 +90,8 @@ export function useSolveForm({
   const { initSolve } = useSimulator()
 
   function handleInitSolve() {
+    if (!state)
+      throw new Error('useSolveForm handler called with undefined state')
     initSolve(
       { discipline, scramble: state.currentScramble.moves },
       (solve) => {
@@ -112,6 +110,9 @@ export function useSolveForm({
       | { type: 'changed_to_extra'; reason: string }
       | { type: 'submitted' },
   ) {
+    if (!state)
+      throw new Error('useSolveForm handler called with undefined state')
+
     submitSolve({
       contestSlug,
       discipline,

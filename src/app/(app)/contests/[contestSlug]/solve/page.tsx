@@ -114,7 +114,7 @@ async function PageContent({
   contestSlug: string
   discipline: Discipline
 }) {
-  const { data: roundSessionState, error } = await tryCatchTRPC(
+  const { error } = await tryCatchTRPC(
     api.roundSession.state({ contestSlug, discipline }),
   )
   if (error?.code === 'NOT_FOUND') notFound()
@@ -147,11 +147,7 @@ async function PageContent({
         </p>
 
         <SimulatorProvider>
-          <SolveContestForm
-            initialData={roundSessionState}
-            contestSlug={contestSlug}
-            discipline={discipline}
-          />
+          <SolveContestForm contestSlug={contestSlug} discipline={discipline} />
         </SimulatorProvider>
       </div>
     </div>

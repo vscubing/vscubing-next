@@ -4,7 +4,6 @@ import type { Discipline } from '@/types'
 import { CurrentSolve } from './current-solve'
 import { Progress } from './progress'
 import { SolvePanel } from './solve-panel'
-import { type RouterOutputs } from '@/trpc/react'
 import { useSolveForm } from '@/frontend/shared/use-solve-form'
 
 export function SolveContestForm({
@@ -13,11 +12,12 @@ export function SolveContestForm({
 }: {
   contestSlug: string
   discipline: Discipline
-  initialData: RouterOutputs['roundSession']['state']
 }) {
   const { state, isPending, handleSubmitSolve, handleInitSolve } = useSolveForm(
     { contestSlug, discipline },
   )
+
+  if (!state) return // TODO: remove this if we make useSolveForm use useSuspenseQuery (see https://github.com/t3-oss/create-t3-app/issues/1765)
 
   const currentSolveNumber = (state?.submittedSolves?.length ?? 0) + 1
   return (

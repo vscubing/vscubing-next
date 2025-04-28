@@ -24,6 +24,7 @@ import type { RefObject } from 'react'
 import { UserBadges } from './user-badges'
 import { useSolveForm } from './use-solve-form'
 import { SimulatorProvider } from '@/app/(app)/contests/[contestSlug]/solve/_components'
+import { LoadingDots } from '../ui/loading-dots'
 
 // HACK: we can't just use useMatchesScreen for switching between Desktop and Tablet because then it won't be SSRed properly
 type RoundSessionRowProps = {
@@ -380,6 +381,13 @@ function OwnSolveInProgress({
     { contestSlug, discipline },
   )
 
+  if (!state)
+    return (
+      <div className='flex w-24 items-center justify-center lg:w-20'>
+        <LoadingDots />
+      </div>
+    )
+
   if (!state.currentSolve)
     return (
       <span className='inline-flex h-full w-24 items-center justify-center lg:w-20'>
@@ -396,6 +404,7 @@ function OwnSolveInProgress({
         contestSlug={contestSlug}
         discipline={discipline}
         solveId={state.currentSolve.id}
+        isFestive={state.currentSolve.isPersonalRecord}
         canShowHint={false}
         backgroundColorClass='bg-secondary-80'
         extraNumber={getExtraNumber(state.currentScramble.position)}
