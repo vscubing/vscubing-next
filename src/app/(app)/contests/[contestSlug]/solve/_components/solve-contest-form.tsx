@@ -1,161 +1,23 @@
 'use client'
 
-import type { Discipline, ResultDnfable } from '@/types'
+import type { Discipline } from '@/types'
 import { CurrentSolve } from './current-solve'
 import { Progress } from './progress'
 import { SolvePanel } from './solve-panel'
-import { useTRPC, type RouterOutputs } from '@/trpc/react'
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from '@tanstack/react-query'
-import { redirect, RedirectType } from 'next/navigation'
-import { useSimulator } from './simulator'
-import { useLocalStorage } from 'usehooks-ts'
-import { toast, type Toast } from '@/frontend/ui'
-import { TRPCError } from '@trpc/server'
-import { SolveTimeLinkOrDnf } from '@/frontend/shared/solve-time-button'
-import { signSolve } from '@/utils/solve-signature'
+import { type RouterOutputs } from '@/trpc/react'
+import { useSolveForm } from '@/frontend/shared/use-solve-form'
 
 export function SolveContestForm({
   contestSlug,
   discipline,
-  initialData,
 }: {
   contestSlug: string
   discipline: Discipline
   initialData: RouterOutputs['roundSession']['state']
 }) {
-  const trpc = useTRPC()
-  const queryClient = useQueryClient()
-  const [seenDiscordInvite, setSeenDiscordInvite] = useLocalStorage(
-    'vs-seenDiscordInvite',
-    false,
+  const { state, isPending, handleSubmitSolve, handleInitSolve } = useSolveForm(
+    { contestSlug, discipline },
   )
-
-  const stateQuery = trpc.roundSession.state.queryOptions(
-    {
-      contestSlug,
-      discipline,
-    },
-    {
-      retry: (_, err) =>
-        err.data?.code !== 'FORBIDDEN' && err.data?.code !== 'UNAUTHORIZED', // TODO: why does removing unauthorized result in server errors?
-      initialData,
-    },
-  )
-  const {
-    data: state,
-    isFetching: isStateFetching,
-    error,
-  } = useSuspenseQuery(stateQuery)
-  if (error?.data?.code === 'FORBIDDEN') {
-    console.log(state)
-    redirect(
-      `/contests/${contestSlug}/results?discipline=${discipline}&scrollToOwn=true`,
-      RedirectType.replace,
-    )
-  }
-
-  if (error)
-    throw new TRPCError({ message: error.message, code: error.data!.code })
-
-  const { mutate: postSolveResult, isPending: isPostSolvePending } =
-    useMutation(
-      trpc.roundSession.postSolve.mutationOptions({
-        onSuccess: (res) => {
-          if (res?.setNewPersonalRecord)
-            handlePersonalRecord(res.previousPersonalRecord)
-        },
-        onSettled: () => queryClient.invalidateQueries(stateQuery),
-        onError: (error) => {
-          if (error?.data?.code === 'BAD_REQUEST') toast(SOLVE_REJECTED_TOAST)
-        },
-      }),
-    )
-  const { mutate: submitSolve, isPending: isSubmitSolvePending } = useMutation(
-    trpc.roundSession.submitSolve.mutationOptions({
-      onSettled: () => queryClient.invalidateQueries(stateQuery),
-    }),
-  )
-
-  const isFormPending =
-    isStateFetching || isPostSolvePending || isSubmitSolvePending
-
-  const { initSolve } = useSimulator()
-
-  function handleInitSolve() {
-    initSolve(
-      { discipline, scramble: state.currentScramble.moves },
-      (solve) => {
-        return postSolveResult({
-          solve: signSolve(solve),
-          scrambleId: state.currentScramble.id,
-          contestSlug,
-          discipline,
-        })
-      },
-    )
-  }
-
-  async function handleSubmitSolve(
-    payload:
-      | { type: 'changed_to_extra'; reason: string }
-      | { type: 'submitted' },
-  ) {
-    submitSolve({
-      contestSlug,
-      discipline,
-      type: payload.type,
-      solveId: state.currentSolve!.id,
-    })
-
-    if (
-      state.submittedSolves.length === 4 &&
-      payload.type === 'submitted' &&
-      !seenDiscordInvite
-    ) {
-      toast({
-        title: 'Great to have you on board',
-        description:
-          'Join our Discord community to connect with other vscubers',
-        contactUsButton: true,
-        contactUsButtonLabel: 'Discord',
-        duration: 'infinite',
-        className: 'w-[23.75rem]',
-      })
-      setSeenDiscordInvite(true)
-    }
-  }
-
-  function handlePersonalRecord(previousPersonalRecord?: {
-    id: number
-    result: ResultDnfable
-    contestSlug: string
-  }) {
-    toast({
-      title: 'Wow, new personal best single!',
-      description: previousPersonalRecord ? (
-        <>
-          Previous personal best:{' '}
-          {
-            <SolveTimeLinkOrDnf
-              className='h-auto min-w-0'
-              canShowHint={false}
-              result={previousPersonalRecord.result}
-              discipline={discipline}
-              contestSlug={previousPersonalRecord.contestSlug}
-              solveId={previousPersonalRecord.id}
-            />
-          }
-        </>
-      ) : (
-        'You can check out the reconstruction by clicking on the solve time.'
-      ),
-      variant: 'festive',
-    })
-  }
 
   const currentSolveNumber = (state?.submittedSolves?.length ?? 0) + 1
   return (
@@ -192,7 +54,7 @@ export function SolveContestForm({
           <CurrentSolve
             contestSlug={contestSlug}
             discipline={discipline}
-            areActionsDisabled={isFormPending}
+            areActionsDisabled={isPending}
             canChangeToExtra={state.canChangeToExtra}
             position={state.currentScramble.position}
             scramble={state.currentScramble.moves}
@@ -211,11 +73,3 @@ export function SolveContestForm({
     </div>
   )
 }
-
-const SOLVE_REJECTED_TOAST = {
-  title: 'Uh-oh! Solve rejected by the server',
-  description:
-    "Under normal circumstances this shouldn't happen. Feel free to take an extra.",
-  duration: 'infinite',
-  contactUsButton: true,
-} satisfies Toast

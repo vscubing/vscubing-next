@@ -21,7 +21,7 @@ import {
 } from '@/types'
 import { groupBy } from '@/utils/group-by'
 import { TRPCError } from '@trpc/server'
-import { and, desc, eq, lte } from 'drizzle-orm'
+import { and, desc, eq, lte, or } from 'drizzle-orm'
 import { getContestUserCapabilities } from '../../shared/get-contest-user-capabilities'
 import { sortWithRespectToExtras } from '../../shared/sort-with-respect-to-extras'
 
@@ -173,7 +173,7 @@ export const contestRouter = createTRPCRouter({
       })
       const wcaIdSubquery = getWcaIdSubquery({ db: ctx.db })
 
-      const queryRes = await ctx.db
+      const solveRows = await ctx.db
         .select({
           session: {
             id: roundSessionTable.id,
@@ -188,6 +188,7 @@ export const contestRouter = createTRPCRouter({
             id: solveTable.id,
             position: scrambleTable.position,
             personalRecordId: bestSolveSubquery.id,
+            status: solveTable.status,
           },
           user: {
             name: userTable.name,
@@ -213,43 +214,101 @@ export const contestRouter = createTRPCRouter({
           and(
             eq(roundTable.contestSlug, input.contestSlug),
             eq(roundTable.disciplineSlug, input.discipline),
-            eq(solveTable.status, 'submitted'),
+            or(
+              eq(solveTable.status, 'pending'),
+              eq(solveTable.status, 'submitted'),
+            ),
           ),
         )
         .orderBy(roundSessionTable.avgMs)
 
-      const solvesBySessionId = groupBy(queryRes, ({ session }) => session.id)
+      const solvesBySessionId = groupBy(solveRows, ({ session }) => session.id)
       const globalRecordsByUser = await getGlobalRecordsByUser()
 
-      return Array.from(solvesBySessionId.values()).map((rows) => {
-        if (!rows[0]) throw new Error('no 1st row')
-        const { session, user } = rows[0]
-        return {
+      const emptySessionRows = await ctx.db
+        .select({
           session: {
-            result: session.isFinished ? resultDnfable.parse(session) : null,
-            id: session.id,
-            isOwn: user.id === ctx.session?.user.id,
-            isFinished: session.isFinished,
+            id: roundSessionTable.id,
           },
-          solves: sortWithRespectToExtras(
-            rows.map(({ solve }) => ({
-              id: solve.id,
-              position: solve.position,
-              result: resultDnfable.parse({
-                timeMs: solve.timeMs,
-                isDnf: solve.isDnf,
-                plusTwoIncluded: solve.plusTwoIncluded,
-              }),
-              isPersonalRecord: solve.id === solve.personalRecordId,
-            })),
-          ),
           user: {
-            ...user,
-            globalRecords: globalRecordsByUser.get(user.id) ?? null,
+            name: userTable.name,
+            id: userTable.id,
+            wcaId: wcaIdSubquery.wcaId,
+            role: userTable.role,
           },
-          contestSlug: input.contestSlug,
-        }
-      })
+        })
+        .from(roundTable)
+        .innerJoin(
+          roundSessionTable,
+          eq(roundSessionTable.roundId, roundTable.id),
+        )
+        .innerJoin(userTable, eq(userTable.id, roundSessionTable.contestantId))
+        .leftJoin(wcaIdSubquery, eq(wcaIdSubquery.userId, userTable.id))
+        .where(
+          and(
+            eq(roundTable.contestSlug, input.contestSlug),
+            eq(roundTable.disciplineSlug, input.discipline),
+            eq(
+              ctx.db.$count(
+                solveTable,
+                eq(solveTable.roundSessionId, roundSessionTable.id),
+              ),
+              0,
+            ),
+          ),
+        )
+
+      return Array.from(solvesBySessionId.values())
+        .map((rows) => {
+          if (!rows[0]) {
+            console.error(`no 1st row for ${JSON.stringify(input)}`)
+            throw new Error(`no 1st row for ${JSON.stringify(input)}`)
+          }
+
+          const { session, user } = rows[0]
+          return {
+            session: {
+              result: session.isFinished ? resultDnfable.parse(session) : null,
+              id: session.id,
+              isOwn: user.id === ctx.session?.user.id,
+              isFinished: session.isFinished,
+            },
+            solves: sortWithRespectToExtras(
+              rows.map(({ solve }) => ({
+                id: solve.id,
+                position: solve.position,
+                result: resultDnfable.parse({
+                  timeMs: solve.timeMs,
+                  isDnf: solve.isDnf,
+                  plusTwoIncluded: solve.plusTwoIncluded,
+                }),
+                status: solve.status,
+                isPersonalRecord: solve.id === solve.personalRecordId,
+              })),
+            ),
+            user: {
+              ...user,
+              globalRecords: globalRecordsByUser.get(user.id) ?? null,
+            },
+            contestSlug: input.contestSlug,
+          }
+        })
+        .concat(
+          emptySessionRows.map(({ user, session }) => ({
+            session: {
+              result: null,
+              id: session.id,
+              isOwn: user.id === ctx.session?.user.id,
+              isFinished: false,
+            },
+            solves: [],
+            user: {
+              ...user,
+              globalRecords: globalRecordsByUser.get(user.id) ?? null,
+            },
+            contestSlug: input.contestSlug,
+          })),
+        )
     }),
 
   getSolve: publicProcedure

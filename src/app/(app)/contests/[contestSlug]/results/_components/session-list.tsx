@@ -1,13 +1,19 @@
 'use client'
+
 import {
   RoundSessionHeader,
   RoundSessionRow,
 } from '@/frontend/shared/round-session-row'
+import { PrimaryButton } from '@/frontend/ui'
 import { cn } from '@/frontend/utils/cn'
 import { useScrollToIndex } from '@/frontend/utils/use-scroll-to-index'
 import { useTRPC, type RouterOutputs } from '@/trpc/react'
 import { type Discipline } from '@/types'
-import { useSuspenseQuery } from '@tanstack/react-query'
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from '@tanstack/react-query'
 import { useCallback, useEffect } from 'react'
 
 export function SessionList({
@@ -58,11 +64,33 @@ export function SessionList({
       )
   }, [scrollToId, sessions, scrollAndGlow])
 
+  const queryClient = useQueryClient()
+  const { mutate: createRoundSession } = useMutation(
+    trpc.roundSession.create.mutationOptions({
+      onSettled: () =>
+        queryClient.refetchQueries(
+          // TODO: we probably should be revalidating queryKeys and not queries
+          trpc.contest.getContestResults.queryOptions({
+            contestSlug,
+            discipline,
+          }),
+        ),
+    }),
+  )
+
   const ownSessionIdx = sessions.findIndex((result) => result.session.isOwn)
   return (
     <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 lg:p-4 sm:p-3'>
       <RoundSessionHeader />
-      {ownSessionIdx === -1 && <div>Join this round!</div>}
+      {ownSessionIdx === -1 && (
+        <PrimaryButton
+          size='sm'
+          onClick={() => createRoundSession({ contestSlug, discipline })}
+          autoFocus
+        >
+          Join this round!
+        </PrimaryButton>
+      )}
       <ul ref={containerRef} className='space-y-2'>
         {sessions.map((session, idx) => (
           <RoundSessionRow

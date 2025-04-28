@@ -227,6 +227,6 @@ type SimulatorContextValue = {
 }
 export const SimulatorContext = createContext<SimulatorContextValue>({
   initSolve: () => {
-    throw new Error('cube context is missing')
+    throw new Error('`SimulatorContest` is missing')
   },
 })

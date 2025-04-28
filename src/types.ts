@@ -104,6 +104,7 @@ export type RoundSession = {
     position: ScramblePosition
     result: ResultDnfable
     isPersonalRecord: boolean
+    status: SolveStatus
   }[]
   contestSlug: string
   user: User

@@ -16,7 +16,7 @@ import { validateSolve } from '@/backend/shared/validate-solve'
 import { getContestUserCapabilities } from '../../shared/get-contest-user-capabilities'
 import { removeSolutionComments } from '@/utils/remove-solution-comments'
 import { getPersonalRecordSolveSubquery } from '@/backend/shared/personal-record'
-import type { db } from '@/backend/db'
+import { db } from '@/backend/db'
 import { decodeSolve } from '@/utils/solve-signature'
 
 const EXTRAS_PER_ROUND = 2
@@ -61,16 +61,10 @@ export const roundSessionAuthProcedure = protectedProcedure
         message: "You can't participate in a round you've already completed.",
       })
 
-    const roundSubquery = ctx.db
-      .select()
-      .from(roundTable)
-      .where(
-        and(
-          eq(roundTable.contestSlug, input.contestSlug),
-          eq(roundTable.disciplineSlug, input.discipline),
-        ),
-      )
-      .as('subquery')
+    const roundSubquery = getRoundSubquery({
+      contestSlug: input.contestSlug,
+      discipline: input.discipline,
+    })
 
     const [roundSession] = await ctx.db
       .select({ id: roundSessionTable.id, roundId: roundSubquery.id })
@@ -84,14 +78,12 @@ export const roundSessionAuthProcedure = protectedProcedure
 
     if (roundSession) return next({ ctx: { roundSession } })
 
-    const [createdRoundSession] = await ctx.db
-      .with(roundSubquery)
-      .insert(roundSessionTable)
-      .values({
-        roundId: sql`(select id from ${roundSubquery})`,
-        contestantId: ctx.session.user.id,
-      })
-      .returning({ id: roundSessionTable.id, roundId: roundSubquery.id })
+    const createdRoundSession = await createRoundSession({
+      userId: ctx.session.user.id,
+      contestSlug: input.contestSlug,
+      discipline: input.discipline,
+    })
+
     if (!createdRoundSession)
       throw new Error(
         `Error while creating a round session for ${JSON.stringify(input)}`,
@@ -111,6 +103,20 @@ export const roundSessionAuthProcedure = protectedProcedure
   })
 
 export const roundSessionRouter = createTRPCRouter({
+  create: protectedProcedure
+    .input(
+      z.object({
+        discipline: z.enum(DISCIPLINES),
+        contestSlug: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) =>
+      createRoundSession({
+        userId: ctx.session.userId,
+        contestSlug: input.contestSlug,
+        discipline: input.discipline,
+      }),
+    ),
   state: roundSessionAuthProcedure.query(async ({ ctx, input }) => {
     const allRows = await ctx.db
       .select({
@@ -403,4 +409,56 @@ async function getPersonalRecordSolveIncludingOngoing(
         result: resultDnfable.parse(activeBest?.result),
       }
     : undefined
+}
+
+async function createRoundSession({
+  userId,
+  contestSlug,
+  discipline,
+}: {
+  userId: string
+  contestSlug: string
+  discipline: Discipline
+}) {
+  const roundSubquery = getRoundSubquery({ contestSlug, discipline })
+  console.log(contestSlug, discipline, userId)
+  console.log(
+    await db
+      .select()
+      .from(roundSubquery)
+      .where(
+        and(
+          eq(roundSubquery.disciplineSlug, discipline),
+          eq(roundSubquery.contestSlug, contestSlug),
+        ),
+      ),
+  )
+  const [roundSession] = await db
+    .with(roundSubquery)
+    .insert(roundSessionTable)
+    .values({
+      roundId: sql`(select id from ${roundSubquery})`,
+      contestantId: userId,
+    })
+    .returning({ id: roundSessionTable.id, roundId: roundSubquery.id })
+  return roundSession
+}
+
+function getRoundSubquery({
+  contestSlug,
+  discipline,
+}: {
+  contestSlug: string
+  discipline: Discipline
+}) {
+  return db
+    .select()
+    .from(roundTable)
+    .where(
+      and(
+        eq(roundTable.contestSlug, contestSlug),
+        eq(roundTable.disciplineSlug, discipline),
+      ),
+    )
+    .as('subquery')
 }

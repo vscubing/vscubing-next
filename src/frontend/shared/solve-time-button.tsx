@@ -52,7 +52,19 @@ export function SolveTimeLinkOrDnf({
   backgroundColorClass,
 }: SolveTimeLinkOrDnfProps) {
   if (result.isDnf) {
-    return <SolveTimeLabel isDnf className={className} />
+    return (
+      <span className='relative'>
+        <span className='absolute top-[-0.9rem] flex min-w-full items-center'>
+          {extraNumber !== undefined && (
+            <ExtraLabel
+              extraNumber={extraNumber}
+              className={cn('-ml-1 rounded px-1', backgroundColorClass)}
+            />
+          )}
+        </span>
+        <SolveTimeLabel isDnf className={className} />
+      </span>
+    )
   }
   return (
     <WatchSolveHintPopover disabled={!canShowHint}>
