@@ -25,12 +25,14 @@ export function SessionList({
   initialData,
   scrollToId,
   scrollToOwn,
+  isOngoing,
 }: {
   contestSlug: string
   discipline: Discipline
   initialData?: RouterOutputs['contest']['getContestResults']
   scrollToId?: number
   scrollToOwn?: boolean
+  isOngoing: boolean
 }) {
   const trpc = useTRPC()
   const { data: sessions } = useSuspenseQuery(
@@ -107,7 +109,7 @@ export function SessionList({
           />
         ))}
       </ul>
-      {ownSessionIdx === -1 && (
+      {isOngoing && ownSessionIdx === -1 && (
         <div className='sticky bottom-0 flex h-16 w-full items-center gap-2 rounded-xl border border-secondary-20 bg-secondary-80 px-4'>
           {user ? (
             <GhostButton

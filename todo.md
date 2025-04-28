@@ -1,3 +1,6 @@
 - [x] always show results, without auth, even incomplete sessions
-- [ ] join/leave round
+- [x] join round
+- [x] leave round
+- [ ] scroll on session finish
 - [ ] start/end rounds (+incomplete sessions warning)
+- [ ] streaming

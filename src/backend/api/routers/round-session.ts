@@ -117,6 +117,26 @@ export const roundSessionRouter = createTRPCRouter({
         discipline: input.discipline,
       }),
     ),
+  delete: roundSessionAuthProcedure.mutation(async ({ ctx }) => {
+    const solves = await ctx.db
+      .select()
+      .from(roundSessionTable)
+      .innerJoin(
+        solveTable,
+        eq(solveTable.roundSessionId, roundSessionTable.id),
+      )
+      .where(eq(roundSessionTable.id, ctx.roundSession.id))
+    if (solves.length > 0) throw new TRPCError({ code: 'FORBIDDEN' })
+
+    await ctx.db
+      .delete(roundSessionTable)
+      .where(
+        and(
+          eq(roundSessionTable.id, ctx.roundSession.id),
+          eq(roundSessionTable.contestantId, ctx.session.user.id),
+        ),
+      )
+  }),
   state: roundSessionAuthProcedure.query(async ({ ctx, input }) => {
     const allRows = await ctx.db
       .select({

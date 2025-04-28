@@ -2,20 +2,16 @@ import { LayoutSectionHeader } from '@/app/(app)/_layout'
 import { LayoutHeaderTitlePortal } from '@/app/(app)/_layout/layout-header'
 import { LayoutPageTitleMobile } from '@/app/(app)/_layout/layout-page-title-mobile'
 import { DisciplineSwitcher } from '@/frontend/shared/discipline-switcher'
-import { HintSignInSection } from '@/frontend/shared/hint-section'
+import { HintSection } from '@/frontend/shared/hint-section'
 import { NavigateBackButton } from '@/frontend/shared/navigate-back-button'
 import { api } from '@/trpc/server'
-import {
-  CONTEST_UNAUTHORIZED_MESSAGE,
-  DEFAULT_DISCIPLINE,
-  isDiscipline,
-  type Discipline,
-} from '@/types'
+import { DEFAULT_DISCIPLINE, isDiscipline, type Discipline } from '@/types'
 import { formatContestDuration } from '@/utils/format-date'
 import { tryCatchTRPC } from '@/utils/try-catch'
 import { notFound, redirect } from 'next/navigation'
 import { Suspense } from 'react'
 import { SessionList } from './_components/session-list'
+import { LeaveRoundButton } from './_components/leave-round-button'
 
 export default async function ContestResultsPage({
   params,
@@ -63,6 +59,7 @@ export default async function ContestResultsPage({
             {formatContestDuration(contest)}
           </p>
         </div>
+        <LeaveRoundButton contestSlug={contestSlug} discipline={discipline} />
       </LayoutSectionHeader>
 
       <Suspense
@@ -78,6 +75,7 @@ export default async function ContestResultsPage({
           discipline={discipline}
           scrollToId={Number(scrollToId)}
           scrollToOwn={Boolean(scrollToOwn)}
+          isOngoing={contest.isOngoing}
         />
       </Suspense>
     </>
@@ -89,31 +87,37 @@ async function PageContent({
   discipline,
   scrollToId,
   scrollToOwn,
+  isOngoing,
 }: {
   contestSlug: string
   discipline: Discipline
   scrollToId?: number
   scrollToOwn?: boolean
+  isOngoing: boolean
 }) {
-  const { data: initialData, error } = await tryCatchTRPC(
-    api.contest.getContestResults({
-      contestSlug,
-      discipline,
-    }),
-  )
+  let sessions = await api.contest.getContestResults({
+    contestSlug,
+    discipline,
+  })
 
-  if (error?.code === 'UNAUTHORIZED')
-    return <HintSignInSection description={CONTEST_UNAUTHORIZED_MESSAGE} />
+  if (!isOngoing)
+    sessions = sessions.filter((session) => session.session.isFinished) // TODO: remove this when we implement autocompleting all incomplete sessions on contest end
 
-  if (error) throw error
-
+  if (sessions.length === 0) {
+    return (
+      <HintSection>
+        <p>It seems no one participated in this round.</p>
+      </HintSection>
+    )
+  }
   return (
     <SessionList
-      initialData={initialData}
+      initialData={sessions}
       contestSlug={contestSlug}
       discipline={discipline}
       scrollToId={scrollToId}
       scrollToOwn={scrollToOwn}
+      isOngoing={isOngoing}
     />
   )
 }
