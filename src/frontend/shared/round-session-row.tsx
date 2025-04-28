@@ -116,14 +116,23 @@ function RoundSessionRowTablet({
 }: RoundSessionRowProps) {
   const { bestId, worstId } = getBestAndWorstIds(solves)
 
+  const isInProgress =
+    solves.length !== 5 || solves.at(-1)!.status === 'pending'
   return (
-    <Accordion.Root type='single' collapsible asChild>
+    <Accordion.Root
+      type='single'
+      defaultValue={isInProgress && session.isOwn ? 'result' : undefined}
+      collapsible
+      asChild
+    >
       <Accordion.Item value='result' asChild>
         <div className={className}>
           <SpinningBorder
-            enabled={session.isOwn}
+            enabled={session.isOwn && session.isFinished}
             color={tailwindConfig.theme.colors.secondary[60]}
-            className='rounded-xl'
+            className={cn('rounded-xl', {
+              'border border-dashed border-grey-20': !session.isFinished,
+            })}
           >
             <div
               className={cn(
@@ -226,8 +235,10 @@ function RoundSessionRowDesktop({
     <div className={className}>
       <SpinningBorder
         color={tailwindConfig.theme.colors.secondary[60]}
-        enabled={session.isOwn}
-        className='rounded-xl'
+        enabled={session.isOwn && session.isFinished}
+        className={cn('rounded-xl', {
+          'border border-dashed border-grey-40': !session.isFinished,
+        })}
       >
         <div
           className={cn(
@@ -398,7 +409,7 @@ function OwnSolveInProgress({
     )
 
   return (
-    <div className='relative'>
+    <div className='relative md:flex md:flex-col md:items-center'>
       <SolveTimeLinkOrDnf
         result={state.currentSolve.result}
         contestSlug={contestSlug}
@@ -416,7 +427,7 @@ function OwnSolveInProgress({
               : undefined
         }
       />
-      <div className='absolute -bottom-3 left-1/2 flex -translate-x-1/2 gap-2'>
+      <div className='absolute -bottom-3 left-1/2 flex -translate-x-1/2 gap-2 md:static md:translate-x-0'>
         {state.canChangeToExtra && (
           <UnderlineButton
             size='sm'

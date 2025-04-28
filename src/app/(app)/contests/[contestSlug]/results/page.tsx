@@ -56,7 +56,9 @@ export default async function ContestResultsPage({
           initialDiscipline={discipline}
         />
         <div>
-          <h2 className='title-h2 mb-1'>Contest {contestSlug}</h2>
+          <h2 className='title-h2 mb-1'>
+            Contest {contestSlug} {contest.isOngoing ? ' (ongoing)' : ''}
+          </h2>
           <p className='min-w-1 text-grey-40'>
             {formatContestDuration(contest)}
           </p>

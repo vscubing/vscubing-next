@@ -220,7 +220,7 @@ export const contestRouter = createTRPCRouter({
             ),
           ),
         )
-        .orderBy(roundSessionTable.avgMs)
+        .orderBy(desc(roundSessionTable.isFinished), roundSessionTable.avgMs)
 
       const solvesBySessionId = groupBy(solveRows, ({ session }) => session.id)
       const globalRecordsByUser = await getGlobalRecordsByUser()

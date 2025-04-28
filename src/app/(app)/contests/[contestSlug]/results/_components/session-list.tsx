@@ -108,7 +108,7 @@ export function SessionList({
         ))}
       </ul>
       {ownSessionIdx === -1 && (
-        <div className='sticky bottom-0 flex w-full items-center gap-2 rounded-xl border border-secondary-20 bg-secondary-80 px-4 py-2'>
+        <div className='sticky bottom-0 flex h-16 w-full items-center gap-2 rounded-xl border border-secondary-20 bg-secondary-80 px-4'>
           {user ? (
             <GhostButton
               onClick={() => createRoundSession({ contestSlug, discipline })}
