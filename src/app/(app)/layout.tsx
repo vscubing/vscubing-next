@@ -19,7 +19,7 @@ export default function AppLayout({
   const SIDEBAR_WIDTH_CLASS = 'w-[clamp(15rem,17vw,21rem)]'
 
   return (
-    <SimulatorProvider>
+    <>
       <Toaster />
       <PickUsernameDialog />
       <PopupSidebar />
@@ -53,7 +53,7 @@ export default function AppLayout({
           <div className='relative flex-1' id={MAIN_OVERLAY_ID}></div>
         </div>
       </div>
-    </SimulatorProvider>
+    </>
   )
 }
 

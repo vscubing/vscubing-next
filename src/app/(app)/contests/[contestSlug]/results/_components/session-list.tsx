@@ -4,6 +4,8 @@ import {
   RoundSessionHeader,
   RoundSessionRow,
 } from '@/frontend/shared/round-session-row'
+import { SignInButton } from '@/frontend/shared/sign-in-button'
+import { useUser } from '@/frontend/shared/use-user'
 import { PrimaryButton } from '@/frontend/ui'
 import { cn } from '@/frontend/utils/cn'
 import { useScrollToIndex } from '@/frontend/utils/use-scroll-to-index'
@@ -79,18 +81,22 @@ export function SessionList({
   )
 
   const ownSessionIdx = sessions.findIndex((result) => result.session.isOwn)
+  const { user } = useUser()
   return (
     <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 lg:p-4 sm:p-3'>
       <RoundSessionHeader />
-      {ownSessionIdx === -1 && (
-        <PrimaryButton
-          size='sm'
-          onClick={() => createRoundSession({ contestSlug, discipline })}
-          autoFocus
-        >
-          Join this round!
-        </PrimaryButton>
-      )}
+      {ownSessionIdx === -1 &&
+        (user ? (
+          <PrimaryButton
+            size='sm'
+            onClick={() => createRoundSession({ contestSlug, discipline })}
+            autoFocus
+          >
+            Join this round!
+          </PrimaryButton>
+        ) : (
+          <SignInButton variant='primary' />
+        ))}
       <ul ref={containerRef} className='space-y-2'>
         {sessions.map((session, idx) => (
           <RoundSessionRow

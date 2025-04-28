@@ -146,11 +146,13 @@ async function PageContent({
           {getSplashText({ contestSlug, discipline })}
         </p>
 
-        <SolveContestForm
-          initialData={roundSessionState}
-          contestSlug={contestSlug}
-          discipline={discipline}
-        />
+        <SimulatorProvider>
+          <SolveContestForm
+            initialData={roundSessionState}
+            contestSlug={contestSlug}
+            discipline={discipline}
+          />
+        </SimulatorProvider>
       </div>
     </div>
   )

@@ -23,6 +23,7 @@ import Link from 'next/link'
 import type { RefObject } from 'react'
 import { UserBadges } from './user-badges'
 import { useSolveForm } from './use-solve-form'
+import { SimulatorProvider } from '@/app/(app)/contests/[contestSlug]/solve/_components'
 
 // HACK: we can't just use useMatchesScreen for switching between Desktop and Tablet because then it won't be SSRed properly
 type RoundSessionRowProps = {
@@ -326,15 +327,16 @@ function SingleAttempt({
   const isInProgress =
     solves[idx]?.status === 'pending' ||
     (solves.at(-1)?.status !== 'pending' && idx === solves.length)
-  debugger
   if (session.isOwn && isInProgress) {
     return (
-      <OwnSolveInProgress
-        contestSlug={contestSlug}
-        discipline={discipline}
-        bestId={bestId}
-        worstId={worstId}
-      />
+      <SimulatorProvider>
+        <OwnSolveInProgress
+          contestSlug={contestSlug}
+          discipline={discipline}
+          bestId={bestId}
+          worstId={worstId}
+        />
+      </SimulatorProvider>
     )
   }
 

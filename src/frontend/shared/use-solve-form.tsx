@@ -1,3 +1,5 @@
+'use client'
+
 import { useSimulator } from '@/app/(app)/contests/[contestSlug]/solve/_components/simulator'
 import { useTRPC } from '@/trpc/react'
 import type { Discipline, ResultDnfable } from '@/types'
