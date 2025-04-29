@@ -427,7 +427,7 @@ function OwnSolveInProgress({
               : undefined
         }
       />
-      <div className='absolute -bottom-3 left-1/2 flex -translate-x-1/2 gap-2 md:static md:translate-x-0'>
+      <div className='absolute -bottom-3 left-1/2 flex -translate-x-1/2 gap-2 bg-secondary-80 md:static md:translate-x-0'>
         {state.canChangeToExtra && (
           <UnderlineButton
             size='sm'

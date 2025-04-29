@@ -103,13 +103,14 @@ async function PageContent({
   if (!isOngoing)
     sessions = sessions.filter((session) => session.session.isFinished) // TODO: remove this when we implement autocompleting all incomplete sessions on contest end
 
-  if (sessions.length === 0) {
+  if (sessions.length === 0 && !isOngoing) {
     return (
       <HintSection>
         <p>It seems no one participated in this round.</p>
       </HintSection>
     )
   }
+
   return (
     <SessionList
       initialData={sessions}
