@@ -62,6 +62,8 @@
     "postgres": "^3.4.5",
     "posthog-js": "^1.235.4",
     "posthog-node": "^4.11.3",
+    "pusher": "^5.2.0",
+    "pusher-js": "^8.4.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.50.1",
