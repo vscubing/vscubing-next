@@ -7,3 +7,5 @@
 - [ ] streaming
 - [ ] remove scrollToXXX after performing scroll (maybe rename it to anchorId)
 - [ ] round status (registration|ongoing|finished) (+incomplete sessions warning)
+- [ ] rework OwnSolveInProgress row
+- [ ] legacy/new solve view toggle
