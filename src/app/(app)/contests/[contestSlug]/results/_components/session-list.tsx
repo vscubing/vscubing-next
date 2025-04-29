@@ -91,6 +91,7 @@ export function SessionList({
                 idx === ownSessionIdx,
             })}
             key={session.session.id}
+            isPlacePreliminary={isOngoing}
             onPlaceClick={
               idx === ownSessionIdx
                 ? () => scrollAndGlow(ownSessionIdx)

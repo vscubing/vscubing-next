@@ -4,11 +4,13 @@ import type { ComponentPropsWithRef } from 'react'
 export function PlaceLabel({
   children: place,
   podiumColors = false,
+  variant,
   className,
   onClick,
   ...props
 }: ComponentPropsWithRef<'span'> & {
   podiumColors?: boolean
+  variant?: 'default' | 'dashed'
   children: number
 }) {
   return (
@@ -21,6 +23,7 @@ export function PlaceLabel({
           'border-2 border-[#9daebf]': podiumColors && place === 2,
           'border-2 border-[#d27c45]': podiumColors && place === 3,
         },
+        { 'border-dashed': variant === 'dashed' },
         className,
       )}
       {...props}

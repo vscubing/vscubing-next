@@ -38,6 +38,7 @@ type RoundSessionRowProps = {
   podiumColors?: boolean
   onPlaceClick?: () => void
   revealedAttemptsNumber?: number
+  isPlacePreliminary?: boolean
 }
 export function RoundSessionRow({
   discipline,
@@ -50,6 +51,7 @@ export function RoundSessionRow({
   podiumColors = false,
   onPlaceClick,
   revealedAttemptsNumber = 5,
+  isPlacePreliminary = false,
 }: RoundSessionRowProps & { ref?: RefObject<HTMLLIElement | null> }) {
   return (
     <li ref={ref} className={className}>
@@ -63,6 +65,7 @@ export function RoundSessionRow({
         session={session}
         onPlaceClick={onPlaceClick}
         revealedAttemptsNumber={revealedAttemptsNumber}
+        isPlacePreliminary={isPlacePreliminary}
       />
       <RoundSessionRowTablet
         className='hidden md:block'
@@ -74,6 +77,7 @@ export function RoundSessionRow({
         session={session}
         onPlaceClick={onPlaceClick}
         revealedAttemptsNumber={revealedAttemptsNumber}
+        isPlacePreliminary={isPlacePreliminary}
       />
     </li>
   )
@@ -119,6 +123,7 @@ function RoundSessionRowTablet({
   className,
   onPlaceClick,
   revealedAttemptsNumber,
+  isPlacePreliminary,
 }: RoundSessionRowProps) {
   const { bestId, worstId } = getBestAndWorstIds(solves)
 
@@ -152,6 +157,7 @@ function RoundSessionRowTablet({
                 <PlaceLabel
                   onClick={onPlaceClick}
                   podiumColors={podiumColors}
+                  variant={isPlacePreliminary ? 'dashed' : 'default'}
                   className={cn('mr-3 sm:mr-0', {
                     'cursor-pointer': onPlaceClick,
                   })}
@@ -231,6 +237,7 @@ function RoundSessionRowTablet({
 function RoundSessionRowDesktop({
   session: { solves, user, session, contestSlug },
   place,
+  isPlacePreliminary,
   withContestLink,
   isFirstOnPage,
   discipline,
@@ -261,6 +268,7 @@ function RoundSessionRowDesktop({
           <PlaceLabel
             onClick={onPlaceClick}
             podiumColors={podiumColors}
+            variant={isPlacePreliminary ? 'dashed' : 'default'}
             className={cn('mr-3', { 'cursor-pointer': onPlaceClick })}
           >
             {place}
