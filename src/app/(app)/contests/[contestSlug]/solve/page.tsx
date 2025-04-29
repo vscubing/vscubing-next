@@ -120,9 +120,8 @@ async function PageContent({
   if (error?.code === 'NOT_FOUND') notFound()
   if (error?.code === 'UNAUTHORIZED')
     return <HintSignInSection description={CONTEST_UNAUTHORIZED_MESSAGE} />
-  if (error?.code === 'FORBIDDEN')
-    redirect(`/contests/${contestSlug}/results?discipline=${discipline}`)
-  if (error) throw error
+  if (error?.code === 'PRECONDITION_FAILED')
+    await api.roundSession.create({ contestSlug, discipline })
 
   return (
     <div className='flex-1 rounded-2xl bg-black-80'>

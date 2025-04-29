@@ -206,13 +206,13 @@ export const contestRouter = createTRPCRouter({
           and(
             eq(roundTable.contestSlug, input.contestSlug),
             eq(roundTable.disciplineSlug, input.discipline),
-            or(
-              eq(solveTable.status, 'pending'),
-              eq(solveTable.status, 'submitted'),
-            ),
           ),
         )
-        .orderBy(desc(roundSessionTable.isFinished), roundSessionTable.avgMs)
+        .orderBy(
+          desc(roundSessionTable.isFinished),
+          roundSessionTable.avgMs,
+          roundSessionTable.createdAt,
+        )
 
       const solvesBySessionId = groupBy(solveRows, ({ session }) => session.id)
       const globalRecordsByUser = await getGlobalRecordsByUser()
@@ -266,17 +266,19 @@ export const contestRouter = createTRPCRouter({
               isFinished: session.isFinished,
             },
             solves: sortWithRespectToExtras(
-              rows.map(({ solve }) => ({
-                id: solve.id,
-                position: solve.position,
-                result: resultDnfable.parse({
-                  timeMs: solve.timeMs,
-                  isDnf: solve.isDnf,
-                  plusTwoIncluded: solve.plusTwoIncluded,
-                }),
-                status: solve.status,
-                isPersonalRecord: solve.id === solve.personalRecordId,
-              })),
+              rows
+                .filter(({ solve }) => solve.status === 'submitted')
+                .map(({ solve }) => ({
+                  id: solve.id,
+                  position: solve.position,
+                  result: resultDnfable.parse({
+                    timeMs: solve.timeMs,
+                    isDnf: solve.isDnf,
+                    plusTwoIncluded: solve.plusTwoIncluded,
+                  }),
+                  status: solve.status,
+                  isPersonalRecord: solve.id === solve.personalRecordId,
+                })),
             ),
             user: {
               ...user,

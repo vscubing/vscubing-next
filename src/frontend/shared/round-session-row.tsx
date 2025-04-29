@@ -25,6 +25,7 @@ import { UserBadges } from './user-badges'
 import { useSolveForm } from './use-solve-form'
 import { SimulatorProvider } from '@/app/(app)/contests/[contestSlug]/solve/_components'
 import { LoadingDots } from '../ui/loading-dots'
+import { useClient } from '../utils/use-client'
 
 // HACK: we can't just use useMatchesScreen for switching between Desktop and Tablet because then it won't be SSRed properly
 type RoundSessionRowProps = {
@@ -36,6 +37,7 @@ type RoundSessionRowProps = {
   className?: string
   podiumColors?: boolean
   onPlaceClick?: () => void
+  revealedAttemptsNumber?: number
 }
 export function RoundSessionRow({
   discipline,
@@ -47,6 +49,7 @@ export function RoundSessionRow({
   className,
   podiumColors = false,
   onPlaceClick,
+  revealedAttemptsNumber = 5,
 }: RoundSessionRowProps & { ref?: RefObject<HTMLLIElement | null> }) {
   return (
     <li ref={ref} className={className}>
@@ -59,6 +62,7 @@ export function RoundSessionRow({
         place={place}
         session={session}
         onPlaceClick={onPlaceClick}
+        revealedAttemptsNumber={revealedAttemptsNumber}
       />
       <RoundSessionRowTablet
         className='hidden md:block'
@@ -69,6 +73,7 @@ export function RoundSessionRow({
         place={place}
         session={session}
         onPlaceClick={onPlaceClick}
+        revealedAttemptsNumber={revealedAttemptsNumber}
       />
     </li>
   )
@@ -113,9 +118,12 @@ function RoundSessionRowTablet({
   isFirstOnPage,
   className,
   onPlaceClick,
+  revealedAttemptsNumber,
 }: RoundSessionRowProps) {
   const { bestId, worstId } = getBestAndWorstIds(solves)
 
+  const revealedAverage =
+    revealedAttemptsNumber !== undefined && revealedAttemptsNumber === 5
   const isInProgress =
     solves.length !== 5 || solves.at(-1)!.status === 'pending'
   return (
@@ -166,7 +174,7 @@ function RoundSessionRowTablet({
                     timeMs={session.result?.timeMs ?? undefined}
                     isDnf={session.result?.isDnf}
                     isAverage={session.isFinished}
-                    isPlaceholder={!session.isFinished}
+                    isPlaceholder={!session.isFinished || !revealedAverage}
                   />
                 </span>
                 <Accordion.Trigger className='outline-ring group sm:py-2'>
@@ -191,6 +199,7 @@ function RoundSessionRowTablet({
                           discipline={discipline}
                           bestId={bestId}
                           worstId={worstId}
+                          revealedAttemptsNumber={revealedAttemptsNumber}
                         />
                       </span>
                     </li>
@@ -228,9 +237,12 @@ function RoundSessionRowDesktop({
   podiumColors,
   className,
   onPlaceClick,
+  revealedAttemptsNumber,
 }: RoundSessionRowProps) {
   const { bestId, worstId } = getBestAndWorstIds(solves)
 
+  const revealedAverage =
+    revealedAttemptsNumber !== undefined && revealedAttemptsNumber === 5
   return (
     <div className={className}>
       <SpinningBorder
@@ -263,7 +275,7 @@ function RoundSessionRowDesktop({
             timeMs={session.result?.timeMs ?? undefined}
             isDnf={session.result?.isDnf}
             isAverage={session.isFinished}
-            isPlaceholder={!session.isFinished}
+            isPlaceholder={!session.isFinished || !revealedAverage}
             className='relative mr-4 after:absolute after:-right-2 after:top-1/2 after:h-6 after:w-px after:-translate-y-1/2 after:bg-grey-60'
           />
 
@@ -281,6 +293,7 @@ function RoundSessionRowDesktop({
                     solves={solves}
                     bestId={bestId}
                     worstId={worstId}
+                    revealedAttemptsNumber={revealedAttemptsNumber}
                   />
                 </span>
               </li>
@@ -326,6 +339,7 @@ function SingleAttempt({
   bestId,
   discipline,
   contestSlug,
+  revealedAttemptsNumber,
 }: {
   solves: RoundSession['solves']
   idx: number
@@ -335,6 +349,7 @@ function SingleAttempt({
   discipline: Discipline
   bestId?: number
   worstId?: number
+  revealedAttemptsNumber?: number
 }) {
   const isInProgress =
     solves[idx]?.status === 'pending' ||
@@ -353,9 +368,15 @@ function SingleAttempt({
   }
 
   const solve = solves[idx]
-  if (!solve) {
+  if (
+    !solve ||
+    (!session.isOwn &&
+      revealedAttemptsNumber !== undefined &&
+      idx >= revealedAttemptsNumber)
+  ) {
     return <SolveTimeLabel isPlaceholder />
   }
+
   return (
     <SolveTimeLinkOrDnf
       canShowHint={isFirstOnPage && idx === 0}
@@ -391,8 +412,9 @@ function OwnSolveInProgress({
   const { state, isPending, handleSubmitSolve, handleInitSolve } = useSolveForm(
     { contestSlug, discipline },
   )
+  const { isClient } = useClient()
 
-  if (!state)
+  if (!state || !isClient)
     return (
       <div className='flex w-24 items-center justify-center lg:w-20 md:h-14'>
         <LoadingDots />
@@ -409,7 +431,7 @@ function OwnSolveInProgress({
     )
 
   return (
-    <div className='relative md:flex md:h-14 md:flex-col md:items-center'>
+    <div className='relative flex md:h-14 md:flex-col md:items-center'>
       <SolveTimeLinkOrDnf
         result={state.currentSolve.result}
         contestSlug={contestSlug}

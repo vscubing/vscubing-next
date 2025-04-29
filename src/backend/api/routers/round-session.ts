@@ -77,29 +77,7 @@ export const roundSessionAuthProcedure = protectedProcedure
       .where(eq(roundSessionTable.contestantId, ctx.session.user.id))
 
     if (roundSession) return next({ ctx: { roundSession } })
-
-    const createdRoundSession = await createRoundSession({
-      userId: ctx.session.user.id,
-      contestSlug: input.contestSlug,
-      discipline: input.discipline,
-    })
-
-    if (!createdRoundSession)
-      throw new Error(
-        `Error while creating a round session for ${JSON.stringify(input)}`,
-      )
-
-    ctx.analytics.groupIdentify({
-      groupType: 'roundSession',
-      groupKey: String(createdRoundSession.id),
-      distinctId: ctx.session.user.id,
-      properties: {
-        discipline: input.discipline,
-        contest: input.contestSlug,
-        roundId: createdRoundSession.roundId,
-      },
-    })
-    return next({ ctx: { roundSession: createdRoundSession } })
+    else throw new TRPCError({ code: 'PRECONDITION_FAILED' })
   })
 
 export const roundSessionRouter = createTRPCRouter({
@@ -392,6 +370,8 @@ export const roundSessionRouter = createTRPCRouter({
           },
         })
       }
+
+      return { sessionFinished }
     }),
 })
 
@@ -461,6 +441,8 @@ async function createRoundSession({
       contestantId: userId,
     })
     .returning({ id: roundSessionTable.id, roundId: roundSubquery.id })
+
+  if (!roundSession) throw new Error("couldn't create a round session")
   return roundSession
 }
 

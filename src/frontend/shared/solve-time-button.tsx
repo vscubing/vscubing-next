@@ -53,7 +53,7 @@ export function SolveTimeLinkOrDnf({
 }: SolveTimeLinkOrDnfProps) {
   if (result.isDnf) {
     return (
-      <span className='relative'>
+      <span className='relative z-10'>
         <span className='absolute top-[-0.9rem] flex min-w-full items-center'>
           {extraNumber !== undefined && (
             <ExtraLabel
@@ -62,7 +62,7 @@ export function SolveTimeLinkOrDnf({
             />
           )}
         </span>
-        <SolveTimeLabel isDnf className={className} />
+        <SolveTimeLabel isDnf className={cn('h-auto', className)} />
       </span>
     )
   }
@@ -140,10 +140,10 @@ export function SolveTimeLabel({
 
   if (isDnf) {
     variant = 'dnf'
-  } else if (isAverage) {
-    variant = 'average'
   } else if (isPlaceholder) {
     variant = 'placeholder'
+  } else if (isAverage) {
+    variant = 'average'
   }
 
   let content = ''

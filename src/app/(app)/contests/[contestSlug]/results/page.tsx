@@ -12,6 +12,7 @@ import { notFound, redirect } from 'next/navigation'
 import { Suspense } from 'react'
 import { SessionList } from './_components/session-list'
 import { LeaveRoundButton } from './_components/leave-round-button'
+import { LegacySolvePageLink } from './_components/legacy-solve-page-link'
 
 export default async function ContestResultsPage({
   params,
@@ -60,7 +61,13 @@ export default async function ContestResultsPage({
             {formatContestDuration(contest)}
           </p>
         </div>
-        <LeaveRoundButton contestSlug={contestSlug} discipline={discipline} />
+        <div className='ml-auto space-x-2 sm:hidden'>
+          <LeaveRoundButton contestSlug={contestSlug} discipline={discipline} />
+          <LegacySolvePageLink
+            contestSlug={contestSlug}
+            discipline={discipline}
+          />
+        </div>
       </LayoutSectionHeader>
 
       <Suspense

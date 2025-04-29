@@ -71,6 +71,9 @@ export function SessionList({
   }, [scrollToId, sessions, scrollAndGlow])
 
   const ownSessionIdx = sessions.findIndex((result) => result.session.isOwn)
+  const revealedAttemptsNumber = isOngoing
+    ? (sessions[ownSessionIdx]?.solves.length ?? 0)
+    : 5
   return (
     <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 lg:p-4 sm:p-3'>
       <RoundSessionHeader />
@@ -82,6 +85,7 @@ export function SessionList({
             discipline={discipline}
             podiumColors
             isFirstOnPage={idx === 0}
+            revealedAttemptsNumber={revealedAttemptsNumber}
             className={cn('rounded-xl', {
               'sticky bottom-[-2px] top-[calc(var(--layout-section-header-height)-2px)] z-10':
                 idx === ownSessionIdx,
