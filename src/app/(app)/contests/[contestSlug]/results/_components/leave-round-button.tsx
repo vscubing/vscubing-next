@@ -1,6 +1,6 @@
 'use client'
 
-import { PrimaryButton } from '@/frontend/ui'
+import { SecondaryButton } from '@/frontend/ui'
 import { NoSSR } from '@/frontend/utils/no-ssr'
 import { useTRPC } from '@/trpc/react'
 import type { Discipline } from '@/types'
@@ -49,11 +49,11 @@ function Component({
   const ownSession = sessions.find(({ session }) => session.isOwn)
   if (ownSession && ownSession.solves.length === 0)
     return (
-      <PrimaryButton
+      <SecondaryButton
         onClick={() => deleteSession({ contestSlug, discipline })}
         className='ml-auto sm:hidden'
       >
         Leave round
-      </PrimaryButton>
+      </SecondaryButton>
     )
 }

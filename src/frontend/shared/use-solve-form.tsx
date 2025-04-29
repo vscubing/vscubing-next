@@ -5,8 +5,7 @@ import { useTRPC } from '@/trpc/react'
 import type { Discipline, ResultDnfable } from '@/types'
 import { signSolve } from '@/utils/solve-signature'
 import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query'
-import { TRPCError } from '@trpc/server'
-import { redirect, RedirectType } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useLocalStorage } from 'usehooks-ts'
 import { type Toast, toast } from '../ui'
 import { SolveTimeLinkOrDnf } from './solve-time-button'
@@ -18,6 +17,7 @@ export function useSolveForm({
   contestSlug: string
   discipline: Discipline
 }) {
+  const router = useRouter()
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const [seenDiscordInvite, setSeenDiscordInvite] = useLocalStorage(
@@ -25,31 +25,12 @@ export function useSolveForm({
     false,
   )
 
-  const stateQuery = trpc.roundSession.state.queryOptions(
-    {
-      contestSlug,
-      discipline,
-    },
-    {
-      retry: (_, err) =>
-        err.data?.code !== 'FORBIDDEN' && err.data?.code !== 'UNAUTHORIZED', // TODO: why does removing unauthorized result in server errors?
-    },
-  )
+  const stateQuery = trpc.roundSession.state.queryOptions({
+    contestSlug,
+    discipline,
+  })
 
-  const {
-    data: state,
-    isFetching: isStateFetching,
-    error,
-  } = useQuery(stateQuery)
-  if (error?.data?.code === 'FORBIDDEN') {
-    redirect(
-      `/contests/${contestSlug}/results?discipline=${discipline}&scrollToOwn=true`,
-      RedirectType.replace,
-    )
-  }
-
-  if (error)
-    throw new TRPCError({ message: error.message, code: error.data!.code })
+  const { data: state, isFetching: isStateFetching } = useQuery(stateQuery)
 
   const { mutate: postSolveResult, isPending: isPostSolvePending } =
     useMutation(
@@ -75,6 +56,16 @@ export function useSolveForm({
     )
   const { mutate: submitSolve, isPending: isSubmitSolvePending } = useMutation(
     trpc.roundSession.submitSolve.mutationOptions({
+      onSuccess: () => {
+        const TOTAL_ROUND_ATTEMPTS = 5
+        const justFinishedRound =
+          state?.submittedSolves.length === TOTAL_ROUND_ATTEMPTS - 1
+        if (justFinishedRound) {
+          void router.push(
+            `/contests/${contestSlug}/results?discipline=${discipline}&scrollToOwn=true`,
+          )
+        }
+      },
       onSettled: () => {
         void queryClient.invalidateQueries(stateQuery)
         void queryClient.invalidateQueries(

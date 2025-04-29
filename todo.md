@@ -2,6 +2,6 @@
 - [x] join round
 - [x] leave round
 - [x] hydration error
-- [ ] scroll on session finish
+- [x] scroll on session finish
 - [ ] start/end rounds (+incomplete sessions warning)
 - [ ] streaming
