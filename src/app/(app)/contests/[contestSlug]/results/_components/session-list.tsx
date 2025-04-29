@@ -29,7 +29,7 @@ export function SessionList({
 }: {
   contestSlug: string
   discipline: Discipline
-  initialData?: RouterOutputs['contest']['getContestResults']
+  initialData: RouterOutputs['contest']['getContestResults']
   scrollToId?: number
   scrollToOwn?: boolean
   isOngoing: boolean

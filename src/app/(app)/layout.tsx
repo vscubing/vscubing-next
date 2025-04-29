@@ -7,7 +7,6 @@ import { cn } from '@/frontend/utils/cn'
 import ClientOnlyPortal from '@/frontend/utils/client-only-portal'
 import type { ReactNode } from 'react'
 import { Toaster } from '@/frontend/ui'
-import { SimulatorProvider } from './contests/[contestSlug]/solve/_components'
 
 export default function AppLayout({
   children,
