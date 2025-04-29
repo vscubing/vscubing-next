@@ -41,6 +41,7 @@ export default async function ContestResultsPage({
   } else {
     title = 'Look through the contest results'
   }
+
   return (
     <>
       <LayoutPageTitleMobile>{title}</LayoutPageTitleMobile>

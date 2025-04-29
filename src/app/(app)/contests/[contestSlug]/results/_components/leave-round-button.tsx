@@ -1,20 +1,22 @@
 'use client'
 
 import { PrimaryButton } from '@/frontend/ui'
+import { NoSSR } from '@/frontend/utils/no-ssr'
 import { useTRPC } from '@/trpc/react'
 import type { Discipline } from '@/types'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import dynamic from 'next/dynamic'
 import type { ComponentPropsWithoutRef } from 'react'
 
 // NOTE: we disable SSR on this component because it needs getContestResults, which we have to prefetch to prevent hydration error (mismatch because auth isn't available for fetching in 'use client' during SSR), but prefetching it is tedious so we do this for now
-export const LeaveRoundButton = dynamic(
-  () =>
-    Promise.resolve((props: ComponentPropsWithoutRef<typeof Component>) => (
+export function LeaveRoundButton(
+  props: ComponentPropsWithoutRef<typeof Component>,
+) {
+  return (
+    <NoSSR>
       <Component {...props} />
-    )),
-  { ssr: false },
-)
+    </NoSSR>
+  )
+}
 
 function Component({
   contestSlug,

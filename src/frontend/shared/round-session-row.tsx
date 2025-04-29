@@ -20,7 +20,7 @@ import { tailwindConfig } from '@/frontend/utils/tailwind'
 import { getExtraNumber, type Discipline, type RoundSession } from '@/types'
 import * as Accordion from '@radix-ui/react-accordion'
 import Link from 'next/link'
-import type { RefObject } from 'react'
+import { type RefObject } from 'react'
 import { UserBadges } from './user-badges'
 import { useSolveForm } from './use-solve-form'
 import { SimulatorProvider } from '@/app/(app)/contests/[contestSlug]/solve/_components'
@@ -394,14 +394,14 @@ function OwnSolveInProgress({
 
   if (!state)
     return (
-      <div className='flex w-24 items-center justify-center lg:w-20'>
+      <div className='flex w-24 items-center justify-center lg:w-20 md:h-14'>
         <LoadingDots />
       </div>
     )
 
   if (!state.currentSolve)
     return (
-      <span className='inline-flex h-full w-24 items-center justify-center lg:w-20'>
+      <span className='inline-flex h-full w-24 items-center justify-center lg:w-20 md:h-14'>
         <PrimaryButton size='sm' autoFocus onClick={handleInitSolve}>
           Solve
         </PrimaryButton>
@@ -409,7 +409,7 @@ function OwnSolveInProgress({
     )
 
   return (
-    <div className='relative md:flex md:flex-col md:items-center'>
+    <div className='relative md:flex md:h-14 md:flex-col md:items-center'>
       <SolveTimeLinkOrDnf
         result={state.currentSolve.result}
         contestSlug={contestSlug}
