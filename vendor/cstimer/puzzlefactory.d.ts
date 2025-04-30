@@ -24,7 +24,7 @@ export class Puzzle {
   constructor(twistyScene, twisty)
   keydown(args): unknown
   resize(): unknown
-  addMoves(args): unknown
+  addMoves(...args): unknown
   applyMoves(
     args,
     timestamp: number | undefined,

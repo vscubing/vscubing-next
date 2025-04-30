@@ -113,7 +113,7 @@ export function useTwistySimulator({
   ])
 }
 
-const SIMULATOR_DISCIPLINES_MAP = {
+export const SIMULATOR_DISCIPLINES_MAP = {
   '3by3': {
     dimension: 3,
     puzzle: 'cube3',

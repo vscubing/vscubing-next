@@ -10,7 +10,6 @@ import { useLocalStorage } from 'usehooks-ts'
 import { type Toast, toast } from '../ui'
 import { SolveTimeLinkOrDnf } from './solve-time-button'
 import { v4 as uuid } from 'uuid'
-import { registerSolveStream, sendMove } from '@/lib/pusher/pusher-actions'
 
 export function useSolveForm({
   contestSlug,
@@ -82,6 +81,12 @@ export function useSolveForm({
 
   const { initSolve } = useSimulator()
 
+  const { mutate: registerSolveStream } = useMutation(
+    trpc.solveStream.registerSolveStream.mutationOptions(),
+  )
+  const { mutate: sendMove } = useMutation(
+    trpc.solveStream.sendMove.mutationOptions(),
+  )
   function handleInitSolve() {
     if (!state)
       throw new Error('useSolveForm handler called with undefined state')
@@ -94,7 +99,7 @@ export function useSolveForm({
           discipline,
           scramble: state.currentScramble.moves,
         }),
-      moveCallback: (move) => void sendMove(streamId, move),
+      moveCallback: (move) => void sendMove({ streamId, move }),
       solveCallback: (solve) =>
         postSolveResult({
           solve: signSolve(solve),
