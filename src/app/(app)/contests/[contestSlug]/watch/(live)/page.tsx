@@ -1,6 +1,6 @@
 'use client'
-import React, { useEffect, useRef, useState } from 'react'
 
+import React, { useEffect, useRef, useState } from 'react'
 import PusherJS, { type Channel, type PresenceChannel } from 'pusher-js'
 import { Input, PrimaryButton } from '@/frontend/ui'
 import { testAction } from './pusher-actions'
@@ -9,6 +9,7 @@ export default function WatchLivePage() {
   const [messages, setMessages] = useState<string[]>([])
   const [channelName, setChannelName] = useState<string>('presence-')
   const [membersCount, setMembersCount] = useState(-1)
+  const [me, setMe] = useState<string>('')
 
   const [subscribed, setSubscribed] = useState(false)
   const channelRef = useRef<Channel>(null)
@@ -18,10 +19,10 @@ export default function WatchLivePage() {
     const pusherClient = getPusherClient()
 
     const channel = pusherClient.subscribe(channelName) as PresenceChannel
-    console.log('created channel', channel.name)
 
     channel.bind('pusher:subscription_succeeded', () => {
       setMembersCount(channel.members.count)
+      setMe(channel.members.me.info.name)
       setSubscribed(true)
     })
 
@@ -50,6 +51,7 @@ export default function WatchLivePage() {
       <h1 className='title-h1'>WatchLivePage</h1>
       <p>subscribed: {JSON.stringify(subscribed)}</p>
       <p>members: {membersCount}</p>
+      <p>me: {me}</p>
       <Input
         value={channelName}
         className='border border-white-100'
@@ -84,7 +86,6 @@ function getPusherClient() {
   // PusherJS.logToConsole = true
 
   if (!pusherSingleton) {
-    const tempId = `tempId-${Math.random().toFixed(4)}`
     pusherSingleton = new PusherJS('app-key', {
       cluster: 'NOT_USED',
       wsHost: '127.0.0.1',
@@ -96,10 +97,6 @@ function getPusherClient() {
       userAuthentication: {
         endpoint: '/api/pusher/auth-user',
         transport: 'ajax',
-        headers: { user_id: tempId },
-      },
-      auth: {
-        headers: { user_id: tempId },
       },
     })
   }
