@@ -34,20 +34,22 @@ function WatchLivePageContent() {
   )
 
   return (
-    <div>
+    <div className='flex-1 rounded-2xl bg-black-80 p-4'>
       <h1 className='title-h1'>WatchLivePage</h1>
       <p>subscribed: {JSON.stringify(isSubscribed)}</p>
-      <p>members: {membersCount}</p>
+      <p>Watching live: {membersCount}</p>
       <p>me: {me}</p>
       {streams.length > 0 && <h2>Streams:</h2>}
-      {streams.map((stream) => (
-        <SolveStremView key={stream.streamId} stream={stream} />
-      ))}
+      <div className='space-y-2'>
+        {streams.map((stream) => (
+          <SolveStreamView key={stream.streamId} stream={stream} />
+        ))}
+      </div>
     </div>
   )
 }
 
-function SolveStremView({
+function SolveStreamView({
   stream: { discipline, scramble, streamId },
 }: {
   stream: SolveStream
