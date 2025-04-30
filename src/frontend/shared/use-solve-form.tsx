@@ -9,6 +9,8 @@ import { useRouter } from 'next/navigation'
 import { useLocalStorage } from 'usehooks-ts'
 import { type Toast, toast } from '../ui'
 import { SolveTimeLinkOrDnf } from './solve-time-button'
+import { v4 as uuid } from 'uuid'
+import { registerSolveStream, sendMove } from '@/lib/pusher/pusher-actions'
 
 export function useSolveForm({
   contestSlug,
@@ -83,17 +85,24 @@ export function useSolveForm({
   function handleInitSolve() {
     if (!state)
       throw new Error('useSolveForm handler called with undefined state')
-    initSolve(
-      { discipline, scramble: state.currentScramble.moves },
-      (solve) => {
-        return postSolveResult({
+    const streamId = uuid()
+    initSolve({
+      initSolveData: { discipline, scramble: state.currentScramble.moves },
+      inspectionStartCallback: () =>
+        void registerSolveStream({
+          streamId: streamId,
+          discipline,
+          scramble: state.currentScramble.moves,
+        }),
+      moveCallback: (move) => void sendMove(streamId, move),
+      solveCallback: (solve) =>
+        postSolveResult({
           solve: signSolve(solve),
           scrambleId: state.currentScramble.id,
           contestSlug,
           discipline,
-        })
-      },
-    )
+        }),
+    })
   }
 
   async function handleSubmitSolve(

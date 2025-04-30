@@ -1,7 +1,10 @@
-import PusherJS from 'pusher-js'
+import { testAction } from '@/app/(app)/contests/[contestSlug]/watch/(live)/pusher-actions'
+import PusherJS, { type PresenceChannel } from 'pusher-js'
+import { useState, useEffect } from 'react'
+import { z } from 'zod'
 
 let pusherClientSingleton: PusherJS | undefined
-export function getPusherClient() {
+function getPusherClient() {
   // PusherJS.logToConsole = true
 
   if (!pusherClientSingleton) {
@@ -16,4 +19,62 @@ export function getPusherClient() {
     })
   }
   return pusherClientSingleton
+}
+
+export function usePresenceChannel(
+  unprefixedChannelName: string,
+  bindings: Record<string, (data: never) => void>,
+) {
+  const channelName = `presence-${unprefixedChannelName}`
+
+  const [membersCount, setMembersCount] = useState(-1)
+  const [me, setMe] = useState<string>('')
+
+  const [isSubscribed, setIsSubscribed] = useState(false)
+
+  useEffect(() => {
+    console.log(channelName, bindings)
+    if (channelName === 'presence-') return
+
+    const pusherClient = getPusherClient()
+
+    const channel = pusherClient.subscribe(channelName) as PresenceChannel
+
+    channel.bind('pusher:subscription_succeeded', () => {
+      setMembersCount(channel.members.count)
+      const me = z
+        .object({ id: z.string(), info: z.object({ name: z.string() }) })
+        .parse(channel.members.me)
+      setMe(me.info.name)
+      setIsSubscribed(true)
+    })
+
+    channel.bind('pusher:member_removed', () => {
+      setMembersCount(channel.members.count)
+    })
+
+    channel.bind('pusher:member_added', () => {
+      setMembersCount(channel.members.count)
+    })
+
+    for (const [eventName, callback] of Object.entries(bindings)) {
+      channel.bind(eventName, callback)
+    }
+    return () => {
+      pusherClient.unsubscribe(channel.name)
+      setIsSubscribed(false)
+    }
+  }, [channelName, bindings])
+
+  function unsubscribe() {
+    const pusherClient = getPusherClient()
+    pusherClient.unsubscribe(channelName)
+    setIsSubscribed(false)
+  }
+
+  function sendMessage(message: string) {
+    void testAction(channelName, message)
+  }
+
+  return { isSubscribed, unsubscribe, me, membersCount, sendMessage }
 }

@@ -28,6 +28,7 @@ type SimulatorProps = {
   initSolveData: InitSolveData
   onInspectionStart: () => void
   onSolveFinish: SimulatorSolveFinishCallback
+  onMove: (move: Move) => void
   settings: Omit<
     typeof userSimulatorSettingsTable.$inferSelect,
     'id' | 'createdAt' | 'updatedAt' | 'userId'
@@ -36,8 +37,9 @@ type SimulatorProps = {
 }
 export default function Simulator({
   initSolveData,
-  onSolveFinish,
+  onMove,
   onInspectionStart,
+  onSolveFinish,
   settings,
   setCameraPosition,
 }: SimulatorProps) {
@@ -163,8 +165,9 @@ export default function Simulator({
 
         return prevStatus
       })
+      onMove(move)
     },
-    [],
+    [onMove],
   )
 
   useEffect(() => {

@@ -34,6 +34,7 @@ import {
   useSimulatorSettingsMutation,
 } from '@/app/(app)/settings'
 import { useDebounceValue, useEventListener } from 'usehooks-ts'
+import type { Move } from './simulator/use-simulator'
 const Simulator = lazy(() => import('./simulator/simulator.lazy'))
 
 export function SimulatorProvider({ children }: { children: React.ReactNode }) {
@@ -64,29 +65,34 @@ export function SimulatorProvider({ children }: { children: React.ReactNode }) {
 
   const [solveState, setSolveState] = useState<{
     initSolveData: InitSolveData
+    inspectionStartCallback: () => void
+    moveCallback: (move: Move) => void
     solveCallback: SimulatorSolveFinishCallback
     wasInspectionStarted: boolean
   } | null>(null)
   const [isAbortPromptVisible, setIsAbortPromptVisible] = useState(false)
 
   const initSolve = useCallback(
-    (
-      initSolveData: InitSolveData,
-      solveCallback: SimulatorSolveFinishCallback,
-    ) => {
+    (params: {
+      initSolveData: InitSolveData
+      inspectionStartCallback: () => void
+      moveCallback: (move: Move) => void
+      solveCallback: SimulatorSolveFinishCallback
+    }) => {
       setIsAbortPromptVisible(false)
       setSolveState({
-        initSolveData,
-        solveCallback,
+        ...params,
         wasInspectionStarted: false,
       })
     },
     [],
   )
 
+  const inspectionStartCallback = solveState?.inspectionStartCallback
   const handleInspectionStart = useCallback(() => {
+    inspectionStartCallback?.()
     setSolveState((prev) => prev && { ...prev, wasInspectionStarted: true })
-  }, [])
+  }, [inspectionStartCallback])
 
   const solveCallback = solveState?.solveCallback
   const handleSolveFinish = useCallback(
@@ -169,6 +175,7 @@ export function SimulatorProvider({ children }: { children: React.ReactNode }) {
                     initSolveData={solveState.initSolveData}
                     onSolveFinish={handleSolveFinish}
                     onInspectionStart={handleInspectionStart}
+                    onMove={solveState.moveCallback}
                     settings={{
                       animationDuration: settings?.animationDuration ?? 100,
                       ...cameraPosition,
@@ -220,10 +227,12 @@ export function SimulatorProvider({ children }: { children: React.ReactNode }) {
 }
 
 type SimulatorContextValue = {
-  initSolve: (
-    data: InitSolveData,
-    onSolveFinish: SimulatorSolveFinishCallback,
-  ) => void
+  initSolve: (params: {
+    initSolveData: InitSolveData
+    inspectionStartCallback: () => void
+    moveCallback: (move: Move) => void
+    solveCallback: SimulatorSolveFinishCallback
+  }) => void
 }
 export const SimulatorContext = createContext<SimulatorContextValue>({
   initSolve: () => {
