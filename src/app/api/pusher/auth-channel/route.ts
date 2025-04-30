@@ -1,4 +1,4 @@
-import { pusherServer } from '@/app/(app)/contests/[contestSlug]/watch/(live)/pusher-server'
+import { pusherServer } from '@/lib/pusher/pusher-server'
 import { auth } from '@/backend/auth'
 import type { NextRequest } from 'next/server'
 import { z } from 'zod'

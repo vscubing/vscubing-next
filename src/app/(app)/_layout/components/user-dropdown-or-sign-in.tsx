@@ -41,7 +41,7 @@ import {
 } from '@/frontend/shared/use-user'
 import { WCA_AUTH_SUCCESS_SEARCH_PARAM } from '@/app/api/auth/wca/error-search-param'
 import { useSearchParams } from 'next/navigation'
-import { useRemoveSearchParam } from '@/utils/user-remove-search-param'
+import { useRemoveSearchParam } from '@/lib/utils/use-remove-search-param'
 
 export function UserDropdownOrSignIn() {
   const { user, isLoading } = useUser()

@@ -19,7 +19,7 @@ import {
   resultDnfable,
   type RoundSession,
 } from '@/types'
-import { groupBy } from '@/utils/group-by'
+import { groupBy } from '@/lib/utils/group-by'
 import { TRPCError } from '@trpc/server'
 import { and, desc, eq, lte, or } from 'drizzle-orm'
 import { getContestUserCapabilities } from '../../shared/get-contest-user-capabilities'

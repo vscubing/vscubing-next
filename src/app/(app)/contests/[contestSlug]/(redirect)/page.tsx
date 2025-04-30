@@ -1,6 +1,6 @@
 import { getContestUserCapabilities } from '@/backend/shared/get-contest-user-capabilities'
 import { DEFAULT_DISCIPLINE, isDiscipline } from '@/types'
-import { assertUnreachable } from '@/utils/assert-unreachable'
+import { assertUnreachable } from '@/lib/utils/assert-unreachable'
 import { notFound, redirect, RedirectType } from 'next/navigation'
 
 export default async function ContestPage(props: {

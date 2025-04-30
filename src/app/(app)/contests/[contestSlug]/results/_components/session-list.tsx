@@ -10,7 +10,7 @@ import { GhostButton } from '@/frontend/ui'
 import { cn } from '@/frontend/utils/cn'
 import { NoSSR } from '@/frontend/utils/no-ssr'
 import { useScrollToIndex } from '@/frontend/utils/use-scroll-to-index'
-import { useTRPC, type RouterOutputs } from '@/trpc/react'
+import { useTRPC, type RouterOutputs } from '@/lib/trpc/react'
 import { type Discipline } from '@/types'
 import {
   useMutation,

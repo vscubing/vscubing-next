@@ -1,6 +1,6 @@
 import { type ContestMetadata, type Discipline } from '@/types'
 import { DisciplineIcon, SecondaryButton } from '@/frontend/ui'
-import { formatContestDuration } from '@/utils/format-date'
+import { formatContestDuration } from '@/lib/utils/format-date'
 import Link from 'next/link'
 import { cn } from '@/frontend/utils/cn'
 import tailwindConfig from 'tailwind.config'

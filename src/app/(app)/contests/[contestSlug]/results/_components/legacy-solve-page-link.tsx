@@ -2,7 +2,7 @@
 
 import { SecondaryButton } from '@/frontend/ui'
 import { NoSSR } from '@/frontend/utils/no-ssr'
-import { useTRPC } from '@/trpc/react'
+import { useTRPC } from '@/lib/trpc/react'
 import type { Discipline } from '@/types'
 import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'

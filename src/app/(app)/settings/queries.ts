@@ -1,4 +1,4 @@
-import { useTRPC, type RouterOutputs } from '@/trpc/react'
+import { useTRPC, type RouterOutputs } from '@/lib/trpc/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 export function useSimulatorSettings(

@@ -1,6 +1,6 @@
 import { createNewContest } from '@/backend/shared/contest-management'
 import { DISCIPLINES } from '@/types'
-import { tryCatch } from '@/utils/try-catch'
+import { tryCatch } from '@/lib/utils/try-catch'
 import { z } from 'zod'
 import {
   adminProcedure,

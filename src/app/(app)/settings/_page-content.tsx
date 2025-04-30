@@ -5,7 +5,7 @@ import { cn } from '@/frontend/utils/cn'
 import type { ReactNode, ComponentPropsWithoutRef, ComponentRef } from 'react'
 import * as SelectPrimitive from '@radix-ui/react-select'
 import { useSimulatorSettings, useSimulatorSettingsMutation } from './queries'
-import type { RouterOutputs } from '@/trpc/react'
+import type { RouterOutputs } from '@/lib/trpc/react'
 import { z } from 'zod'
 
 export function SettingsList({

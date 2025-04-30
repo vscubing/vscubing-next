@@ -1,6 +1,6 @@
 'use client'
 import type { Discipline } from '@/types'
-import { useTRPC, type RouterOutputs } from '@/trpc/react'
+import { useTRPC, type RouterOutputs } from '@/lib/trpc/react'
 import { useEffect } from 'react'
 import { ContestRowDesktop, ContestRowMobile } from './contest'
 import { useInView } from 'react-intersection-observer'

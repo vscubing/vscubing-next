@@ -7,7 +7,7 @@ import { type ReactNode, useEffect, useState } from 'react'
 import { useSetAtom } from 'jotai'
 import { mobileMenuOpenAtom } from '../store/mobile-menu-open-atom'
 import type { Route } from 'next'
-import { useTRPC, type RouterOutputs } from '@/trpc/react'
+import { useTRPC, type RouterOutputs } from '@/lib/trpc/react'
 import { useQuery } from '@tanstack/react-query'
 import {
   DashboardIcon,

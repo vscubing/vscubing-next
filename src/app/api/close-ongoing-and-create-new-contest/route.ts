@@ -1,4 +1,4 @@
-import { tryCatch } from '@/utils/try-catch'
+import { tryCatch } from '@/lib/utils/try-catch'
 import { env } from '@/env'
 import {
   closeOngoingAndCreateNewContest,

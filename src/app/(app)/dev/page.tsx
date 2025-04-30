@@ -1,4 +1,4 @@
-import { api } from '@/trpc/server'
+import { api } from '@/lib/trpc/server'
 import { notFound } from 'next/navigation'
 import { SolveValidator } from './_components/solve-validator'
 import { db } from '@/backend/db'

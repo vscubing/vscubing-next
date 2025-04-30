@@ -3,7 +3,7 @@
 import { BestSolves } from './best-solves'
 import Image from 'next/image'
 import dashboardEmptyImg from '@/../public/images/dashboard-empty.svg'
-import { useTRPC } from '@/trpc/react'
+import { useTRPC } from '@/lib/trpc/react'
 import { useQueries, useQuery } from '@tanstack/react-query'
 import { LatestContests } from './latest-contests'
 import { DISCIPLINES } from '@/types'

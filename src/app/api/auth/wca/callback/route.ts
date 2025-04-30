@@ -5,7 +5,7 @@ import {
 } from '@/backend/auth/oauth/wca'
 import { createUserAccount } from '@/backend/auth/user'
 import { auth } from '@/backend/auth'
-import { tryCatch } from '@/utils/try-catch'
+import { tryCatch } from '@/lib/utils/try-catch'
 import { WCA_AUTH_SUCCESS_SEARCH_PARAM } from '../error-search-param'
 
 // TODO: conflict handling

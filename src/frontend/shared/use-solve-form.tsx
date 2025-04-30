@@ -1,9 +1,9 @@
 'use client'
 
 import { useSimulator } from '@/app/(app)/contests/[contestSlug]/solve/_components/simulator'
-import { useTRPC } from '@/trpc/react'
+import { useTRPC } from '@/lib/trpc/react'
 import type { Discipline, ResultDnfable } from '@/types'
-import { signSolve } from '@/utils/solve-signature'
+import { signSolve } from '@/lib/utils/solve-signature'
 import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { useLocalStorage } from 'usehooks-ts'

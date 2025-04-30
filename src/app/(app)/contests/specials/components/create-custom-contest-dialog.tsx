@@ -15,7 +15,7 @@ import {
 } from '@/frontend/ui'
 import { CheckboxWithLabel } from '@/frontend/ui/checkbox'
 import { BaseDialogButton } from '@/frontend/ui/popovers/base-dialog'
-import { useTRPC } from '@/trpc/react'
+import { useTRPC } from '@/lib/trpc/react'
 import { assertDiscipline, DISCIPLINES, type Discipline } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'

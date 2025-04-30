@@ -14,10 +14,10 @@ import { sortWithRespectToExtras } from '../../shared/sort-with-respect-to-extra
 import { calculateAvg } from '../../shared/calculate-avg'
 import { validateSolve } from '@/backend/shared/validate-solve'
 import { getContestUserCapabilities } from '../../shared/get-contest-user-capabilities'
-import { removeSolutionComments } from '@/utils/remove-solution-comments'
+import { removeSolutionComments } from '@/lib/utils/remove-solution-comments'
 import { getPersonalRecordSolveSubquery } from '@/backend/shared/personal-record'
 import { db } from '@/backend/db'
-import { decodeSolve } from '@/utils/solve-signature'
+import { decodeSolve } from '@/lib/utils/solve-signature'
 
 const EXTRAS_PER_ROUND = 2
 const ROUND_ATTEMPTS_QTY = 5

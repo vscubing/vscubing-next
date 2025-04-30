@@ -20,8 +20,8 @@ import { Suspense, type ReactNode } from 'react'
 import { SimulatorProvider } from './_components'
 import { SolveContestForm } from './_components'
 import Link from 'next/link'
-import { api } from '@/trpc/server'
-import { tryCatchTRPC } from '@/utils/try-catch'
+import { api } from '@/lib/trpc/server'
+import { tryCatchTRPC } from '@/lib/utils/try-catch'
 import { LayoutSectionHeader } from '@/app/(app)/_layout'
 import {
   LayoutHeaderTitlePortal,
@@ -33,7 +33,7 @@ import {
   LayoutPageTitleMobile,
   LayoutPageTitleMobileFallback,
 } from '@/app/(app)/_layout/layout-page-title-mobile'
-import { formatContestDuration } from '@/utils/format-date'
+import { formatContestDuration } from '@/lib/utils/format-date'
 import { NavigateBackButton } from '@/frontend/shared/navigate-back-button'
 
 export default async function SolveContestPage({

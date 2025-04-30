@@ -1,7 +1,7 @@
 import { type VariantProps, cva } from 'class-variance-authority'
 import Link from 'next/link'
 import { type ComponentProps } from 'react'
-import { formatSolveTime } from '../../utils/format-solve-time'
+import { formatSolveTime } from '../../lib/utils/format-solve-time'
 import { cn } from '../utils/cn'
 import { WatchSolveHintPopover } from './watch-solve-hint-popover.client'
 import { type Discipline, type ResultDnfable } from '../../types'

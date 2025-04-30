@@ -3,7 +3,7 @@ import { NavigateBackButton } from '@/frontend/shared/navigate-back-button'
 import { auth } from '@/backend/auth'
 import { LayoutHeaderTitlePortal } from '../_layout/layout-header'
 import { SettingsList } from './_page-content'
-import { api } from '@/trpc/server'
+import { api } from '@/lib/trpc/server'
 
 export default async function SettingsPage() {
   const session = await auth()

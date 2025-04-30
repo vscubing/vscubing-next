@@ -8,7 +8,7 @@ import {
 } from '@/frontend/shared/round-session-row'
 import { cn } from '@/frontend/utils/cn'
 import { useScrollToIndex } from '@/frontend/utils/use-scroll-to-index'
-import { useTRPC, type RouterOutputs } from '@/trpc/react'
+import { useTRPC, type RouterOutputs } from '@/lib/trpc/react'
 import { type Discipline } from '@/types'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { type ReactNode } from 'react'

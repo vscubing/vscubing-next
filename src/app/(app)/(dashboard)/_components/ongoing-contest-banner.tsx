@@ -1,9 +1,9 @@
 import { PrimaryButton, DisciplineBadge } from '@/frontend/ui'
 import { cn } from '@/frontend/utils/cn'
-import { formatContestDuration } from '@/utils/format-date'
+import { formatContestDuration } from '@/lib/utils/format-date'
 import { withSuspense } from '@/frontend/utils/with-suspense'
-import type { RouterOutputs } from '@/trpc/react'
-import { api } from '@/trpc/server'
+import type { RouterOutputs } from '@/lib/trpc/react'
+import { api } from '@/lib/trpc/server'
 import Link from 'next/link'
 import { DEFAULT_DISCIPLINE } from '@/types'
 

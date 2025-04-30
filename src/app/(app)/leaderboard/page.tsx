@@ -6,7 +6,7 @@ import {
   type Discipline,
   type LeaderboardType,
 } from '@/types'
-import { api } from '@/trpc/server'
+import { api } from '@/lib/trpc/server'
 import { DisciplineSwitcher } from '@/frontend/shared/discipline-switcher'
 import { NavigateBackButton } from '@/frontend/shared/navigate-back-button'
 import {

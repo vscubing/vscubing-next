@@ -10,7 +10,7 @@ import {
 import { LayoutPageTitleMobile } from '@/app/(app)/_layout/layout-page-title-mobile'
 import { NavigateBackButton } from '@/frontend/shared/navigate-back-button'
 import { redirect } from 'next/navigation'
-import { api } from '@/trpc/server'
+import { api } from '@/lib/trpc/server'
 import { HintSection } from '@/frontend/shared/hint-section'
 import {
   ContestRowSkeletonDesktop,
