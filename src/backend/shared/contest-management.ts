@@ -167,6 +167,7 @@ export async function getLatestContest() {
         systemInitial: contestTable.systemInitial,
       })
       .from(contestTable)
+      .where(eq(contestTable.type, 'weekly'))
       .orderBy(desc(contestTable.endDate))
       .limit(1)
   )?.[0]

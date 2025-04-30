@@ -1,32 +1,22 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { Input, PrimaryButton } from '@/frontend/ui'
 import { usePresenceChannel } from '@/lib/pusher/pusher-client'
+import { type SolveStream } from '@/lib/pusher/streams'
 
 export default function WatchLivePage() {
-  const [channelName, setChannelName] = useState<string>('')
-  const [messages, setMessages] = useState<string[]>([])
+  const [streams, setStreams] = useState<SolveStream[]>([])
 
   const bindings = useMemo(
     () => ({
-      message: (message: string) => setMessages((prev) => [...prev, message]),
+      created: (stream: SolveStream) => setStreams((prev) => [...prev, stream]),
     }),
     [],
   )
-
-  const {
-    me,
-    membersCount,
-    isSubscribed,
-    unsubscribe: unsubscribeChannel,
-    sendMessage,
-  } = usePresenceChannel(channelName, bindings)
-
-  function handleUnsubscribe() {
-    unsubscribeChannel()
-    setMessages([])
-  }
+  const { me, membersCount, isSubscribed } = usePresenceChannel(
+    'presence-solve-streams',
+    bindings,
+  )
 
   return (
     <div>
@@ -34,27 +24,38 @@ export default function WatchLivePage() {
       <p>subscribed: {JSON.stringify(isSubscribed)}</p>
       <p>members: {membersCount}</p>
       <p>me: {me}</p>
-      <Input
-        value={channelName}
-        className='border border-white-100'
-        onChange={(e) => setChannelName(e.target.value)}
-      />
-      <p>List:</p>
-      {messages.map((msg, idx) => (
-        <p key={idx}>{msg}</p>
+      {streams.length > 0 && <h2>Streams:</h2>}
+      {streams.map((stream) => (
+        <SolveStremView key={stream.streamId} stream={stream} />
       ))}
-      <PrimaryButton
-        disabled={!isSubscribed}
-        onClick={() => sendMessage(String(Math.random()))}
-      >
-        Trigger
-      </PrimaryButton>
-      <PrimaryButton
-        disabled={!isSubscribed}
-        onClick={() => handleUnsubscribe()}
-      >
-        Unsubscribe
-      </PrimaryButton>
+    </div>
+  )
+}
+
+function SolveStremView({
+  stream: { discipline, scramble, streamId },
+}: {
+  stream: SolveStream
+}) {
+  const [moves, setMoves] = useState<string[]>([])
+  const bindings = useMemo(
+    () => ({
+      move: (move: string) => setMoves((prev) => [...prev, move]),
+    }),
+    [],
+  )
+  const { isSubscribed } = usePresenceChannel(
+    `presence-solve-stream-${streamId}`,
+    bindings,
+  )
+
+  return (
+    <div>
+      <p>
+        {streamId}, {discipline}, {scramble}, isSubscribed:{' '}
+        {JSON.stringify(isSubscribed)}
+      </p>
+      <p>moves: {moves.join(' ')}</p>
     </div>
   )
 }

@@ -1,4 +1,3 @@
-import { testAction } from '@/app/(app)/contests/[contestSlug]/watch/(live)/pusher-actions'
 import PusherJS, { type PresenceChannel } from 'pusher-js'
 import { useState, useEffect } from 'react'
 import { z } from 'zod'
@@ -22,20 +21,15 @@ function getPusherClient() {
 }
 
 export function usePresenceChannel(
-  unprefixedChannelName: string,
+  channelName: `presence-${string}`,
   bindings: Record<string, (data: never) => void>,
 ) {
-  const channelName = `presence-${unprefixedChannelName}`
-
   const [membersCount, setMembersCount] = useState(-1)
   const [me, setMe] = useState<string>('')
 
   const [isSubscribed, setIsSubscribed] = useState(false)
 
   useEffect(() => {
-    console.log(channelName, bindings)
-    if (channelName === 'presence-') return
-
     const pusherClient = getPusherClient()
 
     const channel = pusherClient.subscribe(channelName) as PresenceChannel
@@ -62,6 +56,9 @@ export function usePresenceChannel(
     }
     return () => {
       pusherClient.unsubscribe(channel.name)
+      for (const eventName of Object.keys(bindings)) {
+        channel.unbind(eventName)
+      }
       setIsSubscribed(false)
     }
   }, [channelName, bindings])
@@ -72,9 +69,5 @@ export function usePresenceChannel(
     setIsSubscribed(false)
   }
 
-  function sendMessage(message: string) {
-    void testAction(channelName, message)
-  }
-
-  return { isSubscribed, unsubscribe, me, membersCount, sendMessage }
+  return { isSubscribed, unsubscribe, me, membersCount }
 }

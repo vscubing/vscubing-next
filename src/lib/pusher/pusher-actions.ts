@@ -1,16 +1,12 @@
 'use server'
 
-import type { Discipline } from '@/types'
 // const streamScrambles = new Map<string, string>()
 
 import { pusherServer } from './pusher-server'
+import type { SolveStream } from './streams'
 
-export async function registerSolveStream(stream: {
-  streamId: string
-  scramble: string
-  discipline: Discipline
-}) {
-  await pusherServer.trigger('solve-streams', 'created', stream)
+export async function registerSolveStream(stream: SolveStream) {
+  await pusherServer.trigger('presence-solve-streams', 'created', stream)
   console.log('solve-streams', 'created', stream)
 }
 
