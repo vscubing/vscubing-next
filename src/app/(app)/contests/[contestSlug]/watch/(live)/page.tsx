@@ -3,9 +3,24 @@
 import { useMemo, useState } from 'react'
 import { usePresenceChannel } from '@/lib/pusher/pusher-client'
 import { type SolveStream } from '@/lib/pusher/streams'
+import { getActiveStreams, getStreamMoves } from '@/lib/pusher/pusher-actions'
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { NoSSR } from '@/frontend/utils/no-ssr'
 
 export default function WatchLivePage() {
-  const [streams, setStreams] = useState<SolveStream[]>([])
+  return (
+    <NoSSR>
+      <WatchLivePageContent />
+    </NoSSR>
+  )
+}
+
+function WatchLivePageContent() {
+  const { data: initialStreams } = useSuspenseQuery({
+    queryFn: getActiveStreams,
+    queryKey: ['active-streams'],
+  })
+  const [streams, setStreams] = useState<SolveStream[]>(initialStreams)
 
   const bindings = useMemo(
     () => ({
@@ -37,7 +52,11 @@ function SolveStremView({
 }: {
   stream: SolveStream
 }) {
-  const [moves, setMoves] = useState<string[]>([])
+  const { data: initialMoves } = useSuspenseQuery({
+    queryFn: () => getStreamMoves(streamId),
+    queryKey: ['streams-moves'],
+  })
+  const [moves, setMoves] = useState<string[]>(initialMoves)
   const bindings = useMemo(
     () => ({
       move: (move: string) => setMoves((prev) => [...prev, move]),
