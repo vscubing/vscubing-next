@@ -17,6 +17,13 @@ export const solveStreamRouter = createTRPCRouter({
       console.log('presence-solve-streams', 'created', input)
     }),
 
+  unregisterSolveStream: protectedProcedure
+    .input(z.object({ streamId: z.string() }))
+    .mutation(async ({ input }) => {
+      solveStreamsRef.current.delete(input.streamId)
+      await pusherServer.trigger('presence-solve-streams', 'deleted', input)
+    }),
+
   sendMove: protectedProcedure
     .input(z.object({ streamId: z.string(), move: z.string() }))
     .mutation(async ({ input }) => {

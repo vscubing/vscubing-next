@@ -87,6 +87,9 @@ export function useSolveForm({
   const { mutate: sendMove } = useMutation(
     trpc.solveStream.sendMove.mutationOptions(),
   )
+  const { mutate: unregisterSolveStream } = useMutation(
+    trpc.solveStream.unregisterSolveStream.mutationOptions(),
+  )
   function handleInitSolve() {
     if (!state)
       throw new Error('useSolveForm handler called with undefined state')
@@ -100,13 +103,15 @@ export function useSolveForm({
           scramble: state.currentScramble.moves,
         }),
       moveCallback: (move) => void sendMove({ streamId, move }),
-      solveCallback: (solve) =>
+      solveCallback: (solve) => {
         postSolveResult({
           solve: signSolve(solve),
           scrambleId: state.currentScramble.id,
           contestSlug,
           discipline,
-        }),
+        })
+        unregisterSolveStream({ streamId })
+      },
     })
   }
 
