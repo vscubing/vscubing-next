@@ -1,6 +1,5 @@
 import PusherJS, { type PresenceChannel } from 'pusher-js'
-import { useState, useEffect, useRef, useLayoutEffect } from 'react'
-import { useEventCallback } from 'usehooks-ts'
+import { useState, useEffect } from 'react'
 import { z } from 'zod'
 
 let pusherClientSingleton: PusherJS | undefined

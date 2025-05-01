@@ -13,6 +13,7 @@ import { LoadingSpinner } from '@/frontend/ui'
 import { EyeIcon } from 'lucide-react'
 import { useEventCallback } from 'usehooks-ts'
 import { useResizeObserver } from '@/frontend/utils/use-resize-observer'
+import { cn } from '@/frontend/utils/cn'
 
 export default function WatchLivePageContent() {
   const trpc = useTRPC()
@@ -24,14 +25,20 @@ export default function WatchLivePageContent() {
   const bindings = useMemo(
     () => ({
       created: (stream: SolveStream) => setStreams((prev) => [...prev, stream]),
-      deleted: ({ streamId }: { streamId: string }) =>
+      ended: ({ streamId }: { streamId: string }) => {
+        setStreams((prev) =>
+          prev.map((stream) =>
+            stream.streamId === streamId ? { ...stream, ended: true } : stream,
+          ),
+        )
         setTimeout(
           () =>
             setStreams((prev) =>
               prev.filter((stream) => stream.streamId !== streamId),
             ),
-          5000,
-        ),
+          3000,
+        )
+      },
     }),
     [],
   )
@@ -68,7 +75,7 @@ export default function WatchLivePageContent() {
 }
 
 function SolveStreamView({
-  stream: { discipline, scramble, streamId },
+  stream: { discipline, scramble, streamId, ended },
 }: {
   stream: SolveStream
 }) {
@@ -93,7 +100,10 @@ function SolveStreamView({
   return (
     <div
       ref={simulatorRef}
-      className='flex aspect-square w-full flex-1 items-center justify-center rounded-2xl bg-black-80 p-4'
+      className={cn(
+        'flex aspect-square w-full flex-1 items-center justify-center rounded-2xl bg-black-80 p-4',
+        { 'opacity-50': ended },
+      )}
     ></div>
   )
 }

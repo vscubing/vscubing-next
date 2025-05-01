@@ -6,4 +6,5 @@ export const solveStreamSchema = z.object({
   discipline: z.enum(DISCIPLINES),
   scramble: z.string(),
   streamId: z.string(),
+  ended: z.boolean(),
 })
