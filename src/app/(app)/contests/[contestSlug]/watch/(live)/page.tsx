@@ -1,9 +1,9 @@
 'use client'
 
-import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { usePresenceChannel } from '@/lib/pusher/pusher-client'
 import { type SolveStream } from '@/lib/pusher/streams'
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query'
 import type { Discipline } from '@/types'
 import { type TwistySimulatorPuzzle, initTwistySimulator } from 'vendor/cstimer'
 import { SIMULATOR_DISCIPLINES_MAP } from '../../solve/_components/simulator/components/simulator/use-simulator'
@@ -60,16 +60,7 @@ export default function WatchLivePageContent() {
       </LayoutHeaderTitlePortal>
       <div className='grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-2'>
         {streams.map((stream) => (
-          <Suspense
-            key={stream.streamId}
-            fallback={
-              <div className='flex aspect-square items-center justify-center rounded-2xl bg-black-80'>
-                <LoadingSpinner />
-              </div>
-            }
-          >
-            <SolveStreamView stream={stream} />
-          </Suspense>
+          <SolveStreamView stream={stream} key={stream.streamId} />
         ))}
       </div>
     </>
@@ -81,14 +72,21 @@ function SolveStreamView({
 }: {
   stream: SolveStream
 }) {
-  const { initialMoves } = useSolveStream({
+  const { initialMoves, isLoading } = useSolveStream({
     streamId,
     onMove: (move) => applyMove(move),
   })
   const { simulatorRef, applyMove } = useControllableSimulator({
     discipline,
-    scramble: scramble + ' ' + initialMoves.join(' '),
+    scramble: initialMoves ? scramble + ' ' + initialMoves.join(' ') : '',
   })
+
+  if (isLoading)
+    return (
+      <div className='flex aspect-square items-center justify-center rounded-2xl bg-black-80'>
+        <LoadingSpinner />
+      </div>
+    )
 
   return (
     <div
@@ -155,14 +153,15 @@ function useSolveStream({
   onMove: (move: string) => void
 }) {
   const trpc = useTRPC()
-  const { data: initialMoves } = useSuspenseQuery(
+  const { data: initialMoves, isLoading } = useQuery(
     trpc.solveStream.getStreamMoves.queryOptions({ streamId }),
   )
 
   usePresenceChannel(`presence-solve-stream-${streamId}`, {
     move: onMove,
   })
-  return { initialMoves }
+
+  return { initialMoves, isLoading }
 }
 
 function parseMoves(moves: string, puzzle: TwistySimulatorPuzzle) {
