@@ -27,7 +27,7 @@ export function usePresenceChannel(
   const [membersCount, setMembersCount] = useState<number | undefined>(
     undefined,
   )
-  const [me, setMe] = useState<string>('')
+  const [me, setMe] = useState<string | undefined>()
 
   const [isSubscribed, setIsSubscribed] = useState(false)
 
@@ -38,7 +38,6 @@ export function usePresenceChannel(
   })
 
   useEffect(() => {
-    console.log('subscribing...')
     const pusherClient = getPusherClient()
 
     const channel = pusherClient.subscribe(channelName) as PresenceChannel
@@ -65,6 +64,7 @@ export function usePresenceChannel(
     )) {
       channel.bind(eventName, callback)
     }
+
     return () => {
       pusherClient.unsubscribe(channel.name)
       for (const eventName of Object.keys(stableBindings.current)) {
@@ -74,11 +74,5 @@ export function usePresenceChannel(
     }
   }, [channelName, stableBindings])
 
-  function unsubscribe() {
-    const pusherClient = getPusherClient()
-    pusherClient.unsubscribe(channelName)
-    setIsSubscribed(false)
-  }
-
-  return { isSubscribed, unsubscribe, me, membersCount }
+  return { isSubscribed, me, membersCount }
 }
