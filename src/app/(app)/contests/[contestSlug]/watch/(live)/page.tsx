@@ -72,13 +72,16 @@ function SolveStreamView({
 }: {
   stream: SolveStream
 }) {
-  const { initialMoves, isLoading } = useSolveStream({
+  const { initialMoves } = useSolveStream({
     streamId,
-    onMove: (move) => applyMove(move),
+    onMove: (move) => applyMove(move), // TODO: handle long puzzle loading
   })
+  const isLoading = !initialMoves
+
   const { simulatorRef, applyMove } = useControllableSimulator({
     discipline,
     scramble: initialMoves ? scramble + ' ' + initialMoves.join(' ') : '',
+    enabled: !isLoading,
   })
 
   if (isLoading)
@@ -99,14 +102,19 @@ function SolveStreamView({
 function useControllableSimulator({
   discipline,
   scramble,
+  enabled,
 }: {
   discipline: Discipline
   scramble: string
+  enabled: boolean
 }) {
   const simulatorRef = useRef<HTMLDivElement>(null)
   const [puzzle, setPuzzle] = useState<TwistySimulatorPuzzle | undefined>()
 
   useEffect(() => {
+    const simulatorElem = simulatorRef.current
+    if (!simulatorElem || !enabled) return
+
     void initTwistySimulator(
       {
         puzzle: SIMULATOR_DISCIPLINES_MAP[discipline].puzzle,
@@ -117,7 +125,7 @@ function useControllableSimulator({
       () => {},
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       () => {},
-      simulatorRef.current!,
+      simulatorElem,
     ).then((pzl) => {
       setTimeout(() => {
         pzl.resize()
@@ -126,8 +134,11 @@ function useControllableSimulator({
       setPuzzle(pzl)
       pzl?.applyMoves(parseMoves(scramble, pzl), 0, true)
     })
-    return () => setPuzzle(undefined)
-  }, [simulatorRef, discipline, scramble])
+    return () => {
+      setPuzzle(undefined)
+      simulatorElem.innerHTML = ''
+    }
+  }, [simulatorRef, discipline, scramble, enabled])
 
   const applyMove = useEventCallback((move: string) => {
     if (!puzzle) throw new Error('no puzzle!')
@@ -152,16 +163,20 @@ function useSolveStream({
   streamId: string
   onMove: (move: string) => void
 }) {
-  const trpc = useTRPC()
-  const { data: initialMoves, isLoading } = useQuery(
-    trpc.solveStream.getStreamMoves.queryOptions({ streamId }),
+  const { isSubscribed } = usePresenceChannel(
+    `presence-solve-stream-${streamId}`,
+    {
+      move: onMove,
+    },
   )
 
-  usePresenceChannel(`presence-solve-stream-${streamId}`, {
-    move: onMove,
+  const trpc = useTRPC()
+  const { data: initialMoves } = useQuery({
+    ...trpc.solveStream.getStreamMoves.queryOptions({ streamId }),
+    enabled: isSubscribed, // NOTE: we fetch initialMoves only after the stream connection is established so that no moves are lost in-between
   })
 
-  return { initialMoves, isLoading }
+  return { initialMoves }
 }
 
 function parseMoves(moves: string, puzzle: TwistySimulatorPuzzle) {
