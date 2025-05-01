@@ -1,4 +1,4 @@
-import { DISCIPLINES } from '@/types'
+import { DISCIPLINES, type Move } from '@/types'
 import { z } from 'zod'
 
 export type SolveStream = z.infer<typeof solveStreamSchema>
@@ -8,3 +8,5 @@ export const solveStreamSchema = z.object({
   streamId: z.string(),
   ended: z.boolean(),
 })
+
+export type SolveStreamMove = { move: Move; idx: number; isSolved: boolean }

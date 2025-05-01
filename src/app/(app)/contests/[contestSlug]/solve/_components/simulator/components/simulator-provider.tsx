@@ -66,7 +66,7 @@ export function SimulatorProvider({ children }: { children: React.ReactNode }) {
   const [solveState, setSolveState] = useState<{
     initSolveData: InitSolveData
     inspectionStartCallback: () => void
-    moveCallback: (move: Move) => void
+    moveCallback: (move: Move, isSolved: boolean) => void
     solveCallback: SimulatorSolveFinishCallback
     wasInspectionStarted: boolean
   } | null>(null)
@@ -76,7 +76,7 @@ export function SimulatorProvider({ children }: { children: React.ReactNode }) {
     (params: {
       initSolveData: InitSolveData
       inspectionStartCallback: () => void
-      moveCallback: (move: Move) => void
+      moveCallback: (move: Move, isSolved: boolean) => void
       solveCallback: SimulatorSolveFinishCallback
     }) => {
       setIsAbortPromptVisible(false)
@@ -230,7 +230,7 @@ type SimulatorContextValue = {
   initSolve: (params: {
     initSolveData: InitSolveData
     inspectionStartCallback: () => void
-    moveCallback: (move: Move) => void
+    moveCallback: (move: Move, isSolved: boolean) => void
     solveCallback: SimulatorSolveFinishCallback
   }) => void
 }

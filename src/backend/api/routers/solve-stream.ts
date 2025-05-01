@@ -1,8 +1,8 @@
 import { pusherServer } from '@/lib/pusher/pusher-server'
-import { type SolveStream } from '@/lib/pusher/streams'
+import { type SolveStream, type SolveStreamMove } from '@/lib/pusher/streams'
 import { z } from 'zod'
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc'
-import { DISCIPLINES } from '@/types'
+import { DISCIPLINES, moveSchema, type Move } from '@/types'
 
 export const solveStreamRouter = createTRPCRouter({
   registerSolveStream: protectedProcedure
@@ -38,7 +38,13 @@ export const solveStreamRouter = createTRPCRouter({
     }),
 
   sendMove: protectedProcedure
-    .input(z.object({ streamId: z.string(), move: z.string() }))
+    .input(
+      z.object({
+        streamId: z.string(),
+        move: moveSchema,
+        isSolved: z.boolean(),
+      }),
+    )
     .mutation(async ({ input }) => {
       const stream = solveStreams.get(input.streamId)
       if (!stream) throw new Error('stream not found')
@@ -46,7 +52,11 @@ export const solveStreamRouter = createTRPCRouter({
       await pusherServer.trigger(
         `presence-solve-stream-${input.streamId}`,
         'move',
-        { move: input.move, idx: stream.moves.length - 1 },
+        {
+          move: input.move,
+          idx: stream.moves.length - 1,
+          isSolved: input.isSolved,
+        } satisfies SolveStreamMove,
       )
       console.log(`presence-solve-stream-${input.streamId}`, 'move', input.move)
     }),
@@ -71,7 +81,7 @@ export const solveStreamRouter = createTRPCRouter({
         console.log('error', solveStreams, input.streamId)
         throw new Error('stream not found')
       }
-      return stream.moves
+      return stream.moves as Move[]
     }),
 })
 

@@ -2,9 +2,9 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { usePresenceChannel } from '@/lib/pusher/pusher-client'
-import { type SolveStream } from '@/lib/pusher/streams'
+import { type SolveStream, type SolveStreamMove } from '@/lib/pusher/streams'
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query'
-import type { Discipline } from '@/types'
+import type { Discipline, Move } from '@/types'
 import { type TwistySimulatorPuzzle, initTwistySimulator } from 'vendor/cstimer'
 import { SIMULATOR_DISCIPLINES_MAP } from '../../solve/_components/simulator/components/simulator/use-simulator'
 import { useTRPC } from '@/lib/trpc/react'
@@ -81,7 +81,11 @@ function SolveStreamView({
 }) {
   const { initialMoves, enabled } = useSolveStream({
     streamId,
-    onMove: (move) => applyMove(move), // TODO: handle long puzzle loading
+    onMove: (move, isSolved) => {
+      applyMove(move)
+      console.log(isSolved)
+      if (isSolved) alert('solved!')
+    }, // TODO: handle long puzzle loading
   })
 
   const { simulatorRef, applyMove } = useControllableSimulator({
@@ -149,7 +153,7 @@ function useControllableSimulator({
     }
   }, [simulatorRef, discipline, scramble, enabled])
 
-  const applyMove = useEventCallback((move: string) => {
+  const applyMove = useEventCallback((move: Move) => {
     if (!puzzle) throw new Error('no puzzle!')
     puzzle.addMoves(parseMoves(move, puzzle), 0)
   })
@@ -170,10 +174,10 @@ function useSolveStream({
   onMove,
 }: {
   streamId: string
-  onMove: (move: string) => void
+  onMove: (move: Move, isSolved: boolean) => void
 }) {
-  const stableMoveHandler = useEventCallback(
-    (move: { move: string; idx: number }) => moveHandler(move),
+  const stableMoveHandler = useEventCallback((move: SolveStreamMove) =>
+    moveHandler(move),
   )
   const bindings = useMemo(
     () => ({ move: stableMoveHandler }),
@@ -193,14 +197,14 @@ function useSolveStream({
   // NOTE: we buffer the moves from the stream until initialMoves are loaded
   const [bufferedMoves, setBufferedMoves] = useState<
     {
-      move: string
+      move: Move
       idx: number
     }[]
   >([])
 
-  function moveHandler({ move, idx }: { move: string; idx: number }) {
+  function moveHandler({ move, idx, isSolved }: SolveStreamMove) {
     if (fetchedInitialMoves) {
-      onMove(move)
+      onMove(move, isSolved)
       return
     }
 

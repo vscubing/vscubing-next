@@ -1,4 +1,9 @@
-import { type Discipline, type SimulatorSettings } from '@/types'
+import {
+  isMove,
+  type Discipline,
+  type Move,
+  type SimulatorSettings,
+} from '@/types'
 import {
   type SimulatorCameraPosition,
   type TwistySimulatorMoveListener,
@@ -7,7 +12,6 @@ import {
 } from 'vendor/cstimer'
 import { type RefObject, useEffect, useState } from 'react'
 
-export type Move = (typeof MOVES)[number]
 export type SimulatorMoveListener = ({
   move,
   isRotation,
@@ -137,31 +141,4 @@ function parseCstimerMove(moveCstimer: string): Move {
 
   if (!isMove(move)) throw new Error(`[SIMULATOR] invalid move: ${move}`)
   return move
-}
-
-const SIMPLE_MOVES = [
-  'R',
-  'U',
-  'F',
-  'B',
-  'L',
-  'D',
-  'M',
-  'E',
-  'S',
-  'Rw',
-  'Uw',
-  'Fw',
-  'Bw',
-  'Lw',
-  'Dw',
-  'x',
-  'y',
-  'z',
-] as const
-const MOVES = SIMPLE_MOVES.flatMap(
-  (move) => [move, `${move}'`, `${move}2`] as const,
-)
-function isMove(moveStr: string): moveStr is Move {
-  return (MOVES as readonly string[]).includes(moveStr)
 }
