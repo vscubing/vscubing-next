@@ -1,5 +1,5 @@
 import PusherJS, { type PresenceChannel } from 'pusher-js'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useLayoutEffect } from 'react'
 import { z } from 'zod'
 
 let pusherClientSingleton: PusherJS | undefined
@@ -31,7 +31,14 @@ export function usePresenceChannel(
 
   const [isSubscribed, setIsSubscribed] = useState(false)
 
+  // HACK: we don't want bindings to ever affect the socket connection so we "stabilize" them, see https://github.com/reactjs/rfcs/blob/useevent/text/0000-useevent.md
+  const stableBindings = useRef(bindings)
+  useLayoutEffect(() => {
+    stableBindings.current = bindings
+  })
+
   useEffect(() => {
+    console.log('subscribing...')
     const pusherClient = getPusherClient()
 
     const channel = pusherClient.subscribe(channelName) as PresenceChannel
@@ -53,17 +60,19 @@ export function usePresenceChannel(
       setMembersCount(channel.members.count)
     })
 
-    for (const [eventName, callback] of Object.entries(bindings)) {
+    for (const [eventName, callback] of Object.entries(
+      stableBindings.current,
+    )) {
       channel.bind(eventName, callback)
     }
     return () => {
       pusherClient.unsubscribe(channel.name)
-      for (const eventName of Object.keys(bindings)) {
+      for (const eventName of Object.keys(stableBindings.current)) {
         channel.unbind(eventName)
       }
       setIsSubscribed(false)
     }
-  }, [channelName, bindings])
+  }, [channelName, stableBindings])
 
   function unsubscribe() {
     const pusherClient = getPusherClient()

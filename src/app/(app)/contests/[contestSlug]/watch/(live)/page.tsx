@@ -1,14 +1,6 @@
 'use client'
 
-import {
-  Suspense,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { usePresenceChannel } from '@/lib/pusher/pusher-client'
 import { type SolveStream } from '@/lib/pusher/streams'
 import { useSuspenseQuery } from '@tanstack/react-query'
@@ -19,6 +11,8 @@ import { useTRPC } from '@/lib/trpc/react'
 import { LayoutHeaderTitlePortal } from '@/app/(app)/_layout'
 import { LoadingSpinner } from '@/frontend/ui'
 import { EyeIcon } from 'lucide-react'
+import { useEventCallback } from 'usehooks-ts'
+import { useResizeObserver } from '@/frontend/utils/use-resize-observer'
 
 export default function WatchLivePageContent() {
   const trpc = useTRPC()
@@ -87,43 +81,14 @@ function SolveStreamView({
 }: {
   stream: SolveStream
 }) {
-  const trpc = useTRPC()
-  const { data: initialMoves } = useSuspenseQuery(
-    trpc.solveStream.getStreamMoves.queryOptions({ streamId }),
-  )
-  const {
-    containerRef: simulatorRef,
-    applyMove,
-    resize,
-  } = useLiveStreamSimulator({
+  const { initialMoves } = useSolveStream({
+    streamId,
+    onMove: (move) => applyMove(move),
+  })
+  const { simulatorRef, applyMove } = useControllableSimulator({
     discipline,
     scramble: scramble + ' ' + initialMoves.join(' '),
   })
-  const applyMoveStable = useEventCallback(applyMove)
-
-  const bindings = useMemo(
-    () => ({
-      move: (move: string) => applyMoveStable(move),
-    }),
-    [applyMoveStable],
-  )
-  usePresenceChannel(`presence-solve-stream-${streamId}`, bindings)
-
-  const resizeStable = useEventCallback(resize)
-  useEffect(() => {
-    const node = simulatorRef.current
-    if (!node) return
-
-    const observer = new ResizeObserver(() => {
-      resizeStable()
-    })
-
-    observer.observe(node)
-
-    return () => {
-      observer.disconnect()
-    }
-  }, [simulatorRef, resizeStable])
 
   return (
     <div
@@ -133,14 +98,14 @@ function SolveStreamView({
   )
 }
 
-function useLiveStreamSimulator({
+function useControllableSimulator({
   discipline,
   scramble,
 }: {
   discipline: Discipline
   scramble: string
 }) {
-  const containerRef = useRef<HTMLDivElement>(null)
+  const simulatorRef = useRef<HTMLDivElement>(null)
   const [puzzle, setPuzzle] = useState<TwistySimulatorPuzzle | undefined>()
 
   useEffect(() => {
@@ -154,7 +119,7 @@ function useLiveStreamSimulator({
       () => {},
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       () => {},
-      containerRef.current!,
+      simulatorRef.current!,
     ).then((pzl) => {
       setTimeout(() => {
         pzl.resize()
@@ -164,38 +129,40 @@ function useLiveStreamSimulator({
       pzl?.applyMoves(parseMoves(scramble, pzl), 0, true)
     })
     return () => setPuzzle(undefined)
-  }, [containerRef, discipline, scramble])
+  }, [simulatorRef, discipline, scramble])
 
-  const applyMove = useCallback(
-    (move: string) => {
-      if (!puzzle) throw new Error('no puzzle!')
-      puzzle.addMoves(parseMoves(move, puzzle), 0)
+  const applyMove = useEventCallback((move: string) => {
+    if (!puzzle) throw new Error('no puzzle!')
+    puzzle.addMoves(parseMoves(move, puzzle), 0)
+  })
+
+  useResizeObserver({
+    ref: simulatorRef,
+    onResize: () => {
+      puzzle?.resize()
+      puzzle?.setCameraPosition({ phi: 6, theta: 0 })
     },
-    [puzzle],
-  )
+  })
 
-  const resize = useCallback(() => {
-    puzzle?.resize()
-    puzzle?.setCameraPosition({ phi: 6, theta: 0 })
-  }, [puzzle])
-  return { applyMove, containerRef, resize }
+  return { applyMove, simulatorRef }
 }
 
-type Fn<ARGS extends unknown[], R> = (...args: ARGS) => R
-
-const useEventCallback = <A extends unknown[], R>(fn: Fn<A, R>): Fn<A, R> => {
-  const ref = useRef<Fn<A, R>>(fn)
-  useLayoutEffect(() => {
-    ref.current = fn
-  })
-  return useMemo(
-    () =>
-      (...args: A): R => {
-        const { current } = ref
-        return current(...args)
-      },
-    [],
+function useSolveStream({
+  streamId,
+  onMove,
+}: {
+  streamId: string
+  onMove: (move: string) => void
+}) {
+  const trpc = useTRPC()
+  const { data: initialMoves } = useSuspenseQuery(
+    trpc.solveStream.getStreamMoves.queryOptions({ streamId }),
   )
+
+  usePresenceChannel(`presence-solve-stream-${streamId}`, {
+    move: onMove,
+  })
+  return { initialMoves }
 }
 
 function parseMoves(moves: string, puzzle: TwistySimulatorPuzzle) {
