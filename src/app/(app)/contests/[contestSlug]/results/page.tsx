@@ -13,8 +13,10 @@ import { Suspense } from 'react'
 import { SessionList } from './_components/session-list'
 import { LeaveRoundButton } from './_components/leave-round-button'
 import { LegacySolvePageLink } from './_components/legacy-solve-page-link'
-import { SecondaryButton } from '@/frontend/ui'
-import Link from 'next/link'
+import {
+  RoundSessionHeader,
+  RoundSessionRowSkeleton,
+} from '@/frontend/shared/round-session-row'
 
 export default async function ContestResultsPage({
   params,
@@ -76,7 +78,12 @@ export default async function ContestResultsPage({
         key={discipline}
         fallback={
           <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 lg:p-4 sm:p-3'>
-            Loading...
+            <RoundSessionHeader />
+            <div className='space-y-2'>
+              {Array.from({ length: 20 }).map((_, idx) => (
+                <RoundSessionRowSkeleton key={idx} />
+              ))}
+            </div>
           </div>
         }
       >
