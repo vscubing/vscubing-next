@@ -6,7 +6,6 @@ import { type SolveStream, type SolveStreamMove } from '@/lib/pusher/streams'
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query'
 import type { Discipline, Move } from '@/types'
 import { type TwistySimulatorPuzzle, initTwistySimulator } from 'vendor/cstimer'
-import { SIMULATOR_DISCIPLINES_MAP } from '../../solve/_components/simulator/components/simulator/use-simulator'
 import { useTRPC } from '@/lib/trpc/react'
 import { LayoutHeaderTitlePortal } from '@/app/(app)/_layout'
 import { LoadingSpinner } from '@/frontend/ui'
@@ -15,6 +14,7 @@ import { useEventCallback } from 'usehooks-ts'
 import { useResizeObserver } from '@/frontend/utils/use-resize-observer'
 import { cn } from '@/frontend/utils/cn'
 import { formatSolveTime } from '@/lib/utils/format-solve-time'
+import { SIMULATOR_DISCIPLINES_MAP } from '../contests/[contestSlug]/solve/_components/simulator/components/simulator/use-simulator'
 
 export default function WatchLivePageContent() {
   const trpc = useTRPC()
@@ -52,7 +52,7 @@ export default function WatchLivePageContent() {
     <>
       <LayoutHeaderTitlePortal>
         <span className='flex items-center'>
-          <span>WatchLivePage</span>
+          <span>Live streams</span>
           {isSubscribed ? (
             <>
               <span className='ml-2 h-4 w-4 animate-pulse rounded-full bg-red-100' />
@@ -66,6 +66,14 @@ export default function WatchLivePageContent() {
           )}
         </span>
       </LayoutHeaderTitlePortal>
+      {!isSubscribed && (
+        <p className='flex-1 rounded-2xl bg-black-80 p-4'>Loading...</p>
+      )}
+      {isSubscribed && streams.length === 0 && (
+        <p className='flex-1 rounded-2xl bg-black-80 p-4'>
+          There are no live streams at the moment.
+        </p>
+      )}
       <div className='grid grid-cols-[repeat(auto-fill,minmax(350px,1fr))] gap-2'>
         {streams.map((stream) => (
           <SolveStreamView stream={stream} key={stream.streamId} />

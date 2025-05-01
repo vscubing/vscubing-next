@@ -15,9 +15,12 @@ Hybrid results view:
 - [ ] rework OwnSolveInProgress row
 
 Live streaming:
+- [ ] disable it in prod
+- [ ] deploy to experiments.vscubing.com
 - [ ] make TwistySimulator api compliant with the standard notation
 - [ ] pusher typesafety
 - [ ] sync final solve time
+- [ ] put simulator into a separate package
 
 Custom contests:
 - [ ] round status (registration|ongoing|finished) (+incomplete sessions warning)
