@@ -1,5 +1,6 @@
 import PusherJS, { type PresenceChannel } from 'pusher-js'
 import { useState, useEffect, useRef, useLayoutEffect } from 'react'
+import { useEventCallback } from 'usehooks-ts'
 import { z } from 'zod'
 
 let pusherClientSingleton: PusherJS | undefined
@@ -31,11 +32,15 @@ export function usePresenceChannel(
 
   const [isSubscribed, setIsSubscribed] = useState(false)
 
-  // HACK: we don't want bindings to ever affect the socket connection so we "stabilize" them, see https://github.com/reactjs/rfcs/blob/useevent/text/0000-useevent.md
-  const stableBindings = useRef(bindings)
-  useLayoutEffect(() => {
-    stableBindings.current = bindings
-  })
+  // // TODO: figure out why binding callbacks don't "see" updated closure
+
+  // const stableBindings = useRef(bindings)
+  // useLayoutEffect(() => {
+  //   stableBindings.current = {}
+  //   for (const [eventName, callback] of Object.entries(bindings)) {
+  //     stableBindings.current[eventName] = (...args) => callback(...args)
+  //   }
+  // })
 
   useEffect(() => {
     const pusherClient = getPusherClient()
@@ -59,20 +64,18 @@ export function usePresenceChannel(
       setMembersCount(channel.members.count)
     })
 
-    for (const [eventName, callback] of Object.entries(
-      stableBindings.current,
-    )) {
-      channel.bind(eventName, callback)
+    for (const [eventName, stableCallback] of Object.entries(bindings)) {
+      channel.bind(eventName, stableCallback)
     }
 
     return () => {
       pusherClient.unsubscribe(channel.name)
-      for (const eventName of Object.keys(stableBindings.current)) {
+      for (const eventName of Object.keys(bindings)) {
         channel.unbind(eventName)
       }
       setIsSubscribed(false)
     }
-  }, [channelName, stableBindings])
+  }, [channelName, bindings])
 
   return { isSubscribed, me, membersCount }
 }

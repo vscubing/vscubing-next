@@ -72,19 +72,18 @@ function SolveStreamView({
 }: {
   stream: SolveStream
 }) {
-  const { initialMoves } = useSolveStream({
+  const { initialMoves, enabled } = useSolveStream({
     streamId,
     onMove: (move) => applyMove(move), // TODO: handle long puzzle loading
   })
-  const isLoading = !initialMoves
 
   const { simulatorRef, applyMove } = useControllableSimulator({
     discipline,
     scramble: initialMoves ? scramble + ' ' + initialMoves.join(' ') : '',
-    enabled: !isLoading,
+    enabled,
   })
 
-  if (isLoading)
+  if (!enabled)
     return (
       <div className='flex aspect-square items-center justify-center rounded-2xl bg-black-80'>
         <LoadingSpinner />
@@ -163,20 +162,54 @@ function useSolveStream({
   streamId: string
   onMove: (move: string) => void
 }) {
+  const stableMoveHandler = useEventCallback(
+    (move: { move: string; idx: number }) => moveHandler(move),
+  )
+  const bindings = useMemo(
+    () => ({ move: stableMoveHandler }),
+    [stableMoveHandler],
+  )
   const { isSubscribed } = usePresenceChannel(
     `presence-solve-stream-${streamId}`,
-    {
-      move: onMove,
-    },
+    bindings,
   )
 
   const trpc = useTRPC()
-  const { data: initialMoves } = useQuery({
+  const { data: fetchedInitialMoves } = useQuery({
     ...trpc.solveStream.getStreamMoves.queryOptions({ streamId }),
     enabled: isSubscribed, // NOTE: we fetch initialMoves only after the stream connection is established so that no moves are lost in-between
   })
 
-  return { initialMoves }
+  // NOTE: we buffer the moves from the stream until initialMoves are loaded
+  const [bufferedMoves, setBufferedMoves] = useState<
+    {
+      move: string
+      idx: number
+    }[]
+  >([])
+
+  function moveHandler({ move, idx }: { move: string; idx: number }) {
+    if (fetchedInitialMoves) {
+      onMove(move)
+      return
+    }
+
+    setBufferedMoves((prev) => [...prev, { move, idx }])
+  }
+
+  if (fetchedInitialMoves === undefined)
+    return { initialMoves: undefined, enabled: false }
+
+  // NOTE: if moves happen after the stream connection is established, but before a snapshot of initialMoves is made, there will be an overlap between initialMoves and bufferedMoves so we have to dedup
+  const bufferedMovesWithoutOverlap = bufferedMoves.filter(
+    ({ idx }) => idx > fetchedInitialMoves.length - 1,
+  )
+  return {
+    initialMoves: fetchedInitialMoves.concat(
+      bufferedMovesWithoutOverlap.map(({ move }) => move),
+    ),
+    enabled: !!fetchedInitialMoves,
+  }
 }
 
 function parseMoves(moves: string, puzzle: TwistySimulatorPuzzle) {

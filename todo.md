@@ -5,7 +5,7 @@
 - [x] scroll on session finish
 - [x] censor solves in contest results
 - [x] streaming primitives
-- [ ] streaming resumability
+- [x] streaming resumability
 - [ ] remove scrollToXXX after performing scroll (maybe rename it to anchorId)
 - [ ] round status (registration|ongoing|finished) (+incomplete sessions warning)
 - [ ] rework OwnSolveInProgress row

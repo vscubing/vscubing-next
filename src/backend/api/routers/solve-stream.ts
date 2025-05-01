@@ -33,7 +33,7 @@ export const solveStreamRouter = createTRPCRouter({
       await pusherServer.trigger(
         `presence-solve-stream-${input.streamId}`,
         'move',
-        input.move,
+        { move: input.move, idx: stream.moves.length - 1 },
       )
       console.log(`presence-solve-stream-${input.streamId}`, 'move', input.move)
     }),
@@ -58,7 +58,6 @@ export const solveStreamRouter = createTRPCRouter({
         throw new Error('stream not found')
       }
       return stream.moves
-      // await new Promise((res) => setTimeout(res, 3000)) // TODO: handle resumability with latency (idea: establish connection first, then fetch moves, remove overlapping and concatenate)
     }),
 })
 
