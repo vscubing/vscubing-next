@@ -18,6 +18,8 @@ import {
 } from '@/frontend/ui'
 import { DEFAULT_DISCIPLINE } from '@/types'
 import { CircleDashed, RadioTowerIcon } from 'lucide-react'
+import { env } from '@/env'
+import { LIVE_STREAMS_ENABLED } from '@/lib/pusher/streams'
 
 type NavbarProps = {
   variant: 'vertical' | 'horizontal'
@@ -185,12 +187,14 @@ function getNavbarLinks(
         : undefined,
       disabled: ongoingContest === null,
     },
-    {
+  ]
+
+  if (LIVE_STREAMS_ENABLED)
+    links.push({
       icon: <RadioTowerIcon />,
       name: 'Live streams',
       route: '/live-streams',
-    },
-  ]
+    })
 
   if (devToolsEnabled) {
     links.push({

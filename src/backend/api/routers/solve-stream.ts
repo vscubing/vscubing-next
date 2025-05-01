@@ -1,11 +1,22 @@
 import { pusherServer } from '@/lib/pusher/pusher-server'
-import { type SolveStream, type SolveStreamMove } from '@/lib/pusher/streams'
+import {
+  LIVE_STREAMS_ENABLED,
+  type SolveStream,
+  type SolveStreamMove,
+} from '@/lib/pusher/streams'
 import { z } from 'zod'
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc'
 import { DISCIPLINES, moveSchema, type Move } from '@/types'
+import { TRPCError } from '@trpc/server'
 
+export const liveStreamProcedure = publicProcedure.use(async ({ next }) => {
+  if (!LIVE_STREAMS_ENABLED) throw new TRPCError({ code: 'FORBIDDEN' })
+  return next()
+})
+
+// TODO: register/unregister authorization
 export const solveStreamRouter = createTRPCRouter({
-  registerSolveStream: protectedProcedure
+  registerSolveStream: liveStreamProcedure
     .input(
       z.object({
         discipline: z.enum(DISCIPLINES),
@@ -25,7 +36,7 @@ export const solveStreamRouter = createTRPCRouter({
       console.log('presence-solve-streams', 'created', input)
     }),
 
-  unregisterSolveStream: protectedProcedure
+  unregisterSolveStream: liveStreamProcedure
     .input(z.object({ streamId: z.string() }))
     .mutation(async ({ input }) => {
       const stream = solveStreams.get(input.streamId)
@@ -61,7 +72,7 @@ export const solveStreamRouter = createTRPCRouter({
       console.log(`presence-solve-stream-${input.streamId}`, 'move', input.move)
     }),
 
-  getActiveStreams: publicProcedure.query(() => {
+  getActiveStreams: liveStreamProcedure.query(() => {
     console.log('getActiveStreams', solveStreams)
     return Array.from(solveStreams.entries())
       .filter(([, { ended }]) => !ended)
@@ -73,7 +84,7 @@ export const solveStreamRouter = createTRPCRouter({
       }))
   }),
 
-  getStreamMoves: publicProcedure
+  getStreamMoves: liveStreamProcedure
     .input(z.object({ streamId: z.string() }))
     .query(({ input }) => {
       const stream = solveStreams.get(input.streamId)

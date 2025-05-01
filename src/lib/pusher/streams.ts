@@ -1,3 +1,4 @@
+import { env } from '@/env'
 import { DISCIPLINES, type Move } from '@/types'
 import { z } from 'zod'
 
@@ -14,3 +15,5 @@ export type SolveStreamMove = {
   idx: number
   event?: 'solve-start' | 'solve-end'
 }
+
+export const LIVE_STREAMS_ENABLED = env.NEXT_PUBLIC_APP_ENV !== 'production'

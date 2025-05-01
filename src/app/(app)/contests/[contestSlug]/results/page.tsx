@@ -64,13 +64,6 @@ export default async function ContestResultsPage({
           </p>
         </div>
         <div className='ml-auto space-x-2 sm:hidden'>
-          <SecondaryButton asChild>
-            <Link
-              href={`/contests/${contestSlug}/watch?discipline=${discipline}`}
-            >
-              Watch live
-            </Link>
-          </SecondaryButton>
           <LeaveRoundButton contestSlug={contestSlug} discipline={discipline} />
           <LegacySolvePageLink
             contestSlug={contestSlug}
