@@ -8,10 +8,10 @@
 - [x] streaming resumability
 - [x] streaming last move correctly (end stream instead of deleting it)
 - [x] timer
+- [ ] remove scrollToXXX after using it (maybe rename it to anchorId)
 
 Hybrid results view:
-- [ ] legacy/new solve view toggle
-- [ ] remove scrollToXXX after performing scroll (maybe rename it to anchorId)
+- [x] legacy/new solve view toggle
 - [ ] rework OwnSolveInProgress row
 
 Live streaming:
@@ -21,6 +21,9 @@ Live streaming:
 - [ ] pusher typesafety
 - [ ] sync final solve time
 - [ ] put simulator into a separate package
+- [ ] try socket.io and aws implementations
 
-Custom contests:
+Special contests:
 - [ ] round status (registration|ongoing|finished) (+incomplete sessions warning)
+
+Collaboration

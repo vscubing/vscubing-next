@@ -17,9 +17,11 @@ import {
   CodeXmlIcon,
 } from '@/frontend/ui'
 import { DEFAULT_DISCIPLINE } from '@/types'
-import { CircleDashed, RadioTowerIcon } from 'lucide-react'
-import { env } from '@/env'
-import { LIVE_STREAMS_ENABLED } from '@/lib/pusher/streams'
+import { HandshakeIcon, RadioTowerIcon } from 'lucide-react'
+import {
+  LIVE_STREAMS_ENABLED,
+  CUBE_TOGETHER_ENABLED,
+} from '@/lib/pusher/streams'
 
 type NavbarProps = {
   variant: 'vertical' | 'horizontal'
@@ -146,9 +148,18 @@ type NavbarRoute =
   | '/settings'
   | '/dev'
   | '/live-streams'
+  | '/cube-together'
 
 function isStaticNavbarRoute(pathname: string): pathname is NavbarRoute {
-  return ['/', '/contests', '/dev', '/live-streams'].includes(pathname)
+  return (
+    [
+      '/',
+      '/contests',
+      '/dev',
+      '/live-streams',
+      '/cube-together',
+    ] satisfies NavbarRoute[] as string[]
+  ).includes(pathname)
 }
 function getNavbarLinks(
   ongoingContest: RouterOutputs['contest']['getOngoing'] | undefined,
@@ -194,6 +205,13 @@ function getNavbarLinks(
       icon: <RadioTowerIcon />,
       name: 'Live streams',
       route: '/live-streams',
+    })
+
+  if (CUBE_TOGETHER_ENABLED)
+    links.push({
+      icon: <HandshakeIcon />,
+      name: 'Cube together',
+      route: '/cube-together',
     })
 
   if (devToolsEnabled) {

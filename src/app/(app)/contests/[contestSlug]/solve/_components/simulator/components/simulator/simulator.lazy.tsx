@@ -147,7 +147,7 @@ export default function Simulator({
     settings.inspectionVoiceAlert,
   ])
 
-  // NOTE: keep an eye on it, I removed useCallback here and added useEventCallback in useTwistySimulator instead, it might not work correctly
+  // WARN: keep an eye on it, I removed useCallback here and added useEventCallback in useTwistySimulator instead, it might not work correctly
   function moveHandler({ move, isRotation, isSolved }: SimulatorEvent) {
     if (!solution) throw new Error('[SIMULATOR] moves undefined')
     setSolution((prev) => [...prev, { move, timestamp: getCurrentTimestamp() }])

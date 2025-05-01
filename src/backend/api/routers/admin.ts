@@ -90,6 +90,7 @@ export const adminRouter = createTRPCRouter({
           tx,
           easyScrambles: input.easyScrambles,
           slug: getNextContestSlug(latestContest.slug),
+          type: 'weekly',
         }),
       )
     }),

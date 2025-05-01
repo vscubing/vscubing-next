@@ -128,14 +128,15 @@ function SolveStreamView({
   )
 }
 
-function useControllableSimulator({
+// TODO: put this in a shared module
+export function useControllableSimulator({
   discipline,
   scramble,
-  enabled,
+  enabled = true,
 }: {
   discipline: Discipline
   scramble: string
-  enabled: boolean
+  enabled?: boolean
 }) {
   const simulatorRef = useRef<HTMLDivElement>(null)
   const [puzzle, setPuzzle] = useState<TwistySimulatorPuzzle | undefined>()
@@ -174,6 +175,11 @@ function useControllableSimulator({
     puzzle.addMoves(parseMoves(move, puzzle), 0)
   })
 
+  const applyKeyboardMove = useEventCallback((event: KeyboardEvent) => {
+    if (!puzzle) throw new Error('no puzzle!')
+    puzzle.keydown(event)
+  })
+
   useResizeObserver({
     ref: simulatorRef,
     onResize: () => {
@@ -182,7 +188,7 @@ function useControllableSimulator({
     },
   })
 
-  return { applyMove, simulatorRef }
+  return { applyMove, simulatorRef, applyKeyboardMove }
 }
 
 function useSolveStream({

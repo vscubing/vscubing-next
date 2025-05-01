@@ -22,14 +22,14 @@ export type CameraPosition = { theta: number; phi: number }
 
 export class Puzzle {
   constructor(twistyScene, twisty)
-  keydown(args): unknown
-  resize(): unknown
+  keydown(event: KeyboardEvent): void
+  resize(): void
   addMoves(...args): unknown
   applyMoves(
     args,
     timestamp: number | undefined,
     applyingScramble: boolean,
-  ): unknown
+  ): void
   setCameraPosition(position: CameraPosition): void
   addMoveListener(listener): unknown
   getDomElement(): unknown
