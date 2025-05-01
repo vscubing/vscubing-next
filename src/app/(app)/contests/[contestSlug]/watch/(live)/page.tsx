@@ -18,6 +18,7 @@ import { SIMULATOR_DISCIPLINES_MAP } from '../../solve/_components/simulator/com
 import { useTRPC } from '@/lib/trpc/react'
 import { LayoutHeaderTitlePortal } from '@/app/(app)/_layout'
 import { LoadingSpinner } from '@/frontend/ui'
+import { EyeIcon } from 'lucide-react'
 
 export default function WatchLivePageContent() {
   const trpc = useTRPC()
@@ -30,32 +31,40 @@ export default function WatchLivePageContent() {
     () => ({
       created: (stream: SolveStream) => setStreams((prev) => [...prev, stream]),
       deleted: ({ streamId }: { streamId: string }) =>
-        setStreams((prev) =>
-          prev.filter((stream) => stream.streamId !== streamId),
+        setTimeout(
+          () =>
+            setStreams((prev) =>
+              prev.filter((stream) => stream.streamId !== streamId),
+            ),
+          5000,
         ),
     }),
     [],
   )
-  const { me, membersCount, isSubscribed } = usePresenceChannel(
+  const { membersCount, isSubscribed } = usePresenceChannel(
     'presence-solve-streams',
     bindings,
   )
 
   return (
     <>
-      {/* <div className='flex-1 rounded-2xl bg-black-80 p-4'> */}
       <LayoutHeaderTitlePortal>
-        WatchLivePage {isSubscribed ? '(connected)' : '(not connected)'}
+        <span className='flex items-center'>
+          <span>WatchLivePage</span>
+          {isSubscribed ? (
+            <>
+              <span className='ml-2 h-4 w-4 animate-pulse rounded-full bg-red-100' />
+              <span className='ml-4 flex gap-2 rounded-2xl bg-black-80'>
+                <EyeIcon />
+                <span className='text-large'>{membersCount}</span>
+              </span>
+            </>
+          ) : (
+            <LoadingSpinner size='sm' />
+          )}
+        </span>
       </LayoutHeaderTitlePortal>
-      {/* <p>Watching live: {membersCount}</p> */}
-      {/* <p>me: {me}</p> */}
       <div className='grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-2'>
-        {/* {Array.from({ length: 5 }).map((_, idx) => ( */}
-        {/*   <div */}
-        {/*     key={idx} */}
-        {/*     className='flex aspect-square flex-1 items-center justify-center rounded-2xl bg-black-80 p-4' */}
-        {/*   /> */}
-        {/* ))} */}
         {streams.map((stream) => (
           <Suspense
             key={stream.streamId}
@@ -69,7 +78,6 @@ export default function WatchLivePageContent() {
           </Suspense>
         ))}
       </div>
-      {/* </div> */}
     </>
   )
 }
@@ -118,16 +126,10 @@ function SolveStreamView({
   }, [simulatorRef, resizeStable])
 
   return (
-    <div>
-      {/* <p> */}
-      {/*   {streamId}, {discipline}, {scramble}, isSubscribed:{' '} */}
-      {/*   {JSON.stringify(isSubscribed)} */}
-      {/* </p> */}
-      {/* <p>{initialMoves}</p> */}
-      <div className='flex flex-1 items-center justify-center rounded-2xl bg-black-80 p-4'>
-        <div ref={simulatorRef} className='aspect-square w-full'></div>
-      </div>
-    </div>
+    <div
+      ref={simulatorRef}
+      className='flex aspect-square w-full flex-1 items-center justify-center rounded-2xl bg-black-80 p-4'
+    ></div>
   )
 }
 

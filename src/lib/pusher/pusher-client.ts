@@ -24,7 +24,9 @@ export function usePresenceChannel(
   channelName: `presence-${string}`,
   bindings: Record<string, (data: never) => void>,
 ) {
-  const [membersCount, setMembersCount] = useState(-1)
+  const [membersCount, setMembersCount] = useState<number | undefined>(
+    undefined,
+  )
   const [me, setMe] = useState<string>('')
 
   const [isSubscribed, setIsSubscribed] = useState(false)

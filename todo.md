@@ -11,3 +11,4 @@
 - [ ] rework OwnSolveInProgress row
 - [ ] legacy/new solve view toggle
 - [ ] make TwistySimulator api compliant with the standard notation
+- [ ] streaming last move correctly (maybe include "isLast" in the move payload)
