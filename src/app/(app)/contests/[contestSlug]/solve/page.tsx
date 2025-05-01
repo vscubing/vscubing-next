@@ -66,6 +66,13 @@ export default async function SolveContestPage({
             scrambles or the round ends
           </p>
         </div>
+        <SecondaryButton className='ml-auto' asChild>
+          <Link
+            href={`/contests/${contestSlug}/results?discipline=${discipline}`}
+          >
+            Experimental view
+          </Link>
+        </SecondaryButton>
       </LayoutSectionHeader>
 
       <Suspense
