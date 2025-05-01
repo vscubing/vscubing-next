@@ -60,7 +60,7 @@ export default function WatchLivePageContent() {
           <Suspense
             key={stream.streamId}
             fallback={
-              <div className='flex items-center justify-center rounded-2xl bg-black-80'>
+              <div className='flex aspect-square items-center justify-center rounded-2xl bg-black-80'>
                 <LoadingSpinner />
               </div>
             }

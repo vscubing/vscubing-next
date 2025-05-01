@@ -4,8 +4,10 @@
 - [x] hydration error
 - [x] scroll on session finish
 - [x] censor solves in contest results
-- [ ] streaming
+- [x] streaming primitives
+- [ ] streaming resumability
 - [ ] remove scrollToXXX after performing scroll (maybe rename it to anchorId)
 - [ ] round status (registration|ongoing|finished) (+incomplete sessions warning)
 - [ ] rework OwnSolveInProgress row
 - [ ] legacy/new solve view toggle
+- [ ] make TwistySimulator api compliant with the standard notation
