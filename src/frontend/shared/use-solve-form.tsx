@@ -102,8 +102,7 @@ export function useSolveForm({
           discipline,
           scramble: state.currentScramble.moves,
         }),
-      moveCallback: (move, isSolved) =>
-        void sendMove({ streamId, move, isSolved }),
+      moveCallback: (move, event) => void sendMove({ streamId, move, event }),
       solveCallback: (solve) => {
         postSolveResult({
           solve: signSolve(solve),

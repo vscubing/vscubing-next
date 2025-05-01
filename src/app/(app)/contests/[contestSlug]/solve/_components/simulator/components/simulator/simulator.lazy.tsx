@@ -1,16 +1,12 @@
-import { useRef, useState, useEffect, useCallback } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { VOICE_ALERTS } from './voice-alerts-audio'
 import { getDisplay } from './get-display'
-import {
-  type Move,
-  type SimulatorMoveListener,
-  useTwistySimulator,
-} from './use-simulator'
+import { type SimulatorEvent, useTwistySimulator } from './use-simulator'
 import {
   INSPECTION_DNF_THRESHHOLD_MS,
   INSPECTION_PLUS_TWO_THRESHHOLD_MS,
 } from './constants'
-import type { Discipline, ResultDnfable } from '@/types'
+import type { Discipline, Move, ResultDnfable } from '@/types'
 import type { userSimulatorSettingsTable } from '@/backend/db/schema'
 import type { SimulatorCameraPosition } from 'vendor/cstimer'
 import { useIsTouchDevice } from '@/frontend/utils/use-media-query'
@@ -28,7 +24,7 @@ type SimulatorProps = {
   initSolveData: InitSolveData
   onInspectionStart: () => void
   onSolveFinish: SimulatorSolveFinishCallback
-  onMove: (move: Move, isSolved: boolean) => void
+  onMove: (move: Move, event?: 'solve-start' | 'solve-end') => void
   settings: Omit<
     typeof userSimulatorSettingsTable.$inferSelect,
     'id' | 'createdAt' | 'updatedAt' | 'userId'
@@ -151,27 +147,24 @@ export default function Simulator({
     settings.inspectionVoiceAlert,
   ])
 
-  const moveHandler = useCallback<SimulatorMoveListener>(
-    ({ move, isRotation, isSolved }) => {
-      setSolution((prev) => {
-        if (!prev) throw new Error('[SIMULATOR] moves undefined')
-        return [...prev, { move, timestamp: getCurrentTimestamp() }]
-      })
-      setStatus((prevStatus) => {
-        if (prevStatus === 'inspecting' && !isRotation) {
-          return 'solving'
-        }
-        if (prevStatus === 'solving' && isSolved) return 'solved'
+  // NOTE: keep an eye on it, I removed useCallback here and added useEventCallback in useTwistySimulator instead, it might not work correctly
+  function moveHandler({ move, isRotation, isSolved }: SimulatorEvent) {
+    if (!solution) throw new Error('[SIMULATOR] moves undefined')
+    setSolution((prev) => [...prev, { move, timestamp: getCurrentTimestamp() }])
 
-        return prevStatus
-      })
-      onMove(move, isSolved)
-    },
-    [onMove],
-  )
+    const solveJustStarted = status === 'inspecting' && !isRotation
+
+    if (solveJustStarted) setStatus('solving')
+    else if (status === 'solving' && isSolved) setStatus('solved')
+
+    if (solveJustStarted) onMove(move, 'solve-start')
+    else if (isSolved) onMove(move, 'solve-end')
+    else onMove(move)
+  }
 
   useEffect(() => {
     if (status !== 'solved') return
+
     const lastMoveTimestamp = solution.at(-1)?.timestamp
     if (
       !solution ||

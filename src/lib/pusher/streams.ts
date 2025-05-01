@@ -9,4 +9,8 @@ export const solveStreamSchema = z.object({
   ended: z.boolean(),
 })
 
-export type SolveStreamMove = { move: Move; idx: number; isSolved: boolean }
+export type SolveStreamMove = {
+  move: Move
+  idx: number
+  event?: 'solve-start' | 'solve-end'
+}

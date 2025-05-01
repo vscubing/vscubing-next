@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { usePresenceChannel } from '@/lib/pusher/pusher-client'
 import { type SolveStream, type SolveStreamMove } from '@/lib/pusher/streams'
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query'
@@ -14,6 +14,7 @@ import { EyeIcon } from 'lucide-react'
 import { useEventCallback } from 'usehooks-ts'
 import { useResizeObserver } from '@/frontend/utils/use-resize-observer'
 import { cn } from '@/frontend/utils/cn'
+import { formatSolveTime } from '@/lib/utils/format-solve-time'
 
 export default function WatchLivePageContent() {
   const trpc = useTRPC()
@@ -36,7 +37,7 @@ export default function WatchLivePageContent() {
             setStreams((prev) =>
               prev.filter((stream) => stream.streamId !== streamId),
             ),
-          3000,
+          10000,
         )
       },
     }),
@@ -61,7 +62,7 @@ export default function WatchLivePageContent() {
               </span>
             </>
           ) : (
-            <LoadingSpinner size='sm' />
+            <LoadingSpinner size='sm' className='ml-2' />
           )}
         </span>
       </LayoutHeaderTitlePortal>
@@ -79,12 +80,14 @@ function SolveStreamView({
 }: {
   stream: SolveStream
 }) {
+  const { timeMs, runStopwatch, stopStopwatch } = useStopwatch()
+
   const { initialMoves, enabled } = useSolveStream({
     streamId,
-    onMove: (move, isSolved) => {
+    onMove: ({ move, event }) => {
       applyMove(move)
-      console.log(isSolved)
-      if (isSolved) alert('solved!')
+      if (event === 'solve-start') runStopwatch()
+      if (event === 'solve-end') stopStopwatch()
     }, // TODO: handle long puzzle loading
   })
 
@@ -102,13 +105,18 @@ function SolveStreamView({
     )
 
   return (
-    <div
-      ref={simulatorRef}
-      className={cn(
-        'flex aspect-square items-center justify-center rounded-2xl bg-black-80',
-        { 'opacity-50': ended },
-      )}
-    ></div>
+    <div className='relative'>
+      <div
+        ref={simulatorRef}
+        className={cn(
+          'flex aspect-square items-center justify-center rounded-2xl bg-black-80',
+          { 'opacity-50': ended },
+        )}
+      ></div>
+      <span className='absolute bottom-2 left-1/2 -translate-x-1/2'>
+        {timeMs ? formatSolveTime(timeMs) : '00:00:000'}
+      </span>
+    </div>
   )
 }
 
@@ -174,7 +182,7 @@ function useSolveStream({
   onMove,
 }: {
   streamId: string
-  onMove: (move: Move, isSolved: boolean) => void
+  onMove: (move: SolveStreamMove) => void
 }) {
   const stableMoveHandler = useEventCallback((move: SolveStreamMove) =>
     moveHandler(move),
@@ -202,9 +210,9 @@ function useSolveStream({
     }[]
   >([])
 
-  function moveHandler({ move, idx, isSolved }: SolveStreamMove) {
+  function moveHandler({ move, idx, event }: SolveStreamMove) {
     if (fetchedInitialMoves) {
-      onMove(move, isSolved)
+      onMove({ move, idx, event })
       return
     }
 
@@ -224,6 +232,33 @@ function useSolveStream({
     ),
     enabled: !!fetchedInitialMoves,
   }
+}
+
+function useStopwatch() {
+  const [timeMs, setTimeMs] = useState<number | undefined>()
+  const [running, setRunning] = useState(false)
+
+  const runStopwatch = useCallback(() => setRunning(true), [])
+  const stopStopwatch = useCallback(() => setRunning(false), [])
+
+  useEffect(() => {
+    if (!running) return
+
+    let aborted = false
+
+    const startTimestamp = performance.now()
+    function loop() {
+      setTimeMs(performance.now() - startTimestamp)
+      if (!aborted) requestAnimationFrame(loop)
+    }
+    loop()
+
+    return () => {
+      aborted = true
+    }
+  }, [running])
+
+  return { timeMs, runStopwatch, stopStopwatch }
 }
 
 function parseMoves(moves: string, puzzle: TwistySimulatorPuzzle) {

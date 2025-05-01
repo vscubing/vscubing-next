@@ -11,17 +11,15 @@ import {
   initTwistySimulator,
 } from 'vendor/cstimer'
 import { type RefObject, useEffect, useState } from 'react'
+import { useEventCallback } from 'usehooks-ts'
 
-export type SimulatorMoveListener = ({
-  move,
-  isRotation,
-  isSolved,
-}: {
+export type SimulatorEvent = {
   move: Move
   timestamp: number
   isRotation: boolean
   isSolved: boolean
-}) => void
+}
+
 export function useTwistySimulator({
   containerRef,
   onMove,
@@ -32,13 +30,14 @@ export function useTwistySimulator({
   setCameraPosition,
 }: {
   containerRef: RefObject<HTMLElement | null>
-  onMove: SimulatorMoveListener
+  onMove: (event: SimulatorEvent) => void
   scramble: string | undefined
   discipline: Discipline
   settings: SimulatorSettings
   touchCubeEnabled: boolean
   setCameraPosition: (pos: SimulatorCameraPosition) => void
 }) {
+  const stableOnMove = useEventCallback(onMove)
   const [puzzle, setPuzzle] = useState<TwistySimulatorPuzzle | undefined>()
 
   useEffect(() => {
@@ -49,7 +48,7 @@ export function useTwistySimulator({
 
       const move = parseCstimerMove(_puzzle.move2str(rawMove))
       const isSolved = _puzzle.isSolved() === 0
-      onMove({
+      stableOnMove({
         move,
         timestamp,
         isRotation: _puzzle.isRotation(rawMove),
@@ -75,7 +74,7 @@ export function useTwistySimulator({
     settings.animationDuration,
     containerRef,
     discipline,
-    onMove,
+    stableOnMove,
     touchCubeEnabled,
     setCameraPosition,
   ])

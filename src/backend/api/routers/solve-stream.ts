@@ -42,7 +42,7 @@ export const solveStreamRouter = createTRPCRouter({
       z.object({
         streamId: z.string(),
         move: moveSchema,
-        isSolved: z.boolean(),
+        event: z.enum(['solve-start', 'solve-end']).optional(),
       }),
     )
     .mutation(async ({ input }) => {
@@ -55,7 +55,7 @@ export const solveStreamRouter = createTRPCRouter({
         {
           move: input.move,
           idx: stream.moves.length - 1,
-          isSolved: input.isSolved,
+          event: input.event,
         } satisfies SolveStreamMove,
       )
       console.log(`presence-solve-stream-${input.streamId}`, 'move', input.move)
