@@ -7,10 +7,11 @@
 - [x] streaming primitives
 - [x] streaming resumability
 - [x] streaming last move correctly (end stream instead of deleting it)
-- [ ] timer
+- [x] timer
 - [ ] remove scrollToXXX after performing scroll (maybe rename it to anchorId)
 - [ ] round status (registration|ongoing|finished) (+incomplete sessions warning)
 - [ ] rework OwnSolveInProgress row
 - [ ] legacy/new solve view toggle
 - [ ] make TwistySimulator api compliant with the standard notation
 - [ ] pusher typesafety
+- [ ] sync final solve time
