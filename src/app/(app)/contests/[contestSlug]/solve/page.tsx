@@ -59,7 +59,7 @@ export default async function SolveContestPage({
             initialDiscipline={discipline}
           />
         </div>
-        <div className='ml-10 flex flex-1 items-center gap-4 sm:sr-only'>
+        <div className='ml-10 mr-4 flex flex-1 items-center gap-4 sm:sr-only'>
           <ExclamationCircleIcon className='shrink-0' />
           <p>
             You can't see the results of an ongoing round until you solve all
@@ -133,7 +133,7 @@ async function PageContent({
   return (
     <div className='flex-1 rounded-2xl bg-black-80'>
       <div className='relative flex h-full flex-col pb-8 pt-7 xl-short:pb-6 xl-short:pt-4 sm:py-3'>
-        <div className='absolute right-4 top-4 flex items-center gap-4 sm:right-2 sm:top-2'>
+        <div className='absolute right-4 top-4 flex items-center gap-4 sm:right-2 sm:top-2 sm:flex-col-reverse sm:items-end sm:gap-0'>
           <Dialog>
             <KeyMapDialogTrigger className='touch:hidden' />
             <DialogPortal>

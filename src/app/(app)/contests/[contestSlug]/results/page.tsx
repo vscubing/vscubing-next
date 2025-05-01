@@ -65,7 +65,7 @@ export default async function ContestResultsPage({
             {formatContestDuration(contest)}
           </p>
         </div>
-        <div className='ml-auto space-x-2 sm:hidden'>
+        <div className='ml-auto flex gap-2 whitespace-nowrap sm:hidden'>
           <LeaveRoundButton contestSlug={contestSlug} discipline={discipline} />
           <LegacySolvePageLink
             contestSlug={contestSlug}
