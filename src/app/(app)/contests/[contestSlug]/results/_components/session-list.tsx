@@ -120,14 +120,22 @@ function JoinRoundButton({
   const queryClient = useQueryClient()
   const { mutate: createRoundSession } = useMutation(
     trpc.roundSession.create.mutationOptions({
-      onSettled: () =>
-        queryClient.invalidateQueries(
+      onSettled: () => {
+        void queryClient.invalidateQueries(
           // TODO: we probably should be revalidating queryKeys and not queries
           trpc.contest.getContestResults.queryOptions({
             contestSlug,
             discipline,
           }),
-        ),
+        )
+        void queryClient.invalidateQueries(
+          // TODO: we probably should be revalidating queryKeys and not queries
+          trpc.roundSession.canLeaveRound.queryOptions({
+            contestSlug,
+            discipline,
+          }),
+        )
+      },
     }),
   )
   const { user } = useUser()

@@ -1,6 +1,6 @@
 import { DISCIPLINES, type Discipline } from '@/types'
 import { z } from 'zod'
-import { eq, and, sql } from 'drizzle-orm'
+import { eq, and, sql, count } from 'drizzle-orm'
 import { createTRPCRouter, protectedProcedure } from '../trpc'
 import { TRPCError } from '@trpc/server'
 import {
@@ -95,7 +95,38 @@ export const roundSessionRouter = createTRPCRouter({
         discipline: input.discipline,
       }),
     ),
-  delete: roundSessionAuthProcedure.mutation(async ({ ctx }) => {
+  canLeaveRound: protectedProcedure
+    .input(
+      z.object({
+        discipline: z.enum(DISCIPLINES),
+        contestSlug: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      if (!ctx.session.user) return false
+
+      const [roundSession] = await ctx.db
+        .select({ id: roundSessionTable.id })
+        .from(roundSessionTable)
+        .innerJoin(roundTable, eq(roundTable.id, roundSessionTable.roundId))
+        .where(
+          and(
+            eq(roundTable.contestSlug, input.contestSlug),
+            eq(roundTable.disciplineSlug, input.discipline),
+            eq(roundSessionTable.contestantId, ctx.session.user.id),
+          ),
+        )
+
+      if (!roundSession) return false
+
+      const [solves] = await ctx.db
+        .select({ count: count() })
+        .from(solveTable)
+        .where(and(eq(solveTable.roundSessionId, roundSession.id)))
+
+      return solves?.count === 0
+    }),
+  leaveRound: roundSessionAuthProcedure.mutation(async ({ ctx }) => {
     const solves = await ctx.db
       .select()
       .from(roundSessionTable)
@@ -108,12 +139,7 @@ export const roundSessionRouter = createTRPCRouter({
 
     await ctx.db
       .delete(roundSessionTable)
-      .where(
-        and(
-          eq(roundSessionTable.id, ctx.roundSession.id),
-          eq(roundSessionTable.contestantId, ctx.session.user.id),
-        ),
-      )
+      .where(and(eq(roundSessionTable.id, ctx.roundSession.id)))
   }),
   state: roundSessionAuthProcedure.query(async ({ ctx, input }) => {
     const allRows = await ctx.db

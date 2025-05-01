@@ -26,29 +26,30 @@ function Component({
   contestSlug: string
   discipline: Discipline
 }) {
-  const trpc = useTRPC()
-  const { data: sessions } = useQuery(
-    trpc.contest.getContestResults.queryOptions({
-      contestSlug,
-      discipline,
-    }),
-  )
   const queryClient = useQueryClient()
+  const trpc = useTRPC()
+  const canLeaveRoundQuery = trpc.roundSession.canLeaveRound.queryOptions({
+    contestSlug,
+    discipline,
+  })
+
+  const { data: canLeaveRound } = useQuery(canLeaveRoundQuery)
+
   const { mutateAsync: deleteSession } = useMutation(
-    trpc.roundSession.delete.mutationOptions({
-      onSettled: () =>
+    trpc.roundSession.leaveRound.mutationOptions({
+      onSettled: () => {
         void queryClient.invalidateQueries(
           trpc.contest.getContestResults.queryOptions({
             contestSlug,
             discipline,
           }),
-        ),
+        )
+        void queryClient.invalidateQueries(canLeaveRoundQuery)
+      },
     }),
   )
-  if (!sessions) return
 
-  const ownSession = sessions.find(({ session }) => session.isOwn)
-  if (ownSession && ownSession.solves.length === 0)
+  if (canLeaveRound)
     return (
       <SecondaryButton
         onClick={() => deleteSession({ contestSlug, discipline })}
