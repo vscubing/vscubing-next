@@ -31,8 +31,7 @@ export function usePresenceChannel(
 
   const [isSubscribed, setIsSubscribed] = useState(false)
 
-  // // TODO: figure out why binding callbacks don't "see" updated closure
-
+  // // TODO: figure out why bound callbacks don't "see" updated closure
   // const stableBindings = useRef(bindings)
   // useLayoutEffect(() => {
   //   stableBindings.current = {}

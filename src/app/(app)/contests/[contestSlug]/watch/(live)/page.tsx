@@ -65,7 +65,7 @@ export default function WatchLivePageContent() {
           )}
         </span>
       </LayoutHeaderTitlePortal>
-      <div className='grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-2'>
+      <div className='grid grid-cols-[repeat(auto-fill,minmax(350px,1fr))] gap-2'>
         {streams.map((stream) => (
           <SolveStreamView stream={stream} key={stream.streamId} />
         ))}
@@ -101,7 +101,7 @@ function SolveStreamView({
     <div
       ref={simulatorRef}
       className={cn(
-        'flex aspect-square w-full flex-1 items-center justify-center rounded-2xl bg-black-80 p-4',
+        'flex aspect-square items-center justify-center rounded-2xl bg-black-80',
         { 'opacity-50': ended },
       )}
     ></div>
