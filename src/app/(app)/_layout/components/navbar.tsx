@@ -17,7 +17,7 @@ import {
   CodeXmlIcon,
 } from '@/frontend/ui'
 import { DEFAULT_DISCIPLINE } from '@/types'
-import { CircleDashed } from 'lucide-react'
+import { CircleDashed, RadioTowerIcon } from 'lucide-react'
 
 type NavbarProps = {
   variant: 'vertical' | 'horizontal'
@@ -132,7 +132,6 @@ function parsePathname(
     )
       return '/contests/ongoing'
 
-    if (pathname.startsWith('/contests/specials')) return '/contests/specials'
     return '/contests'
   }
 }
@@ -142,12 +141,12 @@ type NavbarRoute =
   | '/leaderboard'
   | '/contests'
   | '/contests/ongoing'
-  | '/contests/specials'
   | '/settings'
   | '/dev'
+  | '/live-streams'
 
 function isStaticNavbarRoute(pathname: string): pathname is NavbarRoute {
-  return ['/', '/contests', '/dev'].includes(pathname)
+  return ['/', '/contests', '/dev', '/live-streams'].includes(pathname)
 }
 function getNavbarLinks(
   ongoingContest: RouterOutputs['contest']['getOngoing'] | undefined,
@@ -187,9 +186,9 @@ function getNavbarLinks(
       disabled: ongoingContest === null,
     },
     {
-      icon: <CircleDashed />,
-      name: 'Special contests',
-      route: '/contests/specials',
+      icon: <RadioTowerIcon />,
+      name: 'Live streams',
+      route: '/live-streams',
     },
   ]
 

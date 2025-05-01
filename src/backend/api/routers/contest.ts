@@ -21,9 +21,10 @@ import {
 } from '@/types'
 import { groupBy } from '@/lib/utils/group-by'
 import { TRPCError } from '@trpc/server'
-import { and, desc, eq, lte, or } from 'drizzle-orm'
+import { and, desc, eq, lte } from 'drizzle-orm'
 import { getContestUserCapabilities } from '../../shared/get-contest-user-capabilities'
 import { sortWithRespectToExtras } from '../../shared/sort-with-respect-to-extras'
+import { env } from '@/env'
 
 export const contestRouter = createTRPCRouter({
   getAllContests: publicProcedure
@@ -31,7 +32,7 @@ export const contestRouter = createTRPCRouter({
       z.object({
         discipline: z.enum(DISCIPLINES).optional(),
         cursor: z.string().optional(),
-        type: z.enum(CONTEST_TYPES),
+        type: z.enum(CONTEST_TYPES).optional(),
         limit: z.number().min(1).default(15),
       }),
     )
@@ -52,7 +53,9 @@ export const contestRouter = createTRPCRouter({
         )
         .where(
           and(
-            eq(contestTable.type, input.type),
+            env.NEXT_PUBLIC_APP_ENV === 'production'
+              ? eq(contestTable.type, 'weekly')
+              : input.type && eq(contestTable.type, input.type),
             input.discipline
               ? eq(disciplineTable.slug, input.discipline)
               : undefined,

@@ -1,17 +1,28 @@
 import { createNewContest } from '@/backend/shared/contest-management'
-import { DISCIPLINES } from '@/types'
+import { DISCIPLINES, type SessionUser } from '@/types'
 import { tryCatch } from '@/lib/utils/try-catch'
 import { z } from 'zod'
-import {
-  adminProcedure,
-  createTRPCRouter,
-  isAdmin,
-  publicProcedure,
-} from '../trpc'
+import { createTRPCRouter, isAdmin, publicProcedure } from '../trpc'
+import { env } from '@/env'
+import { TRPCError } from '@trpc/server'
+
+export function canManageSpecials(user?: SessionUser) {
+  return isAdmin(user) && env.NEXT_PUBLIC_APP_ENV !== 'production'
+}
+
+export const specialsManagementProcedure = publicProcedure.use(
+  async ({ next, ctx }) => {
+    if (!canManageSpecials(ctx?.session?.user))
+      throw new TRPCError({ code: 'FORBIDDEN' })
+    return next()
+  },
+)
 
 export const specialContestRouter = createTRPCRouter({
-  canManage: publicProcedure.query(({ ctx }) => isAdmin(ctx.session?.user)),
-  create: adminProcedure
+  canManage: publicProcedure.query(({ ctx }) =>
+    canManageSpecials(ctx.session?.user),
+  ),
+  create: specialsManagementProcedure
     .input(
       z.object({ disciplines: z.array(z.enum(DISCIPLINES)), name: z.string() }),
     )

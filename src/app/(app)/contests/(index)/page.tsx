@@ -1,4 +1,4 @@
-import { SecondaryButton } from '@/frontend/ui'
+import { PrimaryButton, SecondaryButton } from '@/frontend/ui'
 import { LayoutSectionHeader } from '@/app/(app)/_layout/index'
 import { Suspense, type ReactNode } from 'react'
 import {
@@ -19,6 +19,7 @@ import {
 import ContestList from './_components/contest-list-client'
 import { LayoutHeaderTitlePortal } from '../../_layout/layout-header'
 import { DisciplineSwitcher } from '@/frontend/shared/discipline-switcher'
+import { SpecialContestCreationDialog } from './_components/special-contest-creation-dialog'
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>
 export default async function ContestsIndexPage(props: {
@@ -41,6 +42,9 @@ export default async function ContestsIndexPage(props: {
           disciplines={DISCIPLINES}
           initialDiscipline={discipline}
         />
+        <Suspense>
+          <SpecialContestsManagementOverlay />
+        </Suspense>
       </LayoutSectionHeader>
       <Suspense
         key={discipline}
@@ -64,7 +68,6 @@ export default async function ContestsIndexPage(props: {
 async function PageContent({ discipline }: { discipline: Discipline }) {
   const contests = await api.contest.getAllContests({
     discipline,
-    type: 'weekly',
   })
 
   if (contests.items?.length === 0) {
@@ -97,5 +100,15 @@ function ContestListShell({ children }: { children: ReactNode }) {
 
       <ul className='flex flex-1 flex-col gap-2'>{children}</ul>
     </div>
+  )
+}
+
+async function SpecialContestsManagementOverlay() {
+  const authorized = await api.specialContest.canManage()
+  if (!authorized) return
+  return (
+    <SpecialContestCreationDialog>
+      <PrimaryButton className='ml-auto'>New special</PrimaryButton>
+    </SpecialContestCreationDialog>
   )
 }
