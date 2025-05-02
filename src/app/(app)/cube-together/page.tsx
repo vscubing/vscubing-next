@@ -5,6 +5,9 @@ import { LayoutHeaderTitlePortal } from '../_layout'
 import { useControllableSimulator } from '../live-streams/page'
 import { useEventCallback, useEventListener } from 'usehooks-ts'
 import { z } from 'zod'
+import { keyToMove } from '@vscubing/cubing/alg'
+import { puzzles } from '@vscubing/cubing/puzzles'
+import { isMove } from '@/types'
 
 export default function CubeTogetherPage() {
   const [scramble, setScramble] = useState<string>()
@@ -14,10 +17,12 @@ export default function CubeTogetherPage() {
       throw new Error('expected string event.data')
     const message = messageSchema.parse(JSON.parse(event.data))
     if (message.type === 'history') {
-      // setScramble('')
+      setScramble(message.payload)
     }
     if (message.type === 'move') {
-      applyKeyboardMove({ keyCode: +message.payload } as KeyboardEvent)
+      if (!isMove(message.payload))
+        throw new Error(`not a move: ${message.payload}`)
+      applyMove(message.payload)
     }
   })
 
@@ -29,13 +34,25 @@ export default function CubeTogetherPage() {
     return () => _ws.close()
   }, [handleMessage])
 
-  const { simulatorRef, applyKeyboardMove } = useControllableSimulator({
+  const { simulatorRef, applyMove } = useControllableSimulator({
     discipline: '3by3',
-    scramble: scramble ?? "y y'",
-    // enabled: scramble !== undefined,
+    scramble: scramble ?? '',
+    enabled: scramble !== undefined,
   })
 
-  useEventListener('keydown', (e) => ws?.send(String(e.keyCode)))
+  useEventListener('keydown', (e) => {
+    void (async () => {
+      if (!ws) return
+
+      const keyMapping = await puzzles['3x3x3']?.keyMapping?.()
+      if (!keyMapping) throw new Error('no puzzle')
+
+      // TODO: sync keyToMove with cstimer mappings
+      const move = keyToMove(keyMapping, e)?.toString()
+      if (!move || !isMove(move)) return
+      ws.send(move)
+    })()
+  })
 
   return (
     <>
