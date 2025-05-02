@@ -28,7 +28,12 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+
+    /* Cloudflare stuff */
+    // "types": [
+    //     "@cloudflare/workers-types/2023-07-01"
+    // ]
   },
   "include": [
     "svgr.d.ts",
