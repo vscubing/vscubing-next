@@ -5,7 +5,7 @@ import { LayoutHeaderTitlePortal } from '../_layout'
 import { useControllableSimulator } from '../live-streams/page'
 import { useEventCallback, useEventListener } from 'usehooks-ts'
 import { keyToMove } from '@vscubing/cubing/alg'
-import { puzzles } from '@vscubing/cubing/puzzles'
+import { puzzles } from 'cubing/puzzles'
 import { isMove, type Move } from '@/types'
 import type {
   ServerToClientEvents,
@@ -29,17 +29,7 @@ export default function CubeTogetherPage() {
     )
     setSocket(_socket)
 
-    console.log(_socket.disconnected) // true
-
-    _socket.on('connect', () => {
-      console.log(_socket.disconnected) // false
-    })
-
-    _socket.on('ping', () => {
-      console.log('client received ping')
-      _socket.emit('pong')
-      console.log('client sent pong')
-    })
+    // _socket.on('connect', () => {})
 
     _socket.on('history', (moves) => setScramble(moves))
     _socket.on('onMove', applyMoveHandler)

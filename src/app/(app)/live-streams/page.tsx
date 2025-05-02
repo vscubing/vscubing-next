@@ -163,7 +163,7 @@ export function useControllableSimulator({
       })
       setPuzzle(pzl)
 
-      const fixedScr = scramble === '' ? "y y'" : scramble // HACK: applyMoves misbehaves on empty string so we replace it with y y' which is equivalent of not applying any moves
+      const fixedScr = scramble === '' ? "y y'" : fixDoublePrimeMoves(scramble) // HACK: applyMoves misbehaves on empty string so we replace it with y y' which is equivalent of not applying any moves (should we move this inside `vendor/cstimer`?)
       pzl?.applyMoves(parseMoves(fixedScr, pzl), 0, true)
     })
     return () => {
@@ -275,6 +275,11 @@ function useStopwatch() {
   }, [running])
 
   return { timeMs, runStopwatch, stopStopwatch }
+}
+
+// HACK: twisty simulator doesn't support double prime moves like z2' that `cubing.js`'s .invert() outputs a lot
+function fixDoublePrimeMoves(alg: string): string {
+  return alg.replaceAll("2'", '2')
 }
 
 function parseMoves(moves: string, puzzle: TwistySimulatorPuzzle) {
