@@ -12,6 +12,8 @@ import type {
   ClientToServerEvents,
 } from 'socket-server/types'
 import { io, type Socket } from 'socket.io-client'
+import { cn } from '@/frontend/utils/cn'
+import { LoadingSpinner } from '@/frontend/ui'
 
 export default function CubeTogetherPage() {
   const [scramble, setScramble] = useState<string>()
@@ -42,7 +44,6 @@ export default function CubeTogetherPage() {
   const { simulatorRef, applyMove } = useControllableSimulator({
     discipline: '3by3',
     scramble: scramble ?? '',
-    enabled: scramble !== undefined,
   })
 
   useEventListener('keydown', (e) => {
@@ -62,10 +63,20 @@ export default function CubeTogetherPage() {
   return (
     <>
       <LayoutHeaderTitlePortal>Cube together</LayoutHeaderTitlePortal>
-      <div className='flex flex-1 items-center justify-center rounded-2xl bg-black-80 p-4'>
+      <div className='relative flex flex-1 items-center justify-center rounded-2xl bg-black-80 p-4'>
         <div
           ref={simulatorRef}
-          className='aspect-square h-[70%] outline-none sm:h-auto sm:w-full sm:max-w-[34rem]'
+          className={cn(
+            'aspect-square h-[70%] outline-none sm:h-auto sm:w-full sm:max-w-[34rem]',
+            { 'opacity-0': scramble === undefined },
+          )}
+        />
+        <LoadingSpinner
+          size='lg'
+          className={cn(
+            'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0',
+            { 'opacity-100': scramble === undefined },
+          )}
         />
       </div>
     </>

@@ -2,7 +2,7 @@ import { createServer } from 'http'
 import { Server } from 'socket.io'
 import type { ClientToServerEvents, ServerToClientEvents } from './types'
 import { simplifyAlg } from './simplify-alg'
-import type { Move } from '@/types'
+import { type Move } from '@/types'
 
 // NOTE: bun --watch socket-server/index.ts
 
@@ -21,7 +21,7 @@ io.on('connection', (socket) => {
     queuedMoves.push(move)
     if (isBlocking) return
 
-    if (history.length > 200) {
+    if (history.length > 2000) {
       isBlocking = true
       history = await simplifyAlg(history)
     }
