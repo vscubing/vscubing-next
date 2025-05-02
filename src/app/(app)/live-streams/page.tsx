@@ -162,7 +162,9 @@ export function useControllableSimulator({
         pzl.setCameraPosition({ phi: 6, theta: 0 })
       })
       setPuzzle(pzl)
-      pzl?.applyMoves(parseMoves(scramble, pzl), 0, true)
+
+      const fixedScr = scramble === '' ? "y y'" : scramble // HACK: applyMoves misbehaves on empty string so we replace it with y y' which is equivalent of not applying any moves
+      pzl?.applyMoves(parseMoves(fixedScr, pzl), 0, true)
     })
     return () => {
       setPuzzle(undefined)
