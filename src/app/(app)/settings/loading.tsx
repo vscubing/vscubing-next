@@ -10,6 +10,7 @@ export default function Loading() {
         <ul className='space-y-2'>
           <li className='h-20 animate-pulse rounded-xl bg-grey-100'></li>
           <li className='h-20 animate-pulse rounded-xl bg-grey-100'></li>
+          <li className='h-20 animate-pulse rounded-xl bg-grey-100'></li>
         </ul>
       </div>
     </>
