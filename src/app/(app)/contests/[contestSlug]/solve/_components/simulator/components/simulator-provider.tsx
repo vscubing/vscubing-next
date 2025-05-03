@@ -28,7 +28,7 @@ import {
   KeyMapDialogTrigger,
   KeyMapDialogContent,
 } from '@/frontend/shared/key-map-dialog'
-import type { SimulatorCameraPosition } from 'vendor/cstimer'
+import type { SimulatorCameraPosition } from 'vendor/cstimer/types'
 import {
   useSimulatorSettings,
   useSimulatorSettingsMutation,
@@ -174,6 +174,7 @@ export function SimulatorProvider({ children }: { children: React.ReactNode }) {
                       ...cameraPosition,
                       inspectionVoiceAlert:
                         settings?.inspectionVoiceAlert ?? 'Male',
+                      colorscheme: settings?.colorscheme ?? 'default',
                     }}
                     setCameraPosition={updateDebouncedCameraPosition}
                   />

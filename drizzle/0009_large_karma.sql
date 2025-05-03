@@ -1,0 +1,1 @@
+ALTER TABLE "user_simulator_settings" ADD COLUMN "colorscheme" text;

@@ -34,12 +34,6 @@ import {
   AverageResultSkeleton,
 } from './_components/average-list'
 import { ExclamationCircleIcon, HoverPopover } from '@/frontend/ui'
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-  TooltipPortal,
-} from '@/frontend/ui/tooltip'
 
 export default async function LeaderboardPage({
   searchParams,

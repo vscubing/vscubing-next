@@ -117,7 +117,7 @@ export async function init(
   var puzzle = options['puzzle']
   // if (puzzle.startsWith('cube')) {
   options['type'] = 'cube'
-  options['faceColors'] = col2std(kernel.getProp('colcube'), [3, 4, 5, 0, 1, 2]) // U L F D L B
+  options['colorscheme'] = options.colorscheme
   options['dimension'] = ~~puzzle.slice(4) || 3
   options['stickerWidth'] = 1.7
   // } else if (puzzle == 'skb') {
@@ -156,7 +156,6 @@ function col2std(col, faceMap) {
 // kernel mock
 const kernel = {
   props: {
-    colcube: '#ff0#fa0#00f#fff#f00#0d0',
     vrcSpeed: 100,
     vrcAH: '01',
     vrcMP: 'n',
