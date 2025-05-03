@@ -3,8 +3,8 @@ import {
   type SimulatorCameraPosition,
   type TwistySimulatorMoveListener,
   type TwistySimulatorPuzzle,
-  initTwistySimulator,
-} from 'vendor/cstimer'
+} from 'vendor/cstimer/types'
+import { initTwistySimulator } from 'vendor/cstimer'
 import { type RefObject, useEffect, useState } from 'react'
 
 export type Move = (typeof MOVES)[number]
@@ -57,6 +57,7 @@ export function useTwistySimulator({
       {
         puzzle: SIMULATOR_DISCIPLINES_MAP[discipline].puzzle,
         animationDuration: settings.animationDuration,
+        colorscheme: settings.colorscheme,
         allowDragging: touchCubeEnabled,
       },
       moveListener,

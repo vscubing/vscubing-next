@@ -1,4 +1,4 @@
-/* eslint-disable */
+import type { TwistySimulatorColorscheme as Colorscheme } from '.'
 
 export function init(
   options: Options,
@@ -13,10 +13,16 @@ export type MoveListener = (
   timestamp: number,
 ) => void
 type CameraPositionListener = (pos: CameraPosition) => void
+
+/**
+ * @description hex colors URFDLB (default: white red green yellow orange blue)
+ * @type [[number, number, number, number, number, number]]
+ */
 type Options = {
   puzzle: 'cube2' | 'cube3'
   animationDuration: number
   allowDragging: boolean
+  colorscheme: Colorscheme
 }
 export type CameraPosition = { theta: number; phi: number }
 

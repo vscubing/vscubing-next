@@ -12,7 +12,7 @@ import {
 } from './constants'
 import type { Discipline, ResultDnfable } from '@/types'
 import type { userSimulatorSettingsTable } from '@/backend/db/schema'
-import type { SimulatorCameraPosition } from 'vendor/cstimer'
+import type { SimulatorCameraPosition } from 'vendor/cstimer/types'
 import { useIsTouchDevice } from '@/frontend/utils/use-media-query'
 import { cn } from '@/frontend/utils/cn'
 
