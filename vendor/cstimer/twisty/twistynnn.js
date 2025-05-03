@@ -139,18 +139,21 @@ import twistyjs from './twisty'
         for (var sv = 0; sv < cubeOptions.dimension; sv++) {
           var sticker = new THREE.Object3D()
 
-          var key = i
+          let opacity
+          if (i === 0 && su === 2 && sv === 2) {
+            opacity = 0.5
+          }
+
+          var key = i + ',' + su + ',' + sv
           if (cubeOptions.dimension > 7) {
             var su1 = Math.min(su, cubeOptions.dimension - 1 - su)
             var sv1 = Math.min(sv, cubeOptions.dimension - 1 - sv)
             key += ',' + (su1 + sv1) + ',' + su1 * sv1
           }
-          materials[key] =
-            materials[key] ||
-            new THREE.MeshBasicMaterial({
-              color: cubeOptions.faceColors[i],
-              opacity: cubeOptions.opacity,
-            })
+          materials[key] = new THREE.MeshBasicMaterial({
+            color: cubeOptions.faceColors[i],
+            opacity: opacity ?? 1,
+          })
           var meshes = [materials[key]]
           if (cubeOptions.stickerBorder) {
             meshes.push(borderMaterial)
@@ -231,6 +234,43 @@ import twistyjs from './twisty'
 
     var actualScale = (cubeOptions.scale * 0.5) / cubeOptions.dimension
     cubeObject.scale = new THREE.Vector3(actualScale, actualScale, actualScale)
+
+    function doCoolShit() {
+      for (var faceIndex = 0; faceIndex < numSides; faceIndex++) {
+        var faceStickers = cubePieces[faceIndex]
+        for (
+          var stickerIndex = 0;
+          stickerIndex < faceStickers.length;
+          stickerIndex++
+        ) {
+          var sticker = faceStickers[stickerIndex]
+          if (faceIndex !== 0) continue
+
+          let su = Math.floor(stickerIndex / 3)
+          let sv = stickerIndex % 3
+
+          if (su === 2 && sv === 2) {
+            su = 1
+          } else if (su === 1 && sv === 2) {
+            su = 2
+          }
+
+          const transformationMatrix = new THREE.Matrix4().multiply(
+            sidesUV[faceIndex],
+            new THREE.Matrix4().setTranslation(
+              su * 2 - cubeOptions.dimension + 1,
+              -(sv * 2 - cubeOptions.dimension + 1),
+              cubeOptions.dimension,
+            ),
+          )
+
+          sticker[0] = transformationMatrix
+          sticker[1].matrix.copy(sticker[0])
+          sticker[1].update()
+        }
+      }
+      console.log('cool shit done')
+    }
 
     function animateMoveCallback(twisty, currentMove, moveProgress, moveStep) {
       //          var rott = new THREE.Matrix4();
@@ -840,6 +880,7 @@ import twistyjs from './twisty'
       borderMaterial: borderMaterial,
       move2str: move2str,
       moveInv: moveInv,
+      doCoolShit,
     }
   }
 })()

@@ -584,6 +584,11 @@ const twistyjs = (function () {
       }
     }
 
+    window.doCoolShit = () => {
+      twisty.doCoolShit()
+      render()
+    }
+
     function createTwisty(twistyType) {
       var twistyCreateFunction = twisties[twistyType.type]
       if (!twistyCreateFunction) {
