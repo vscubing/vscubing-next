@@ -164,7 +164,7 @@ export function useControllableSimulator({
       setPuzzle(pzl)
 
       const fixedScr = scramble === '' ? "y y'" : fixDoublePrimeMoves(scramble) // HACK: applyMoves misbehaves on empty string so we replace it with y y' which is equivalent of not applying any moves (should we move this inside `vendor/cstimer`?)
-      pzl?.applyMoves(parseMoves(fixedScr, pzl), 0, true)
+      pzl?.applyMoves(tranformAlgForCstimer(fixedScr, pzl), 0, true)
     })
     return () => {
       setPuzzle(undefined)
@@ -174,7 +174,7 @@ export function useControllableSimulator({
 
   const applyMove = useEventCallback((move: Move) => {
     if (!puzzle) throw new Error('no puzzle!')
-    puzzle.addMoves(parseMoves(move, puzzle), 0)
+    puzzle.addMoves(tranformAlgForCstimer(move, puzzle), 0)
   })
 
   const applyKeyboardMove = useEventCallback((event: KeyboardEvent) => {
@@ -282,19 +282,19 @@ function fixDoublePrimeMoves(alg: string): string {
   return alg.replaceAll("2'", '2')
 }
 
-function parseMoves(moves: string, puzzle: TwistySimulatorPuzzle) {
-  const res = moves
+function tranformAlgForCstimer(alg: string, puzzle: TwistySimulatorPuzzle) {
+  const res = alg
     .trim()
     .split(' ')
     .map((move) => {
-      if (move in REPLACE_MAP)
-        return REPLACE_MAP[move as keyof typeof REPLACE_MAP]
+      if (move in CSTIMER_REPLACE_MAP)
+        return CSTIMER_REPLACE_MAP[move as keyof typeof CSTIMER_REPLACE_MAP]
       else return puzzle.parseScramble(move)[0]
     })
   return res
 }
 
-const REPLACE_MAP = {
+const CSTIMER_REPLACE_MAP = {
   E: [2, 2, 'U', -1],
   "E'": [2, 2, 'U', 1],
   M: [2, 2, 'L', 1],
