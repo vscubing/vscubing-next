@@ -1,6 +1,13 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+} from 'react'
 import { usePresenceChannel } from '@/lib/pusher/pusher-client'
 import { type SolveStream, type SolveStreamMove } from '@/lib/pusher/streams'
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query'
@@ -15,6 +22,7 @@ import { useResizeObserver } from '@/frontend/utils/use-resize-observer'
 import { cn } from '@/frontend/utils/cn'
 import { formatSolveTime } from '@/lib/utils/format-solve-time'
 import { SIMULATOR_DISCIPLINES_MAP } from '../contests/[contestSlug]/solve/_components/simulator/components/simulator/use-simulator'
+import { type KPatternData } from '@vscubing/cubing/kpuzzle'
 
 export default function WatchLivePageContent() {
   const trpc = useTRPC()
@@ -102,7 +110,6 @@ function SolveStreamView({
   const { simulatorRef, applyMove } = useControllableSimulator({
     discipline,
     scramble: initialMoves ? scramble + ' ' + initialMoves.join(' ') : '',
-    enabled,
   })
 
   if (!enabled)
@@ -132,7 +139,7 @@ function SolveStreamView({
 export function useControllableSimulator({
   discipline,
   scramble,
-  enabled = true,
+  patternData,
 }: {
   discipline: Discipline
   scramble: string
@@ -143,7 +150,7 @@ export function useControllableSimulator({
 
   useEffect(() => {
     const simulatorElem = simulatorRef.current
-    if (!simulatorElem || !enabled) return
+    if (!simulatorElem || scramble === undefined) return
 
     void initTwistySimulator(
       {
@@ -156,7 +163,7 @@ export function useControllableSimulator({
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       () => {},
       simulatorElem,
-    ).then((pzl) => {
+    ).then(async (pzl) => {
       setTimeout(() => {
         pzl.resize()
         pzl.setCameraPosition({ phi: 6, theta: 0 })
@@ -170,7 +177,7 @@ export function useControllableSimulator({
       setPuzzle(undefined)
       simulatorElem.innerHTML = ''
     }
-  }, [simulatorRef, discipline, scramble, enabled])
+  }, [simulatorRef, discipline, scramble, patternData])
 
   const applyMove = useEventCallback((move: Move) => {
     if (!puzzle) throw new Error('no puzzle!')

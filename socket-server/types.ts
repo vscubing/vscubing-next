@@ -1,12 +1,11 @@
 import type { Move } from '@/types'
+import type { KPatternData } from '@vscubing/cubing/kpuzzle'
 
 export interface ServerToClientEvents {
-  ping: () => void
-  history: (moves: string) => void
+  pattern: (pattern: KPatternData) => void
   onMove: (move: Move) => void
 }
 
 export interface ClientToServerEvents {
-  pong: () => void
   onMove: (move: Move) => void
 }
