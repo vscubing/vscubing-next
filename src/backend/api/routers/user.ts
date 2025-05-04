@@ -69,6 +69,11 @@ export const userRouter = createTRPCRouter({
         .update(userTable)
         .set({ name: input.username, finishedRegistration: true })
         .where(eq(userTable.id, user.id))
+
+      ctx.analytics.capture({
+        event: 'user_completed_registration',
+        distinctId: ctx.session.user.id,
+      })
     }),
 
   // NOTE: connecting a WCA account is done via `/api/auth/wca/callback`
