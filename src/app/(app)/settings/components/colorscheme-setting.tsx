@@ -17,7 +17,7 @@ export function ColorschemeSetting() {
   if (!settings) return
   const colorscheme = settings.colorscheme ?? TWISTY_DEFAULT_COLORSCHEME
   return (
-    <div className='flex items-center'>
+    <div className='flex h-12 items-center'>
       <GhostButton
         size='sm'
         disabled={
