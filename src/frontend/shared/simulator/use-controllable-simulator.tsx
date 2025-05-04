@@ -57,7 +57,7 @@ export function useControllableSimulator({
       setPuzzle(undefined)
       simulatorElem.innerHTML = ''
     }
-  }, [simulatorRef, discipline, scramble, memoizedSettings])
+  }, [simulatorRef, discipline, scramble, memoizedSettings, isTouchDevice])
 
   const applyMove = useEventCallback((move: string) => {
     if (!puzzle) throw new Error('no puzzle!')

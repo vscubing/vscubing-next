@@ -155,13 +155,14 @@ export function SimulatorProvider({ children }: { children: React.ReactNode }) {
                     }}
                     setCameraPosition={({ phi, theta }) => {
                       if (
-                        phi !== settings?.cameraPositionPhi &&
+                        phi !== settings?.cameraPositionPhi ||
                         theta !== settings?.cameraPositionTheta
-                      )
+                      ) {
                         debouncedMutateSettings({
                           cameraPositionPhi: phi,
                           cameraPositionTheta: theta,
                         })
+                      }
                     }}
                   />
                 )}

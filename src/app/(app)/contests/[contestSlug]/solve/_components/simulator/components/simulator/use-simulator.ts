@@ -6,6 +6,7 @@ import {
 } from 'vendor/cstimer/types'
 import { initTwistySimulator } from 'vendor/cstimer'
 import { type RefObject, useEffect, useState } from 'react'
+import { useEventCallback } from 'usehooks-ts'
 
 export type Move = (typeof MOVES)[number]
 export type SimulatorMoveListener = ({
@@ -38,6 +39,8 @@ export function useTwistySimulator({
 }) {
   const [puzzle, setPuzzle] = useState<TwistySimulatorPuzzle | undefined>()
 
+  const stableSetCameraPosition = useEventCallback(setCameraPosition)
+
   useEffect(() => {
     let _puzzle: TwistySimulatorPuzzle | undefined // we need this because move2str is tightly coupled with Puzzle
 
@@ -62,7 +65,7 @@ export function useTwistySimulator({
         allowDragging: touchCubeEnabled,
       },
       moveListener,
-      (pos) => setCameraPosition(pos),
+      (pos) => stableSetCameraPosition(pos),
       containerRef.current!,
     ).then((pzl) => {
       setTimeout(() => pzl.resize())
@@ -76,7 +79,7 @@ export function useTwistySimulator({
     discipline,
     onMove,
     touchCubeEnabled,
-    setCameraPosition,
+    stableSetCameraPosition,
   ])
 
   useEffect(() => {
