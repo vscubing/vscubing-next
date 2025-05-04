@@ -1,8 +1,11 @@
+'use client'
+
 import { useControllableSimulator } from '@/frontend/shared/simulator/use-controllable-simulator'
 import { cn } from '@/frontend/utils/cn'
 import React, { useEffect, useState } from 'react'
 import { useDebounceValue, useEventListener } from 'usehooks-ts'
 import { useSimulatorSettings } from '../hooks/queries'
+import { LoadingSpinner } from '@/frontend/ui'
 
 export function SettingsPreviewSimulator({
   className,
@@ -36,18 +39,31 @@ export function SettingsPreviewSimulator({
       return
     }
 
-    if (!isDirty) setIsDirty(true)
+    if (!isDirty && !isRotation(event)) setIsDirty(true)
     applyKeyboardMove(event)
   })
 
+  if (!settings) {
+    return (
+      <div className='flex h-[300px] w-[300px] items-center justify-center'>
+        <LoadingSpinner />
+      </div>
+    )
+  }
+
   return (
-    <div
-      ref={simulatorRef}
-      className={cn(
-        'flex items-center justify-center rounded-2xl bg-black-80 [&>div]:flex [&>div]:justify-center',
-        className,
-      )}
-    />
+    <div>
+      <div
+        ref={simulatorRef}
+        className={cn(
+          'pointer-events-none flex h-[300px] w-[300px] items-center justify-center rounded-2xl bg-black-80 touch:hidden [&>div]:flex [&>div]:justify-center',
+          className,
+        )}
+      />
+      <p className='caption -mt-4 text-center text-grey-40'>
+        Pro tip: press space to scramle/unscramble
+      </p>
+    </div>
   )
 }
 
@@ -56,4 +72,8 @@ function badRandomScramble() {
   return Array.from({ length: 20 })
     .map(() => MOVES[Math.floor(Math.random() * MOVES.length)])
     .join(' ')
+}
+
+function isRotation(event: KeyboardEvent) {
+  return [65, 59, 66, 78, 84, 89].includes(event.keyCode)
 }

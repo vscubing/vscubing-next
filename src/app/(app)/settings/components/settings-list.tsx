@@ -12,59 +12,50 @@ import {
   useSimulatorSettings,
   useSimulatorSettingsMutation,
 } from '../hooks/queries'
-import type { RouterOutputs } from '@/trpc/react'
 import { ColorschemeSetting } from './colorscheme-setting'
-import { SettingsPreviewSimulator } from './settings-preview-simulator'
 
-export function SettingsList({
-  initialData,
-}: {
-  initialData: RouterOutputs['settings']['simulatorSettings']
-}) {
-  const { data: settings } = useSimulatorSettings(initialData)
+export function SettingsList() {
+  const { data: settings } = useSimulatorSettings()
   const { debouncedMutateSettings } = useSimulatorSettingsMutation()
 
-  return (
-    <div className='flex md:flex-col'>
+  if (!settings)
+    return (
       <ul className='z-10 flex-1 space-y-2'>
-        {settings && (
-          <>
-            <li className='flex items-center justify-between gap-2 rounded-xl bg-grey-100 p-4'>
-              <span>VRC base speed (tps):</span>
-              <Select
-                options={CS_ANIMATION_DURATION_OPTIONS}
-                value={String(settings.animationDuration)}
-                onValueChange={(val) =>
-                  debouncedMutateSettings({
-                    animationDuration: Number(val),
-                  })
-                }
-              />
-            </li>
-            <li className='flex items-center justify-between gap-2 rounded-xl bg-grey-100 p-4'>
-              <span>Preinspection voice alert at 8/12s:</span>
-              <Select
-                options={CS_INSPECTION_VOICE_ALERT_OPTIONS}
-                value={settings.inspectionVoiceAlert}
-                onValueChange={(inspectionVoiceAlert) =>
-                  debouncedMutateSettings({ inspectionVoiceAlert })
-                }
-              />
-            </li>
-            <li className='flex items-center justify-between gap-2 rounded-xl bg-grey-100 p-4'>
-              <span>Colorscheme:</span>
-              <ColorschemeSetting />
-            </li>
-          </>
-        )}
+        <li className='h-20 animate-pulse rounded-xl bg-grey-100' />
+        <li className='h-20 animate-pulse rounded-xl bg-grey-100' />
+        <li className='h-20 animate-pulse rounded-xl bg-grey-100' />
       </ul>
-      <div className='md:mt-4 md:self-start'>
-        <SettingsPreviewSimulator className='pointer-events-none aspect-square w-[300px] touch:hidden' />
-        <p className='caption -mt-4 text-center text-grey-40'>
-          Pro tip: press space to scramle/unscramble
-        </p>
-      </div>
-    </div>
+    )
+
+  return (
+    <ul className='z-10 flex-1 space-y-2'>
+      <li className='flex items-center justify-between gap-2 rounded-xl bg-grey-100 p-4'>
+        <span>VRC base speed (tps):</span>
+        <Select
+          options={CS_ANIMATION_DURATION_OPTIONS}
+          value={String(settings.animationDuration)}
+          onValueChange={(val) =>
+            debouncedMutateSettings({
+              animationDuration: Number(val),
+            })
+          }
+        />
+      </li>
+      <li className='flex items-center justify-between gap-2 rounded-xl bg-grey-100 p-4'>
+        <span>Preinspection voice alert at 8/12s:</span>
+        <Select
+          options={CS_INSPECTION_VOICE_ALERT_OPTIONS}
+          value={settings.inspectionVoiceAlert}
+          onValueChange={(inspectionVoiceAlert) =>
+            debouncedMutateSettings({ inspectionVoiceAlert })
+          }
+        />
+      </li>
+      <li className='flex items-center justify-between gap-2 rounded-xl bg-grey-100 p-4'>
+        <span>Colorscheme:</span>
+        <ColorschemeSetting />
+      </li>
+    </ul>
   )
 }
 

@@ -18,11 +18,10 @@ export function useControllableSimulator({
   const [puzzle, setPuzzle] = useState<TwistySimulatorPuzzle | undefined>()
 
   const memoizedSettings = useMemo(() => JSON.stringify(settings), [settings])
-  console.log(memoizedSettings)
 
   useEffect(() => {
-    console.log('rerenderin....')
     const parsedSettings = JSON.parse(
+      // TODO: fix this differently, this is a dirty hack
       memoizedSettings,
     ) as Partial<SimulatorSettings>
 
