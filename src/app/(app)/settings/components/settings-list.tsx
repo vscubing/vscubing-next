@@ -2,55 +2,59 @@
 
 import { ChevronDownIcon } from '@/frontend/ui'
 import { cn } from '@/frontend/utils/cn'
-import type { ReactNode, ComponentPropsWithoutRef, ComponentRef } from 'react'
+import {
+  type ReactNode,
+  type ComponentPropsWithoutRef,
+  type ComponentRef,
+} from 'react'
 import * as SelectPrimitive from '@radix-ui/react-select'
 import {
   useSimulatorSettings,
   useSimulatorSettingsMutation,
 } from '../hooks/queries'
-import type { RouterOutputs } from '@/trpc/react'
 import { ColorschemeSetting } from './colorscheme-setting'
 
-export function SettingsList({
-  initialData,
-}: {
-  initialData: RouterOutputs['settings']['simulatorSettings']
-}) {
-  const { data: settings } = useSimulatorSettings(initialData)
+export function SettingsList() {
+  const { data: settings } = useSimulatorSettings()
   const { debouncedMutateSettings } = useSimulatorSettingsMutation()
 
+  if (!settings)
+    return (
+      <ul className='z-10 flex-1 space-y-2'>
+        <li className='h-20 animate-pulse rounded-xl bg-grey-100' />
+        <li className='h-20 animate-pulse rounded-xl bg-grey-100' />
+        <li className='h-20 animate-pulse rounded-xl bg-grey-100' />
+      </ul>
+    )
+
   return (
-    <ul className='space-y-2'>
-      {settings && (
-        <>
-          <li className='flex items-center justify-between gap-2 rounded-xl bg-grey-100 p-4'>
-            <span>VRC base speed (tps):</span>
-            <Select
-              options={CS_ANIMATION_DURATION_OPTIONS}
-              value={String(settings.animationDuration)}
-              onValueChange={(val) =>
-                debouncedMutateSettings({
-                  animationDuration: Number(val),
-                })
-              }
-            />
-          </li>
-          <li className='flex items-center justify-between gap-2 rounded-xl bg-grey-100 p-4'>
-            <span>Preinspection voice alert at 8/12s:</span>
-            <Select
-              options={CS_INSPECTION_VOICE_ALERT_OPTIONS}
-              value={settings.inspectionVoiceAlert}
-              onValueChange={(inspectionVoiceAlert) =>
-                debouncedMutateSettings({ inspectionVoiceAlert })
-              }
-            />
-          </li>
-          <li className='flex items-center justify-between gap-2 rounded-xl bg-grey-100 p-4'>
-            <span>Colorscheme:</span>
-            <ColorschemeSetting />
-          </li>
-        </>
-      )}
+    <ul className='z-10 flex-1 space-y-2'>
+      <li className='flex items-center justify-between gap-2 rounded-xl bg-grey-100 p-4'>
+        <span>VRC base speed (tps):</span>
+        <Select
+          options={CS_ANIMATION_DURATION_OPTIONS}
+          value={String(settings.animationDuration)}
+          onValueChange={(val) =>
+            debouncedMutateSettings({
+              animationDuration: Number(val),
+            })
+          }
+        />
+      </li>
+      <li className='flex items-center justify-between gap-2 rounded-xl bg-grey-100 p-4'>
+        <span>Preinspection voice alert at 8/12s:</span>
+        <Select
+          options={CS_INSPECTION_VOICE_ALERT_OPTIONS}
+          value={settings.inspectionVoiceAlert}
+          onValueChange={(inspectionVoiceAlert) =>
+            debouncedMutateSettings({ inspectionVoiceAlert })
+          }
+        />
+      </li>
+      <li className='flex items-center justify-between gap-2 rounded-xl bg-grey-100 p-4'>
+        <span>Colorscheme:</span>
+        <ColorschemeSetting />
+      </li>
     </ul>
   )
 }

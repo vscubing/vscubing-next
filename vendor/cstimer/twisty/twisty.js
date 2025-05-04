@@ -4,6 +4,7 @@
 
 import $ from 'jquery'
 import THREE from '../threemin'
+import kernel from '../kernel'
 
 /*
  * twisty.js
@@ -122,7 +123,7 @@ const twistyjs = (function () {
       twistyCanvas = renderer.domElement
 
       twistyContainer.appendChild(twistyCanvas)
-      touchCube = $('<table class="touchcube">').appendTo(twistyContainer)
+      touchCube = $('<table class="touchcube">')
       var trs = ''
       for (var i = 0; i < 3; i++) {
         var tds = ''
@@ -134,6 +135,7 @@ const twistyjs = (function () {
       touchCube.append(trs)
 
       if (twistyType.allowDragging) {
+        touchCube.appendTo(twistyContainer)
         touchCube.on('mousedown', onTouchDown)
         touchCube.on('mousemove', onTouchMove)
         touchCube.on('mouseup', onTouchUp)
@@ -540,7 +542,7 @@ const twistyjs = (function () {
 
     function stopAnimation() {
       if (pendingAnimationLoop !== null) {
-        cancelRequestAnimFrame(pendingAnimationLoop)
+        cancelAnimationFrame(pendingAnimationLoop)
         pendingAnimationLoop = null
       }
     }
@@ -550,7 +552,7 @@ const twistyjs = (function () {
         //log("Starting move queue: " + movesToString(moveQueue));
         startMove()
         lastTimeStamp = $.now()
-        pendingAnimationLoop = requestAnimFrame(animateLoop, twistyCanvas)
+        pendingAnimationLoop = requestAnimationFrame(animateLoop, twistyCanvas)
       } else if (
         !currentMove[0] ||
         twisty.isParallelMove(twisty, currentMove[0][0], moveQueue[0][0])
@@ -579,7 +581,7 @@ const twistyjs = (function () {
       // We check pendingAnimationLoop first, because the loop
       // may have been cancelled during stepAnimation().
       if (pendingAnimationLoop !== null) {
-        pendingAnimationLoop = requestAnimFrame(animateLoop, twistyCanvas)
+        pendingAnimationLoop = requestAnimationFrame(animateLoop, twistyCanvas)
       }
     }
 

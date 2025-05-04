@@ -6,6 +6,7 @@
 "use strict";
 
 import mathlib from './mathlib'
+import kernel from './kernel'
 
 const cubeutil = (function () {
   function toEqus(facelet) {

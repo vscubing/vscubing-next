@@ -4,6 +4,7 @@ import { DEFAULT_COLORSCHEME } from '../constants'
 import cubeutil from '../cubeutil'
 import THREE from '../threemin'
 import twistyjs from './twisty'
+import kernel from '../kernel'
 ;(function () {
   twistyjs.registerTwisty('cube', createCubeTwisty)
 

@@ -4,10 +4,6 @@
 // NOTE: taken from https://github.com/cs0x7f/cstimer/blob/0c649629be49b99804e2a3ce114502a576543ed9/src/js/lib/threemin.js
 
 var THREE = THREE || {}
-if (!window.Int32Array) {
-  window.Int32Array = Array
-  window.Float32Array = Array
-}
 THREE.Color = function (hex) {
   this.setHex(hex)
 }
@@ -4130,16 +4126,5 @@ THREE.Plane = function (width, height, segmentsWidth, segmentsHeight) {
 }
 THREE.Plane.prototype = new THREE.Geometry()
 THREE.Plane.prototype.constructor = THREE.Plane
-
-var cancelRequestAnimFrame = (function () {
-  return (
-    window.cancelAnimationFrame ||
-    window.webkitCancelRequestAnimationFrame ||
-    window.mozCancelRequestAnimationFrame ||
-    window.oCancelRequestAnimationFrame ||
-    window.msCancelRequestAnimationFrame ||
-    clearTimeout
-  )
-})()
 
 export default THREE
