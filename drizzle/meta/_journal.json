@@ -71,6 +71,20 @@
       "when": 1746304016704,
       "tag": "0009_large_karma",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1746354478001,
+      "tag": "0010_change-colorscheme-from-text-to-json",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1746354506668,
+      "tag": "0011_icy_phalanx",
+      "breakpoints": true
     }
   ]
 }

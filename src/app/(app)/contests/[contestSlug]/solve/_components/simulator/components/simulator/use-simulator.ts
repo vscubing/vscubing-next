@@ -70,6 +70,7 @@ export function useTwistySimulator({
     })
   }, [
     settings.animationDuration,
+    settings.colorscheme,
     containerRef,
     discipline,
     onMove,

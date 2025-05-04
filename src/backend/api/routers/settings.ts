@@ -1,8 +1,8 @@
 import { userSimulatorSettingsTable } from '@/backend/db/schema'
 import { createTRPCRouter, protectedProcedure } from '../trpc'
 import { eq } from 'drizzle-orm'
-import { z } from 'zod'
-import { TWISTY_SIMULATOR_COLORSCHEMES } from 'vendor/cstimer/types'
+import { z, type ZodType } from 'zod'
+import type { TwistySimulatorColorscheme } from 'vendor/cstimer/types'
 
 export const settingsRouter = createTRPCRouter({
   simulatorSettings: protectedProcedure.query(async ({ ctx }) => {
@@ -27,7 +27,19 @@ export const settingsRouter = createTRPCRouter({
         inspectionVoiceAlert: z.enum(['Male', 'Female', 'None']).optional(),
         cameraPositionTheta: z.number().optional(),
         cameraPositionPhi: z.number().optional(),
-        colorscheme: z.enum(TWISTY_SIMULATOR_COLORSCHEMES).optional(),
+        colorscheme: z
+          .object({
+            U: z.number(),
+            R: z.number(),
+            F: z.number(),
+            D: z.number(),
+            L: z.number(),
+            B: z.number(),
+          })
+          .optional()
+          .nullable() satisfies ZodType<
+          TwistySimulatorColorscheme | undefined | null
+        >,
       }),
     )
     .mutation(async ({ ctx, input }) => {
