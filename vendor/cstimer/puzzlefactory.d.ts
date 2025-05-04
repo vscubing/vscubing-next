@@ -25,7 +25,7 @@ type Options = {
   puzzle: 'cube2' | 'cube3'
   animationDuration: number
   allowDragging: boolean
-  colorscheme: Colorscheme
+  colorscheme?: Colorscheme
 }
 export type CameraPosition = { theta: number; phi: number }
 
@@ -48,7 +48,10 @@ export class Puzzle {
   toggleColorVisible(args): unknown
   isSolved(args?: unknown): number
   moveCnt(clr): unknown
-  parseScramble(scramble, addPreScr?: boolean): unknown
+  parseScramble(
+    scramble,
+    addPreScr?: boolean,
+  ): [number, number, string, number][]
 }
 
 type CsMove = [number, number, string, number]
