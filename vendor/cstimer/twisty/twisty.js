@@ -6,6 +6,36 @@ import $ from 'jquery'
 import THREE from '../threemin'
 import kernel from '../kernel'
 
+const touchGridStyles = `
+body {
+  overscroll-behavior: none;
+}
+.touchcube {
+  position: absolute;
+  inset: 0;
+  text-align: center;
+  user-select: none;
+}
+.touchcube tr td {
+  width: 33%;
+  height: 33%;
+}
+.touchcube.active {
+  background-color: #6666;
+  color: #fffa;
+}
+.touchcube.active td.touchto {
+  background-color: #0f0a;
+}
+.touchcube.active td.touchfrom {
+  background-color: #f00a;
+}
+.touchcube.board td {
+  border: 2px solid #6666;
+  border: 0.15rem solid #6666;
+}
+`
+
 /*
  * twisty.js
  *
@@ -135,6 +165,9 @@ const twistyjs = (function () {
       touchCube.append(trs)
 
       if (twistyType.allowDragging) {
+        const css = document.createElement('style')
+        css.innerHTML = touchGridStyles
+        twistyContainer.append(css)
         touchCube.appendTo(twistyContainer)
         touchCube.on('mousedown', onTouchDown)
         touchCube.on('mousemove', onTouchMove)

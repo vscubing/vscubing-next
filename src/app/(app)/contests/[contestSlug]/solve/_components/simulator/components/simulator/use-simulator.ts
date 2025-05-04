@@ -19,6 +19,7 @@ export type SimulatorMoveListener = ({
   isSolved: boolean
 }) => void
 export function useTwistySimulator({
+  // TODO: use useControllableSimulator instead?
   containerRef,
   onMove,
   scramble,
