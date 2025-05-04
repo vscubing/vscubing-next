@@ -17,7 +17,7 @@ export default async function SettingsPage() {
         <div className='flex md:flex-col'>
           <SettingsList />
           <div className='md:mt-4 md:self-start'>
-            <SettingsPreviewSimulator className='pointer-events-none aspect-square w-[300px] touch:hidden' />
+            <SettingsPreviewSimulator />
           </div>
         </div>
       </div>

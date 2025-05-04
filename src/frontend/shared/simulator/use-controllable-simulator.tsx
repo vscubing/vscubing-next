@@ -1,3 +1,4 @@
+import { useIsTouchDevice } from '@/frontend/utils/use-media-query'
 import { useResizeObserver } from '@/frontend/utils/use-resize-observer'
 import type { Discipline, SimulatorSettings } from '@/types'
 import { useRef, useState, useEffect, useMemo } from 'react'
@@ -19,6 +20,7 @@ export function useControllableSimulator({
 
   const memoizedSettings = useMemo(() => JSON.stringify(settings), [settings])
 
+  const isTouchDevice = useIsTouchDevice()
   useEffect(() => {
     const parsedSettings = JSON.parse(
       // TODO: fix this differently, this is a dirty hack
@@ -32,7 +34,7 @@ export function useControllableSimulator({
       {
         puzzle: SIMULATOR_DISCIPLINES_MAP[discipline].puzzle,
         animationDuration: parsedSettings.animationDuration ?? 100,
-        allowDragging: false,
+        allowDragging: isTouchDevice ?? false,
         colorscheme: parsedSettings.colorscheme,
       },
       // eslint-disable-next-line @typescript-eslint/no-empty-function
