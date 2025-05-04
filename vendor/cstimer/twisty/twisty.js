@@ -123,7 +123,7 @@ const twistyjs = (function () {
       twistyCanvas = renderer.domElement
 
       twistyContainer.appendChild(twistyCanvas)
-      touchCube = $('<table class="touchcube">').appendTo(twistyContainer)
+      touchCube = $('<table class="touchcube">')
       var trs = ''
       for (var i = 0; i < 3; i++) {
         var tds = ''
@@ -135,6 +135,7 @@ const twistyjs = (function () {
       touchCube.append(trs)
 
       if (twistyType.allowDragging) {
+        touchCube.appendTo(twistyContainer)
         touchCube.on('mousedown', onTouchDown)
         touchCube.on('mousemove', onTouchMove)
         touchCube.on('mouseup', onTouchUp)

@@ -2,7 +2,11 @@
 
 import { ChevronDownIcon } from '@/frontend/ui'
 import { cn } from '@/frontend/utils/cn'
-import type { ReactNode, ComponentPropsWithoutRef, ComponentRef } from 'react'
+import {
+  type ReactNode,
+  type ComponentPropsWithoutRef,
+  type ComponentRef,
+} from 'react'
 import * as SelectPrimitive from '@radix-ui/react-select'
 import {
   useSimulatorSettings,
@@ -10,6 +14,7 @@ import {
 } from '../hooks/queries'
 import type { RouterOutputs } from '@/trpc/react'
 import { ColorschemeSetting } from './colorscheme-setting'
+import { SettingsPreviewSimulator } from './settings-preview-simulator'
 
 export function SettingsList({
   initialData,
@@ -20,38 +25,46 @@ export function SettingsList({
   const { debouncedMutateSettings } = useSimulatorSettingsMutation()
 
   return (
-    <ul className='space-y-2'>
-      {settings && (
-        <>
-          <li className='flex items-center justify-between gap-2 rounded-xl bg-grey-100 p-4'>
-            <span>VRC base speed (tps):</span>
-            <Select
-              options={CS_ANIMATION_DURATION_OPTIONS}
-              value={String(settings.animationDuration)}
-              onValueChange={(val) =>
-                debouncedMutateSettings({
-                  animationDuration: Number(val),
-                })
-              }
-            />
-          </li>
-          <li className='flex items-center justify-between gap-2 rounded-xl bg-grey-100 p-4'>
-            <span>Preinspection voice alert at 8/12s:</span>
-            <Select
-              options={CS_INSPECTION_VOICE_ALERT_OPTIONS}
-              value={settings.inspectionVoiceAlert}
-              onValueChange={(inspectionVoiceAlert) =>
-                debouncedMutateSettings({ inspectionVoiceAlert })
-              }
-            />
-          </li>
-          <li className='flex items-center justify-between gap-2 rounded-xl bg-grey-100 p-4'>
-            <span>Colorscheme:</span>
-            <ColorschemeSetting />
-          </li>
-        </>
-      )}
-    </ul>
+    <div className='flex md:flex-col'>
+      <ul className='z-10 flex-1 space-y-2'>
+        {settings && (
+          <>
+            <li className='flex items-center justify-between gap-2 rounded-xl bg-grey-100 p-4'>
+              <span>VRC base speed (tps):</span>
+              <Select
+                options={CS_ANIMATION_DURATION_OPTIONS}
+                value={String(settings.animationDuration)}
+                onValueChange={(val) =>
+                  debouncedMutateSettings({
+                    animationDuration: Number(val),
+                  })
+                }
+              />
+            </li>
+            <li className='flex items-center justify-between gap-2 rounded-xl bg-grey-100 p-4'>
+              <span>Preinspection voice alert at 8/12s:</span>
+              <Select
+                options={CS_INSPECTION_VOICE_ALERT_OPTIONS}
+                value={settings.inspectionVoiceAlert}
+                onValueChange={(inspectionVoiceAlert) =>
+                  debouncedMutateSettings({ inspectionVoiceAlert })
+                }
+              />
+            </li>
+            <li className='flex items-center justify-between gap-2 rounded-xl bg-grey-100 p-4'>
+              <span>Colorscheme:</span>
+              <ColorschemeSetting />
+            </li>
+          </>
+        )}
+      </ul>
+      <div className='md:mt-4 md:self-start'>
+        <SettingsPreviewSimulator className='pointer-events-none aspect-square w-[300px] touch:hidden' />
+        <p className='caption -mt-4 text-center text-grey-40'>
+          Pro tip: press space to scramle/unscramble
+        </p>
+      </div>
+    </div>
   )
 }
 
