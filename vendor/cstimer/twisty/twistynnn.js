@@ -1,21 +1,11 @@
 // NOTE: taken from https://github.com/cs0x7f/cstimer/blob/0c649629be49b99804e2a3ce114502a576543ed9/src/js/twisty/twistynnn.js
 
+import { DEFAULT_COLORSCHEME } from '../constants'
 import cubeutil from '../cubeutil'
 import THREE from '../threemin'
 import twistyjs from './twisty'
 ;(function () {
   twistyjs.registerTwisty('cube', createCubeTwisty)
-
-  const COLORSCHEMES = {
-    //       white      red       green     yellow    orange    blue
-    default: [0xffffff, 0xff0000, 0x00ff00, 0xffff00, 0xff9000, 0x0000ff],
-    'colorblind-slight': [
-      0xffffff, 0x7e2954, 0x009e73, 0xf0e442, 0xc18600, 0x6262ff,
-    ], // diy
-    'colorblind-kyo-takano': [
-      0xffffff, 0xfe2222, 0x20ff92, 0xb9b8a7, 0xffa1ff, 0x2121fd,
-    ], // kyo takano
-  }
 
   function axify(v1, v2, v3) {
     var ax = new THREE.Matrix4()
@@ -114,7 +104,7 @@ import twistyjs from './twisty'
       doubleSided: true,
       opacity: 1,
       dimension: 3,
-      colorscheme: 'default',
+      colorscheme: DEFAULT_COLORSCHEME,
       scale: 1,
     }
 
@@ -126,10 +116,15 @@ import twistyjs from './twisty'
       }
     }
 
-    const colorschemeName = cubeOptions['colorscheme']
-    if (!(colorschemeName in COLORSCHEMES))
-      throw new Error(`unsupported colorscheme: ${colorschemeName}`)
-    const faceColors = COLORSCHEMES[colorschemeName]
+    // URFDLB
+    const faceColors = [
+      cubeOptions.colorscheme.U,
+      cubeOptions.colorscheme.R,
+      cubeOptions.colorscheme.F,
+      cubeOptions.colorscheme.D,
+      cubeOptions.colorscheme.L,
+      cubeOptions.colorscheme.B,
+    ]
 
     // Cube Materials
     var materials = {}

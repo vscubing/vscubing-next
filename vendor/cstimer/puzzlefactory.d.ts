@@ -14,10 +14,13 @@ export type MoveListener = (
 ) => void
 type CameraPositionListener = (pos: CameraPosition) => void
 
+type PuzzleFaces = 'U' | 'R' | 'F' | 'D' | 'L' | 'B'
+
 /**
- * @description hex colors URFDLB (default: white red green yellow orange blue)
- * @type [[number, number, number, number, number, number]]
+ * @description hex colors (default: white red green yellow orange blue)
  */
+type Colorscheme = Record<PuzzleFaces, number>
+
 type Options = {
   puzzle: 'cube2' | 'cube3'
   animationDuration: number

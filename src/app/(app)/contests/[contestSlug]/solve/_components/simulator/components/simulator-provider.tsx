@@ -174,7 +174,7 @@ export function SimulatorProvider({ children }: { children: React.ReactNode }) {
                       ...cameraPosition,
                       inspectionVoiceAlert:
                         settings?.inspectionVoiceAlert ?? 'Male',
-                      colorscheme: settings?.colorscheme ?? 'default',
+                      colorscheme: settings?.colorscheme ?? null,
                     }}
                     setCameraPosition={updateDebouncedCameraPosition}
                   />
