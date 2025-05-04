@@ -5,7 +5,6 @@ import {
   lazy,
   Suspense,
   useCallback,
-  useEffect,
   useMemo,
   useState,
 } from 'react'
@@ -28,39 +27,16 @@ import {
   KeyMapDialogTrigger,
   KeyMapDialogContent,
 } from '@/frontend/shared/key-map-dialog'
-import type { SimulatorCameraPosition } from 'vendor/cstimer/types'
 import {
   useSimulatorSettings,
   useSimulatorSettingsMutation,
 } from '@/app/(app)/settings'
-import { useDebounceValue, useEventListener } from 'usehooks-ts'
+import { useEventListener } from 'usehooks-ts'
 const Simulator = lazy(() => import('./simulator/simulator.lazy'))
 
 export function SimulatorProvider({ children }: { children: React.ReactNode }) {
   const { data: settings } = useSimulatorSettings()
-  const { mutate: mutateSettings } = useSimulatorSettingsMutation()
-
-  const [debouncedCameraPosition, updateDebouncedCameraPosition] =
-    useDebounceValue<SimulatorCameraPosition | undefined>(undefined, 500)
-
-  useEffect(() => {
-    const noChanges =
-      debouncedCameraPosition?.theta === settings?.cameraPositionTheta &&
-      debouncedCameraPosition?.phi === settings?.cameraPositionPhi
-
-    if (!debouncedCameraPosition || noChanges) return
-    mutateSettings({
-      cameraPositionTheta: debouncedCameraPosition.theta,
-      cameraPositionPhi: debouncedCameraPosition.phi,
-    })
-  }, [debouncedCameraPosition, mutateSettings, settings])
-
-  const cameraPosition = {
-    cameraPositionTheta:
-      debouncedCameraPosition?.theta ?? settings?.cameraPositionTheta ?? 0,
-    cameraPositionPhi:
-      debouncedCameraPosition?.phi ?? settings?.cameraPositionPhi ?? 6,
-  }
+  const { debouncedMutateSettings } = useSimulatorSettingsMutation()
 
   const [solveState, setSolveState] = useState<{
     initSolveData: InitSolveData
@@ -170,13 +146,23 @@ export function SimulatorProvider({ children }: { children: React.ReactNode }) {
                     onSolveFinish={handleSolveFinish}
                     onInspectionStart={handleInspectionStart}
                     settings={{
-                      animationDuration: settings?.animationDuration ?? 100,
-                      ...cameraPosition,
+                      animationDuration: settings?.animationDuration ?? 100, // TODO: defaults don't belong here
+                      cameraPositionPhi: settings?.cameraPositionPhi ?? 6,
+                      cameraPositionTheta: settings?.cameraPositionTheta ?? 0,
                       inspectionVoiceAlert:
                         settings?.inspectionVoiceAlert ?? 'Male',
                       colorscheme: settings?.colorscheme ?? null,
                     }}
-                    setCameraPosition={updateDebouncedCameraPosition}
+                    setCameraPosition={({ phi, theta }) => {
+                      if (
+                        phi !== settings?.cameraPositionPhi &&
+                        theta !== settings?.cameraPositionTheta
+                      )
+                        debouncedMutateSettings({
+                          cameraPositionPhi: phi,
+                          cameraPositionTheta: theta,
+                        })
+                    }}
                   />
                 )}
               </Suspense>

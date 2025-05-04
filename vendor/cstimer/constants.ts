@@ -1,4 +1,4 @@
-import { TwistySimulatorColorscheme } from './types'
+import { type TwistySimulatorColorscheme } from './types'
 
 export const DEFAULT_COLORSCHEME: TwistySimulatorColorscheme = {
   U: 0xffffff,

@@ -4,9 +4,12 @@ import { ChevronDownIcon } from '@/frontend/ui'
 import { cn } from '@/frontend/utils/cn'
 import type { ReactNode, ComponentPropsWithoutRef, ComponentRef } from 'react'
 import * as SelectPrimitive from '@radix-ui/react-select'
-import { useSimulatorSettings, useSimulatorSettingsMutation } from './queries'
+import {
+  useSimulatorSettings,
+  useSimulatorSettingsMutation,
+} from '../hooks/queries'
 import type { RouterOutputs } from '@/trpc/react'
-import type { TwistySimulatorColorscheme } from 'vendor/cstimer/types'
+import { ColorschemeSetting } from './colorscheme-setting'
 
 export function SettingsList({
   initialData,
@@ -14,11 +17,11 @@ export function SettingsList({
   initialData: RouterOutputs['settings']['simulatorSettings']
 }) {
   const { data: settings } = useSimulatorSettings(initialData)
-  const { mutate: mutateSettings } = useSimulatorSettingsMutation()
+  const { debouncedMutateSettings } = useSimulatorSettingsMutation()
 
   return (
     <ul className='space-y-2'>
-      {settings ? (
+      {settings && (
         <>
           <li className='flex items-center justify-between gap-2 rounded-xl bg-grey-100 p-4'>
             <span>VRC base speed (tps):</span>
@@ -26,7 +29,9 @@ export function SettingsList({
               options={CS_ANIMATION_DURATION_OPTIONS}
               value={String(settings.animationDuration)}
               onValueChange={(val) =>
-                mutateSettings({ animationDuration: Number(val) })
+                debouncedMutateSettings({
+                  animationDuration: Number(val),
+                })
               }
             />
           </li>
@@ -36,21 +41,15 @@ export function SettingsList({
               options={CS_INSPECTION_VOICE_ALERT_OPTIONS}
               value={settings.inspectionVoiceAlert}
               onValueChange={(inspectionVoiceAlert) =>
-                mutateSettings({ inspectionVoiceAlert })
+                debouncedMutateSettings({ inspectionVoiceAlert })
               }
             />
           </li>
           <li className='flex items-center justify-between gap-2 rounded-xl bg-grey-100 p-4'>
-            <span>Colorscheme</span>
-            <Select
-              options={CS_COLORSCHEME}
-              value={settings.colorscheme ?? 'default'}
-              onValueChange={(colorscheme) => mutateSettings({ colorscheme })}
-            />
+            <span>Colorscheme:</span>
+            <ColorschemeSetting />
           </li>
         </>
-      ) : (
-        <li className='h-20 animate-pulse rounded-xl bg-grey-100'></li>
       )}
     </ul>
   )
@@ -73,23 +72,6 @@ const CS_INSPECTION_VOICE_ALERT_OPTIONS = [
   { value: 'Female', view: 'female voice' },
   { value: 'None', view: 'none' },
 ] as const
-
-const CS_COLORSCHEME: Readonly<
-  {
-    value: TwistySimulatorColorscheme | 'default'
-    view: ReactNode
-  }[]
-> = [
-  { value: 'default', view: 'default' },
-  {
-    value: 'colorblind-slight',
-    view: 'slightly tweaked for colorblind',
-  },
-  {
-    value: 'colorblind-kyo-takano',
-    view: 'kyo takano colorblind',
-  },
-]
 
 function Select<T extends string>({
   options,

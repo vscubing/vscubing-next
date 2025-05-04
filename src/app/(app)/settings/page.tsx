@@ -2,7 +2,7 @@ import { HintSignInSection } from '@/frontend/shared/hint-section'
 import { NavigateBackButton } from '@/frontend/shared/navigate-back-button'
 import { auth } from '@/backend/auth'
 import { LayoutHeaderTitlePortal } from '../_layout/layout-header'
-import { SettingsList } from './_page-content'
+import { SettingsList } from './components/settings-list'
 import { api } from '@/trpc/server'
 
 export default async function SettingsPage() {
