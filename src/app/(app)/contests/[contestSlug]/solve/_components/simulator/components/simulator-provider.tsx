@@ -29,14 +29,14 @@ import {
 } from '@/frontend/shared/key-map-dialog'
 import {
   useSimulatorSettings,
-  useSimulatorSettingsMutation,
+  useMutateSimulatorSettings,
 } from '@/app/(app)/settings'
 import { useEventListener } from 'usehooks-ts'
 const Simulator = lazy(() => import('./simulator/simulator.lazy'))
 
 export function SimulatorProvider({ children }: { children: React.ReactNode }) {
   const { data: settings } = useSimulatorSettings()
-  const { debouncedMutateSettings } = useSimulatorSettingsMutation()
+  const { updateSettings } = useMutateSimulatorSettings()
 
   const [solveState, setSolveState] = useState<{
     initSolveData: InitSolveData
@@ -158,7 +158,7 @@ export function SimulatorProvider({ children }: { children: React.ReactNode }) {
                         phi !== settings?.cameraPositionPhi ||
                         theta !== settings?.cameraPositionTheta
                       ) {
-                        debouncedMutateSettings({
+                        updateSettings({
                           cameraPositionPhi: phi,
                           cameraPositionTheta: theta,
                         })

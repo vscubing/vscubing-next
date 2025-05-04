@@ -65,7 +65,7 @@ export function useTwistySimulator({
         allowDragging: touchCubeEnabled,
       },
       moveListener,
-      (pos) => stableSetCameraPosition(pos),
+      stableSetCameraPosition,
       containerRef.current!,
     ).then((pzl) => {
       setTimeout(() => pzl.resize())

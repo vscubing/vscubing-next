@@ -4,49 +4,71 @@ import type { Discipline, SimulatorSettings } from '@/types'
 import { useRef, useState, useEffect, useMemo } from 'react'
 import { useEventCallback } from 'usehooks-ts'
 import { initTwistySimulator } from 'vendor/cstimer'
-import type { TwistySimulatorPuzzle } from 'vendor/cstimer/types'
+import type {
+  SimulatorCameraPosition,
+  TwistySimulatorPuzzle,
+} from 'vendor/cstimer/types'
+
+const CAMERA_POSITION_DEFAULTS = { phi: 6, theta: 0 } as const
 
 export function useControllableSimulator({
   discipline,
   scramble,
   settings,
+  setCameraPosition,
 }: {
   discipline: Discipline
-  settings?: Partial<SimulatorSettings>
+  settings?: Partial<
+    Pick<
+      SimulatorSettings,
+      | 'animationDuration'
+      | 'cameraPositionPhi'
+      | 'cameraPositionTheta'
+      | 'colorscheme'
+    >
+  >
   scramble: string
+  setCameraPosition?: (pos: SimulatorCameraPosition) => void
 }) {
   const simulatorRef = useRef<HTMLDivElement>(null)
   const [puzzle, setPuzzle] = useState<TwistySimulatorPuzzle | undefined>()
 
-  const memoizedSettings = useMemo(() => JSON.stringify(settings), [settings])
+  const memoizedSettings = useMemo(
+    () => ({
+      animationDuration: settings?.animationDuration,
+      colorscheme: settings?.colorscheme,
+    }),
+    [settings?.animationDuration, settings?.colorscheme],
+  )
+  const stableSetCameraPosition = useEventCallback(setCameraPosition)
+
+  const cameraPosition = useMemo(
+    () => ({
+      phi: settings?.cameraPositionPhi ?? CAMERA_POSITION_DEFAULTS.phi,
+      theta: settings?.cameraPositionTheta ?? CAMERA_POSITION_DEFAULTS.theta,
+    }),
+    [settings?.cameraPositionPhi, settings?.cameraPositionTheta],
+  )
 
   const isTouchDevice = useIsTouchDevice()
   useEffect(() => {
-    const parsedSettings = JSON.parse(
-      // TODO: fix this differently, this is a dirty hack
-      memoizedSettings,
-    ) as Partial<SimulatorSettings>
-
     const simulatorElem = simulatorRef.current
     if (!simulatorElem || scramble === undefined) return
 
     void initTwistySimulator(
       {
         puzzle: SIMULATOR_DISCIPLINES_MAP[discipline].puzzle,
-        animationDuration: parsedSettings.animationDuration ?? 100,
+        animationDuration: memoizedSettings.animationDuration ?? 100,
         allowDragging: isTouchDevice ?? false,
-        colorscheme: parsedSettings.colorscheme,
+        colorscheme: memoizedSettings.colorscheme,
       },
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       () => {},
       // eslint-disable-next-line @typescript-eslint/no-empty-function
-      () => {},
+      stableSetCameraPosition ?? (() => {}),
       simulatorElem,
     ).then(async (pzl) => {
-      setTimeout(() => {
-        pzl.resize()
-        pzl.setCameraPosition({ phi: 6, theta: 0 })
-      })
+      setTimeout(() => pzl.resize())
       setPuzzle(pzl)
 
       const fixedScr =
@@ -57,7 +79,14 @@ export function useControllableSimulator({
       setPuzzle(undefined)
       simulatorElem.innerHTML = ''
     }
-  }, [simulatorRef, discipline, scramble, memoizedSettings, isTouchDevice])
+  }, [
+    simulatorRef,
+    discipline,
+    scramble,
+    memoizedSettings,
+    isTouchDevice,
+    stableSetCameraPosition,
+  ])
 
   const applyMove = useEventCallback((move: string) => {
     if (!puzzle) throw new Error('no puzzle!')
@@ -73,9 +102,13 @@ export function useControllableSimulator({
     ref: simulatorRef,
     onResize: () => {
       puzzle?.resize()
-      puzzle?.setCameraPosition({ phi: 6, theta: 0 })
+      puzzle?.setCameraPosition(cameraPosition)
     },
   })
+
+  useEffect(() => {
+    if (puzzle) setTimeout(() => puzzle.setCameraPosition(cameraPosition))
+  }, [cameraPosition, puzzle, scramble])
 
   return { applyMove, simulatorRef, applyKeyboardMove }
 }
