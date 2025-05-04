@@ -75,7 +75,7 @@ export function SettingsPreviewSimulator({
           Pro tip: press space to scramle/unscramble
         </span>
         <span className='hidden touch:block'>
-          Pro tip: double click to scramle/unscramble
+          Pro tip: double tap to scramle/unscramble
         </span>
       </p>
     </div>
