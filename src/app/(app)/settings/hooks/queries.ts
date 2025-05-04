@@ -11,7 +11,8 @@ export function useSimulatorSettings(
   return useQuery({ ...settingsQuery, initialData })
 }
 
-export function useSimulatorSettingsMutation() {
+// NOTE: settings are updated locally immediately, but the mutation request to server is debounced
+export function useMutateSimulatorSettings() {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const settingsQuery = trpc.settings.simulatorSettings.queryOptions()
@@ -38,7 +39,7 @@ export function useSimulatorSettingsMutation() {
     }, 500)
   }
 
-  return { debouncedMutateSettings: handleMutation }
+  return { updateSettings: handleMutation }
 }
 
 let timeoutId: number | undefined

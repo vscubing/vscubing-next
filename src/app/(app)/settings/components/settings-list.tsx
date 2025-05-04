@@ -10,13 +10,13 @@ import {
 import * as SelectPrimitive from '@radix-ui/react-select'
 import {
   useSimulatorSettings,
-  useSimulatorSettingsMutation,
+  useMutateSimulatorSettings,
 } from '../hooks/queries'
 import { ColorschemeSetting } from './colorscheme-setting'
 
 export function SettingsList() {
   const { data: settings } = useSimulatorSettings()
-  const { debouncedMutateSettings } = useSimulatorSettingsMutation()
+  const { updateSettings } = useMutateSimulatorSettings()
 
   if (!settings)
     return (
@@ -35,7 +35,7 @@ export function SettingsList() {
           options={CS_ANIMATION_DURATION_OPTIONS}
           value={String(settings.animationDuration)}
           onValueChange={(val) =>
-            debouncedMutateSettings({
+            updateSettings({
               animationDuration: Number(val),
             })
           }
@@ -47,7 +47,7 @@ export function SettingsList() {
           options={CS_INSPECTION_VOICE_ALERT_OPTIONS}
           value={settings.inspectionVoiceAlert}
           onValueChange={(inspectionVoiceAlert) =>
-            debouncedMutateSettings({ inspectionVoiceAlert })
+            updateSettings({ inspectionVoiceAlert })
           }
         />
       </li>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import {
   useSimulatorSettings,
-  useSimulatorSettingsMutation,
+  useMutateSimulatorSettings,
 } from '../hooks/queries'
 import * as PopoverPrimitive from '@radix-ui/react-popover'
 import { cn } from '@/frontend/utils/cn'
@@ -9,10 +9,11 @@ import { HexColorPicker } from 'react-colorful'
 import { GhostButton, Input, SecondaryButton } from '@/frontend/ui'
 import { TWISTY_DEFAULT_COLORSCHEME } from 'vendor/cstimer/constants'
 import { RotateCcwIcon } from 'lucide-react'
+import { useDebounceCallback } from 'usehooks-ts'
 
 export function ColorschemeSetting() {
   const { data: settings } = useSimulatorSettings()
-  const { debouncedMutateSettings } = useSimulatorSettingsMutation()
+  const { updateSettings } = useMutateSimulatorSettings()
 
   if (!settings) return
   const colorscheme = settings.colorscheme ?? TWISTY_DEFAULT_COLORSCHEME
@@ -25,7 +26,7 @@ export function ColorschemeSetting() {
           JSON.stringify(TWISTY_DEFAULT_COLORSCHEME)
         }
         className='mr-2'
-        onClick={() => debouncedMutateSettings({ colorscheme: null })}
+        onClick={() => updateSettings({ colorscheme: null })}
       >
         Reset all
       </GhostButton>
@@ -35,7 +36,7 @@ export function ColorschemeSetting() {
             <ColorPicker
               value={'#' + colorscheme[face].toString(16).padStart(6, '0')}
               onReset={() => {
-                debouncedMutateSettings({
+                updateSettings({
                   colorscheme: {
                     ...colorscheme,
                     [face]: TWISTY_DEFAULT_COLORSCHEME[face],
@@ -48,7 +49,7 @@ export function ColorschemeSetting() {
               }
               onChange={(color) => {
                 const withoutHash = color.slice(1)
-                debouncedMutateSettings({
+                updateSettings({
                   colorscheme: {
                     ...colorscheme,
                     [face]: parseInt(withoutHash, 16),
@@ -82,6 +83,7 @@ function ColorPicker({
   const [open, setOpen] = useState(false)
   const [inputValid, setInputValid] = useState(true)
   const [inputValue, setInputValue] = useState(value)
+  const debouncedOnChange = useDebounceCallback(onChange, 50)
 
   useEffect(() => {
     setInputValid(true)
@@ -94,18 +96,18 @@ function ColorPicker({
         <button
           {...props}
           className={cn('block', className)}
-          onClick={() => {
-            setOpen(true)
-          }}
-          style={{
-            backgroundColor: value,
-          }}
+          onClick={() => setOpen(true)}
+          style={{ backgroundColor: value }}
         >
           <div className='h-6 w-6' />
         </button>
       </PopoverPrimitive.Trigger>
       <PopoverPrimitive.Content className='w-full' collisionPadding={32}>
-        <HexColorPicker color={value} onChange={onChange} className='mb-1' />
+        <HexColorPicker
+          color={value}
+          onChange={debouncedOnChange}
+          className='mb-1'
+        />
         <div className='flex gap-1'>
           <Input
             maxLength={7}

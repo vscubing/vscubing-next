@@ -2,9 +2,12 @@
 
 import { useControllableSimulator } from '@/frontend/shared/simulator/use-controllable-simulator'
 import { cn } from '@/frontend/utils/cn'
-import React, { useEffect, useState, type RefObject } from 'react'
-import { useDebounceValue, useEventListener } from 'usehooks-ts'
-import { useSimulatorSettings } from '../hooks/queries'
+import { useEffect, useState, type RefObject } from 'react'
+import { useEventListener } from 'usehooks-ts'
+import {
+  useSimulatorSettings,
+  useMutateSimulatorSettings,
+} from '../hooks/queries'
 import { LoadingSpinner } from '@/frontend/ui'
 
 export function SettingsPreviewSimulator({
@@ -13,16 +16,18 @@ export function SettingsPreviewSimulator({
   className?: string
 }) {
   const { data: settings } = useSimulatorSettings()
-  const [debouncedSettings] = useDebounceValue(settings, 50)
+  const { updateSettings } = useMutateSimulatorSettings()
 
   const [scramble, setScramble] = useState('')
   const { applyKeyboardMove, simulatorRef } = useControllableSimulator({
     discipline: '3by3',
     scramble,
-    settings: {
-      colorscheme: debouncedSettings?.colorscheme,
-      animationDuration: debouncedSettings?.animationDuration,
-    },
+    settings,
+    setCameraPosition: ({ phi, theta }) =>
+      updateSettings({
+        cameraPositionPhi: phi,
+        cameraPositionTheta: theta,
+      }),
   })
 
   useEffect(() => setScramble(''), [settings?.colorscheme])

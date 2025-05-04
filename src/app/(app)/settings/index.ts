@@ -1,4 +1,4 @@
 export {
   useSimulatorSettings,
-  useSimulatorSettingsMutation,
+  useMutateSimulatorSettings,
 } from './hooks/queries'
