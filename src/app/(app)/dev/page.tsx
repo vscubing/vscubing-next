@@ -15,7 +15,7 @@ export default async function DevPage() {
   return (
     <div className='flex flex-1 flex-wrap justify-between gap-8 rounded-2xl bg-black-80 p-6 sm:p-3'>
       <div className='max-w-[30rem] space-y-4'>
-        This is indeed the latest app version (11)
+        This is indeed the latest app version (12)
         <h2 className='title-h2'>Ongoing contest</h2>
         <OngoingContestInfo />
         <SolveValidator />
