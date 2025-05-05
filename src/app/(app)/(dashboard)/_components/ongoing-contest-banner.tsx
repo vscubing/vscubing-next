@@ -50,7 +50,7 @@ function BannerContent({
       </div>
 
       <div className='relative mr-32'>
-        <div className='flex flex-col items-start justify-between gap-4 py-4 xl-short:pt-0'>
+        <div className='flex flex-col items-start justify-between gap-4 py-4'>
           <Title />
           <div className='flex w-full items-end justify-between'>
             <div>

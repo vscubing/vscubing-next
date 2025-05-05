@@ -2,10 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { LayoutHeaderTitlePortal } from '../_layout'
-import { useControllableSimulator } from '../live-streams/page'
 import { useEventCallback, useEventListener } from 'usehooks-ts'
 import { keyToMove } from '@vscubing/cubing/alg'
-import { puzzles } from 'cubing/puzzles'
 import { isMove, type Move } from '@/types'
 import type {
   ServerToClientEvents,
@@ -15,6 +13,8 @@ import { io, type Socket } from 'socket.io-client'
 import { cn } from '@/frontend/utils/cn'
 import { LoadingSpinner } from '@/frontend/ui'
 import type { KPatternData } from '@vscubing/cubing/kpuzzle'
+import { puzzles } from '@vscubing/cubing/puzzles'
+import { useControllableSimulator } from '@/frontend/shared/simulator/use-controllable-simulator'
 
 export default function CubeTogetherPage() {
   const [patternData, setPatternData] = useState<KPatternData>()
@@ -42,7 +42,8 @@ export default function CubeTogetherPage() {
 
   const { simulatorRef, applyMove } = useControllableSimulator({
     discipline: '3by3',
-    patternData,
+    scramble: '',
+    // patternData,
   })
 
   useEventListener('keydown', (e) => {

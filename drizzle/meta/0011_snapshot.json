@@ -1,6 +1,6 @@
 {
-  "id": "4257b4c6-5940-4810-b3eb-66d857e86c21",
-  "prevId": "52457eb0-6888-43f7-b0f9-247b5975b640",
+  "id": "43ba8b10-b424-43dd-80a2-dba0ad09fb08",
+  "prevId": "ebfb284b-e282-4610-a0ee-13093934d576",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -857,7 +857,7 @@
         },
         "colorscheme": {
           "name": "colorscheme",
-          "type": "text",
+          "type": "json",
           "primaryKey": false,
           "notNull": false
         }

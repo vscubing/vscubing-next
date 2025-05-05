@@ -8,8 +8,8 @@ import {
   type SimulatorCameraPosition,
   type TwistySimulatorMoveListener,
   type TwistySimulatorPuzzle,
-  initTwistySimulator,
-} from 'vendor/cstimer'
+} from 'vendor/cstimer/types'
+import { initTwistySimulator } from 'vendor/cstimer'
 import { type RefObject, useEffect, useState } from 'react'
 import { useEventCallback } from 'usehooks-ts'
 
@@ -21,6 +21,7 @@ export type SimulatorEvent = {
 }
 
 export function useTwistySimulator({
+  // TODO: use useControllableSimulator instead?
   containerRef,
   onMove,
   scramble,
@@ -39,6 +40,8 @@ export function useTwistySimulator({
 }) {
   const stableOnMove = useEventCallback(onMove)
   const [puzzle, setPuzzle] = useState<TwistySimulatorPuzzle | undefined>()
+
+  const stableSetCameraPosition = useEventCallback(setCameraPosition)
 
   useEffect(() => {
     let _puzzle: TwistySimulatorPuzzle | undefined // we need this because move2str is tightly coupled with Puzzle
@@ -60,10 +63,11 @@ export function useTwistySimulator({
       {
         puzzle: SIMULATOR_DISCIPLINES_MAP[discipline].puzzle,
         animationDuration: settings.animationDuration,
+        colorscheme: settings.colorscheme,
         allowDragging: touchCubeEnabled,
       },
       moveListener,
-      (pos) => setCameraPosition(pos),
+      stableSetCameraPosition,
       containerRef.current!,
     ).then((pzl) => {
       setTimeout(() => pzl.resize())
@@ -72,11 +76,12 @@ export function useTwistySimulator({
     })
   }, [
     settings.animationDuration,
+    settings.colorscheme,
     containerRef,
     discipline,
     stableOnMove,
     touchCubeEnabled,
-    setCameraPosition,
+    stableSetCameraPosition,
   ])
 
   useEffect(() => {

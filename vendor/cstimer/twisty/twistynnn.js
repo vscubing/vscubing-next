@@ -1,8 +1,10 @@
 // NOTE: taken from https://github.com/cs0x7f/cstimer/blob/0c649629be49b99804e2a3ce114502a576543ed9/src/js/twisty/twistynnn.js
 
+import { DEFAULT_COLORSCHEME } from '../constants'
 import cubeutil from '../cubeutil'
 import THREE from '../threemin'
 import twistyjs from './twisty'
+import kernel from '../kernel'
 ;(function () {
   twistyjs.registerTwisty('cube', createCubeTwisty)
 
@@ -103,17 +105,27 @@ import twistyjs from './twisty'
       doubleSided: true,
       opacity: 1,
       dimension: 3,
-      faceColors: [0xffffff, 0xff0000, 0x00ff00, 0xffff00, 0xff9000, 0x0000ff],
+      colorscheme: DEFAULT_COLORSCHEME,
       scale: 1,
     }
 
     // Passed Parameters
     for (var option in cubeOptions) {
       if (option in twistyParameters) {
-        //              console.log("Setting option \"" + option + "\" to " + twistyParameters[option]);
-        cubeOptions[option] = twistyParameters[option]
+        if (twistyParameters[option])
+          cubeOptions[option] = twistyParameters[option]
       }
     }
+
+    // URFDLB
+    const faceColors = [
+      cubeOptions.colorscheme.U,
+      cubeOptions.colorscheme.R,
+      cubeOptions.colorscheme.F,
+      cubeOptions.colorscheme.D,
+      cubeOptions.colorscheme.L,
+      cubeOptions.colorscheme.B,
+    ]
 
     // Cube Materials
     var materials = {}
@@ -125,7 +137,7 @@ import twistyjs from './twisty'
     })
     for (var i = 0; i < numSides; i++) {
       materials[i] = new THREE.MeshBasicMaterial({
-        color: cubeOptions.faceColors[i],
+        color: faceColors[i],
         opacity: cubeOptions.opacity,
       })
     }
@@ -154,6 +166,14 @@ import twistyjs from './twisty'
             color: cubeOptions.faceColors[i],
             opacity: opacity ?? 1,
           })
+
+          // materials[key] =
+          //   materials[key] ||
+          //   new THREE.MeshBasicMaterial({
+          //     color: faceColors[i],
+          //     opacity: cubeOptions.opacity,
+          //   })
+
           var meshes = [materials[key]]
           if (cubeOptions.stickerBorder) {
             meshes.push(borderMaterial)
@@ -368,7 +388,7 @@ import twistyjs from './twisty'
       var state = twisty.cubePieces
       for (var faceIndex = 0; faceIndex < numSides; faceIndex++) {
         var faceStickers = state[faceIndex]
-        var faceColor = visible ? cubeOptions.faceColors[faceIndex] : 0x7f7f7f
+        var faceColor = visible ? faceColors[faceIndex] : 0x7f7f7f
         for (
           var stickerIndex = 0, faceStickerslength = faceStickers.length;
           stickerIndex < faceStickerslength;
@@ -408,7 +428,7 @@ import twistyjs from './twisty'
             cord2 in effLayers ||
             dim - 1 - cord2 in effLayers
           materials[0].color.setHex(
-            hit || colorVisible ? cubeOptions.faceColors[faceIndex] : 0x7f7f7f,
+            hit || colorVisible ? faceColors[faceIndex] : 0x7f7f7f,
           )
           if (hit || borderVisible) {
             materials[1] = twisty.borderMaterial

@@ -1,0 +1,1 @@
+ALTER TABLE "user_simulator_settings" ALTER COLUMN "colorscheme" SET DATA TYPE json;

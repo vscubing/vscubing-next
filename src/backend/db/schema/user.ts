@@ -1,6 +1,7 @@
 import { pgTable } from 'drizzle-orm/pg-core'
 import { createdUpdatedAtColumns } from './core'
 import { userTable } from './account'
+import type { TwistySimulatorColorscheme } from 'vendor/cstimer/types'
 
 export const userSimulatorSettingsTable = pgTable(
   'user_simulator_settings',
@@ -22,5 +23,6 @@ export const userSimulatorSettingsTable = pgTable(
       .notNull()
       .default(0),
     cameraPositionPhi: d.integer('camera_position_phi').notNull().default(6),
+    colorscheme: d.json().$type<TwistySimulatorColorscheme>(), // I don't want to set it for everyone in the db, including users that don't need it, so it's nullable, maybe I'll eventually make other columns here nullable too
   }),
 )

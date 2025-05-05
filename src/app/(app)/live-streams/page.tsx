@@ -1,28 +1,19 @@
 'use client'
 
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type RefObject,
-} from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { usePresenceChannel } from '@/lib/pusher/pusher-client'
 import { type SolveStream, type SolveStreamMove } from '@/lib/pusher/streams'
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query'
-import type { Discipline, Move } from '@/types'
-import { type TwistySimulatorPuzzle, initTwistySimulator } from 'vendor/cstimer'
+import type { Move } from '@/types'
+import { type TwistySimulatorPuzzle } from 'vendor/cstimer/types'
 import { useTRPC } from '@/lib/trpc/react'
 import { LayoutHeaderTitlePortal } from '@/app/(app)/_layout'
 import { LoadingSpinner } from '@/frontend/ui'
 import { EyeIcon } from 'lucide-react'
 import { useEventCallback } from 'usehooks-ts'
-import { useResizeObserver } from '@/frontend/utils/use-resize-observer'
 import { cn } from '@/frontend/utils/cn'
 import { formatSolveTime } from '@/lib/utils/format-solve-time'
-import { SIMULATOR_DISCIPLINES_MAP } from '../contests/[contestSlug]/solve/_components/simulator/components/simulator/use-simulator'
-import { type KPatternData } from '@vscubing/cubing/kpuzzle'
+import { useControllableSimulator } from '@/frontend/shared/simulator/use-controllable-simulator'
 
 export default function WatchLivePageContent() {
   const trpc = useTRPC()
@@ -135,71 +126,6 @@ function SolveStreamView({
   )
 }
 
-// TODO: put this in a shared module
-export function useControllableSimulator({
-  discipline,
-  scramble,
-  patternData,
-}: {
-  discipline: Discipline
-  scramble: string
-  enabled?: boolean
-}) {
-  const simulatorRef = useRef<HTMLDivElement>(null)
-  const [puzzle, setPuzzle] = useState<TwistySimulatorPuzzle | undefined>()
-
-  useEffect(() => {
-    const simulatorElem = simulatorRef.current
-    if (!simulatorElem || scramble === undefined) return
-
-    void initTwistySimulator(
-      {
-        puzzle: SIMULATOR_DISCIPLINES_MAP[discipline].puzzle,
-        animationDuration: 100,
-        allowDragging: false,
-      },
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      () => {},
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      () => {},
-      simulatorElem,
-    ).then(async (pzl) => {
-      setTimeout(() => {
-        pzl.resize()
-        pzl.setCameraPosition({ phi: 6, theta: 0 })
-      })
-      setPuzzle(pzl)
-
-      const fixedScr = scramble === '' ? "y y'" : fixDoublePrimeMoves(scramble) // HACK: applyMoves misbehaves on empty string so we replace it with y y' which is equivalent of not applying any moves (should we move this inside `vendor/cstimer`?)
-      pzl?.applyMoves(tranformAlgForCstimer(fixedScr, pzl), 0, true)
-    })
-    return () => {
-      setPuzzle(undefined)
-      simulatorElem.innerHTML = ''
-    }
-  }, [simulatorRef, discipline, scramble, patternData])
-
-  const applyMove = useEventCallback((move: Move) => {
-    if (!puzzle) throw new Error('no puzzle!')
-    puzzle.addMoves(tranformAlgForCstimer(move, puzzle), 0)
-  })
-
-  const applyKeyboardMove = useEventCallback((event: KeyboardEvent) => {
-    if (!puzzle) throw new Error('no puzzle!')
-    puzzle.keydown(event)
-  })
-
-  useResizeObserver({
-    ref: simulatorRef,
-    onResize: () => {
-      puzzle?.resize()
-      puzzle?.setCameraPosition({ phi: 6, theta: 0 })
-    },
-  })
-
-  return { applyMove, simulatorRef, applyKeyboardMove }
-}
-
 function useSolveStream({
   streamId,
   onMove,
@@ -283,29 +209,3 @@ function useStopwatch() {
 
   return { timeMs, runStopwatch, stopStopwatch }
 }
-
-// HACK: twisty simulator doesn't support double prime moves like z2' that `cubing.js`'s .invert() outputs a lot
-function fixDoublePrimeMoves(alg: string): string {
-  return alg.replaceAll("2'", '2')
-}
-
-function tranformAlgForCstimer(alg: string, puzzle: TwistySimulatorPuzzle) {
-  const res = alg
-    .trim()
-    .split(' ')
-    .map((move) => {
-      if (move in CSTIMER_REPLACE_MAP)
-        return CSTIMER_REPLACE_MAP[move as keyof typeof CSTIMER_REPLACE_MAP]
-      else return puzzle.parseScramble(move)[0]
-    })
-  return res
-}
-
-const CSTIMER_REPLACE_MAP = {
-  E: [2, 2, 'U', -1],
-  "E'": [2, 2, 'U', 1],
-  M: [2, 2, 'L', 1],
-  "M'": [2, 2, 'L', -1],
-  S: [2, 2, 'F', 1],
-  "S'": [2, 2, 'F', -1],
-} as const

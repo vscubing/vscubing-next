@@ -38,7 +38,8 @@
     "**/*.tsx",
     "**/*.cjs",
     "**/*.js",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "vendor/**/*.ts"
   ],
   "exclude": ["node_modules", "vendor", ".next"]
 }
