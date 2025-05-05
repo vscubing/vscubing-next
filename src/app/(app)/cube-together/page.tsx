@@ -68,14 +68,14 @@ export default function CubeTogetherPage() {
           ref={simulatorRef}
           className={cn(
             'aspect-square h-[70%] outline-none sm:h-auto sm:w-full sm:max-w-[34rem]',
-            { 'opacity-0': patternData === undefined },
+            // { 'opacity-0': patternData === undefined },
           )}
         />
         <LoadingSpinner
           size='lg'
           className={cn(
             'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0',
-            { 'opacity-100': patternData === undefined },
+            // { 'opacity-100': patternData === undefined },
           )}
         />
       </div>

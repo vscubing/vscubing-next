@@ -163,7 +163,7 @@ import kernel from '../kernel'
             key += ',' + (su1 + sv1) + ',' + su1 * sv1
           }
           materials[key] = new THREE.MeshBasicMaterial({
-            color: cubeOptions.faceColors[i],
+            color: faceColors[i],
             opacity: opacity ?? 1,
           })
 
