@@ -1,4 +1,9 @@
-import { type Discipline, type SimulatorSettings } from '@/types'
+import {
+  isMove,
+  type Discipline,
+  type Move,
+  type SimulatorSettings,
+} from '@/types'
 import {
   type SimulatorCameraPosition,
   type TwistySimulatorMoveListener,
@@ -8,17 +13,13 @@ import { initTwistySimulator } from 'vendor/cstimer'
 import { type RefObject, useEffect, useState } from 'react'
 import { useEventCallback } from 'usehooks-ts'
 
-export type Move = (typeof MOVES)[number]
-export type SimulatorMoveListener = ({
-  move,
-  isRotation,
-  isSolved,
-}: {
+export type SimulatorEvent = {
   move: Move
   timestamp: number
   isRotation: boolean
   isSolved: boolean
-}) => void
+}
+
 export function useTwistySimulator({
   // TODO: use useControllableSimulator instead?
   containerRef,
@@ -30,13 +31,14 @@ export function useTwistySimulator({
   setCameraPosition,
 }: {
   containerRef: RefObject<HTMLElement | null>
-  onMove: SimulatorMoveListener
+  onMove: (event: SimulatorEvent) => void
   scramble: string | undefined
   discipline: Discipline
   settings: SimulatorSettings
   touchCubeEnabled: boolean
   setCameraPosition: (pos: SimulatorCameraPosition) => void
 }) {
+  const stableOnMove = useEventCallback(onMove)
   const [puzzle, setPuzzle] = useState<TwistySimulatorPuzzle | undefined>()
 
   const stableSetCameraPosition = useEventCallback(setCameraPosition)
@@ -49,7 +51,7 @@ export function useTwistySimulator({
 
       const move = parseCstimerMove(_puzzle.move2str(rawMove))
       const isSolved = _puzzle.isSolved() === 0
-      onMove({
+      stableOnMove({
         move,
         timestamp,
         isRotation: _puzzle.isRotation(rawMove),
@@ -77,7 +79,7 @@ export function useTwistySimulator({
     settings.colorscheme,
     containerRef,
     discipline,
-    onMove,
+    stableOnMove,
     touchCubeEnabled,
     stableSetCameraPosition,
   ])
@@ -119,7 +121,7 @@ export function useTwistySimulator({
   ])
 }
 
-const SIMULATOR_DISCIPLINES_MAP = {
+export const SIMULATOR_DISCIPLINES_MAP = {
   '3by3': {
     dimension: 3,
     puzzle: 'cube3',
@@ -143,31 +145,4 @@ function parseCstimerMove(moveCstimer: string): Move {
 
   if (!isMove(move)) throw new Error(`[SIMULATOR] invalid move: ${move}`)
   return move
-}
-
-const SIMPLE_MOVES = [
-  'R',
-  'U',
-  'F',
-  'B',
-  'L',
-  'D',
-  'M',
-  'E',
-  'S',
-  'Rw',
-  'Uw',
-  'Fw',
-  'Bw',
-  'Lw',
-  'Dw',
-  'x',
-  'y',
-  'z',
-] as const
-const MOVES = SIMPLE_MOVES.flatMap(
-  (move) => [move, `${move}'`, `${move}2`] as const,
-)
-function isMove(moveStr: string): moveStr is Move {
-  return (MOVES as readonly string[]).includes(moveStr)
 }

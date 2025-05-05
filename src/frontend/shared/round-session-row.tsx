@@ -1,23 +1,31 @@
-import {
-  DisciplineIcon,
-  PlusIcon,
-  MinusIcon,
-  ArrowRightIcon,
-  SecondaryButton,
-} from '@/frontend/ui'
-import { cn } from '@/frontend/utils/cn'
-import * as Accordion from '@radix-ui/react-accordion'
+'use client'
+
 import { PlaceLabel } from '@/frontend/shared/place-label'
 import {
   SolveTimeLabel,
   SolveTimeLinkOrDnf,
 } from '@/frontend/shared/solve-time-button'
-import { getExtraNumber, type Discipline, type RoundSession } from '@/types'
+import {
+  ArrowRightIcon,
+  DisciplineIcon,
+  MinusIcon,
+  PlusIcon,
+  PrimaryButton,
+  SecondaryButton,
+  UnderlineButton,
+} from '@/frontend/ui'
 import { SpinningBorder } from '@/frontend/ui/spinning-border'
+import { cn } from '@/frontend/utils/cn'
 import { tailwindConfig } from '@/frontend/utils/tailwind'
-import type { RefObject } from 'react'
+import { getExtraNumber, type Discipline, type RoundSession } from '@/types'
+import * as Accordion from '@radix-ui/react-accordion'
 import Link from 'next/link'
+import { type RefObject } from 'react'
 import { UserBadges } from './user-badges'
+import { useSolveForm } from './use-solve-form'
+import { SimulatorProvider } from '@/app/(app)/contests/[contestSlug]/solve/_components'
+import { LoadingDots } from '../ui/loading-dots'
+import { useClient } from '../utils/use-client'
 
 // HACK: we can't just use useMatchesScreen for switching between Desktop and Tablet because then it won't be SSRed properly
 type RoundSessionRowProps = {
@@ -29,6 +37,8 @@ type RoundSessionRowProps = {
   className?: string
   podiumColors?: boolean
   onPlaceClick?: () => void
+  revealedAttemptsNumber?: number
+  isPlacePreliminary?: boolean
 }
 export function RoundSessionRow({
   discipline,
@@ -40,6 +50,8 @@ export function RoundSessionRow({
   className,
   podiumColors = false,
   onPlaceClick,
+  revealedAttemptsNumber = 5,
+  isPlacePreliminary = false,
 }: RoundSessionRowProps & { ref?: RefObject<HTMLLIElement | null> }) {
   return (
     <li ref={ref} className={className}>
@@ -52,6 +64,8 @@ export function RoundSessionRow({
         place={place}
         session={session}
         onPlaceClick={onPlaceClick}
+        revealedAttemptsNumber={revealedAttemptsNumber}
+        isPlacePreliminary={isPlacePreliminary}
       />
       <RoundSessionRowTablet
         className='hidden md:block'
@@ -62,6 +76,8 @@ export function RoundSessionRow({
         place={place}
         session={session}
         onPlaceClick={onPlaceClick}
+        revealedAttemptsNumber={revealedAttemptsNumber}
+        isPlacePreliminary={isPlacePreliminary}
       />
     </li>
   )
@@ -106,17 +122,30 @@ function RoundSessionRowTablet({
   isFirstOnPage,
   className,
   onPlaceClick,
+  revealedAttemptsNumber,
+  isPlacePreliminary,
 }: RoundSessionRowProps) {
   const { bestId, worstId } = getBestAndWorstIds(solves)
 
+  const revealedAverage =
+    revealedAttemptsNumber !== undefined && revealedAttemptsNumber === 5
+  const isInProgress =
+    solves.length !== 5 || solves.at(-1)!.status === 'pending'
   return (
-    <Accordion.Root type='single' collapsible asChild>
+    <Accordion.Root
+      type='single'
+      defaultValue={isInProgress && session.isOwn ? 'result' : undefined}
+      collapsible
+      asChild
+    >
       <Accordion.Item value='result' asChild>
         <div className={className}>
           <SpinningBorder
-            enabled={session.isOwn}
+            enabled={session.isOwn && session.isFinished}
             color={tailwindConfig.theme.colors.secondary[60]}
-            className='rounded-xl'
+            className={cn('rounded-xl', {
+              'border border-dashed border-grey-20': !session.isFinished,
+            })}
           >
             <div
               className={cn(
@@ -128,6 +157,7 @@ function RoundSessionRowTablet({
                 <PlaceLabel
                   onClick={onPlaceClick}
                   podiumColors={podiumColors}
+                  variant={isPlacePreliminary ? 'dashed' : 'default'}
                   className={cn('mr-3 sm:mr-0', {
                     'cursor-pointer': onPlaceClick,
                   })}
@@ -147,9 +177,10 @@ function RoundSessionRowTablet({
                     Average time
                   </span>
                   <SolveTimeLabel
-                    timeMs={session.result.timeMs ?? undefined}
-                    isDnf={session.result.isDnf}
-                    isAverage
+                    timeMs={session.result?.timeMs ?? undefined}
+                    isDnf={session.result?.isDnf}
+                    isAverage={session.isFinished}
+                    isPlaceholder={!session.isFinished || !revealedAverage}
                   />
                 </span>
                 <Accordion.Trigger className='outline-ring group sm:py-2'>
@@ -159,30 +190,22 @@ function RoundSessionRowTablet({
               </Accordion.Header>
               <Accordion.Content className='w-full overflow-y-clip data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down'>
                 <ul className='grid grid-flow-col grid-cols-[repeat(5,min-content)] grid-rows-[min-content_min-content] justify-end gap-x-2 gap-y-1 border-t border-grey-60 pt-4 sm:grid-flow-row sm:grid-cols-2 sm:grid-rows-none sm:items-center sm:gap-y-0 sm:pl-2 sm:pt-3'>
-                  {solves.map((solve, index) => (
-                    <li key={solve.id} className='contents'>
+                  {Array.from({ length: 5 }).map((_, idx) => (
+                    <li key={solves[idx]?.id ?? idx} className='contents'>
                       <span className='text-center text-grey-40 sm:text-left'>
-                        Attempt {index + 1}
+                        Attempt {idx + 1}
                       </span>
-                      <span className='relative sm:ml-auto sm:text-right'>
-                        <SolveTimeLinkOrDnf
-                          canShowHint={isFirstOnPage && index === 0}
+                      <span className='relative flex items-center sm:ml-auto sm:text-right'>
+                        <SingleAttempt
                           contestSlug={contestSlug}
-                          solveId={solve.id}
+                          session={session}
+                          isFirstOnPage={isFirstOnPage}
+                          idx={idx}
+                          solves={solves}
                           discipline={discipline}
-                          result={solve.result}
-                          isFestive={solve.isPersonalRecord}
-                          variant={
-                            solve.id === bestId
-                              ? 'best'
-                              : solve.id === worstId
-                                ? 'worst'
-                                : undefined
-                          }
-                          extraNumber={getExtraNumber(solve.position)}
-                          backgroundColorClass={
-                            session.isOwn ? 'bg-secondary-80' : 'bg-grey-100'
-                          }
+                          bestId={bestId}
+                          worstId={worstId}
+                          revealedAttemptsNumber={revealedAttemptsNumber}
                         />
                       </span>
                     </li>
@@ -214,21 +237,27 @@ function RoundSessionRowTablet({
 function RoundSessionRowDesktop({
   session: { solves, user, session, contestSlug },
   place,
+  isPlacePreliminary,
   withContestLink,
   isFirstOnPage,
   discipline,
   podiumColors,
   className,
   onPlaceClick,
+  revealedAttemptsNumber,
 }: RoundSessionRowProps) {
   const { bestId, worstId } = getBestAndWorstIds(solves)
 
+  const revealedAverage =
+    revealedAttemptsNumber !== undefined && revealedAttemptsNumber === 5
   return (
     <div className={className}>
       <SpinningBorder
         color={tailwindConfig.theme.colors.secondary[60]}
-        enabled={session.isOwn}
-        className='rounded-xl'
+        enabled={session.isOwn && session.isFinished}
+        className={cn('rounded-xl', {
+          'border border-dashed border-grey-40': !session.isFinished,
+        })}
       >
         <div
           className={cn(
@@ -239,6 +268,7 @@ function RoundSessionRowDesktop({
           <PlaceLabel
             onClick={onPlaceClick}
             podiumColors={podiumColors}
+            variant={isPlacePreliminary ? 'dashed' : 'default'}
             className={cn('mr-3', { 'cursor-pointer': onPlaceClick })}
           >
             {place}
@@ -250,35 +280,28 @@ function RoundSessionRowDesktop({
           </span>
 
           <SolveTimeLabel
-            timeMs={session.result.timeMs ?? undefined}
-            isDnf={session.result.isDnf}
-            isAverage
+            timeMs={session.result?.timeMs ?? undefined}
+            isDnf={session.result?.isDnf}
+            isAverage={session.isFinished}
+            isPlaceholder={!session.isFinished || !revealedAverage}
             className='relative mr-4 after:absolute after:-right-2 after:top-1/2 after:h-6 after:w-px after:-translate-y-1/2 after:bg-grey-60'
           />
 
           <ul className='mr-2 grid grid-cols-[repeat(5,min-content)] gap-x-2 lg:gap-x-1'>
-            {solves.map((solve, index) => (
-              <li key={solve.id} className='contents'>
-                <span className='sr-only'>Attempt {index + 1}</span>
-                <span className='relative'>
-                  <SolveTimeLinkOrDnf
-                    canShowHint={isFirstOnPage && index === 0}
+            {Array.from({ length: 5 }).map((_, idx) => (
+              <li key={solves[idx]?.id ?? idx} className='contents'>
+                <span className='sr-only'>Attempt {idx + 1}</span>
+                <span className='relative flex items-center'>
+                  <SingleAttempt
                     contestSlug={contestSlug}
+                    session={session}
+                    isFirstOnPage={isFirstOnPage}
+                    idx={idx}
                     discipline={discipline}
-                    solveId={solve.id}
-                    result={solve.result}
-                    isFestive={solve.isPersonalRecord}
-                    variant={
-                      solve.id === bestId
-                        ? 'best'
-                        : solve.id === worstId
-                          ? 'worst'
-                          : undefined
-                    }
-                    extraNumber={getExtraNumber(solve.position)}
-                    backgroundColorClass={
-                      session.isOwn ? 'bg-secondary-80' : 'bg-grey-100'
-                    }
+                    solves={solves}
+                    bestId={bestId}
+                    worstId={worstId}
+                    revealedAttemptsNumber={revealedAttemptsNumber}
                   />
                 </span>
               </li>
@@ -313,4 +336,153 @@ function getBestAndWorstIds(solves: RoundSessionRowProps['session']['solves']) {
   const worstId = dnfSolve?.id ?? successful.at(-1)?.id
 
   return { bestId, worstId }
+}
+
+function SingleAttempt({
+  solves,
+  session,
+  idx,
+  isFirstOnPage,
+  worstId,
+  bestId,
+  discipline,
+  contestSlug,
+  revealedAttemptsNumber,
+}: {
+  solves: RoundSession['solves']
+  idx: number
+  session: RoundSession['session']
+  isFirstOnPage: boolean
+  contestSlug: string
+  discipline: Discipline
+  bestId?: number
+  worstId?: number
+  revealedAttemptsNumber?: number
+}) {
+  const isInProgress =
+    solves[idx]?.status === 'pending' ||
+    (solves.at(-1)?.status !== 'pending' && idx === solves.length)
+  if (session.isOwn && isInProgress) {
+    return (
+      <SimulatorProvider>
+        <OwnSolveInProgress
+          contestSlug={contestSlug}
+          discipline={discipline}
+          bestId={bestId}
+          worstId={worstId}
+        />
+      </SimulatorProvider>
+    )
+  }
+
+  const solve = solves[idx]
+  if (
+    !solve ||
+    (!session.isOwn &&
+      revealedAttemptsNumber !== undefined &&
+      idx >= revealedAttemptsNumber)
+  ) {
+    return <SolveTimeLabel isPlaceholder />
+  }
+
+  return (
+    <SolveTimeLinkOrDnf
+      canShowHint={isFirstOnPage && idx === 0}
+      contestSlug={contestSlug}
+      solveId={solve.id}
+      discipline={discipline}
+      result={solve.result}
+      isFestive={solve.isPersonalRecord}
+      variant={
+        solve.id === bestId
+          ? 'best'
+          : solve.id === worstId
+            ? 'worst'
+            : undefined
+      }
+      extraNumber={getExtraNumber(solve.position)}
+      backgroundColorClass={session.isOwn ? 'bg-secondary-80' : 'bg-grey-100'}
+    />
+  )
+}
+
+function OwnSolveInProgress({
+  contestSlug,
+  discipline,
+  worstId,
+  bestId,
+}: {
+  contestSlug: string
+  discipline: Discipline
+  bestId?: number
+  worstId?: number
+}) {
+  const { state, isPending, handleSubmitSolve, handleInitSolve } = useSolveForm(
+    { contestSlug, discipline },
+  )
+  const { isClient } = useClient()
+
+  if (!state || !isClient)
+    return (
+      <div className='flex w-24 items-center justify-center lg:w-20 md:h-14'>
+        <LoadingDots />
+      </div>
+    )
+
+  if (!state.currentSolve)
+    return (
+      <span className='inline-flex h-full w-24 items-center justify-center lg:w-20 md:h-14'>
+        <PrimaryButton size='sm' autoFocus onClick={handleInitSolve}>
+          Solve
+        </PrimaryButton>
+      </span>
+    )
+
+  return (
+    <div className='relative flex md:h-14 md:flex-col md:items-center'>
+      <SolveTimeLinkOrDnf
+        result={state.currentSolve.result}
+        contestSlug={contestSlug}
+        discipline={discipline}
+        solveId={state.currentSolve.id}
+        isFestive={state.currentSolve.isPersonalRecord}
+        canShowHint={false}
+        backgroundColorClass='bg-secondary-80'
+        extraNumber={getExtraNumber(state.currentScramble.position)}
+        variant={
+          state.currentSolve.id === bestId
+            ? 'best'
+            : state.currentSolve.id === worstId
+              ? 'worst'
+              : undefined
+        }
+      />
+      <div className='absolute -bottom-3 left-1/2 flex -translate-x-1/2 gap-2 bg-secondary-80 md:static md:translate-x-0'>
+        {state.canChangeToExtra && (
+          <UnderlineButton
+            size='sm'
+            disabled={isPending}
+            onClick={() =>
+              handleSubmitSolve({
+                type: 'changed_to_extra',
+                reason: 'not implemented yet',
+              })
+            }
+            className='h-5 text-red-80 hover:text-red-100 active:text-red-80'
+          >
+            Extra
+          </UnderlineButton>
+        )}
+        <UnderlineButton
+          size='sm'
+          disabled={isPending}
+          onClick={() => handleSubmitSolve({ type: 'submitted' })}
+          className='h-5'
+          autoFocus
+        >
+          Submit
+        </UnderlineButton>
+      </div>
+    </div>
+  )
 }

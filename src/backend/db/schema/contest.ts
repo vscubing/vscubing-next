@@ -1,4 +1,5 @@
 import {
+  type ContestType,
   type Discipline,
   type ScramblePosition,
   type SolveStatus,
@@ -31,6 +32,7 @@ export const contestTable = pgTable('contest', (d) => ({
     .notNull(),
   endDate: d.timestamp('end_date', { withTimezone: true, mode: 'string' }),
   isOngoing: d.boolean('is_ongoing').notNull(),
+  type: d.text('type').$type<ContestType>().notNull(),
   systemInitial: d.boolean('system_initial').notNull().default(false),
 }))
 
@@ -46,6 +48,7 @@ export const roundTable = pgTable('round', (d) => ({
     .notNull()
     .references(() => disciplineTable.slug, { onDelete: 'cascade' })
     .$type<Discipline>(),
+  number: d.integer(),
 }))
 
 export const scrambleTable = pgTable(

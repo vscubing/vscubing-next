@@ -1,7 +1,7 @@
 import { type VariantProps, cva } from 'class-variance-authority'
 import Link from 'next/link'
 import { type ComponentProps } from 'react'
-import { formatSolveTime } from '../../utils/format-solve-time'
+import { formatSolveTime } from '../../lib/utils/format-solve-time'
 import { cn } from '../utils/cn'
 import { WatchSolveHintPopover } from './watch-solve-hint-popover.client'
 import { type Discipline, type ResultDnfable } from '../../types'
@@ -52,7 +52,19 @@ export function SolveTimeLinkOrDnf({
   backgroundColorClass,
 }: SolveTimeLinkOrDnfProps) {
   if (result.isDnf) {
-    return <SolveTimeLabel isDnf className={className} />
+    return (
+      <span className='relative z-10'>
+        <span className='absolute top-[-0.9rem] flex min-w-full items-center'>
+          {extraNumber !== undefined && (
+            <ExtraLabel
+              extraNumber={extraNumber}
+              className={cn('-ml-1 rounded px-1', backgroundColorClass)}
+            />
+          )}
+        </span>
+        <SolveTimeLabel isDnf className={cn('h-auto', className)} />
+      </span>
+    )
   }
   return (
     <WatchSolveHintPopover disabled={!canShowHint}>
@@ -97,7 +109,11 @@ const solveTimeLabelVariants = cva(
   'vertical-alignment-fix relative inline-flex h-8 min-w-24 items-center justify-center lg:min-w-20',
   {
     variants: {
-      variant: { average: 'text-yellow-100', dnf: 'text-red-80' },
+      variant: {
+        average: 'text-yellow-100',
+        dnf: 'text-red-80',
+        placeholder: 'text-grey-40',
+      },
     },
   },
 )
@@ -120,10 +136,12 @@ export function SolveTimeLabel({
 }: SolveTimeLabelProps & {
   ref?: React.RefObject<HTMLSpanElement>
 }) {
-  let variant: 'average' | 'dnf' | undefined
+  let variant: 'average' | 'dnf' | 'placeholder' | undefined
 
   if (isDnf) {
     variant = 'dnf'
+  } else if (isPlaceholder) {
+    variant = 'placeholder'
   } else if (isAverage) {
     variant = 'average'
   }

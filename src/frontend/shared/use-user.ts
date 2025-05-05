@@ -1,4 +1,4 @@
-import { useTRPC } from '@/trpc/react'
+import { useTRPC } from '@/lib/trpc/react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 
 export function useUser() {

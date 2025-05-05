@@ -6,7 +6,7 @@ import { Contest, ContestSkeleton } from '@/frontend/shared/contest'
 import { DEFAULT_DISCIPLINE } from '@/types'
 import { cn } from '@/frontend/utils/cn'
 import { useMatchesScreen } from '@/frontend/utils/tailwind'
-import type { RouterOutputs } from '@/trpc/react'
+import type { RouterOutputs } from '@/lib/trpc/react'
 import Link from 'next/link'
 
 const MIN_ITEM_COUNT = 2

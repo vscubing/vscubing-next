@@ -1,9 +1,9 @@
 import { PrimaryButton, DisciplineBadge } from '@/frontend/ui'
 import { cn } from '@/frontend/utils/cn'
-import { formatContestDuration } from '@/utils/format-date'
+import { formatContestDuration } from '@/lib/utils/format-date'
 import { withSuspense } from '@/frontend/utils/with-suspense'
-import type { RouterOutputs } from '@/trpc/react'
-import { api } from '@/trpc/server'
+import type { RouterOutputs } from '@/lib/trpc/react'
+import { api } from '@/lib/trpc/server'
 import Link from 'next/link'
 import { DEFAULT_DISCIPLINE } from '@/types'
 
@@ -57,7 +57,13 @@ function BannerContent({
               <p className='title-h3 mb-2'>Duration</p>
               <Duration ongoing={ongoing} />
             </div>
-            <SolveOngoingLink ongoing={ongoing} />
+            <PrimaryButton asChild className={className}>
+              <Link
+                href={`/contests/${ongoing.slug}/results?discipline=${DEFAULT_DISCIPLINE}`}
+              >
+                Solve now
+              </Link>
+            </PrimaryButton>
           </div>
         </div>
         <Divider className='absolute -right-40 top-0 h-full w-36' />
@@ -80,7 +86,13 @@ function BannerContentMobile({
     >
       <div className='relative z-10 flex flex-col items-start gap-4 py-4 pl-4 sm:gap-4 sm:p-0'>
         <Title />
-        <SolveOngoingLink ongoing={ongoing} className='sm:hidden' />
+        <PrimaryButton asChild className='sm:hidden'>
+          <Link
+            href={`/contests/${ongoing.slug}/results?discipline=${DEFAULT_DISCIPLINE}`}
+          >
+            Solve now
+          </Link>
+        </PrimaryButton>
       </div>
 
       <div className='relative flex-1 sm:hidden'>
@@ -112,25 +124,6 @@ function BannerOnMaintenance() {
   )
 }
 
-function SolveOngoingLink({
-  ongoing,
-  className,
-}: {
-  ongoing: NonNullable<RouterOutputs['contest']['getOngoing']>
-  className?: string
-}) {
-  const defaultDisciplineCapabilities = ongoing.disciplines.find(
-    (d) => d.slug === DEFAULT_DISCIPLINE,
-  )?.capabilities
-  const defaultDisciplineLink = `/contests/${ongoing.slug}/${defaultDisciplineCapabilities}?discipline=${DEFAULT_DISCIPLINE}`
-
-  return (
-    <PrimaryButton asChild className={className}>
-      <Link href={defaultDisciplineLink}>Solve now</Link>
-    </PrimaryButton>
-  )
-}
-
 function Duration({
   ongoing,
 }: {
@@ -156,16 +149,16 @@ function Disciplines({
       {ongoing.disciplines.map((discipline) => {
         return (
           <Link
-            href={`/contests/${ongoing.slug}/${discipline.capabilities}?discipline=${discipline.slug}`}
+            href={`/contests/${ongoing.slug}/results?discipline=${discipline}`}
             className='outline-ring group flex flex-col gap-2'
-            key={discipline.slug}
+            key={discipline}
           >
             <DisciplineBadge
-              discipline={discipline.slug}
+              discipline={discipline}
               className='transition-base outline-ring group-hover:bg-secondary-40 group-active:bg-secondary-20'
             />
             <span className='btn-lg text-center lg:hidden'>
-              {discipline.slug.replace('by', 'x')}
+              {discipline.replace('by', 'x')}
             </span>
           </Link>
         )

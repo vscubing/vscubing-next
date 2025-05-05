@@ -1,15 +1,24 @@
 'use client'
-import { HintSection } from '@/frontend/shared/hint-section'
-import { type Discipline } from '@/types'
-import { useSuspenseQuery } from '@tanstack/react-query'
-import { useTRPC, type RouterOutputs } from '@/trpc/react'
-import { useCallback, useEffect, type ReactNode } from 'react'
+
 import {
-  RoundSessionRow,
   RoundSessionHeader,
+  RoundSessionRow,
 } from '@/frontend/shared/round-session-row'
-import { useScrollToIndex } from '@/frontend/utils/use-scroll-to-index'
+import { SignInButton } from '@/frontend/shared/sign-in-button'
+import { useUser } from '@/frontend/shared/use-user'
+import { GhostButton } from '@/frontend/ui'
 import { cn } from '@/frontend/utils/cn'
+import { NoSSR } from '@/frontend/utils/no-ssr'
+import { useScrollToIndex } from '@/frontend/utils/use-scroll-to-index'
+import { useTRPC, type RouterOutputs } from '@/lib/trpc/react'
+import { type Discipline } from '@/types'
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from '@tanstack/react-query'
+import { LogInIcon } from 'lucide-react'
+import { useCallback, useEffect } from 'react'
 
 export function SessionList({
   contestSlug,
@@ -17,12 +26,14 @@ export function SessionList({
   initialData,
   scrollToId,
   scrollToOwn,
+  isOngoing,
 }: {
   contestSlug: string
   discipline: Discipline
-  initialData?: RouterOutputs['contest']['getContestResults']
+  initialData: RouterOutputs['contest']['getContestResults']
   scrollToId?: number
   scrollToOwn?: boolean
+  isOngoing: boolean
 }) {
   const trpc = useTRPC()
   const { data: sessions } = useSuspenseQuery(
@@ -59,17 +70,13 @@ export function SessionList({
       )
   }, [scrollToId, sessions, scrollAndGlow])
 
-  if (sessions.length === 0) {
-    return (
-      <HintSection>
-        <p>It seems no one participated in this round</p>
-      </HintSection>
-    )
-  }
-
-  const stickyItemIdx = sessions.findIndex((result) => result.session.isOwn)
+  const ownSessionIdx = sessions.findIndex((result) => result.session.isOwn)
+  const revealedAttemptsNumber = isOngoing
+    ? (sessions[ownSessionIdx]?.solves.length ?? 0)
+    : 5
   return (
-    <SessionListShell>
+    <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 lg:p-4 sm:p-3'>
+      <RoundSessionHeader />
       <ul ref={containerRef} className='space-y-2'>
         {sessions.map((session, idx) => (
           <RoundSessionRow
@@ -77,30 +84,80 @@ export function SessionList({
             place={idx + 1}
             discipline={discipline}
             podiumColors
-            isFirstOnPage={false}
+            isFirstOnPage={idx === 0}
+            revealedAttemptsNumber={revealedAttemptsNumber}
             className={cn('rounded-xl', {
               'sticky bottom-[-2px] top-[calc(var(--layout-section-header-height)-2px)] z-10':
-                idx === stickyItemIdx,
+                idx === ownSessionIdx,
             })}
             key={session.session.id}
+            isPlacePreliminary={isOngoing}
             onPlaceClick={
-              idx === stickyItemIdx
-                ? () => scrollAndGlow(stickyItemIdx)
+              idx === ownSessionIdx
+                ? () => scrollAndGlow(ownSessionIdx)
                 : undefined
             }
           />
         ))}
       </ul>
-    </SessionListShell>
+      {isOngoing && ownSessionIdx === -1 && (
+        <NoSSR>
+          <JoinRoundButton contestSlug={contestSlug} discipline={discipline} />
+        </NoSSR>
+      )}
+    </div>
   )
 }
 
-export function SessionListShell({ children }: { children: ReactNode }) {
-  return (
-    <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 lg:p-4 sm:p-3'>
-      <RoundSessionHeader />
+function JoinRoundButton({
+  contestSlug,
+  discipline,
+}: {
+  contestSlug: string
+  discipline: Discipline
+}) {
+  const trpc = useTRPC()
+  const queryClient = useQueryClient()
+  const { mutate: createRoundSession } = useMutation(
+    trpc.roundSession.create.mutationOptions({
+      onSettled: () => {
+        void queryClient.invalidateQueries(
+          // TODO: we probably should be revalidating queryKeys and not queries
+          trpc.contest.getContestResults.queryOptions({
+            contestSlug,
+            discipline,
+          }),
+        )
+        void queryClient.invalidateQueries(
+          // TODO: we probably should be revalidating queryKeys and not queries
+          trpc.roundSession.canLeaveRound.queryOptions({
+            contestSlug,
+            discipline,
+          }),
+        )
+      },
+    }),
+  )
+  const { user } = useUser()
 
-      <ul className='flex flex-1 flex-col gap-2'>{children}</ul>
+  return (
+    <div className='sticky bottom-0 flex h-16 w-full items-center gap-2 rounded-xl border border-secondary-20 bg-secondary-80 px-4'>
+      {user ? (
+        <GhostButton
+          onClick={() => createRoundSession({ contestSlug, discipline })}
+          size='sm'
+          autoFocus
+          className='text-lg'
+        >
+          Join this round!
+          <LogInIcon />
+        </GhostButton>
+      ) : (
+        <>
+          <span className='title-h3'>To participate in this round:</span>{' '}
+          <SignInButton variant='ghost' />
+        </>
+      )}
     </div>
   )
 }

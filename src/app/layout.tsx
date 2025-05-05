@@ -6,7 +6,7 @@ import { Hind, Kanit } from 'next/font/google'
 import { cn } from '../frontend/utils/cn'
 import { env } from '@/env'
 import { PostHogProvider } from '../frontend/post-hog-provider'
-import { TRPCReactProvider } from '@/trpc/react'
+import { TRPCReactProvider } from '@/lib/trpc/react'
 import { TooltipProvider } from '@/frontend/ui/tooltip'
 
 export const metadata: Metadata = {
