@@ -23,11 +23,16 @@ export function SettingsPreviewSimulator({
     discipline: '3by3',
     scramble,
     settings,
-    setCameraPosition: ({ phi, theta }) =>
-      updateSettings({
-        cameraPositionPhi: phi,
-        cameraPositionTheta: theta,
-      }),
+    setCameraPosition: ({ phi, theta }) => {
+      if (
+        phi !== settings?.cameraPositionPhi ||
+        theta !== settings?.cameraPositionTheta
+      )
+        updateSettings({
+          cameraPositionPhi: phi,
+          cameraPositionTheta: theta,
+        })
+    },
   })
 
   useEffect(() => setScramble(''), [settings?.colorscheme])
