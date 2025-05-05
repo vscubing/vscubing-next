@@ -51,18 +51,23 @@ export default function CubeTogetherPage() {
       patternHandler(newPatternData)
       setPatternData((prev) => {
         if (prev) {
-          // console.clear()
-          logDiff('Edges', prev.EDGES!.pieces, newPatternData.EDGES!.pieces)
+          console.clear()
+          // logDiff('Edges', prev.EDGES!.pieces, newPatternData.EDGES!.pieces)
           logDiff(
-            'Corners',
+            'Corners pieces',
             prev.CORNERS!.pieces,
             newPatternData.CORNERS!.pieces,
           )
           logDiff(
-            'Centers',
-            prev.CENTERS!.pieces,
-            newPatternData.CENTERS!.pieces,
+            'Corners orientation',
+            prev.CORNERS!.orientation,
+            newPatternData.CORNERS!.orientation,
           )
+          // logDiff(
+          //   'Centers',
+          //   prev.CENTERS!.pieces,
+          //   newPatternData.CENTERS!.pieces,
+          // )
         }
 
         return newPatternData
@@ -142,13 +147,13 @@ export default function CubeTogetherPage() {
 function logDiff(name: string, arr1: number[], arr2: number[]) {
   const changed = arr1.map((a, idx) => arr2[idx] !== a)
   console.log(
-    name.padEnd(10),
+    name.padEnd(20),
     arr1
       .map((a, idx) => (changed[idx] ? String(a).padEnd(2, ' ') : '_ '))
       .join(' '),
   )
   console.log(
-    name.padEnd(10),
+    name.padEnd(20),
     arr2
       .map((a, idx) => (changed[idx] ? String(a).padEnd(2, ' ') : '_ '))
       .join(' '),

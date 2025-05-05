@@ -640,8 +640,6 @@ const twistyjs = (function () {
      * @param {Record<'EDGES' | 'CORNERS' | 'CENTERS', {pieces: number[], orientation: number[]} pattern
      */
     function applyPattern(pattern) {
-      // console.clear()
-      console.log(pattern)
       const CENTERS = ['U', 'L', 'F', 'R', 'B', 'D']
       for (const [slot, piece] of pattern.CENTERS.pieces.entries()) {
         twisty.moveSticker(
@@ -658,8 +656,8 @@ const twistyjs = (function () {
         ],
         [
           { face: 'U', sv: 0, su: 2 },
-          { face: 'R', sv: 0, su: 2 },
           { face: 'B', sv: 0, su: 0 },
+          { face: 'R', sv: 0, su: 2 },
         ],
         [
           { face: 'U', sv: 0, su: 0 },
@@ -668,34 +666,38 @@ const twistyjs = (function () {
         ],
         [
           { face: 'U', sv: 2, su: 0 },
-          { face: 'L', sv: 0, su: 2 },
           { face: 'F', sv: 0, su: 0 },
+          { face: 'L', sv: 0, su: 2 },
         ],
         [
+          { face: 'D', sv: 0, su: 2 },
           { face: 'F', sv: 2, su: 2 },
           { face: 'R', sv: 2, su: 0 },
-          { face: 'D', sv: 0, su: 2 },
         ],
         [
-          { face: 'F', sv: 2, su: 0 },
-          { face: 'L', sv: 2, su: 2 },
           { face: 'D', sv: 0, su: 0 },
+          { face: 'L', sv: 2, su: 2 },
+          { face: 'F', sv: 2, su: 0 },
         ],
         [
+          { face: 'D', sv: 2, su: 0 },
           { face: 'B', sv: 2, su: 2 },
           { face: 'L', sv: 2, su: 0 },
-          { face: 'D', sv: 2, su: 0 },
         ],
         [
-          { face: 'B', sv: 2, su: 0 },
-          { face: 'R', sv: 2, su: 2 },
           { face: 'D', sv: 2, su: 2 },
+          { face: 'R', sv: 2, su: 2 },
+          { face: 'B', sv: 2, su: 0 },
         ],
       ]
-      for (const [slot, piece] of pattern.CORNERS.pieces.entries()) {
+      for (let slot = 0; slot < 8; slot++) {
+        const piece = pattern.CORNERS.pieces[slot]
         for (let i = 0; i < 3; i++) {
-          if (CORNERS[piece] === undefined) debugger
-          twisty.moveSticker(CORNERS[piece][i], CORNERS[slot][i])
+          const orientation = pattern.CORNERS.orientation[slot]
+          twisty.moveSticker(
+            CORNERS[piece][i],
+            CORNERS[slot][(i + orientation) % 3],
+          )
         }
       }
 
