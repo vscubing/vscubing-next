@@ -44,7 +44,7 @@
     "@trpc/react-query": "^11.0.0",
     "@trpc/server": "^11.0.1",
     "@trpc/tanstack-react-query": "^11.0.1",
-    "@vscubing/cubing": "0.56.1-vscubing.12",
+    "@vscubing/cubing": "0.56.1-vscubing.13",
     "arctic": "^3.6.0",
     "bun": "^1.2.10",
     "cheerio": "^1.0.0",
