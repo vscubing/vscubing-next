@@ -51,18 +51,18 @@ export default function CubeTogetherPage() {
       patternHandler(newPatternData)
       setPatternData((prev) => {
         if (prev) {
-          console.clear()
+          // console.clear()
           // logDiff('Edges', prev.EDGES!.pieces, newPatternData.EDGES!.pieces)
-          logDiff(
-            'Corners pieces',
-            prev.CORNERS!.pieces,
-            newPatternData.CORNERS!.pieces,
-          )
-          logDiff(
-            'Corners orientation',
-            prev.CORNERS!.orientation,
-            newPatternData.CORNERS!.orientation,
-          )
+          // logDiff(
+          //   'Edge pieces',
+          //   prev.EDGES!.pieces,
+          //   newPatternData.EDGES!.pieces,
+          // )
+          // logDiff(
+          //   'Edge orientation',
+          //   prev.EDGES!.orientation,
+          //   newPatternData.EDGES!.orientation,
+          // )
           // logDiff(
           //   'Centers',
           //   prev.CENTERS!.pieces,
