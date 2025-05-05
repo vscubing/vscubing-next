@@ -2,6 +2,7 @@ import { createServer } from 'http'
 import { Server } from 'socket.io'
 import type { ClientToServerEvents, ServerToClientEvents } from './types'
 import { puzzles } from '@vscubing/cubing/puzzles'
+import { experimentalReid3x3x3ToTwizzleBinary } from '@vscubing/cubing/protocol'
 
 // NOTE: bun --watch socket-server/index.ts
 
@@ -12,17 +13,13 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, {
 
 const puzzle = await puzzles['3x3x3']!.kpuzzle()
 let pattern = puzzle.defaultPattern()
-let history = ''
 
 io.on('connection', (socket) => {
-  socket.emit('pattern', pattern.patternData)
-  socket.emit('history', history)
+  socket.emit('pattern', experimentalReid3x3x3ToTwizzleBinary(pattern))
 
   socket.on('onMove', async (move) => {
     pattern = pattern.applyMove(move)
-    history += ' ' + move
     io.emit('onMove', move)
-    io.emit('pattern', pattern.patternData)
   })
 })
 

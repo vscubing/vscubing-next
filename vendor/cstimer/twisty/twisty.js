@@ -637,10 +637,13 @@ const twistyjs = (function () {
 
     /**
      *
-     * @param {Record<'EDGES' | 'CORNERS' | 'CENTERS', {pieces: number[], orientation: number[]} pattern
+     * @param {Record<string, {pieces: number[], orientation: number[]} pattern
      */
     function applyPattern(pattern) {
       // TODO: write an explanation for this abomination
+
+      if (!pattern.EDGES || !pattern.CORNERS || !pattern.CENTERS)
+        throw new Error('bad pattern')
 
       const CENTERS = ['U', 'L', 'F', 'R', 'B', 'D']
       for (const [slot, piece] of pattern.CENTERS.pieces.entries()) {

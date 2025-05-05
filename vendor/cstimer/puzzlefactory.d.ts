@@ -53,10 +53,7 @@ export class Puzzle {
     addPreScr?: boolean,
   ): [number, number, string, number][]
   applyPattern(
-    pattern: Record<
-      'EDGES' | 'CORNERS' | 'CENTERS',
-      { pieces: number[]; orientation: number[] }
-    >,
+    pattern: Record<string, { pieces: number[]; orientation: number[] }>,
   ): void
 }
 

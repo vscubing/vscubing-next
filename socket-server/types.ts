@@ -1,8 +1,7 @@
 import type { Move } from '@/types'
-import type { KPatternData } from '@vscubing/cubing/kpuzzle'
 
 export interface ServerToClientEvents {
-  pattern: (pattern: KPatternData) => void
+  pattern: (binaryPattern: Uint8Array) => void
   history: (history: string) => void
   onMove: (move: Move) => void
 }

@@ -1,6 +1,7 @@
 import { useIsTouchDevice } from '@/frontend/utils/use-media-query'
 import { useResizeObserver } from '@/frontend/utils/use-resize-observer'
 import type { Discipline, SimulatorSettings } from '@/types'
+import type { KPattern } from '@vscubing/cubing/kpuzzle'
 import { useRef, useState, useEffect, useMemo } from 'react'
 import { useEventCallback } from 'usehooks-ts'
 import { initTwistySimulator } from 'vendor/cstimer'
@@ -16,6 +17,7 @@ export function useControllableSimulator({
   scramble,
   settings,
   setCameraPosition,
+  pattern,
 }: {
   discipline: Discipline
   settings?: Partial<
@@ -27,8 +29,9 @@ export function useControllableSimulator({
       | 'colorscheme'
     >
   >
-  scramble: string
+  scramble?: string
   setCameraPosition?: (pos: SimulatorCameraPosition) => void
+  pattern?: KPattern
 }) {
   const simulatorRef = useRef<HTMLDivElement>(null)
   const [puzzle, setPuzzle] = useState<TwistySimulatorPuzzle | undefined>()
@@ -53,7 +56,8 @@ export function useControllableSimulator({
   const isTouchDevice = useIsTouchDevice()
   useEffect(() => {
     const simulatorElem = simulatorRef.current
-    if (!simulatorElem || scramble === undefined) return
+    if (!simulatorElem || (scramble === undefined && pattern === undefined))
+      return
 
     void initTwistySimulator(
       {
@@ -71,9 +75,11 @@ export function useControllableSimulator({
       setTimeout(() => pzl.resize())
       setPuzzle(pzl)
 
-      const fixedScr =
-        scramble.trim() === '' ? "y y'" : fixDoublePrimeMoves(scramble) // HACK: applyMoves misbehaves on empty string so we replace it with y y' which is equivalent of not applying any moves (should we move this inside `vendor/cstimer`?)
-      pzl?.applyMoves(tranformAlgForCstimer(fixedScr, pzl), 0, true)
+      if (scramble) {
+        const fixedScr =
+          scramble.trim() === '' ? "y y'" : fixDoublePrimeMoves(scramble) // HACK: applyMoves misbehaves on empty string so we replace it with y y' which is equivalent of not applying any moves (should we move this inside `vendor/cstimer`?)
+        pzl?.applyMoves(tranformAlgForCstimer(fixedScr, pzl), 0, true)
+      } else if (pattern) pzl.applyPattern(pattern.patternData)
     })
     return () => {
       setPuzzle(undefined)
@@ -83,19 +89,18 @@ export function useControllableSimulator({
     simulatorRef,
     discipline,
     scramble,
+    pattern,
     memoizedSettings,
     isTouchDevice,
     stableSetCameraPosition,
   ])
 
   const applyMove = useEventCallback((move: string) => {
-    if (!puzzle) throw new Error('no puzzle!')
-    puzzle.addMoves(tranformAlgForCstimer(move, puzzle))
+    if (puzzle) puzzle.addMoves(tranformAlgForCstimer(move, puzzle))
   })
 
   const applyKeyboardMove = useEventCallback((event: KeyboardEvent) => {
-    if (!puzzle) throw new Error('no puzzle!')
-    puzzle.keydown(event)
+    if (puzzle) puzzle.keydown(event)
   })
 
   useResizeObserver({
