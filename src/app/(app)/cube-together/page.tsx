@@ -2,66 +2,37 @@
 
 import { useEffect, useState } from 'react'
 import { LayoutHeaderTitlePortal } from '../_layout'
-import { useEventListener } from 'usehooks-ts'
+import { useEventCallback, useEventListener } from 'usehooks-ts'
 import { keyToMove } from '@vscubing/cubing/alg'
 import { isMove } from '@/types'
-import type {
-  ServerToClientEvents,
-  ClientToServerEvents,
-} from 'socket-server/types'
-import { io, type Socket } from 'socket.io-client'
 import { cn } from '@/frontend/utils/cn'
 import { LoadingSpinner } from '@/frontend/ui'
-import { type KPattern } from '@vscubing/cubing/kpuzzle'
 import { puzzles } from '@vscubing/cubing/puzzles'
 import { useControllableSimulator } from '@/frontend/shared/simulator/use-controllable-simulator'
-import {
-  experimentalBinaryComponentsToReid3x3x3,
-  experimentalTwizzleBinaryToBinaryComponents,
-} from '@vscubing/cubing/protocol'
+import { z, ZodIssueCode } from 'zod'
+import { assertUnreachable } from '@/lib/utils/assert-unreachable'
+import { KPattern } from '@vscubing/cubing/kpuzzle'
 
 export default function CubeTogetherPage() {
-  const [pattern, setPattern] = useState<KPattern>()
-
-  const [socket, setSocket] =
-    useState<Socket<ServerToClientEvents, ClientToServerEvents>>()
+  const { pattern, onMove } = useCubeTogetherWebsocket({
+    handleMove: (move) => applyMove(move),
+  })
 
   const { simulatorRef, applyMove } = useControllableSimulator({
     discipline: '3by3',
     pattern,
   })
 
-  useEffect(() => {
-    const _socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
-      'ws://localhost:3001',
-    )
-    setSocket(_socket)
-
-    _socket.on('pattern', (binaryPattern) => {
-      const binaryComponents =
-        experimentalTwizzleBinaryToBinaryComponents(binaryPattern)
-      const pattern = experimentalBinaryComponentsToReid3x3x3(binaryComponents)
-      return setPattern(pattern)
-    })
-    _socket.on('onMove', applyMove)
-
-    return () => {
-      _socket.close()
-    }
-  }, [applyMove])
-
   useEventListener('keydown', (e) => {
-    void (async () => {
-      if (!socket) return
-
-      const keyMapping = await puzzles['3x3x3']?.keyMapping?.()
-      if (!keyMapping) throw new Error('no puzzle')
+    async function handle() {
+      const keyMapping = await puzzles['3x3x3']!.keyMapping!()
 
       // TODO: sync keyToMove with cstimer mappings
       const move = keyToMove(keyMapping, e)?.toString()
       if (!move || !isMove(move)) return
-      socket.emit('onMove', move)
-    })()
+      onMove(move)
+    }
+    void handle()
   })
 
   return (
@@ -86,3 +57,87 @@ export default function CubeTogetherPage() {
     </>
   )
 }
+
+function parseJsonPreprocessor(value: unknown, ctx: z.RefinementCtx) {
+  if (typeof value !== 'string') {
+    ctx.addIssue({
+      code: ZodIssueCode.custom,
+      message: 'Not a string',
+    })
+    return
+  }
+  try {
+    return JSON.parse(value) as unknown
+  } catch (e) {
+    ctx.addIssue({
+      code: ZodIssueCode.custom,
+      message: (e as Error).message,
+    })
+  }
+}
+
+function useCubeTogetherWebsocket({
+  handleMove,
+}: {
+  handleMove: (move: string) => void
+}) {
+  const [pattern, setPattern] = useState<KPattern>()
+  const [socket, setSocket] = useState<WebSocket>()
+
+  function onMove(move: string) {
+    socket?.send(move)
+  }
+
+  const stableHandleMove = useEventCallback(handleMove)
+
+  useEffect(() => {
+    const _socket = new WebSocket('ws://localhost:8787/ws')
+
+    _socket.addEventListener(
+      'message',
+      (message) => void handleMessage(message),
+    )
+    setSocket(_socket)
+
+    async function handleMessage(event: MessageEvent<unknown>) {
+      const data = z
+        .preprocess(
+          parseJsonPreprocessor,
+          z.union([patternMessageSchema, moveMessageSchema]),
+        )
+        .parse(event.data)
+      switch (data.type) {
+        case 'pattern': {
+          const puzzle = await puzzles['3x3x3']!.kpuzzle()
+          setPattern(new KPattern(puzzle, data.payload))
+          break
+        }
+        case 'move': {
+          stableHandleMove(data.payload)
+          break
+        }
+        default:
+          assertUnreachable(data)
+      }
+    }
+    return () => _socket.close()
+  }, [stableHandleMove])
+
+  return { pattern, onMove }
+}
+
+const kpuzzleDataSchema = z.record(
+  z.string(),
+  z.object({
+    pieces: z.array(z.number()),
+    orientation: z.array(z.number()),
+  }),
+)
+const patternMessageSchema = z.object({
+  type: z.literal('pattern'),
+  payload: kpuzzleDataSchema,
+})
+const moveMessageSchema = z.object({
+  type: z.literal('move'),
+  payload: z.string(),
+})
