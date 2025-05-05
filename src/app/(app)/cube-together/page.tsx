@@ -12,6 +12,7 @@ import { useControllableSimulator } from '@/frontend/shared/simulator/use-contro
 import { z, ZodIssueCode } from 'zod'
 import { assertUnreachable } from '@/lib/utils/assert-unreachable'
 import { KPattern } from '@vscubing/cubing/kpuzzle'
+import { useUser } from '@/frontend/shared/use-user'
 
 export default function CubeTogetherPage() {
   const { pattern, onMove } = useCubeTogetherWebsocket({
@@ -83,14 +84,24 @@ function useCubeTogetherWebsocket({
 }) {
   const [pattern, setPattern] = useState<KPattern>()
   const [socket, setSocket] = useState<WebSocket>()
+  const { user } = useUser()
+  const [identifier, setIdentifier] = useState<string>()
+
+  if (user !== undefined && identifier === undefined) {
+    setIdentifier(user?.name ?? 'guest-' + Math.random().toFixed(5))
+  }
 
   function onMove(move: string) {
-    socket?.send(move)
+    socket?.send(
+      JSON.stringify({ type: 'move', payload: { move, username: identifier } }),
+    )
   }
 
   const stableHandleMove = useEventCallback(handleMove)
 
   useEffect(() => {
+    if (!identifier) return
+
     const _socket = new WebSocket('ws://localhost:8787/ws')
 
     _socket.addEventListener(
@@ -121,7 +132,7 @@ function useCubeTogetherWebsocket({
       }
     }
     return () => _socket.close()
-  }, [stableHandleMove])
+  }, [stableHandleMove, identifier])
 
   return { pattern, onMove }
 }
