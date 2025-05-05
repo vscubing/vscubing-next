@@ -12,13 +12,17 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, {
 
 const puzzle = await puzzles['3x3x3']!.kpuzzle()
 let pattern = puzzle.defaultPattern()
+let history = ''
 
 io.on('connection', (socket) => {
   socket.emit('pattern', pattern.patternData)
+  socket.emit('history', history)
 
   socket.on('onMove', async (move) => {
     pattern = pattern.applyMove(move)
+    history += ' ' + move
     io.emit('onMove', move)
+    io.emit('pattern', pattern.patternData)
   })
 })
 

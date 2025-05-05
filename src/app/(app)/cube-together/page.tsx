@@ -15,15 +15,30 @@ import { LoadingSpinner } from '@/frontend/ui'
 import type { KPatternData } from '@vscubing/cubing/kpuzzle'
 import { puzzles } from '@vscubing/cubing/puzzles'
 import { useControllableSimulator } from '@/frontend/shared/simulator/use-controllable-simulator'
+import { TwistyCube } from '@/frontend/shared/twisty'
+import { TwistyPlayer } from '@vscubing/cubing/twisty'
 
 export default function CubeTogetherPage() {
   const [patternData, setPatternData] = useState<KPatternData>()
+  const [history, setHistory] = useState<string>()
 
   const [socket, setSocket] =
     useState<Socket<ServerToClientEvents, ClientToServerEvents>>()
 
   const applyMoveHandler = useEventCallback((move: Move) => {
-    return applyMove(move)
+    // applyMove(move)
+    setHistory((prev) => prev + ' ' + move)
+  })
+
+  const patternHandler = useEventCallback((pattern: KPatternData) => {
+    if (
+      !('CORNERS' in pattern) ||
+      !('EDGES' in pattern) ||
+      !('CENTERS' in pattern)
+    )
+      throw new Error('invalid pattern')
+
+    puzzle?.applyPattern(pattern)
   })
 
   useEffect(() => {
@@ -32,15 +47,36 @@ export default function CubeTogetherPage() {
     )
     setSocket(_socket)
 
-    _socket.on('pattern', (pattern) => setPatternData(pattern))
+    _socket.on('pattern', (newPatternData) => {
+      patternHandler(newPatternData)
+      setPatternData((prev) => {
+        if (prev) {
+          // console.clear()
+          logDiff('Edges', prev.EDGES!.pieces, newPatternData.EDGES!.pieces)
+          logDiff(
+            'Corners',
+            prev.CORNERS!.pieces,
+            newPatternData.CORNERS!.pieces,
+          )
+          logDiff(
+            'Centers',
+            prev.CENTERS!.pieces,
+            newPatternData.CENTERS!.pieces,
+          )
+        }
+
+        return newPatternData
+      })
+    })
+    _socket.on('history', (h) => setHistory(h))
     _socket.on('onMove', applyMoveHandler)
 
     return () => {
       _socket.close()
     }
-  }, [applyMoveHandler])
+  }, [applyMoveHandler, patternHandler])
 
-  const { simulatorRef, applyMove } = useControllableSimulator({
+  const { simulatorRef, applyMove, puzzle } = useControllableSimulator({
     discipline: '3by3',
     scramble: '',
     // patternData,
@@ -60,6 +96,23 @@ export default function CubeTogetherPage() {
     })()
   })
 
+  const [player, setPlayer] = useState<TwistyPlayer>()
+  useEffect(() => {
+    if (history !== undefined) {
+      const newPlayer = new TwistyPlayer({
+        controlPanel: 'none',
+        background: 'none',
+        visualization: 'PG3D',
+        experimentalSetupAlg: history,
+        alg: '',
+        puzzle: '3x3x3',
+      })
+      setPlayer(newPlayer)
+    } else {
+      setPlayer(undefined)
+    }
+  }, [history])
+
   return (
     <>
       <LayoutHeaderTitlePortal>Cube together</LayoutHeaderTitlePortal>
@@ -78,7 +131,26 @@ export default function CubeTogetherPage() {
             // { 'opacity-100': patternData === undefined },
           )}
         />
+        {player && (
+          <TwistyCube player={player} className='h-[300px] w-[300px]' />
+        )}
       </div>
     </>
+  )
+}
+
+function logDiff(name: string, arr1: number[], arr2: number[]) {
+  const changed = arr1.map((a, idx) => arr2[idx] !== a)
+  console.log(
+    name.padEnd(10),
+    arr1
+      .map((a, idx) => (changed[idx] ? String(a).padEnd(2, ' ') : '_ '))
+      .join(' '),
+  )
+  console.log(
+    name.padEnd(10),
+    arr2
+      .map((a, idx) => (changed[idx] ? String(a).padEnd(2, ' ') : '_ '))
+      .join(' '),
   )
 }

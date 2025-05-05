@@ -63,6 +63,9 @@ class Puzzle {
   parseScramble(scramble, addPreScr) {
     return this.twisty.parseScramble(scramble, addPreScr)
   }
+  applyPattern(pattern) {
+    return this.twistyScene.applyPattern(pattern)
+  }
 }
 
 var prevParents = []
@@ -141,6 +144,7 @@ export async function init(
   child[2].twistyScene.initializeTwisty(options)
   child[2].twisty = child[2].twistyScene.getTwisty()
   child[2].resize()
+  window.t = child[2]
 
   return child[2]
 }

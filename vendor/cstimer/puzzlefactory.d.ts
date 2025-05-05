@@ -14,12 +14,12 @@ export type MoveListener = (
 ) => void
 type CameraPositionListener = (pos: CameraPosition) => void
 
-type PuzzleFaces = 'U' | 'R' | 'F' | 'D' | 'L' | 'B'
+export type PuzzleFace = 'U' | 'R' | 'F' | 'D' | 'L' | 'B'
 
 /**
  * @description hex colors (default: white red green yellow orange blue)
  */
-type Colorscheme = Record<PuzzleFaces, number>
+type Colorscheme = Record<PuzzleFace, number>
 
 type Options = {
   puzzle: 'cube2' | 'cube3'
@@ -52,6 +52,12 @@ export class Puzzle {
     scramble,
     addPreScr?: boolean,
   ): [number, number, string, number][]
+  applyPattern(
+    pattern: Record<
+      'EDGES' | 'CORNERS' | 'CENTERS',
+      { pieces: number[]; orientation: number[] }
+    >,
+  ): void
 }
 
 type CsMove = [number, number, string, number]

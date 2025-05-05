@@ -110,7 +110,7 @@ export function useControllableSimulator({
     if (puzzle) setTimeout(() => puzzle.setCameraPosition(cameraPosition))
   }, [cameraPosition, puzzle, scramble])
 
-  return { applyMove, simulatorRef, applyKeyboardMove }
+  return { applyMove, simulatorRef, applyKeyboardMove, puzzle }
 }
 
 const SIMULATOR_DISCIPLINES_MAP = {
