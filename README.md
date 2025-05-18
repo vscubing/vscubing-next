@@ -30,7 +30,7 @@ The application is hosted on a `DigitalOcean` Droplet with `Dokploy`.
         + S3 backups (daily)
     * [vscubing/vscubing-tnoodle](https://github.com/vscubing/vscubing-tnoodle)
     * [vscubing/vscubing-cron](https://github.com/vscubing/vscubing-cron)
-        + automatic publishing of new weekly contests
+        + automatic publishing of new weekly contests (currently disabled because it doesn't work and doing it by hand is easier than fixing it)
 
 - staging: deployed from `dev`
     * Next.js app
