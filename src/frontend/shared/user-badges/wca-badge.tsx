@@ -2,7 +2,7 @@
 
 import { HoverPopover, WcaLogoIcon } from '@/frontend/ui'
 import { LoadingDots } from '@/frontend/ui/loading-dots'
-import { formatSolveTime } from '@/utils/format-solve-time'
+import { formatSolveTime } from '@/lib/utils/format-solve-time'
 import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
 import { z } from 'zod'

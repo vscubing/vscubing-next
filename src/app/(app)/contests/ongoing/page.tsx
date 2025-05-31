@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { api } from '@/trpc/server'
+import { api } from '@/lib/trpc/server'
 import { castDiscipline } from '@/types'
 
 export default async function OngoingContestRedirectPage({

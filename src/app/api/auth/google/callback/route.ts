@@ -13,7 +13,7 @@ import {
   getUserAccount,
   getUserFromEmail,
 } from '@/backend/auth/user'
-import { tryCatch } from '@/utils/try-catch'
+import { tryCatch } from '@/lib/utils/try-catch'
 import { GOOGLE_AUTH_ERROR_SEARCH_PARAM } from '../error-search-param'
 
 export async function GET(request: Request): Promise<Response> {

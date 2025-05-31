@@ -2,7 +2,7 @@ import { SecondaryButton, ArrowRightIcon } from '@/frontend/ui'
 import { type ContestMetadata, type Discipline } from '@/types'
 import Link from 'next/link'
 import { cn } from '@/frontend/utils/cn'
-import { formatContestDuration } from '@/utils/format-date'
+import { formatContestDuration } from '@/lib/utils/format-date'
 import tailwindConfig from 'tailwind.config'
 import { SpinningBorder } from '../ui/spinning-border'
 

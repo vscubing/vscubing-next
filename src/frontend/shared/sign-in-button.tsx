@@ -5,7 +5,7 @@ import { GhostButton, GoogleIcon, PrimaryButton, toast } from '@/frontend/ui'
 import { useEffect, type MouseEventHandler } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { GOOGLE_AUTH_ERROR_SEARCH_PARAM } from '../../app/api/auth/google/error-search-param'
-import { useRemoveSearchParam } from '@/utils/user-remove-search-param'
+import { useRemoveSearchParam } from '@/lib/utils/use-remove-search-param'
 
 const GOOGLE_AUTH_HREF = '/api/auth/google'
 type SignInButtonProps = { variant: 'primary' | 'ghost'; className?: string }

@@ -83,6 +83,7 @@ export function TwistyControls({
           },
         )}
         onClick={playPause}
+        autoFocus
       >
         {isPlaying ? CONTROL_ICONS.pause : CONTROL_ICONS.play}
       </button>
