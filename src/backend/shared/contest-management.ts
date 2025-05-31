@@ -6,6 +6,7 @@ import { contestTable, roundTable, scrambleTable } from '../db/schema'
 import { env } from '@/env'
 import { posthogClient } from '../posthog'
 import { generateScrambles } from './generate-scrambles'
+import type { Transaction } from '@/utils/types'
 
 const PREFIX = '[CONTEST_MANAGEMENT]'
 export const NO_ONGOING_CONTEST_ERROR_MESSAGE = `${PREFIX} no ongoing contest. Please create one manually from the developer tools`
@@ -29,9 +30,6 @@ export async function closeOngoingAndCreateNewContest(
   })
 }
 
-export type Transaction = Parameters<
-  Parameters<(typeof db)['transaction']>[0]
->[0]
 export async function createNewContest({
   slug,
   tx = db,
