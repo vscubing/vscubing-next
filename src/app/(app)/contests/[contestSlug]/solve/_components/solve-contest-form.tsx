@@ -141,7 +141,7 @@ export function SolveContestForm({
             for online contests with physical puzzles
           </>
         ),
-        duration: 'infinite',
+        duration: 'long',
       })
       setSeenSportcubingAd()
     }

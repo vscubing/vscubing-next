@@ -44,6 +44,7 @@ export const TOASTS_PRESETS = {
 const DURATIONS = {
   short: 3_000,
   normal: 10_000,
+  long: 30_000,
   infinite: Infinity,
 } as const
 
