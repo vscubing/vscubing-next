@@ -12,7 +12,11 @@
 
 Hybrid results view:
 - [x] legacy/new solve view toggle
-- [ ] rework OwnSolveInProgress row
+- [ ] check if orpc ssr works on dokploy
+- [ ] migrate to orpc
+- [ ] remove NoSSR
+- [ ] use custom query keys for revalidation
+- [ ] rework OwnSolveInProgress row (before submission show the row like in old solve view)
 
 Live streaming:
 - [ ] disable it in prod
