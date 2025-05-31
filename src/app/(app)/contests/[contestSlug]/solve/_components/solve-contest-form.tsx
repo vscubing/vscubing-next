@@ -7,6 +7,7 @@ import { SolvePanel } from './solve-panel'
 import { useTRPC, type RouterOutputs } from '@/trpc/react'
 import {
   useMutation,
+  useQuery,
   useQueryClient,
   useSuspenseQuery,
 } from '@tanstack/react-query'
@@ -17,6 +18,7 @@ import { toast, type Toast } from '@/frontend/ui'
 import { TRPCError } from '@trpc/server'
 import { SolveTimeLinkOrDnf } from '@/frontend/shared/solve-time-button'
 import { signSolve } from '@/utils/solve-signature'
+import { userMetadataTable } from '@/backend/db/schema'
 
 export function SolveContestForm({
   contestSlug,
@@ -80,6 +82,13 @@ export function SolveContestForm({
     }),
   )
 
+  const { data: userMetadata } = useQuery(
+    trpc.userMetadata.userMetadata.queryOptions(),
+  )
+  const { mutate: setSeenSportcubingAd } = useMutation(
+    trpc.userMetadata.setSeenSportcubingAd.mutationOptions(),
+  )
+
   const isFormPending =
     isStateFetching || isPostSolvePending || isSubmitSolvePending
 
@@ -111,11 +120,33 @@ export function SolveContestForm({
       solveId: state.currentSolve!.id,
     })
 
-    if (
-      state.submittedSolves.length === 4 &&
-      payload.type === 'submitted' &&
-      !seenDiscordInvite
-    ) {
+    if (state.submittedSolves.length === 4 && payload.type === 'submitted') {
+      handleSessionFinished()
+    }
+  }
+
+  function handleSessionFinished() {
+    if (userMetadata && !userMetadata.seenSportcubingAd) {
+      toast({
+        title: 'Want more contests?',
+        description: (
+          <>
+            Also check out{' '}
+            <a
+              href='https://sportcubing.in.ua/lang/en'
+              className='border-b border-secondary-20 text-secondary-20'
+            >
+              Sportcubing
+            </a>{' '}
+            for online contests with physical puzzles
+          </>
+        ),
+        duration: 'long',
+      })
+      setSeenSportcubingAd()
+    }
+
+    if (!seenDiscordInvite) {
       toast({
         title: 'Great to have you on board',
         description:
