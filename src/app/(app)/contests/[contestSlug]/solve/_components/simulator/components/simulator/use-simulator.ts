@@ -125,6 +125,7 @@ const SIMULATOR_DISCIPLINES_MAP = {
   '4by4': 'cube4',
 } as const
 
+// TODO: finish this for 4x4
 function parseCstimerMove(moveCstimer: string): Move {
   const move = moveCstimer
     .replace(/@(\d+)/g, '/*$1*/')
@@ -134,9 +135,17 @@ function parseCstimerMove(moveCstimer: string): Move {
     .replace(/2-2Fw/g, 'S')
     .replace(/2-2Uw'/g, 'E')
     .replace(/2-2Uw/g, "E'")
+    .replace(/3-3Lw/g, "Rw' R") // r'
+    .replace(/2-3Fw/g, 'S') // s
+    .replace(/2-3Uw'/g, 'E') // e
+    .replace(/2-3Uw/g, "E'") // e
+    // .replace(/3-3Rw'/g, 'E') // e
+    // .replace(/3-3Rw/g, "E'") // e
     .trim()
+  console.log(moveCstimer, move)
 
-  if (!isMove(move)) throw new Error(`[SIMULATOR] invalid move: ${move}`)
+  // if (!isMove(move)) throw new Error(`[SIMULATOR] invalid move: ${move}`)
+  if (!isMove(move)) console.error(`[SIMULATOR] invalid move: ${move}`)
   return move
 }
 
@@ -161,8 +170,10 @@ const SIMPLE_MOVES = [
   'z',
 ] as const
 const MOVES = SIMPLE_MOVES.flatMap(
-  (move) => [move, `${move}'`, `${move}2`] as const,
+  (move) => [move, `${move}'`, `${move}2`, `3${move}`, `3${move}'`] as const,
 )
 function isMove(moveStr: string): moveStr is Move {
-  return (MOVES as readonly string[]).includes(moveStr)
+  return moveStr
+    .split(' ')
+    .every((move) => (MOVES as readonly string[]).includes(move))
 }

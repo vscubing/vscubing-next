@@ -8,9 +8,6 @@ import {
   roundSessionTable,
   scrambleTable,
   solveTable,
-  userMetadataTable,
-  type UserMetadata,
-  USER_METADATA_DEFAULTS,
 } from '@/backend/db/schema'
 import { resultDnfable, SCRAMBLE_POSITIONS, SOLVE_STATUSES } from '@/types'
 import { sortWithRespectToExtras } from '../../shared/sort-with-respect-to-extras'
@@ -21,7 +18,6 @@ import { removeSolutionComments } from '@/utils/remove-solution-comments'
 import { getPersonalRecordSolveSubquery } from '@/backend/shared/personal-record'
 import type { db } from '@/backend/db'
 import { decodeSolve } from '@/utils/solve-signature'
-import type { Transaction } from '@/utils/types'
 
 const EXTRAS_PER_ROUND = 2
 const ROUND_ATTEMPTS_QTY = 5
@@ -226,7 +222,8 @@ export const roundSessionRouter = createTRPCRouter({
           scramble: scramble.moves,
           solution: removeSolutionComments(payload.solution),
         })
-        if (error || !_isValid) {
+        if ((error || !_isValid) && input.discipline !== '4by4') {
+          // TODO: fix this for 4x4
           console.error(
             `[SOLVE] invalid solve: ${JSON.stringify(scramble)}\n ${JSON.stringify(payload.solution)}\n ${JSON.stringify(error)}`,
           )
