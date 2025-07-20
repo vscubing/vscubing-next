@@ -118,7 +118,6 @@ export async function init(
   options['type'] = 'cube'
   options['colorscheme'] = options.colorscheme
   options['dimension'] = ~~puzzle.slice(4) || 3
-  console.log(options['dimension'])
   options['stickerWidth'] = 1.7
   // } else if (puzzle == 'skb') {
   //   options['type'] = 'skewb'
