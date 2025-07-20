@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useCallback } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { VOICE_ALERTS } from './voice-alerts-audio'
 import { getDisplay } from './get-display'
 import { type SimulatorMoveListener, useTwistySimulator } from './use-simulator'
@@ -13,7 +13,9 @@ import { useIsTouchDevice } from '@/frontend/utils/use-media-query'
 import { cn } from '@/frontend/utils/cn'
 import { type QuantumMove } from '@vscubing/cubing/alg'
 import { useEventCallback } from 'usehooks-ts'
+import { toast } from '@/frontend/ui'
 
+export const MOVECOUNT_LIMIT = 2000
 export type InitSolveData = { scramble: string; discipline: Discipline }
 
 export type SimulatorSolve = {
@@ -152,7 +154,6 @@ export default function Simulator({
     isRotation,
     isSolved,
   }) => {
-    if (!solution) throw new Error('[SIMULATOR] moves undefined')
     setSolution([...solution, { move, timestamp: getCurrentTimestamp() }])
 
     if (status === 'inspecting' && !isRotation) {
@@ -163,11 +164,37 @@ export default function Simulator({
   }
   const moveHandler = useEventCallback(unstableMoveHandler)
 
+  if (solution.length > MOVECOUNT_LIMIT) {
+    toast({
+      title: 'Move count limit exceeded',
+      duration: 'infinite',
+      description: (
+        <p>
+          For reasons of storage space, solves are limited to {MOVECOUNT_LIMIT}{' '}
+          moves. Please practice at{' '}
+          <a
+            className='text-primary-60 hover:underline'
+            href='https://cstimer.net/'
+          >
+            csTimer.net
+          </a>{' '}
+          first if necessary.
+        </p>
+      ),
+    })
+    setStatus('idle')
+    setSolution([])
+    onSolveFinish({
+      result: { isDnf: true, timeMs: null, plusTwoIncluded: false },
+      solution: '',
+    })
+  }
+
   useEffect(() => {
     if (status !== 'solved') return
+
     const lastMoveTimestamp = solution.at(-1)?.timestamp
     if (
-      !solution ||
       !lastMoveTimestamp ||
       !currentTimestamp ||
       !solveStartTimestamp ||
