@@ -11,7 +11,8 @@ import type { userSimulatorSettingsTable } from '@/backend/db/schema'
 import type { SimulatorCameraPosition } from 'vendor/cstimer/types'
 import { useIsTouchDevice } from '@/frontend/utils/use-media-query'
 import { cn } from '@/frontend/utils/cn'
-import { QuantumMove } from '@vscubing/cubing/alg'
+import { type QuantumMove } from '@vscubing/cubing/alg'
+import { useEventCallback } from 'usehooks-ts'
 
 export type InitSolveData = { scramble: string; discipline: Discipline }
 
@@ -146,23 +147,21 @@ export default function Simulator({
     settings.inspectionVoiceAlert,
   ])
 
-  const moveHandler = useCallback<SimulatorMoveListener>(
-    ({ move, isRotation, isSolved }) => {
-      setSolution((prev) => {
-        if (!prev) throw new Error('[SIMULATOR] moves undefined')
-        return [...prev, { move, timestamp: getCurrentTimestamp() }]
-      })
-      setStatus((prevStatus) => {
-        if (prevStatus === 'inspecting' && !isRotation) {
-          return 'solving'
-        }
-        if (prevStatus === 'solving' && isSolved) return 'solved'
+  const unstableMoveHandler: SimulatorMoveListener = ({
+    move,
+    isRotation,
+    isSolved,
+  }) => {
+    if (!solution) throw new Error('[SIMULATOR] moves undefined')
+    setSolution([...solution, { move, timestamp: getCurrentTimestamp() }])
 
-        return prevStatus
-      })
-    },
-    [],
-  )
+    if (status === 'inspecting' && !isRotation) {
+      setStatus('solving')
+    } else if (status === 'solving' && isSolved) {
+      setStatus('solved')
+    }
+  }
+  const moveHandler = useEventCallback(unstableMoveHandler)
 
   useEffect(() => {
     if (status !== 'solved') return
