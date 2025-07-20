@@ -6,7 +6,12 @@ import {
   isAdmin,
   publicProcedure,
 } from '@/backend/api/trpc'
-import { contestTable, roundSessionTable, userTable } from '@/backend/db/schema'
+import {
+  contestTable,
+  disciplineTable,
+  roundSessionTable,
+  userTable,
+} from '@/backend/db/schema'
 import { validateSolve } from '@/backend/shared/validate-solve'
 import { DISCIPLINES } from '@/types'
 import dayjs from 'dayjs'
@@ -40,6 +45,11 @@ export const adminRouter = createTRPCRouter({
           slug: '0',
           systemInitial: true,
         })
+        .onConflictDoNothing()
+
+      await t
+        .insert(disciplineTable)
+        .values([{ slug: '3by3' }, { slug: '2by2' }])
         .onConflictDoNothing()
     }),
   ),

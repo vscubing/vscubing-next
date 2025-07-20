@@ -7,14 +7,14 @@ import {
 import { initTwistySimulator } from 'vendor/cstimer'
 import { type RefObject, useEffect, useState } from 'react'
 import { useEventCallback } from 'usehooks-ts'
-import { QuantumMove } from '@vscubing/cubing/alg'
 
+export type Move = (typeof MOVES)[number]
 export type SimulatorMoveListener = ({
   move,
   isRotation,
   isSolved,
 }: {
-  move: QuantumMove
+  move: Move
   timestamp: number
   isRotation: boolean
   isSolved: boolean
@@ -47,7 +47,7 @@ export function useTwistySimulator({
     const moveListener: TwistySimulatorMoveListener = (rawMove, timestamp) => {
       if (!_puzzle) throw new Error('[SIMULATOR] puzzle undefined')
 
-      const move = new QuantumMove(_puzzle.move2str(rawMove))
+      const move = parseCstimerMove(_puzzle.move2str(rawMove))
       const isSolved = _puzzle.isSolved() === 0
       onMove({
         move,
@@ -59,7 +59,7 @@ export function useTwistySimulator({
 
     void initTwistySimulator(
       {
-        puzzle: SIMULATOR_DISCIPLINES_MAP[discipline],
+        puzzle: SIMULATOR_DISCIPLINES_MAP[discipline].puzzle,
         animationDuration: settings.animationDuration,
         colorscheme: settings.colorscheme,
         allowDragging: touchCubeEnabled,
@@ -120,7 +120,54 @@ export function useTwistySimulator({
 }
 
 const SIMULATOR_DISCIPLINES_MAP = {
-  '3by3': 'cube3',
-  '2by2': 'cube2',
-  '4by4': 'cube4',
+  '3by3': {
+    dimension: 3,
+    puzzle: 'cube3',
+  },
+  '2by2': {
+    dimension: 2,
+    puzzle: 'cube2',
+  },
 } as const
+
+function parseCstimerMove(moveCstimer: string): Move {
+  const move = moveCstimer
+    .replace(/@(\d+)/g, '/*$1*/')
+    .replace(/2-2Rw2/g, 'M2')
+    .replace(/2-2Lw|2-2Rw'/g, 'M')
+    .replace(/2-2Rw/g, "M'")
+    .replace(/2-2Fw/g, 'S')
+    .replace(/2-2Uw'/g, 'E')
+    .replace(/2-2Uw/g, "E'")
+    .trim()
+
+  if (!isMove(move)) throw new Error(`[SIMULATOR] invalid move: ${move}`)
+  return move
+}
+
+const SIMPLE_MOVES = [
+  'R',
+  'U',
+  'F',
+  'B',
+  'L',
+  'D',
+  'M',
+  'E',
+  'S',
+  'Rw',
+  'Uw',
+  'Fw',
+  'Bw',
+  'Lw',
+  'Dw',
+  'x',
+  'y',
+  'z',
+] as const
+const MOVES = SIMPLE_MOVES.flatMap(
+  (move) => [move, `${move}'`, `${move}2`] as const,
+)
+function isMove(moveStr: string): moveStr is Move {
+  return (MOVES as readonly string[]).includes(moveStr)
+}

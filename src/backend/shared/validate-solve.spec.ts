@@ -1,7 +1,7 @@
 import { test, expect } from 'bun:test'
 import { validateSolve } from './validate-solve'
 
-test('valid 3x3x3 solve', async () => {
+test('valid solve', async () => {
   const { isValid, error } = await validateSolve({
     scramble: 'R U',
     solution: "U' R'",
@@ -11,19 +11,9 @@ test('valid 3x3x3 solve', async () => {
   expect(error).toBe(null)
 })
 
-test('valid 4x4x4 solve', async () => {
+test('invalid solve', async () => {
   const { isValid, error } = await validateSolve({
-    scramble: "R U Rw'",
-    solution: "Rw U' R'",
-    discipline: '4by4',
-  })
-  expect(isValid).toBe(true)
-  expect(error).toBe(null)
-})
-
-test('invalid 4x4x4 solve', async () => {
-  const { isValid, error } = await validateSolve({
-    scramble: 'R U Rw',
+    scramble: 'R U',
     solution: 'U',
     discipline: '3by3',
   })
