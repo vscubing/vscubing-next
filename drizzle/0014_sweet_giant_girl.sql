@@ -1,0 +1,1 @@
+ALTER TABLE "solve" ALTER COLUMN "solution" SET DATA TYPE varchar(500000);

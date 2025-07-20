@@ -1,11 +1,7 @@
-import { useRef, useState, useEffect, useCallback } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { VOICE_ALERTS } from './voice-alerts-audio'
 import { getDisplay } from './get-display'
-import {
-  type Move,
-  type SimulatorMoveListener,
-  useTwistySimulator,
-} from './use-simulator'
+import { type SimulatorMoveListener, useTwistySimulator } from './use-simulator'
 import {
   INSPECTION_DNF_THRESHHOLD_MS,
   INSPECTION_PLUS_TWO_THRESHHOLD_MS,
@@ -15,7 +11,11 @@ import type { userSimulatorSettingsTable } from '@/backend/db/schema'
 import type { SimulatorCameraPosition } from 'vendor/cstimer/types'
 import { useIsTouchDevice } from '@/frontend/utils/use-media-query'
 import { cn } from '@/frontend/utils/cn'
+import { type QuantumMove } from '@vscubing/cubing/alg'
+import { useEventCallback } from 'usehooks-ts'
+import { toast } from '@/frontend/ui'
 
+export const MOVECOUNT_LIMIT = 2000
 export type InitSolveData = { scramble: string; discipline: Discipline }
 
 export type SimulatorSolve = {
@@ -50,9 +50,9 @@ export default function Simulator({
     useState<number>()
   const [solveStartTimestamp, setSolveStartTimestamp] = useState<number>()
   const [currentTimestamp, setCurrentTimestamp] = useState<number>()
-  const [solution, setSolution] = useState<{ move: Move; timestamp: number }[]>(
-    [],
-  )
+  const [solution, setSolution] = useState<
+    { move: QuantumMove; timestamp: number }[]
+  >([])
 
   const [heard8sAlert, setHeard8sAlert] = useState(false)
   const [heard12sAlert, setHeard12sAlert] = useState(false)
@@ -149,29 +149,52 @@ export default function Simulator({
     settings.inspectionVoiceAlert,
   ])
 
-  const moveHandler = useCallback<SimulatorMoveListener>(
-    ({ move, isRotation, isSolved }) => {
-      setSolution((prev) => {
-        if (!prev) throw new Error('[SIMULATOR] moves undefined')
-        return [...prev, { move, timestamp: getCurrentTimestamp() }]
-      })
-      setStatus((prevStatus) => {
-        if (prevStatus === 'inspecting' && !isRotation) {
-          return 'solving'
-        }
-        if (prevStatus === 'solving' && isSolved) return 'solved'
+  const unstableMoveHandler: SimulatorMoveListener = ({
+    move,
+    isRotation,
+    isSolved,
+  }) => {
+    setSolution([...solution, { move, timestamp: getCurrentTimestamp() }])
 
-        return prevStatus
-      })
-    },
-    [],
-  )
+    if (status === 'inspecting' && !isRotation) {
+      setStatus('solving')
+    } else if (status === 'solving' && isSolved) {
+      setStatus('solved')
+    }
+  }
+  const moveHandler = useEventCallback(unstableMoveHandler)
+
+  if (solution.length > MOVECOUNT_LIMIT) {
+    toast({
+      title: 'Move count limit exceeded',
+      duration: 'infinite',
+      description: (
+        <p>
+          For reasons of storage space, solves are limited to {MOVECOUNT_LIMIT}{' '}
+          moves. Please practice at{' '}
+          <a
+            className='text-primary-60 hover:underline'
+            href='https://cstimer.net/'
+          >
+            csTimer.net
+          </a>{' '}
+          first if necessary.
+        </p>
+      ),
+    })
+    setStatus('idle')
+    setSolution([])
+    onSolveFinish({
+      result: { isDnf: true, timeMs: null, plusTwoIncluded: false },
+      solution: '',
+    })
+  }
 
   useEffect(() => {
     if (status !== 'solved') return
+
     const lastMoveTimestamp = solution.at(-1)?.timestamp
     if (
-      !solution ||
       !lastMoveTimestamp ||
       !currentTimestamp ||
       !solveStartTimestamp ||
@@ -188,7 +211,7 @@ export default function Simulator({
     const solutionStr = solution
       .map(
         ({ move, timestamp }) =>
-          `${move} /*${Math.max(timestamp - solveStartTimestamp, 0)}*/`,
+          `${move.toString()} /*${Math.max(timestamp - solveStartTimestamp, 0)}*/`,
       )
       .join(' ')
     onSolveFinish({

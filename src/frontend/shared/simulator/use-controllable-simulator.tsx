@@ -57,7 +57,7 @@ export function useControllableSimulator({
 
     void initTwistySimulator(
       {
-        puzzle: SIMULATOR_DISCIPLINES_MAP[discipline].puzzle,
+        puzzle: SIMULATOR_DISCIPLINES_MAP[discipline],
         animationDuration: memoizedSettings.animationDuration ?? 100,
         allowDragging: isTouchDevice ?? false,
         colorscheme: memoizedSettings.colorscheme,
@@ -114,14 +114,9 @@ export function useControllableSimulator({
 }
 
 const SIMULATOR_DISCIPLINES_MAP = {
-  '3by3': {
-    dimension: 3,
-    puzzle: 'cube3',
-  },
-  '2by2': {
-    dimension: 2,
-    puzzle: 'cube2',
-  },
+  '3by3': 'cube3',
+  '2by2': 'cube2',
+  '4by4': 'cube4',
 } as const
 
 // HACK: twisty simulator doesn't support double prime moves like z2' that `cubing.js`'s .invert() outputs a lot

@@ -4,6 +4,7 @@ import { type HTMLAttributes } from 'react'
 
 import Discipline3by3Icon from '@/../public/icons/discipline-3by3.icon.svg'
 import Discipline2by2Icon from '@/../public/icons/discipline-2by2.icon.svg'
+import Discipline4by4Icon from '@/../public/icons/discipline-4by4.icon.svg'
 import AllContestsIcon from '@/../public/icons/all-contests.icon.svg'
 import ArrowBackUpIcon from '@/../public/icons/arrow-back-up.icon.svg'
 import ArrowRightIcon from '@/../public/icons/arrow-right.icon.svg'
@@ -90,6 +91,7 @@ type DisciplineIconProps = HTMLAttributes<SVGSVGElement> & {
 const ICONS = {
   '3by3': Discipline3by3Icon,
   '2by2': Discipline2by2Icon,
+  '4by4': Discipline4by4Icon,
 } as const
 export function DisciplineIcon({
   ref,
