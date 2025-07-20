@@ -719,62 +719,23 @@ import kernel from '../kernel'
     }
 
     function move2str(move) {
-      const rawSiGN = moveToRawSiGN(move)
-      if (iSi === 2) return rawSiGN
-      if (iSi === 3) {
-        const replacements = {
-          '2R2': 'M2',
-          '2L2': 'M2',
-          "2L'": "M'",
-          '2L': 'M',
-          "2R'": 'M',
-          '2R': "M'",
-          '2F': 'S',
-          "2F'": "S'",
-          "2U'": 'E',
-          '2U': "E'",
-        }
-        return replacements[rawSiGN] ?? rawSiGN
-      }
-      if (iSi === 4) {
-        const replacements = {
-          '3L': "2R'",
-          '3R': "2L'",
-          '4L': "R'",
-          '4R': "L'",
-          '2-3U': "e'",
-          "2-3U'": 'e',
-          '2-3F': 's',
-          "2-3F'": "s'",
-        }
-        return replacements[rawSiGN] ?? rawSiGN
-      }
-      throw new Error(`Unsupported puzzle dimensions: ${iSi}`)
-    }
-
-    function moveToRawSiGN(move) {
-      const [startLayer, endLayer, axis, direction] = move
-      const pow = (direction + 3) % 4 // this is very cursed
-      if (startLayer === 1 && endLayer >= iSi) {
-        // rotation
+      var axis = move[2]
+      var nlayer = move[1]
+      var pow = (move[3] + 3) % 4
+      if (nlayer >= iSi) {
         return (
           'yxz'.charAt('URFDLB'.indexOf(move[2]) % 3) +
-          " 2'".charAt('URF'.indexOf(move[2]) == -1 ? 2 - pow : pow).trim()
+          " 2'".charAt('URF'.indexOf(move[2]) == -1 ? 2 - pow : pow)
         )
-      } else if (startLayer == 1) {
-        // wide move
+      } else if (move[0] == 1) {
         return (
-          (endLayer > 2 ? endLayer : '') +
+          (nlayer > 2 ? nlayer : '') +
           axis +
-          (endLayer >= 2 ? 'w' : '') +
-          " 2'".charAt(pow).trim()
+          (nlayer >= 2 ? 'w' : '') +
+          " 2'".charAt(pow)
         )
-      } else if (startLayer === endLayer) {
-        // slice
-        return startLayer + axis + " 2'".charAt(pow).trim()
       } else {
-        // inner block move
-        return startLayer + '-' + endLayer + axis + " 2'".charAt(pow).trim()
+        return move[0] + '-' + move[1] + move[2] + 'w' + " 2'".charAt(pow)
       }
     }
 

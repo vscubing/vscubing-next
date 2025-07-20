@@ -92,20 +92,6 @@
       "when": 1748699110673,
       "tag": "0012_greedy_pet_avengers",
       "breakpoints": true
-    },
-    {
-      "idx": 13,
-      "version": "7",
-      "when": 1751570101169,
-      "tag": "0013_discipline-seeding-2-4",
-      "breakpoints": true
-    },
-    {
-      "idx": 14,
-      "version": "7",
-      "when": 1753001899258,
-      "tag": "0014_sweet_giant_girl",
-      "breakpoints": true
     }
   ]
 }

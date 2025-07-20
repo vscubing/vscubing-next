@@ -55,5 +55,4 @@ export function useTwistyPlayer({
 const TWISTY_PUZZLE_MAP: Record<Discipline, PuzzleID> = {
   '3by3': '3x3x3',
   '2by2': '2x2x2',
-  '4by4': '4x4x4',
 }

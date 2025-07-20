@@ -118,29 +118,6 @@ function parseTimestamps(solutionWithTimestamps: string): number[] | undefined {
   })
 }
 
-const placeholderAnalyzer: Analyzer = (_, solution) => {
-  const signatures: (string | null)[] = []
-
-  let inInspection = true
-  let solutionSoFar = new Alg()
-  for (const node of new Alg(solution).childAlgNodes()) {
-    solutionSoFar = new Alg([...solutionSoFar.childAlgNodes(), node])
-
-    signatures.push(null)
-
-    if (!isRotation(node) && inInspection) {
-      inInspection = false
-      if (signatures.length > 1) {
-        signatures[signatures.length - 2] = INSPECTION_SIGNATURE
-      }
-    }
-  }
-
-  signatures[signatures.length - 1] = 'Solved'
-
-  return new Promise((res) => res(signatures))
-}
-
 type Analyzer = (
   scramble: Alg | string,
   solution: Alg | string,
@@ -173,8 +150,28 @@ const ANALYZER_MAP: Record<Discipline, Analyzer> = {
     }
     return signatures
   },
-  '2by2': placeholderAnalyzer,
-  '4by4': placeholderAnalyzer,
+  '2by2': (_, solution) => {
+    const signatures: (string | null)[] = []
+
+    let inInspection = true
+    let solutionSoFar = new Alg()
+    for (const node of new Alg(solution).childAlgNodes()) {
+      solutionSoFar = new Alg([...solutionSoFar.childAlgNodes(), node])
+
+      signatures.push(null)
+
+      if (!isRotation(node) && inInspection) {
+        inInspection = false
+        if (signatures.length > 1) {
+          signatures[signatures.length - 2] = INSPECTION_SIGNATURE
+        }
+      }
+    }
+
+    signatures[signatures.length - 1] = 'Solved'
+
+    return new Promise((res) => res(signatures))
+  },
 }
 
 const INSPECTION_SIGNATURE = 'Inspection'

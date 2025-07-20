@@ -20,7 +20,7 @@ export function SettingsPreviewSimulator({
 
   const [scramble, setScramble] = useState('')
   const { applyKeyboardMove, simulatorRef } = useControllableSimulator({
-    discipline: '4by4',
+    discipline: '3by3',
     scramble,
     settings,
     setCameraPosition: ({ phi, theta }) => {

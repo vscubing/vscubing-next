@@ -48,8 +48,6 @@ export default async function SolveContestPage({
   const { contestSlug } = await params
   if (!isDiscipline(discipline)) redirect(`/contests/${contestSlug}`)
 
-  const metadata = await api.contest.getContestMetaData({ contestSlug })
-
   return (
     <>
       <PageTitle />
@@ -57,7 +55,7 @@ export default async function SolveContestPage({
       <LayoutSectionHeader>
         <div className='flex gap-3'>
           <DisciplineSwitcher
-            disciplines={metadata.disciplines}
+            disciplines={DISCIPLINES}
             initialDiscipline={discipline}
           />
         </div>
