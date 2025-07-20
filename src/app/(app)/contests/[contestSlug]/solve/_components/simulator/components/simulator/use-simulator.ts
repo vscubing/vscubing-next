@@ -7,14 +7,14 @@ import {
 import { initTwistySimulator } from 'vendor/cstimer'
 import { type RefObject, useEffect, useState } from 'react'
 import { useEventCallback } from 'usehooks-ts'
+import { QuantumMove } from '@vscubing/cubing/alg'
 
-export type Move = (typeof MOVES)[number]
 export type SimulatorMoveListener = ({
   move,
   isRotation,
   isSolved,
 }: {
-  move: Move
+  move: QuantumMove
   timestamp: number
   isRotation: boolean
   isSolved: boolean
@@ -47,7 +47,7 @@ export function useTwistySimulator({
     const moveListener: TwistySimulatorMoveListener = (rawMove, timestamp) => {
       if (!_puzzle) throw new Error('[SIMULATOR] puzzle undefined')
 
-      const move = parseCstimerMove(_puzzle.move2str(rawMove))
+      const move = new QuantumMove(_puzzle.move2str(rawMove))
       const isSolved = _puzzle.isSolved() === 0
       onMove({
         move,
@@ -124,56 +124,3 @@ const SIMULATOR_DISCIPLINES_MAP = {
   '2by2': 'cube2',
   '4by4': 'cube4',
 } as const
-
-// TODO: finish this for 4x4
-function parseCstimerMove(moveCstimer: string): Move {
-  const move = moveCstimer
-    .replace(/@(\d+)/g, '/*$1*/')
-    .replace(/2-2Rw2/g, 'M2')
-    .replace(/2-2Lw|2-2Rw'/g, 'M')
-    .replace(/2-2Rw/g, "M'")
-    .replace(/2-2Fw/g, 'S')
-    .replace(/2-2Uw'/g, 'E')
-    .replace(/2-2Uw/g, "E'")
-    .replace(/3-3Lw/g, "Rw' R") // r'
-    .replace(/2-3Fw/g, 'S') // s
-    .replace(/2-3Uw'/g, 'E') // e
-    .replace(/2-3Uw/g, "E'") // e
-    // .replace(/3-3Rw'/g, 'E') // e
-    // .replace(/3-3Rw/g, "E'") // e
-    .trim()
-  console.log(moveCstimer, move)
-
-  // if (!isMove(move)) throw new Error(`[SIMULATOR] invalid move: ${move}`)
-  if (!isMove(move)) console.error(`[SIMULATOR] invalid move: ${move}`)
-  return move
-}
-
-const SIMPLE_MOVES = [
-  'R',
-  'U',
-  'F',
-  'B',
-  'L',
-  'D',
-  'M',
-  'E',
-  'S',
-  'Rw',
-  'Uw',
-  'Fw',
-  'Bw',
-  'Lw',
-  'Dw',
-  'x',
-  'y',
-  'z',
-] as const
-const MOVES = SIMPLE_MOVES.flatMap(
-  (move) => [move, `${move}'`, `${move}2`, `3${move}`, `3${move}'`] as const,
-)
-function isMove(moveStr: string): moveStr is Move {
-  return moveStr
-    .split(' ')
-    .every((move) => (MOVES as readonly string[]).includes(move))
-}

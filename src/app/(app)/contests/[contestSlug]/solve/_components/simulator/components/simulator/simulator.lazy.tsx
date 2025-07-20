@@ -1,11 +1,7 @@
 import { useRef, useState, useEffect, useCallback } from 'react'
 import { VOICE_ALERTS } from './voice-alerts-audio'
 import { getDisplay } from './get-display'
-import {
-  type Move,
-  type SimulatorMoveListener,
-  useTwistySimulator,
-} from './use-simulator'
+import { type SimulatorMoveListener, useTwistySimulator } from './use-simulator'
 import {
   INSPECTION_DNF_THRESHHOLD_MS,
   INSPECTION_PLUS_TWO_THRESHHOLD_MS,
@@ -15,6 +11,7 @@ import type { userSimulatorSettingsTable } from '@/backend/db/schema'
 import type { SimulatorCameraPosition } from 'vendor/cstimer/types'
 import { useIsTouchDevice } from '@/frontend/utils/use-media-query'
 import { cn } from '@/frontend/utils/cn'
+import { QuantumMove } from '@vscubing/cubing/alg'
 
 export type InitSolveData = { scramble: string; discipline: Discipline }
 
@@ -50,9 +47,9 @@ export default function Simulator({
     useState<number>()
   const [solveStartTimestamp, setSolveStartTimestamp] = useState<number>()
   const [currentTimestamp, setCurrentTimestamp] = useState<number>()
-  const [solution, setSolution] = useState<{ move: Move; timestamp: number }[]>(
-    [],
-  )
+  const [solution, setSolution] = useState<
+    { move: QuantumMove; timestamp: number }[]
+  >([])
 
   const [heard8sAlert, setHeard8sAlert] = useState(false)
   const [heard12sAlert, setHeard12sAlert] = useState(false)
@@ -188,7 +185,7 @@ export default function Simulator({
     const solutionStr = solution
       .map(
         ({ move, timestamp }) =>
-          `${move} /*${Math.max(timestamp - solveStartTimestamp, 0)}*/`,
+          `${move.toString()} /*${Math.max(timestamp - solveStartTimestamp, 0)}*/`,
       )
       .join(' ')
     onSolveFinish({

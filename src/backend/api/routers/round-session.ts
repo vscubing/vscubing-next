@@ -222,10 +222,9 @@ export const roundSessionRouter = createTRPCRouter({
           scramble: scramble.moves,
           solution: removeSolutionComments(payload.solution),
         })
-        if ((error || !_isValid) && input.discipline !== '4by4') {
-          // TODO: fix this for 4x4
+        if (error || !_isValid) {
           console.error(
-            `[SOLVE] invalid solve: ${JSON.stringify(scramble)}\n ${JSON.stringify(payload.solution)}\n ${JSON.stringify(error)}`,
+            `[SOLVE] invalid solve: ${JSON.stringify(scramble)}\n ${JSON.stringify(removeSolutionComments(payload.solution))}\n ${JSON.stringify(error)}`,
           )
           isValid = false
           isDnf = true
