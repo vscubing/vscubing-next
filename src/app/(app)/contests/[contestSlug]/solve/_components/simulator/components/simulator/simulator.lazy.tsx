@@ -154,7 +154,11 @@ export default function Simulator({
     isRotation,
     isSolved,
   }) => {
-    setSolution([...solution, { move, timestamp: getCurrentTimestamp() }])
+    setSolution((prevSolution) => [
+      // NOTE: very important that this uses prevSolution from the argument and not from the state to avoid race conditions on double moves
+      ...prevSolution,
+      { move, timestamp: getCurrentTimestamp() },
+    ])
 
     if (status === 'inspecting' && !isRotation) {
       setStatus('solving')
