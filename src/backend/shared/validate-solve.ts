@@ -29,4 +29,5 @@ export async function validateSolve({
 const DISCIPLINE_TO_KPUZZLE: Record<Discipline, string> = {
   '3by3': '3x3x3',
   '2by2': '2x2x2',
+  '4by4': '4x4x4',
 }
