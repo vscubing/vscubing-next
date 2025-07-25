@@ -35,7 +35,8 @@ export function AverageList({
   if (sessions.length === 0) {
     return (
       <HintSection>
-        <p>It seems no one participated in this round</p>
+        While this page may be empty now, it's brimming with potential for
+        thrilling contests that will soon fill this
       </HintSection>
     )
   }
