@@ -31,6 +31,7 @@ export const contestRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
+      // TODO: find a clean way to hide contests with no results that doesn't affect the ongoing one
       const items = await ctx.db
         .selectDistinctOn([contestTable.startDate, roundTable.id], {
           slug: contestTable.slug,
@@ -44,10 +45,6 @@ export const contestRouter = createTRPCRouter({
         .innerJoin(
           disciplineTable,
           eq(roundTable.disciplineSlug, disciplineTable.slug),
-        )
-        .innerJoin(
-          roundSessionTable,
-          eq(roundSessionTable.roundId, roundTable.id),
         )
         .where(
           and(
