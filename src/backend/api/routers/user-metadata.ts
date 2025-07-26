@@ -6,11 +6,15 @@ import {
 } from '@/backend/db/schema'
 import { createTRPCRouter, protectedProcedure } from '../trpc'
 import { eq } from 'drizzle-orm'
+import { z } from 'zod'
 
 export const userMetadataRouter = createTRPCRouter({
   userMetadata: protectedProcedure.query(async ({ ctx }) => {
     const [row] = await ctx.db
-      .select({ seenSportcubingAd: userMetadataTable.seenSportcubingAd })
+      .select({
+        seenDiscordInvite: userMetadataTable.seenDiscordInvite,
+        seenSportcubingAd: userMetadataTable.seenSportcubingAd,
+      })
       .from(userMetadataTable)
       .where(eq(userMetadataTable.userId, ctx.session.user.id))
 
@@ -20,16 +24,25 @@ export const userMetadataRouter = createTRPCRouter({
     for (const [key, value] of Object.entries(row)) {
       metadata[key as keyof UserMetadata] = value!
     }
-    console.log(row, metadata)
     return metadata
   }),
-  setSeenSportcubingAd: protectedProcedure.mutation(async ({ ctx }) => {
-    await ctx.db
-      .insert(userMetadataTable)
-      .values({ userId: ctx.session.user.id, seenSportcubingAd: true })
-      .onConflictDoUpdate({
-        target: userTable.id,
-        set: { seenSportcubingAd: true },
-      })
-  }),
+  updateUserMetadata: protectedProcedure
+    .input(
+      z.object({
+        seenDiscordInvite: z.boolean().optional(),
+        seenSportcubingAd: z.boolean().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db
+        .insert(userMetadataTable)
+        .values({
+          userId: ctx.session.user.id,
+          ...input,
+        })
+        .onConflictDoUpdate({
+          target: userMetadataTable.userId,
+          set: input,
+        })
+    }),
 })

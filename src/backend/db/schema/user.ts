@@ -34,8 +34,10 @@ export const userMetadataTable = pgTable('user_metadata', (d) => ({
   userId: d
     .text('user_id')
     .notNull()
-    .references(() => userTable.id, { onDelete: 'cascade' }),
+    .references(() => userTable.id, { onDelete: 'cascade' })
+    .unique(),
   seenSportcubingAd: d.boolean(),
+  seenDiscordInvite: d.boolean(),
 }))
 export type UserMetadata = FieldsNonNullable<
   Omit<
@@ -43,4 +45,7 @@ export type UserMetadata = FieldsNonNullable<
     'id' | 'userId' | 'createdAt' | 'updatedAt'
   >
 >
-export const USER_METADATA_DEFAULTS: UserMetadata = { seenSportcubingAd: false }
+export const USER_METADATA_DEFAULTS: UserMetadata = {
+  seenDiscordInvite: false,
+  seenSportcubingAd: false,
+}

@@ -13,12 +13,11 @@ import {
 } from '@tanstack/react-query'
 import { redirect, RedirectType } from 'next/navigation'
 import { useSimulator } from './simulator'
-import { useLocalStorage } from 'usehooks-ts'
 import { toast, type Toast } from '@/frontend/ui'
 import { TRPCError } from '@trpc/server'
 import { SolveTimeLinkOrDnf } from '@/frontend/shared/solve-time-button'
 import { signSolve } from '@/utils/solve-signature'
-import { userMetadataTable } from '@/backend/db/schema'
+import { useEffect } from 'react'
 
 export function SolveContestForm({
   contestSlug,
@@ -31,10 +30,6 @@ export function SolveContestForm({
 }) {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
-  const [seenDiscordInvite, setSeenDiscordInvite] = useLocalStorage(
-    'vs-seenDiscordInvite',
-    false,
-  )
 
   const stateQuery = trpc.roundSession.state.queryOptions(
     {
@@ -53,7 +48,6 @@ export function SolveContestForm({
     error,
   } = useSuspenseQuery(stateQuery)
   if (error?.data?.code === 'FORBIDDEN') {
-    console.log(state)
     redirect(
       `/contests/${contestSlug}/results?discipline=${discipline}&scrollToOwn=true`,
       RedirectType.replace,
@@ -82,12 +76,22 @@ export function SolveContestForm({
     }),
   )
 
-  const { data: userMetadata } = useQuery(
-    trpc.userMetadata.userMetadata.queryOptions(),
+  const metadataQuery = trpc.userMetadata.userMetadata.queryOptions()
+  const { data: userMetadata } = useQuery(metadataQuery)
+  const { mutate: updateUserMetadata } = useMutation(
+    trpc.userMetadata.updateUserMetadata.mutationOptions({
+      onSettled: () => queryClient.invalidateQueries(metadataQuery),
+    }),
   )
-  const { mutate: setSeenSportcubingAd } = useMutation(
-    trpc.userMetadata.setSeenSportcubingAd.mutationOptions(),
-  )
+
+  useEffect(() => {
+    // migration
+    const LS_LEGACY_KEY = 'vs-seenDiscordInvite'
+    if (localStorage.getItem(LS_LEGACY_KEY) === 'true') {
+      updateUserMetadata({ seenDiscordInvite: true })
+      localStorage.removeItem(LS_LEGACY_KEY)
+    }
+  }, [updateUserMetadata])
 
   const isFormPending =
     isStateFetching || isPostSolvePending || isSubmitSolvePending
@@ -126,7 +130,23 @@ export function SolveContestForm({
   }
 
   function handleSessionFinished() {
-    if (userMetadata && !userMetadata.seenSportcubingAd) {
+    if (!userMetadata) return
+
+    if (!userMetadata.seenDiscordInvite) {
+      toast({
+        title: 'Great to have you on board',
+        description:
+          'Join our Discord community to connect with other vscubers',
+        contactUsButton: true,
+        contactUsButtonLabel: 'Discord',
+        duration: 'infinite',
+        className: 'w-[23.75rem]',
+      })
+      updateUserMetadata({ seenDiscordInvite: true })
+      return
+    }
+
+    if (!userMetadata.seenSportcubingAd) {
       toast({
         title: 'Want more contests?',
         description: (
@@ -143,20 +163,8 @@ export function SolveContestForm({
         ),
         duration: 'long',
       })
-      setSeenSportcubingAd()
-    }
-
-    if (!seenDiscordInvite) {
-      toast({
-        title: 'Great to have you on board',
-        description:
-          'Join our Discord community to connect with other vscubers',
-        contactUsButton: true,
-        contactUsButtonLabel: 'Discord',
-        duration: 'infinite',
-        className: 'w-[23.75rem]',
-      })
-      setSeenDiscordInvite(true)
+      updateUserMetadata({ seenSportcubingAd: true })
+      return
     }
   }
 
