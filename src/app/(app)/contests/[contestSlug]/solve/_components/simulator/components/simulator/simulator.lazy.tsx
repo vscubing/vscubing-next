@@ -1,27 +1,32 @@
 import { useTwistySimulator } from './use-twisty-simulator'
-import type { userSimulatorSettingsTable } from '@/backend/db/schema'
-import type { SimulatorCameraPosition } from 'vendor/cstimer/types'
 import { cn } from '@/frontend/utils/cn'
 import { useSimulatorTimer } from './use-simulator-timer'
 import type { InitSolveData, SimulatorSolveFinishCallback } from './types'
+import {
+  useMutateSimulatorSettings,
+  useSimulatorSettings,
+} from '@/app/(app)/settings'
 
 type SimulatorProps = {
   initSolveData: InitSolveData
   onInspectionStart: () => void
   onSolveFinish: SimulatorSolveFinishCallback
-  settings: Omit<
-    typeof userSimulatorSettingsTable.$inferSelect,
-    'id' | 'createdAt' | 'updatedAt' | 'userId'
-  >
-  setCameraPosition: (pos: SimulatorCameraPosition) => void
 }
 export default function Simulator({
   initSolveData,
   onSolveFinish,
   onInspectionStart,
-  settings,
-  setCameraPosition,
 }: SimulatorProps) {
+  const { data: rawSettings } = useSimulatorSettings()
+  const settings = {
+    animationDuration: rawSettings?.animationDuration ?? 100, // TODO: defaults don't belong here
+    cameraPositionPhi: rawSettings?.cameraPositionPhi ?? 6,
+    cameraPositionTheta: rawSettings?.cameraPositionTheta ?? 0,
+    inspectionVoiceAlert: rawSettings?.inspectionVoiceAlert ?? 'Male',
+    colorscheme: rawSettings?.colorscheme ?? null,
+  }
+  const { updateSettings } = useMutateSimulatorSettings()
+
   const {
     touchStartHandler,
     display,
@@ -42,7 +47,17 @@ export default function Simulator({
     scramble: hasRevealedScramble ? initSolveData.scramble : undefined,
     discipline: initSolveData.discipline,
     settings,
-    setCameraPosition,
+    setCameraPosition: ({ phi, theta }) => {
+      if (
+        phi !== rawSettings?.cameraPositionPhi ||
+        theta !== rawSettings?.cameraPositionTheta
+      ) {
+        updateSettings({
+          cameraPositionPhi: phi,
+          cameraPositionTheta: theta,
+        })
+      }
+    },
   })
 
   return (
