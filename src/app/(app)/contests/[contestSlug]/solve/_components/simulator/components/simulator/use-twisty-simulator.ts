@@ -8,6 +8,7 @@ import { initTwistySimulator } from 'vendor/cstimer'
 import { type RefObject, useEffect, useState } from 'react'
 import { useEventCallback } from 'usehooks-ts'
 import { QuantumMove } from '@vscubing/cubing/alg'
+import { useIsTouchDevice } from '@/frontend/utils/use-media-query'
 
 export type SimulatorMoveListener = ({
   move,
@@ -26,7 +27,6 @@ export function useTwistySimulator({
   scramble,
   discipline,
   settings,
-  touchCubeEnabled,
   setCameraPosition,
 }: {
   containerRef: RefObject<HTMLElement | null>
@@ -34,12 +34,12 @@ export function useTwistySimulator({
   scramble: string | undefined
   discipline: Discipline
   settings: SimulatorSettings
-  touchCubeEnabled: boolean
   setCameraPosition: (pos: SimulatorCameraPosition) => void
 }) {
   const [puzzle, setPuzzle] = useState<TwistySimulatorPuzzle | undefined>()
 
   const stableSetCameraPosition = useEventCallback(setCameraPosition)
+  const isTouchDevice = useIsTouchDevice()
 
   useEffect(() => {
     let _puzzle: TwistySimulatorPuzzle | undefined // we need this because move2str is tightly coupled with Puzzle
@@ -62,7 +62,7 @@ export function useTwistySimulator({
         puzzle: SIMULATOR_DISCIPLINES_MAP[discipline],
         animationDuration: settings.animationDuration,
         colorscheme: settings.colorscheme,
-        allowDragging: touchCubeEnabled,
+        allowDragging: isTouchDevice ?? false,
       },
       moveListener,
       stableSetCameraPosition,
@@ -78,8 +78,8 @@ export function useTwistySimulator({
     containerRef,
     discipline,
     onMove,
-    touchCubeEnabled,
     stableSetCameraPosition,
+    isTouchDevice,
   ])
 
   useEffect(() => {

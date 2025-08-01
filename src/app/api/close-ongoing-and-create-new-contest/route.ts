@@ -1,5 +1,3 @@
-import type { NextRequest } from 'next/server'
-
 export async function POST() {
   // TODO: replace with a package.json script and a built-in Dokploy cron job
   // const token = new Headers(request.headers)

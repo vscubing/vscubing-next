@@ -1,7 +1,6 @@
 import {
   USER_METADATA_DEFAULTS,
   userMetadataTable,
-  userTable,
   type UserMetadata,
 } from '@/backend/db/schema'
 import { createTRPCRouter, protectedProcedure } from '../trpc'

@@ -9,11 +9,6 @@ import {
   useState,
 } from 'react'
 import { useConditionalBeforeUnload } from '@/frontend/utils/use-conditional-before-unload'
-import {
-  type SimulatorSolveFinishCallback,
-  type InitSolveData,
-  type SimulatorSolve,
-} from './simulator/simulator.lazy'
 import { AbortPrompt } from './abort-prompt'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import {
@@ -32,6 +27,11 @@ import {
   useMutateSimulatorSettings,
 } from '@/app/(app)/settings'
 import { useEventListener } from 'usehooks-ts'
+import type {
+  InitSolveData,
+  SimulatorSolveFinishCallback,
+  SimulatorSolve,
+} from './simulator/types'
 const Simulator = lazy(() => import('./simulator/simulator.lazy'))
 
 export function SimulatorProvider({ children }: { children: React.ReactNode }) {
