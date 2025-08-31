@@ -28,6 +28,7 @@ export function useTwistySimulator({
   settings,
   touchCubeEnabled,
   setCameraPosition,
+  scale,
 }: {
   containerRef: RefObject<HTMLElement | null>
   onMove: SimulatorMoveListener
@@ -36,6 +37,7 @@ export function useTwistySimulator({
   settings: SimulatorSettings
   touchCubeEnabled: boolean
   setCameraPosition: (pos: SimulatorCameraPosition) => void
+  scale: number
 }) {
   const [puzzle, setPuzzle] = useState<TwistySimulatorPuzzle | undefined>()
 
@@ -117,6 +119,10 @@ export function useTwistySimulator({
     puzzle,
     scramble,
   ])
+
+  useEffect(() => {
+    puzzle?.resize()
+  }, [scale, puzzle])
 }
 
 const SIMULATOR_DISCIPLINES_MAP = {

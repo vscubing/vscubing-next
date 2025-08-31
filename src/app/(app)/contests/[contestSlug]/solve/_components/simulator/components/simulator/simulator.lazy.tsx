@@ -12,7 +12,7 @@ import type { SimulatorCameraPosition } from 'vendor/cstimer/types'
 import { useIsTouchDevice } from '@/frontend/utils/use-media-query'
 import { cn } from '@/frontend/utils/cn'
 import { type QuantumMove } from '@vscubing/cubing/alg'
-import { useEventCallback } from 'usehooks-ts'
+import { useEventCallback, useEventListener } from 'usehooks-ts'
 import { toast } from '@/frontend/ui'
 
 export const MOVECOUNT_LIMIT = 2000
@@ -237,6 +237,8 @@ export default function Simulator({
   ])
 
   const hasRevealedScramble = status !== 'idle' && status !== 'ready'
+  const [scale, setScale] = useState(1)
+
   useTwistySimulator({
     containerRef,
     onMove: moveHandler,
@@ -245,6 +247,19 @@ export default function Simulator({
     discipline: initSolveData.discipline,
     settings,
     setCameraPosition,
+    scale,
+  })
+
+  useEventListener('keydown', (e) => {
+    if (e.key === '+') {
+      setScale((prev) => Math.min(1.5, prev + 0.05))
+    }
+    if (e.key === '-') {
+      setScale((prev) => Math.max(0.7, prev - 0.05))
+    }
+    if (e.key === '=') {
+      setScale(1)
+    }
   })
 
   return (
@@ -280,7 +295,8 @@ export default function Simulator({
           </span>
         )}
         <div
-          className='aspect-square h-[60%] outline-none sm:h-auto sm:w-full sm:max-w-[34rem] [&>div]:flex'
+          className='aspect-square h-[60%] outline-none sm:!h-auto sm:w-full sm:max-w-[34rem] [&>div]:flex'
+          style={{ height: `calc(60% * ${scale})` }}
           tabIndex={-1}
           ref={containerRef}
         ></div>
