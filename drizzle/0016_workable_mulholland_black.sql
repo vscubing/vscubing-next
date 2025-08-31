@@ -1,0 +1,1 @@
+ALTER TABLE "user_simulator_settings" ADD COLUMN "puzzle_scale" real DEFAULT 1 NOT NULL;

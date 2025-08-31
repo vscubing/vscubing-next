@@ -14,6 +14,10 @@ import { cn } from '@/frontend/utils/cn'
 import { type QuantumMove } from '@vscubing/cubing/alg'
 import { useEventCallback, useEventListener } from 'usehooks-ts'
 import { toast } from '@/frontend/ui'
+import {
+  useSimulatorSettings,
+  useMutateSimulatorSettings,
+} from '@/app/(app)/settings'
 
 export const MOVECOUNT_LIMIT = 2000
 export type InitSolveData = { scramble: string; discipline: Discipline }
@@ -38,9 +42,19 @@ export default function Simulator({
   initSolveData,
   onSolveFinish,
   onInspectionStart,
-  settings,
-  setCameraPosition,
 }: SimulatorProps) {
+  const { data: settingsWithoutDefaults } = useSimulatorSettings()
+  const { updateSettings } = useMutateSimulatorSettings()
+  const settings = {
+    animationDuration: settingsWithoutDefaults?.animationDuration ?? 100, // TODO: defaults don't belong here
+    cameraPositionPhi: settingsWithoutDefaults?.cameraPositionPhi ?? 6,
+    cameraPositionTheta: settingsWithoutDefaults?.cameraPositionTheta ?? 0,
+    inspectionVoiceAlert:
+      settingsWithoutDefaults?.inspectionVoiceAlert ?? 'Male',
+    colorscheme: settingsWithoutDefaults?.colorscheme ?? null,
+    puzzleScale: settingsWithoutDefaults?.puzzleScale ?? 1,
+  }
+
   const containerRef = useRef<HTMLDivElement>(null)
   const isTouchDevice = useIsTouchDevice()
   const [status, setStatus] = useState<
@@ -237,7 +251,6 @@ export default function Simulator({
   ])
 
   const hasRevealedScramble = status !== 'idle' && status !== 'ready'
-  const [scale, setScale] = useState(1)
 
   useTwistySimulator({
     containerRef,
@@ -246,19 +259,33 @@ export default function Simulator({
     touchCubeEnabled: isTouchDevice ?? false,
     discipline: initSolveData.discipline,
     settings,
-    setCameraPosition,
-    scale,
+    setCameraPosition: ({ phi, theta }) => {
+      if (
+        phi !== settings?.cameraPositionPhi ||
+        theta !== settings?.cameraPositionTheta
+      ) {
+        updateSettings({
+          cameraPositionPhi: phi,
+          cameraPositionTheta: theta,
+        })
+      }
+    },
   })
 
   useEventListener('keydown', (e) => {
+    const loadedScale = settingsWithoutDefaults?.puzzleScale
+    if (!loadedScale) return
+
     if (e.key === '+') {
-      setScale((prev) => Math.min(1.5, prev + 0.05))
+      updateSettings({
+        puzzleScale: Math.min(1.5, loadedScale + 0.05),
+      })
     }
     if (e.key === '-') {
-      setScale((prev) => Math.max(0.7, prev - 0.05))
+      updateSettings({ puzzleScale: Math.max(0.7, loadedScale - 0.05) })
     }
     if (e.key === '=') {
-      setScale(1)
+      updateSettings({ puzzleScale: 1 })
     }
   })
 
@@ -296,7 +323,7 @@ export default function Simulator({
         )}
         <div
           className='aspect-square h-[60%] outline-none sm:!h-auto sm:w-full sm:max-w-[34rem] [&>div]:flex'
-          style={{ height: `calc(60% * ${scale})` }}
+          style={{ height: `calc(60% * ${settings.puzzleScale})` }}
           tabIndex={-1}
           ref={containerRef}
         ></div>
