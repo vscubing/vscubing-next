@@ -7,8 +7,6 @@ import {
   INSPECTION_PLUS_TWO_THRESHHOLD_MS,
 } from './constants'
 import type { Discipline, ResultDnfable } from '@/types'
-import type { userSimulatorSettingsTable } from '@/backend/db/schema'
-import type { SimulatorCameraPosition } from 'vendor/cstimer/types'
 import { useIsTouchDevice } from '@/frontend/utils/use-media-query'
 import { cn } from '@/frontend/utils/cn'
 import { type QuantumMove } from '@vscubing/cubing/alg'
@@ -32,18 +30,14 @@ type SimulatorProps = {
   initSolveData: InitSolveData
   onInspectionStart: () => void
   onSolveFinish: SimulatorSolveFinishCallback
-  settings: Omit<
-    typeof userSimulatorSettingsTable.$inferSelect,
-    'id' | 'createdAt' | 'updatedAt' | 'userId'
-  >
-  setCameraPosition: (pos: SimulatorCameraPosition) => void
 }
 export default function Simulator({
   initSolveData,
   onSolveFinish,
   onInspectionStart,
 }: SimulatorProps) {
-  const { data: settingsWithoutDefaults } = useSimulatorSettings()
+  const { data: settingsWithoutDefaults, isLoading: settingsLoading } =
+    useSimulatorSettings()
   const { updateSettings } = useMutateSimulatorSettings()
   const settings = {
     animationDuration: settingsWithoutDefaults?.animationDuration ?? 100, // TODO: defaults don't belong here
@@ -273,16 +267,18 @@ export default function Simulator({
   })
 
   useEventListener('keydown', (e) => {
-    const loadedScale = settingsWithoutDefaults?.puzzleScale
-    if (!loadedScale) return
+    const prevScale = settingsWithoutDefaults?.puzzleScale
+    if (!prevScale) return
 
     if (e.key === '+') {
+      const newScale = Math.min(1.5, Number((prevScale + 0.05).toFixed(2)))
       updateSettings({
-        puzzleScale: Math.min(1.5, loadedScale + 0.05),
+        puzzleScale: newScale,
       })
     }
     if (e.key === '-') {
-      updateSettings({ puzzleScale: Math.max(0.7, loadedScale - 0.05) })
+      const newScale = Math.max(0.7, Number((prevScale - 0.05).toFixed(2)))
+      updateSettings({ puzzleScale: newScale })
     }
     if (e.key === '=') {
       updateSettings({ puzzleScale: 1 })
@@ -323,7 +319,10 @@ export default function Simulator({
         )}
         <div
           className='aspect-square h-[60%] outline-none sm:!h-auto sm:w-full sm:max-w-[34rem] [&>div]:flex'
-          style={{ height: `calc(60% * ${settings.puzzleScale})` }}
+          style={{
+            height: `calc(60% * ${settings.puzzleScale})`,
+            opacity: settingsLoading ? 0 : 1,
+          }}
           tabIndex={-1}
           ref={containerRef}
         ></div>

@@ -1,5 +1,5 @@
 {
-  "id": "ed3007c3-2861-4cee-8ea7-660351e986e2",
+  "id": "ed724a34-6bae-45b2-b8c6-3fd4f0804e3a",
   "prevId": "06e84ea5-8eb4-4fcf-a63e-e4ba56656e5e",
   "version": "7",
   "dialect": "postgresql",
@@ -947,7 +947,7 @@
         },
         "puzzle_scale": {
           "name": "puzzle_scale",
-          "type": "real",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": true,
           "default": 1
