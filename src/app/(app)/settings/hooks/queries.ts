@@ -31,7 +31,7 @@ export function useMutateSimulatorSettings() {
 
     debounceSettings(async () => {
       try {
-        await mutateAsync(newSettings)
+        await mutateAsync({ ...oldSettings, ...newSettings }) // NOTE: we have to merge oldSettings with newSettings so taht cameraPosition and puzzleSize changes don't override each other in a race condition
       } catch {
         queryClient.setQueryData(settingsQuery.queryKey, oldSettings)
         toast(TOASTS_PRESETS.internalError)

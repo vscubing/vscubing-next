@@ -7,13 +7,15 @@ import {
   INSPECTION_PLUS_TWO_THRESHHOLD_MS,
 } from './constants'
 import type { Discipline, ResultDnfable } from '@/types'
-import type { userSimulatorSettingsTable } from '@/backend/db/schema'
-import type { SimulatorCameraPosition } from 'vendor/cstimer/types'
 import { useIsTouchDevice } from '@/frontend/utils/use-media-query'
 import { cn } from '@/frontend/utils/cn'
 import { type QuantumMove } from '@vscubing/cubing/alg'
-import { useEventCallback } from 'usehooks-ts'
+import { useEventCallback, useEventListener } from 'usehooks-ts'
 import { toast } from '@/frontend/ui'
+import {
+  useSimulatorSettings,
+  useMutateSimulatorSettings,
+} from '@/app/(app)/settings'
 
 export const MOVECOUNT_LIMIT = 2000
 export type InitSolveData = { scramble: string; discipline: Discipline }
@@ -28,19 +30,25 @@ type SimulatorProps = {
   initSolveData: InitSolveData
   onInspectionStart: () => void
   onSolveFinish: SimulatorSolveFinishCallback
-  settings: Omit<
-    typeof userSimulatorSettingsTable.$inferSelect,
-    'id' | 'createdAt' | 'updatedAt' | 'userId'
-  >
-  setCameraPosition: (pos: SimulatorCameraPosition) => void
 }
 export default function Simulator({
   initSolveData,
   onSolveFinish,
   onInspectionStart,
-  settings,
-  setCameraPosition,
 }: SimulatorProps) {
+  const { data: settingsWithoutDefaults, isLoading: settingsLoading } =
+    useSimulatorSettings()
+  const { updateSettings } = useMutateSimulatorSettings()
+  const settings = {
+    animationDuration: settingsWithoutDefaults?.animationDuration ?? 100, // TODO: defaults don't belong here
+    cameraPositionPhi: settingsWithoutDefaults?.cameraPositionPhi ?? 6,
+    cameraPositionTheta: settingsWithoutDefaults?.cameraPositionTheta ?? 0,
+    inspectionVoiceAlert:
+      settingsWithoutDefaults?.inspectionVoiceAlert ?? 'Male',
+    colorscheme: settingsWithoutDefaults?.colorscheme ?? null,
+    puzzleScale: settingsWithoutDefaults?.puzzleScale ?? 1,
+  }
+
   const containerRef = useRef<HTMLDivElement>(null)
   const isTouchDevice = useIsTouchDevice()
   const [status, setStatus] = useState<
@@ -237,6 +245,7 @@ export default function Simulator({
   ])
 
   const hasRevealedScramble = status !== 'idle' && status !== 'ready'
+
   useTwistySimulator({
     containerRef,
     onMove: moveHandler,
@@ -244,7 +253,36 @@ export default function Simulator({
     touchCubeEnabled: isTouchDevice ?? false,
     discipline: initSolveData.discipline,
     settings,
-    setCameraPosition,
+    setCameraPosition: ({ phi, theta }) => {
+      if (
+        phi !== settings?.cameraPositionPhi ||
+        theta !== settings?.cameraPositionTheta
+      ) {
+        updateSettings({
+          cameraPositionPhi: phi,
+          cameraPositionTheta: theta,
+        })
+      }
+    },
+  })
+
+  useEventListener('keydown', (e) => {
+    const prevScale = settingsWithoutDefaults?.puzzleScale
+    if (!prevScale) return
+
+    if (e.key === '+') {
+      const newScale = Math.min(1.5, Number((prevScale + 0.05).toFixed(2)))
+      updateSettings({
+        puzzleScale: newScale,
+      })
+    }
+    if (e.key === '-') {
+      const newScale = Math.max(0.7, Number((prevScale - 0.05).toFixed(2)))
+      updateSettings({ puzzleScale: newScale })
+    }
+    if (e.key === '=') {
+      updateSettings({ puzzleScale: 1 })
+    }
   })
 
   return (
@@ -280,7 +318,11 @@ export default function Simulator({
           </span>
         )}
         <div
-          className='aspect-square h-[60%] outline-none sm:h-auto sm:w-full sm:max-w-[34rem] [&>div]:flex'
+          className='aspect-square h-[60%] outline-none sm:!h-auto sm:w-full sm:max-w-[34rem] [&>div]:flex'
+          style={{
+            height: `calc(60% * ${settings.puzzleScale})`,
+            opacity: settingsLoading ? 0 : 1,
+          }}
           tabIndex={-1}
           ref={containerRef}
         ></div>

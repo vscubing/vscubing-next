@@ -117,6 +117,10 @@ export function useTwistySimulator({
     puzzle,
     scramble,
   ])
+
+  useEffect(() => {
+    puzzle?.resize()
+  }, [settings.puzzleScale, puzzle])
 }
 
 const SIMULATOR_DISCIPLINES_MAP = {
