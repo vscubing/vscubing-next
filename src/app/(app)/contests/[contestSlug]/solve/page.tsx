@@ -13,7 +13,7 @@ import {
   KeyMapDialogContent,
 } from '@/frontend/shared/key-map-dialog'
 import { isDiscipline, type Discipline } from '@/types'
-import { CONTEST_UNAUTHORIZED_MESSAGE, DISCIPLINES } from '@/types'
+import { CONTEST_UNAUTHORIZED_MESSAGE } from '@/types'
 import { notFound } from 'next/navigation'
 import { redirect } from 'next/navigation'
 import { Suspense, type ReactNode } from 'react'
