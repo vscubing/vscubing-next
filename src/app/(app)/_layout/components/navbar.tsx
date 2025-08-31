@@ -17,6 +17,7 @@ import {
   CodeXmlIcon,
 } from '@/frontend/ui'
 import { DEFAULT_DISCIPLINE } from '@/types'
+import { DumbbellIcon } from 'lucide-react'
 
 type NavbarProps = {
   variant: 'vertical' | 'horizontal'
@@ -121,7 +122,6 @@ function parsePathname(
   ongoingContestSlug?: string,
 ): NavbarRoute | undefined {
   if (isStaticNavbarRoute(pathname)) return pathname
-  if (pathname.startsWith('/leaderboard')) return '/leaderboard'
 
   if (!ongoingContestSlug) return undefined
   if (pathname.startsWith('/contests')) {
@@ -141,10 +141,11 @@ type NavbarRoute =
   | '/contests'
   | '/contests/ongoing'
   | '/settings'
+  | '/dojo'
   | '/dev'
 
 function isStaticNavbarRoute(pathname: string): pathname is NavbarRoute {
-  return ['/', '/contests', '/dev'].includes(pathname)
+  return ['/', '/contests', '/leaderboard', '/dojo', '/dev'].includes(pathname)
 }
 function getNavbarLinks(
   ongoingContest: RouterOutputs['contest']['getOngoing'] | undefined,
@@ -180,6 +181,11 @@ function getNavbarLinks(
       route: '/contests/ongoing',
       href: getOngoingLink(ongoingContest),
       disabled: ongoingContest === null,
+    },
+    {
+      icon: <DumbbellIcon />,
+      name: 'Dojo',
+      route: '/dojo',
     },
   ]
 
