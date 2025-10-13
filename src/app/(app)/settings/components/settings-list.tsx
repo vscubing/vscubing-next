@@ -13,6 +13,7 @@ import {
   useMutateSimulatorSettings,
 } from '../hooks/queries'
 import { ColorschemeSetting } from './colorscheme-setting'
+import { PUZZLE_SCALE } from '@/types'
 
 export function SettingsList() {
   const { data: settings } = useSimulatorSettings()
@@ -55,6 +56,16 @@ export function SettingsList() {
         <span>Colorscheme:</span>
         <ColorschemeSetting />
       </li>
+      <li className='flex items-center justify-between gap-2 rounded-xl bg-grey-100 p-4'>
+        <span>Puzzle Scale:</span>
+        <Select
+          options={PUZZLE_SCALE_OPTIONS}
+          value={settings.puzzleScale.toFixed(2)}
+          onValueChange={(scale) =>
+            updateSettings({ puzzleScale: parseFloat(scale) })
+          }
+        />
+      </li>
     </ul>
   )
 }
@@ -77,13 +88,22 @@ const CS_INSPECTION_VOICE_ALERT_OPTIONS = [
   { value: 'None', view: 'none' },
 ] as const
 
+const PUZZLE_SCALE_OPTIONS: { value: string }[] = []
+for (
+  let scale = PUZZLE_SCALE.MIN;
+  scale <= PUZZLE_SCALE.MAX + 0.01; // 0.01 needed to fix floating point imprecision
+  scale += PUZZLE_SCALE.STEP
+) {
+  PUZZLE_SCALE_OPTIONS.push({ value: scale.toFixed(2) })
+}
+
 function Select<T extends string>({
   options,
   value,
   onValueChange,
   className,
 }: {
-  options: Readonly<{ value: T; view: ReactNode }[]>
+  options: Readonly<{ value: T; view?: ReactNode }[]>
   value: T
   onValueChange: (value: T) => void
   className?: string
@@ -107,14 +127,14 @@ function Select<T extends string>({
         </SelectPrimitive.Icon>
       </SelectPrimitive.Trigger>
       <SelectPrimitive.Content
-        className='mt-1 rounded-lg bg-black-100 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-top-2'
+        className='mt-1 max-h-80 overflow-x-auto rounded-lg bg-black-100 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-top-2'
         align='end'
         position='popper'
         style={{ minWidth: 'var(--radix-select-trigger-width)' }}
       >
         {options.map(({ value, view }) => (
           <SelectItem key={value} value={value}>
-            {view}
+            {view ?? value}
           </SelectItem>
         ))}
       </SelectPrimitive.Content>
