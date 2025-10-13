@@ -94,7 +94,10 @@ function ColorPicker({
       <PopoverPrimitive.Trigger asChild>
         <button
           {...props}
-          className={cn('block h-11 w-11 rounded-lg sm:h-6 sm:w-6', className)}
+          className={cn(
+            'm-[-2px] block h-11 w-11 rounded-lg border-2 border-transparent bg-clip-padding hover:border-black-100 sm:h-6 sm:w-6',
+            className,
+          )}
           onClick={() => setOpen(true)}
           style={{ backgroundColor: value }}
         ></button>

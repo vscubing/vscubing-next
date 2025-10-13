@@ -1,6 +1,13 @@
 'use client'
 
-import { ChevronDownIcon } from '@/frontend/ui'
+import {
+  ChevronDownIcon,
+  ExclamationCircleIcon,
+  Popover,
+  PopoverContent,
+  PopoverPortal,
+  PopoverTrigger,
+} from '@/frontend/ui'
 import { cn } from '@/frontend/utils/cn'
 import {
   type ReactNode,
@@ -57,7 +64,25 @@ export function SettingsList() {
         <ColorschemeSetting />
       </li>
       <li className='flex items-center justify-between gap-2 rounded-xl bg-grey-100 p-4'>
-        <span>Puzzle Scale:</span>
+        <span className='flex items-center gap-2'>
+          <span className='vertical-alignment-fix'>Puzzle Scale:</span>
+          <Popover>
+            <PopoverTrigger className='outline-none'>
+              <ExclamationCircleIcon />
+            </PopoverTrigger>
+            <PopoverPortal>
+              <PopoverContent
+                className='caption max-w-[15.5rem]'
+                side='bottom'
+                withArrow
+              >
+                Use "+" and "-" keys to increase/decrease the puzzle size during
+                a solve. <br />
+                "=" resets the size to default.
+              </PopoverContent>
+            </PopoverPortal>
+          </Popover>
+        </span>
         <Select
           options={PUZZLE_SCALE_OPTIONS}
           value={settings.puzzleScale.toFixed(2)}
