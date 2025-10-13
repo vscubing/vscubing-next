@@ -111,3 +111,10 @@ export type SimulatorSettings = Omit<
   typeof userSimulatorSettingsTable.$inferSelect,
   'id' | 'createdAt' | 'updatedAt' | 'userId'
 >
+
+export const PUZZLE_SCALE = {
+  MIN: 0.75,
+  MAX: 1.5,
+  DEFAULT: 1,
+  STEP: 0.05,
+} as const

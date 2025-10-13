@@ -18,19 +18,18 @@ export function ColorschemeSetting() {
   if (!settings) return
   const colorscheme = settings.colorscheme ?? TWISTY_DEFAULT_COLORSCHEME
   return (
-    <div className='flex h-12 items-center'>
-      <GhostButton
+    <div className='flex h-12 items-center gap-3'>
+      <SecondaryButton
         size='sm'
         disabled={
           JSON.stringify(colorscheme) ===
           JSON.stringify(TWISTY_DEFAULT_COLORSCHEME)
         }
-        className='mr-2'
         onClick={() => updateSettings({ colorscheme: null })}
       >
         Reset all
-      </GhostButton>
-      <ul className='grid grid-cols-6 sm:grid-cols-3'>
+      </SecondaryButton>
+      <ul className='grid grid-cols-6 gap-2 sm:grid-cols-3 sm:gap-1'>
         {(['U', 'R', 'F', 'D', 'L', 'B'] as const).map((face) => (
           <li key={face}>
             <ColorPicker
@@ -95,12 +94,13 @@ function ColorPicker({
       <PopoverPrimitive.Trigger asChild>
         <button
           {...props}
-          className={cn('block', className)}
+          className={cn(
+            'm-[-2px] block h-11 w-11 rounded-lg border-2 border-transparent bg-clip-padding hover:border-black-100 sm:h-6 sm:w-6',
+            className,
+          )}
           onClick={() => setOpen(true)}
           style={{ backgroundColor: value }}
-        >
-          <div className='h-6 w-6' />
-        </button>
+        ></button>
       </PopoverPrimitive.Trigger>
       <PopoverPrimitive.Content className='w-full' collisionPadding={32}>
         <HexColorPicker

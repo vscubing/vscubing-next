@@ -6,7 +6,7 @@ import {
   INSPECTION_DNF_THRESHHOLD_MS,
   INSPECTION_PLUS_TWO_THRESHHOLD_MS,
 } from './constants'
-import type { Discipline, ResultDnfable } from '@/types'
+import { PUZZLE_SCALE, type Discipline, type ResultDnfable } from '@/types'
 import { useIsTouchDevice } from '@/frontend/utils/use-media-query'
 import { cn } from '@/frontend/utils/cn'
 import { type QuantumMove } from '@vscubing/cubing/alg'
@@ -271,17 +271,23 @@ export default function Simulator({
     if (!prevScale) return
 
     if (e.key === '+') {
-      const newScale = Math.min(1.5, Number((prevScale + 0.05).toFixed(2)))
+      const newScale = Math.min(
+        PUZZLE_SCALE.MAX,
+        Number((prevScale + PUZZLE_SCALE.STEP).toFixed(2)),
+      )
       updateSettings({
         puzzleScale: newScale,
       })
     }
     if (e.key === '-') {
-      const newScale = Math.max(0.7, Number((prevScale - 0.05).toFixed(2)))
+      const newScale = Math.max(
+        PUZZLE_SCALE.MIN,
+        Number((prevScale - PUZZLE_SCALE.STEP).toFixed(2)),
+      )
       updateSettings({ puzzleScale: newScale })
     }
     if (e.key === '=') {
-      updateSettings({ puzzleScale: 1 })
+      updateSettings({ puzzleScale: PUZZLE_SCALE.DEFAULT })
     }
   })
 
