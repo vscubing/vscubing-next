@@ -196,6 +196,25 @@ export function SolveContestForm({
     })
   }
 
+  if (userMetadata?.suspended) {
+    return (
+      <p className='title-lg fixed inset-16 z-[10000] flex flex-1 flex-col items-center justify-center rounded-xl bg-black-100 text-center'>
+        Your account was suspended!
+        <br /> Go do something productive. <br />
+        <span className='mt-2 text-lg text-grey-60'>
+          P.S. if this is a mistake please{' '}
+          <a
+            className='text-primary-100 underline'
+            href='https://discord.gg/PxFrW9vTAy'
+          >
+            let us know
+          </a>
+          , we'll fix it ASAP
+        </span>
+      </p>
+    ) // this is an ad hoc solution for a friend who asked me to suspend his account
+  }
+
   const currentSolveNumber = (state?.submittedSolves?.length ?? 0) + 1
   return (
     <div className='flex flex-1 justify-center pl-16 pr-12 md:px-8 sm:px-3'>

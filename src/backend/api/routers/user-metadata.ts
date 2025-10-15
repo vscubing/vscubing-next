@@ -13,6 +13,7 @@ export const userMetadataRouter = createTRPCRouter({
       .select({
         seenDiscordInvite: userMetadataTable.seenDiscordInvite,
         seenSportcubingAd: userMetadataTable.seenSportcubingAd,
+        suspended: userMetadataTable.suspended,
       })
       .from(userMetadataTable)
       .where(eq(userMetadataTable.userId, ctx.session.user.id))
