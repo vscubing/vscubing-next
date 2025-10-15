@@ -39,6 +39,7 @@ export const userMetadataTable = pgTable('user_metadata', (d) => ({
     .unique(),
   seenSportcubingAd: d.boolean(),
   seenDiscordInvite: d.boolean(),
+  suspended: d.boolean('suspended'),
 }))
 export type UserMetadata = FieldsNonNullable<
   Omit<
@@ -49,4 +50,5 @@ export type UserMetadata = FieldsNonNullable<
 export const USER_METADATA_DEFAULTS: UserMetadata = {
   seenDiscordInvite: false,
   seenSportcubingAd: false,
+  suspended: false,
 }
