@@ -6,7 +6,7 @@ import {
 import * as PopoverPrimitive from '@radix-ui/react-popover'
 import { cn } from '@/frontend/utils/cn'
 import { HexColorPicker } from 'react-colorful'
-import { GhostButton, Input, SecondaryButton } from '@/frontend/ui'
+import { Input, SecondaryButton } from '@/frontend/ui'
 import { TWISTY_DEFAULT_COLORSCHEME } from 'vendor/cstimer/constants'
 import { RotateCcwIcon } from 'lucide-react'
 import { useDebounceCallback } from 'usehooks-ts'
