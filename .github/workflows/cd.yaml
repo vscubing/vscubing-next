@@ -38,6 +38,9 @@ jobs:
           AUTH_WCA_CLIENT_ID=${{ secrets.AUTH_WCA_CLIENT_ID }}
           AUTH_WCA_CLIENT_SECRET=${{ secrets.AUTH_WCA_CLIENT_SECRET }}
           AUTH_WCA_URL=${{ vars.AUTH_WCA_URL }}
+          TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_CONTEST_MANAGEMENT_THREAD_ID=${{ secrets.TELEGRAM_CONTEST_MANAGEMENT_THREAD_ID }}
           TNOODLE_URL=${{ vars.TNOODLE_URL }}
           TNOODLE_SECRET=${{ secrets.TNOODLE_SECRET }}
           EOF
