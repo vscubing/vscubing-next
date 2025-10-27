@@ -34,6 +34,7 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_APP_ENV === 'development'
         ? z.literal('ENABLED').optional()
         : z.undefined(),
+    CONTEST_CREATION_WEBHOOK_SECRET: z.string(),
   },
 
   /**
@@ -75,6 +76,8 @@ export const env = createEnv({
     ),
     TNOODLE_URL: process.env.TNOODLE_URL,
     TNOODLE_SECRET: process.env.TNOODLE_SECRET,
+    CONTEST_CREATION_WEBHOOK_SECRET:
+      process.env.CONTEST_CREATION_WEBHOOK_SECRET,
     NEXT_PUBLIC_APP_ENV: process.env.NEXT_PUBLIC_APP_ENV,
     NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
     NEXT_PUBLIC_SOLVE_SECRET: process.env.NEXT_PUBLIC_SOLVE_SECRET,

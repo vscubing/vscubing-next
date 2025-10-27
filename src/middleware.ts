@@ -4,6 +4,9 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest): Promise<NextResponse> {
+  if (request.nextUrl.pathname === '/api/close-ongoing-and-create-new-contest')
+    return NextResponse.next()
+
   if (request.method === 'GET') {
     const response = NextResponse.next()
     const token = request.cookies.get('session')?.value ?? null
