@@ -16,9 +16,7 @@ function PopoverContent({
   ref,
   side = 'top',
   ...props
-}: ComponentPropsWithRef<typeof PopoverPrimitive.Content> & {
-  withArrow?: boolean
-}) {
+}: ComponentPropsWithRef<typeof PopoverPrimitive.Content>) {
   return (
     <PopoverPrimitive.Content
       onOpenAutoFocus={(event) => event.preventDefault()}

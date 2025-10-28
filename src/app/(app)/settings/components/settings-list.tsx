@@ -71,11 +71,7 @@ export function SettingsList() {
               <ExclamationCircleIcon />
             </PopoverTrigger>
             <PopoverPortal>
-              <PopoverContent
-                className='caption max-w-[15.5rem]'
-                side='bottom'
-                withArrow
-              >
+              <PopoverContent className='caption max-w-[15.5rem]' side='bottom'>
                 Use "+" and "-" keys to increase/decrease the puzzle size during
                 a solve. <br />
                 "=" resets the size to default.
