@@ -5,7 +5,7 @@ import {
   AverageIcon,
   SingleIcon,
   TrophyIcon,
-  SquareArrowOutUpRight,
+  SecondaryButton,
 } from '@/frontend/ui'
 import { SolveTimeLabel, SolveTimeLinkOrDnf } from '../solve-time-button'
 import Link from 'next/link'
@@ -20,13 +20,10 @@ export function RecordHolderBadge({
   return (
     <HoverPopover
       content={<RecordHolderPopover records={records} name={name} />}
-      contentProps={{
-        className:
-          'border-2 border-b-amber-400 border-t-grey-100 border-x-grey-100',
-      }}
       asChild
+      contentClassName='flex flex-col p-3 gap-4 max-w-max'
     >
-      <span className='relative inline-flex text-amber-400'>
+      <span className='relative inline-flex text-yellow-100'>
         <TrophyIcon className='text-sm' />
       </span>
     </HoverPopover>
@@ -43,58 +40,81 @@ function RecordHolderPopover({
   const recordCount = records.averages.length + records.singles.length
   return (
     <>
-      <p className='flex items-center gap-1'>
-        <TrophyIcon className='-mt-1' />
-        <span>
-          {name} holds {recordCount} {recordCount > 1 ? 'records' : 'record'}
+      <p className='flex items-center gap-1 self-stretch'>
+        <TrophyIcon className='text-yellow-100' />
+        <span className='title-h3'>
+          <span className='text-white-100'>{name}</span>{' '}
+          <span className='text-grey-40'>
+            holds {recordCount} {recordCount > 1 ? 'records' : 'record'}
+          </span>
         </span>
       </p>
-      {records.averages.map(({ contestSlug, discipline, roundSession }) => (
-        <div key={roundSession.id} className='flex items-center'>
-          <DisciplineIcon discipline={discipline} className='mr-3' />
-          <span className='-mr-2 flex w-20 items-center gap-1 text-secondary-20'>
-            <AverageIcon className='text-sm' />
-            <span className='vertical-alignment-fix'>Average</span>
-          </span>
-          <SolveTimeLabel
-            timeMs={roundSession.result.timeMs ?? undefined}
-            isAverage
-            className='mr-2'
-          />
-          <Link
-            href={`/contests/${contestSlug}/results?discipline=${discipline}&scrollToId=${roundSession.id}`}
-            className='transition-base flex gap-1 whitespace-nowrap text-primary-60 hover:text-primary-80 active:text-primary-100'
+      <ul className='flex flex-col gap-2'>
+        {records.averages.map(({ contestSlug, discipline, roundSession }) => (
+          <li
+            key={roundSession.id}
+            className='flex items-center rounded-lg bg-black-80 pl-2'
           >
-            Contest {contestSlug}
-            <SquareArrowOutUpRight width='1em' height='1em' />
-          </Link>
-        </div>
-      ))}
+            <span className='relative mr-2 after:absolute after:-right-1 after:top-1/2 after:h-[1.7rem] after:w-px after:-translate-y-1/2 after:bg-grey-100'>
+              <DisciplineIcon discipline={discipline} className='sm:w-6' />
+            </span>
+            <span className='flex w-28 items-center gap-1 pl-1 sm:w-20'>
+              <AverageIcon className='w-4 sm:hidden' />
+              <span className='vertical-alignment-fix sm:caption whitespace-nowrap'>
+                Average time
+              </span>
+            </span>
+            <span className='relative mr-5 after:absolute after:-right-1 after:top-1/2 after:h-[1.7rem] after:w-px after:-translate-y-1/2 after:bg-grey-100'>
+              <SolveTimeLabel
+                timeMs={roundSession.result.timeMs ?? undefined}
+                isAverage
+              />
+            </span>
+            <SecondaryButton size='sm' asChild>
+              <Link
+                href={`/contests/${contestSlug}/results?discipline=${discipline}&scrollToId=${roundSession.id}`}
+                className='transition-base flex gap-1 whitespace-nowrap text-primary-60 hover:text-primary-80 active:text-primary-100'
+              >
+                Contest {contestSlug}
+              </Link>
+            </SecondaryButton>
+          </li>
+        ))}
 
-      {records.singles.map(({ contestSlug, discipline, solve }) => (
-        <div key={solve.id} className='flex items-center'>
-          <DisciplineIcon discipline={discipline} className='mr-3' />
-          <span className='-mr-2 flex w-20 items-center gap-1 text-secondary-20'>
-            <SingleIcon className='text-sm' />
-            <span className='vertical-alignment-fix'>Single</span>
-          </span>
-          <SolveTimeLinkOrDnf
-            result={solve.result}
-            solveId={solve.id}
-            contestSlug={contestSlug}
-            discipline={discipline}
-            canShowHint={false}
-            className='mr-2'
-          />
-          <Link
-            href={`/contests/${contestSlug}/results?discipline=${discipline}&scrollToId=${solve.roundSessionId}`}
-            className='transition-base flex gap-1 whitespace-nowrap text-primary-60 hover:text-primary-80 active:text-primary-100'
+        {records.singles.map(({ contestSlug, discipline, solve }) => (
+          <li
+            key={solve.id}
+            className='flex items-center rounded-lg bg-black-80 pl-2'
           >
-            Contest {contestSlug}
-            <SquareArrowOutUpRight width='1em' height='1em' />
-          </Link>
-        </div>
-      ))}
+            <span className='relative mr-2 after:absolute after:-right-1 after:top-1/2 after:h-[1.7rem] after:w-px after:-translate-y-1/2 after:bg-grey-100'>
+              <DisciplineIcon discipline={discipline} className='sm:w-6' />
+            </span>
+            <span className='flex w-28 items-center gap-1 pl-1 sm:w-20'>
+              <SingleIcon className='w-4 sm:hidden' />
+              <span className='vertical-alignment-fix sm:caption whitespace-nowrap'>
+                Single time
+              </span>
+            </span>
+            <span className='relative mr-5 after:absolute after:-right-1 after:top-1/2 after:h-[1.7rem] after:w-px after:-translate-y-1/2 after:bg-grey-100'>
+              <SolveTimeLinkOrDnf
+                result={solve.result}
+                solveId={solve.id}
+                contestSlug={contestSlug}
+                discipline={discipline}
+                canShowHint={false}
+              />
+            </span>
+            <SecondaryButton size='sm' asChild>
+              <Link
+                href={`/contests/${contestSlug}/results?discipline=${discipline}&scrollToId=${solve.roundSessionId}`}
+                className='transition-base flex gap-1 whitespace-nowrap text-primary-60 hover:text-primary-80 active:text-primary-100'
+              >
+                Contest {contestSlug}
+              </Link>
+            </SecondaryButton>
+          </li>
+        ))}
+      </ul>
     </>
   )
 }

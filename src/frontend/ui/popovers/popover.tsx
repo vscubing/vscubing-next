@@ -14,7 +14,6 @@ function PopoverContent({
   className,
   children,
   ref,
-  withArrow,
   side = 'top',
   ...props
 }: ComponentPropsWithRef<typeof PopoverPrimitive.Content> & {
@@ -25,11 +24,8 @@ function PopoverContent({
       onOpenAutoFocus={(event) => event.preventDefault()}
       collisionPadding={12}
       className={cn(
-        'relative z-20 flex max-w-[calc(100vw-12px*2)] flex-col items-center gap-2 whitespace-normal rounded-xl bg-black-100 p-4 text-center animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
-        {
-          'mb-2 after:absolute after:-bottom-3 after:h-3 after:w-full':
-            !withArrow,
-        },
+        'relative z-20 max-w-[calc(100vw-12px*2)] whitespace-normal rounded-xl border border-grey-60 bg-black-100 animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
+        'mb-2 after:absolute after:-bottom-3 after:h-3 after:w-full', // arrow
         className,
       )}
       ref={ref}
@@ -37,13 +33,11 @@ function PopoverContent({
       {...props}
     >
       {children}
-      {withArrow && (
-        <PopoverPrimitive.Arrow
-          width={22}
-          className='fill-black-100'
-          height={18}
-        ></PopoverPrimitive.Arrow>
-      )}
+      <PopoverPrimitive.Arrow
+        width={22}
+        className='-my-px border-none fill-black-100 drop-shadow-[0_2px_0_#6B7980]'
+        height={18}
+      ></PopoverPrimitive.Arrow>
     </PopoverPrimitive.Content>
   )
 }
@@ -67,12 +61,12 @@ export function HoverPopover({
   children: trigger,
   asChild,
   content,
-  contentProps,
+  contentClassName,
 }: {
   children: ReactNode
   asChild?: boolean
   content: ReactNode
-  contentProps?: ComponentPropsWithRef<typeof PopoverContent>
+  contentClassName?: string
 }) {
   const [open, setOpen] = useState(false)
   const handleMouseEnter = () => {
@@ -96,7 +90,7 @@ export function HoverPopover({
         <PopoverContent
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
-          {...contentProps}
+          className={contentClassName}
         >
           {content}
         </PopoverContent>
