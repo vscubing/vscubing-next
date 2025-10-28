@@ -29,7 +29,7 @@ export function PlaceLabel({
       )}
       {...props}
     >
-      {place === 1 && (
+      {podiumColors && place === 1 && (
         <CrownIcon className='absolute -right-1 -top-2 rotate-[30deg] transform text-secondary-20' />
       )}
       {place}
