@@ -40,7 +40,7 @@ function RecordHolderPopover({
   const recordCount = records.averages.length + records.singles.length
   return (
     <>
-      <p className='flex items-center gap-1 self-stretch'>
+      <p className='mb-4 flex items-center gap-1'>
         <TrophyIcon className='text-yellow-100' />
         <span className='title-h3'>
           <span className='text-white-100'>{name}</span>{' '}
