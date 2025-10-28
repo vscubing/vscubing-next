@@ -23,19 +23,42 @@ function PopoverContent({
       collisionPadding={12}
       className={cn(
         'relative z-20 max-w-[calc(100vw-12px*2)] whitespace-normal rounded-xl border border-grey-60 bg-black-100 animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
-        'mb-2 after:absolute after:-bottom-3 after:h-3 after:w-full', // arrow
+        'mb-[2px] after:absolute after:-bottom-3 after:h-3 after:w-full', // arrow
         className,
       )}
       ref={ref}
       side={side}
       {...props}
     >
-      {children}
-      <PopoverPrimitive.Arrow
-        width={22}
-        className='-my-px border-none fill-black-100 drop-shadow-[0_2px_0_#6B7980]'
-        height={18}
-      ></PopoverPrimitive.Arrow>
+      <div>{children}</div>
+      <PopoverPrimitive.Arrow asChild>
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          width='21'
+          height='16'
+          viewBox='0 0 21 16'
+          fill='none'
+        >
+          <mask
+            id='mask0_4054_61791'
+            style={{ maskType: 'alpha' }}
+            maskUnits='userSpaceOnUse'
+            x='0'
+            y='0'
+            width='21'
+            height='16'
+          >
+            <rect width='21' height='16' fill='#D9D9D9' />
+          </mask>
+          <g mask='url(#mask0_4054_61791)'>
+            <path
+              d='M11.8291 14.3809C11.2678 15.4537 9.73221 15.4537 9.1709 14.3809L-0.0830078 -3.30469C-0.605363 -4.30331 0.119106 -5.49985 1.24609 -5.5L19.7539 -5.5C20.8809 -5.49985 21.6054 -4.30331 21.083 -3.30469L11.8291 14.3809Z'
+              fill='#1B1E25'
+              stroke='#6B7980'
+            />
+          </g>
+        </svg>
+      </PopoverPrimitive.Arrow>
     </PopoverPrimitive.Content>
   )
 }

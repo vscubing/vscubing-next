@@ -50,8 +50,10 @@ export default {
       white: {
         100: '#F9F9F9',
       },
-      amber: {
-        400: 'oklch(0.769 0.188 70.08)',
+      podium: {
+        gold: '#F7D570',
+        silver: '#DBDFE6',
+        bronze: '#F49E71',
       },
     },
     extend: {

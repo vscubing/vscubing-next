@@ -79,7 +79,7 @@ function UserDropdown({
         )}
       >
         <AvatarIcon />
-        <span className='text-large vertical-alignment-fix sm:hidden'>
+        <span className='vertical-alignment-fix text-base sm:hidden'>
           {user.name}
         </span>
         <ChevronDownIcon className='group-data-[state=open]:rotate-180' />

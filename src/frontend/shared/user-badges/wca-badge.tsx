@@ -16,7 +16,7 @@ export function WcaBadgeLink({ wcaId }: { wcaId: string }) {
           href={`https://worldcubeassociation.org/persons/${wcaId}`}
           className='touch:hidden'
         >
-          <WcaLogoIcon className='text-xs' />
+          <WcaLogoIcon className='w-5' />
         </Link>
       </div>
     </HoverPopover>
@@ -57,7 +57,7 @@ function WcaPopoverContent({ wcaId }: { wcaId: string }) {
       {avatarUrl && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          className='max-h-48 max-w-48 grow basis-0 rounded-xl'
+          className='max-h-44 grow basis-0 rounded-xl'
           src={avatarUrl}
           alt={officialData.name}
         />

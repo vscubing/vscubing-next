@@ -24,7 +24,7 @@ export function RecordHolderBadge({
       contentClassName='flex flex-col p-3 gap-4 max-w-max'
     >
       <span className='relative inline-flex text-yellow-100'>
-        <TrophyIcon className='text-sm' />
+        <TrophyIcon className='text-base' />
       </span>
     </HoverPopover>
   )
