@@ -18,11 +18,11 @@ export function PlaceLabel({
       className={cn(
         'vertical-alignment-fix relative flex h-11 w-11 items-center justify-center rounded-full border border-primary-60 text-base text-white-100 sm:h-9 sm:w-9 sm:py-0 sm:text-[0.875rem]',
         {
-          'bg-podium-gold border-none text-grey-100':
+          'border-none bg-podium-gold text-grey-100':
             podiumColors && place === 1,
-          'bg-podium-silver border-none text-grey-100':
+          'border-none bg-podium-silver text-grey-100':
             podiumColors && place === 2,
-          'bg-podium-bronze border-none text-grey-100':
+          'border-none bg-podium-bronze text-grey-100':
             podiumColors && place === 3,
         },
         className,
