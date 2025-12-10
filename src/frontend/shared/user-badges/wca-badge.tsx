@@ -9,21 +9,14 @@ import { z } from 'zod'
 
 export function WcaBadgeLink({ wcaId }: { wcaId: string }) {
   return (
-    <HoverPopover
-      content={<WcaPopoverContent wcaId={wcaId} />}
-      contentProps={{
-        className:
-          'border-2 border-b-yellow-100 border-t-grey-100 border-x-grey-100',
-      }}
-      asChild
-    >
+    <HoverPopover content={<WcaPopoverContent wcaId={wcaId} />} asChild>
       <div>
         <WcaLogoIcon className='hidden text-xs touch:block' />
         <Link
           href={`https://worldcubeassociation.org/persons/${wcaId}`}
           className='touch:hidden'
         >
-          <WcaLogoIcon className='text-xs' />
+          <WcaLogoIcon className='w-5' />
         </Link>
       </div>
     </HoverPopover>
@@ -41,17 +34,18 @@ function WcaPopoverContent({ wcaId }: { wcaId: string }) {
   const {
     data: avatarUrl,
     isLoading: isAvatarLoading,
-    error: unoffucialError,
+    error: unofficialError,
   } = useWcaAvatarUrl({
     wcaId,
   })
 
-  if (isOfficialDataLoading || isAvatarLoading) return <LoadingDots />
-  if (officialError || unoffucialError) {
+  if (isOfficialDataLoading || isAvatarLoading)
+    return <LoadingDots className='p-4' />
+  if (officialError || unofficialError) {
     return (
       <>
         <p>Error:</p>
-        <p>{officialError?.message}</p> <p>{unoffucialError?.message}</p>
+        <p>{officialError?.message}</p> <p>{unofficialError?.message}</p>
       </>
     )
   }
@@ -59,41 +53,60 @@ function WcaPopoverContent({ wcaId }: { wcaId: string }) {
 
   const best3by3Results = getBest3by3Results(officialData)
   return (
-    <div className='flex gap-4 sm:flex-col sm:items-center'>
+    <div className='flex gap-[0.625rem] p-3 sm:flex-col sm:items-center'>
       {avatarUrl && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          className='max-h-48 max-w-48 grow basis-0 rounded-xl'
+          className='max-h-44 grow basis-0 rounded-xl'
           src={avatarUrl}
           alt={officialData.name}
         />
       )}
 
       <div className='flex flex-col text-left sm:items-center sm:text-center'>
-        <h1 className='btn-lg flex items-center gap-2'>
-          <CountryFlag iso={officialData.country} />
-          <span>{officialData.name}</span>
-        </h1>
-        <div className='flex items-center gap-2'>
+        <div className='border-b border-grey-100 pb-1'>
+          <h1 className='title-h3 mb-1 flex items-center gap-2'>
+            <CountryFlag iso={officialData.country} />
+            <span>{officialData.name}</span>
+          </h1>
           <Link
             href={`https://worldcubeassociation.org/persons/${wcaId}`}
-            className='text-secondary-20 underline'
+            className='btn-sm text-secondary-20'
           >
-            <span>({wcaId})</span>
+            <span>{wcaId}</span>
           </Link>
         </div>
-        <p>Competitions: {officialData.numberOfCompetitions}</p>
-        <p>Completed solves: {getTotalCompletedSolveNumber(officialData)}</p>
-        {best3by3Results.single && (
+
+        <div className='flex flex-1 flex-col justify-end gap-1 pt-4 text-grey-40 sm:pt-2'>
           <p>
-            Best 3x3 single: {formatSolveTime(best3by3Results.single, true)}
+            Competitions:{' '}
+            <span className='text-white-100'>
+              {officialData.numberOfCompetitions}
+            </span>
           </p>
-        )}
-        {best3by3Results.average && (
           <p>
-            Best 3x3 average: {formatSolveTime(best3by3Results.average, true)}
+            Completed solves:{' '}
+            <span className='text-white-100'>
+              {getTotalCompletedSolveNumber(officialData)}
+            </span>
           </p>
-        )}
+          {best3by3Results.single && (
+            <p>
+              Best 3x3 single:{' '}
+              <span className='text-white-100'>
+                {formatSolveTime(best3by3Results.single, true)}
+              </span>
+            </p>
+          )}
+          {best3by3Results.average && (
+            <p>
+              Best 3x3 average:{' '}
+              <span className='text-white-100'>
+                {formatSolveTime(best3by3Results.average, true)}
+              </span>
+            </p>
+          )}
+        </div>
       </div>
     </div>
   )

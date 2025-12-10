@@ -15,7 +15,8 @@ export default function AppLayout({
   children: React.ReactNode
   withoutHeader?: boolean
 }) {
-  const SIDEBAR_WIDTH_CLASS = 'w-[clamp(15rem,17vw,21rem)]'
+  const SIDEBAR_WIDTH_CLASS =
+    'w-[clamp(15rem,17vw,21rem)] xl-short:min-w-[19rem] lg:w-[4.375rem] sm:sr-only'
 
   return (
     <>
@@ -26,12 +27,7 @@ export default function AppLayout({
         vaul-drawer-wrapper='vaul-drawer-wrapper'
         className='flex h-full gap-3 bg-black-100 p-[1.625rem] lg:p-3 sm:flex-col sm:gap-0 sm:py-0'
       >
-        <Sidebar
-          className={cn(
-            'xl-short:min-w-[19rem] lg:w-auto sm:sr-only',
-            SIDEBAR_WIDTH_CLASS,
-          )}
-        />
+        <Sidebar className={SIDEBAR_WIDTH_CLASS} />
         <main
           id={SCROLL_CONTAINER_ID}
           className='relative flex h-[calc(100svh-3.25rem)] flex-1 flex-col overflow-y-auto rounded-2xl lg:h-[calc(100svh-1.5rem)]'
@@ -42,13 +38,8 @@ export default function AppLayout({
           </section>
         </main>
         <BottomNavbar className='hidden sm:block' />
-        <div className='pointer-events-none fixed inset-0 flex p-[1.625rem] sm:px-0 sm:pb-16'>
-          <div
-            className={cn(
-              'opacity-0 xl-short:min-w-[19rem] lg:sr-only',
-              SIDEBAR_WIDTH_CLASS,
-            )}
-          />
+        <div className='pointer-events-none fixed inset-0 flex p-[1.625rem] lg:p-3 sm:px-0 sm:pb-16'>
+          <div className={SIDEBAR_WIDTH_CLASS} />
           <div className='relative flex-1' id={MAIN_OVERLAY_ID}></div>
         </div>
       </div>

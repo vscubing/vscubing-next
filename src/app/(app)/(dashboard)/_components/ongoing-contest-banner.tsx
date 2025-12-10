@@ -138,9 +138,9 @@ function Duration({
 }) {
   const duration = formatContestDuration(ongoing)
   return duration ? (
-    <p className='text-large'>{duration}</p>
+    <p className='text-base'>{duration}</p>
   ) : (
-    <p className='text-large w-36 animate-pulse bg-grey-100 text-grey-100'>
+    <p className='w-36 animate-pulse bg-grey-100 text-base text-grey-100'>
       Loading...
     </p>
   )

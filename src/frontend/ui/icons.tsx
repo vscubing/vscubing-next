@@ -42,6 +42,7 @@ import SingleIcon from '@/../public/icons/single.icon.svg'
 import VscubingIcon from '@/../public/icons/vscubing.icon.svg'
 import WcaLogoIcon from '@/../public/icons/wca-logo.icon.svg'
 import TrophyIcon from '@/../public/icons/trophy.icon.svg'
+import CrownIcon from '@/../public/icons/crown.icon.svg'
 
 export {
   AllContestsIcon,
@@ -81,6 +82,7 @@ export {
   VscubingIcon,
   WcaLogoIcon,
   TrophyIcon,
+  CrownIcon,
 }
 export { CodeXmlIcon, SquareArrowOutUpRight } from 'lucide-react'
 

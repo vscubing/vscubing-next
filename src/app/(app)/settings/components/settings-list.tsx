@@ -72,9 +72,8 @@ export function SettingsList() {
             </PopoverTrigger>
             <PopoverPortal>
               <PopoverContent
-                className='caption max-w-[15.5rem]'
+                className='caption max-w-[15.5rem] p-4 text-center'
                 side='bottom'
-                withArrow
               >
                 Use "+" and "-" keys to increase/decrease the puzzle size during
                 a solve. <br />
@@ -144,7 +143,7 @@ function Select<T extends string>({
           className,
         )}
       >
-        <span className='text-large'>
+        <span className='text-base'>
           <SelectPrimitive.Value />
         </span>
         <SelectPrimitive.Icon>
@@ -178,7 +177,7 @@ function SelectItem({
   return (
     <SelectPrimitive.Item
       className={cn(
-        'text-large flex w-full min-w-[5.625rem] cursor-pointer items-center rounded-lg px-4 py-[0.625rem] outline-none hover:bg-primary-100 active:bg-primary-100 data-[state=checked]:bg-primary-100',
+        'flex w-full min-w-[5.625rem] cursor-pointer items-center rounded-lg px-4 py-[0.625rem] text-base outline-none hover:bg-primary-100 active:bg-primary-100 data-[state=checked]:bg-primary-100',
         className,
       )}
       {...props}

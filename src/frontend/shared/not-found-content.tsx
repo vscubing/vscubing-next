@@ -12,7 +12,7 @@ export function NotFoundContent() {
         <ParallaxCubes mainImgSrc={img404} mainImgAlt='404' />
         <div className='relative max-w-[35rem] sm:max-w-none'>
           <p className='title-lg mb-4'>Lost in cuberspace?</p>
-          <p className='text-large mb-8 inline-block'>
+          <p className='mb-8 inline-block text-base'>
             Sorry, the page you're looking for seems to have gone on a digital
             adventure of its own
           </p>

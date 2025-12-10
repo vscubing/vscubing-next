@@ -49,9 +49,6 @@
   .btn-sm {
     @apply font-kanit text-[0.875rem] font-medium;
   }
-  .text-large {
-    @apply text-[1rem] sm:text-[0.9375rem];
-  }
   .caption {
     @apply text-[0.75rem] tracking-[0.01em] sm:text-[0.75rem];
   }
