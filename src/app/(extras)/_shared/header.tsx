@@ -1,15 +1,15 @@
 'use client'
 import { cn } from '@/frontend/utils/cn'
 import { useState, useEffect } from 'react'
-import { Container } from '../_shared/container'
+import { Container } from './container'
 import { CloseIcon, Logo, MenuIcon } from '@/frontend/ui'
-import { DynamicLinkToApp } from '../_shared/link-to-app'
+import { DynamicLinkToApp } from './link-to-app'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 
-export function LandingHeader({
-  navigationAnchors,
+export function ExtrasHeader({
+  navigationLinks: navigationAnchors,
 }: {
-  navigationAnchors: { id: string; name: string }[]
+  navigationLinks: { href: string; name: string }[]
 }) {
   const isWindowScrolled = useIsWindowScrolled()
 
@@ -29,10 +29,10 @@ export function LandingHeader({
               <Logo variant='full' />
             </a>
             <nav className='vertical-alignment-fix flex gap-10 md:hidden'>
-              {navigationAnchors.map(({ id, name }) => (
+              {navigationAnchors.map(({ href, name }) => (
                 <a
-                  key={id}
-                  href={`#${id}`}
+                  key={href}
+                  href={href}
                   className='transition-base text-[1.125rem] font-medium text-grey-40 hover:text-white-100'
                 >
                   {name}
@@ -56,7 +56,7 @@ function MobileMenu({
   navigationAnchors,
 }: {
   className: string
-  navigationAnchors: { id: string; name: string }[]
+  navigationAnchors: { href: string; name: string }[]
 }) {
   return (
     <DialogPrimitive.Dialog>
@@ -80,9 +80,9 @@ function MobileMenu({
             </DialogPrimitive.Close>
           </div>
           <div className='flex flex-1 flex-col items-center gap-11 rounded-b-3xl pt-6 text-[1rem] text-grey-40 [background:linear-gradient(180deg,rgba(6,7,9,1)_16%,rgba(73,76,116,1)_80%)]'>
-            {navigationAnchors.map(({ id, name }) => (
-              <DialogPrimitive.Close asChild key={id}>
-                <a href={`#${id}`} className='py-1 font-medium'>
+            {navigationAnchors.map(({ href, name }) => (
+              <DialogPrimitive.Close asChild key={href}>
+                <a href={href} className='py-1 font-medium'>
                   {name}
                 </a>
               </DialogPrimitive.Close>

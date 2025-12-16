@@ -1,5 +1,5 @@
 import { CubeIcon, KeyboardIcon } from '../_shared/icons'
-import { Container } from '../_shared/container'
+import { Container } from '../../_shared/container'
 import { LazyAutoplayVideo } from '../_shared/lazy-autoplay-video'
 
 export function AboutSection({

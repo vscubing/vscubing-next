@@ -6,7 +6,7 @@ import {
   Logo,
   SecondaryButton,
 } from '@/frontend/ui'
-import { Container } from '../_shared/container'
+import { Container } from './container'
 import { cn } from '@/frontend/utils/cn'
 import footerBgCubes from '@/../public/landing/footer/footer-bg-cubes.svg'
 import animatedCube1 from '@/../public/landing/footer/animated-cube-1.svg'
@@ -22,13 +22,7 @@ import standWithUkraineImg from '@/../public/images/stand-with-ukraine.svg'
 import { type CSSProperties } from 'react'
 import Image, { type StaticImageData } from 'next/image'
 
-export function Footer({
-  className,
-  navigationAnchors,
-}: {
-  className: string
-  navigationAnchors: { id: string; name: string }[]
-}) {
+export function Footer({ className }: { className: string }) {
   return (
     <Container className={cn('pb-[1.625rem]', className)}>
       <footer className='relative overflow-clip rounded-3xl px-[1.625rem] pb-[1.625rem] pt-10 [background:linear-gradient(180deg,#060709_0%,#494C74_100%)] sm:px-6'>
@@ -83,17 +77,19 @@ export function Footer({
             <div className='w-[21.125rem] pt-3'>
               <h2 className='mb-4 font-medium text-white-100'>Quick links</h2>
               <nav className='flex flex-col gap-[.8rem]'>
-                {navigationAnchors
-                  .filter(({ id }) => id !== 'contacts') // we already have the contacts in the footer
-                  .map(({ id, name }) => (
-                    <a
-                      key={id}
-                      href={`#${id}`}
-                      className='text-[1.125rem] font-medium hover:text-white-100'
-                    >
-                      {name}
-                    </a>
-                  ))}
+                {[
+                  { name: 'About', href: '/landing#about' },
+                  { name: 'Features', href: '/landing#features' },
+                  { name: 'Guide', href: '/landing#guide' },
+                ].map(({ href, name }) => (
+                  <a
+                    key={href}
+                    href={href}
+                    className='text-[1.125rem] font-medium hover:text-white-100'
+                  >
+                    {name}
+                  </a>
+                ))}
               </nav>
             </div>
             <div className='flex-1 pt-3'>
