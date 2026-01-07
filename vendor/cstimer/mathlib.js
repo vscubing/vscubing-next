@@ -377,7 +377,7 @@ const mathlib = (function () {
       col2 = f[cFacelet[i][(ori + 2) % 3]]
       for (j = 0; j < 8; ++j) {
         if (col1 == ~~(cFacelet[j][1] / 9) && col2 == ~~(cFacelet[j][2] / 9)) {
-          this.ca[i] = j | (ori % 3 << 3)
+          this.ca[i] = j | ((ori % 3) << 3)
           break
         }
       }
