@@ -1,7 +1,7 @@
 'use client'
 
 import { DiscordIcon, PrimaryButton } from '@/frontend/ui'
-import { Container } from '../_shared/container'
+import { Container } from '../../_shared/container'
 import contactsPeopleImg from '@/../public/landing/contacts-people.svg'
 import { AnimatedBlob } from '../_shared/animated-blob'
 import Image from 'next/image'
