@@ -20,7 +20,8 @@
     "lint:check": "next lint",
     "lint:write": "next lint --fix",
     "type:check": "tsc --noEmit",
-    "test": "bun test"
+    "test": "bun test",
+    "postinstall": "next telemetry disable"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
