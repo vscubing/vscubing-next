@@ -100,7 +100,7 @@ export default function PrivacyPolicyPage() {
                 </ul>
                 <p className='mb-2'>
                   We do not use session replay, do not send email addresses to
-                  PostHog, and do not use feature flags. PostHog is hosted on
+                  PostHog, and do not use feature flags. We only use PostHog's
                   EU-based servers.
                 </p>
               </Section>

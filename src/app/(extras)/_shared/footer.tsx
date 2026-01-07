@@ -21,6 +21,7 @@ import animatedCube9 from '@/../public/landing/footer/animated-cube-9.svg'
 import standWithUkraineImg from '@/../public/images/stand-with-ukraine.svg'
 import { type CSSProperties } from 'react'
 import Image, { type StaticImageData } from 'next/image'
+import Link from 'next/link'
 
 export function Footer({ className }: { className: string }) {
   return (
@@ -82,13 +83,13 @@ export function Footer({ className }: { className: string }) {
                   { name: 'Features', href: '/landing#features' },
                   { name: 'Guide', href: '/landing#guide' },
                 ].map(({ href, name }) => (
-                  <a
+                  <Link
                     key={href}
                     href={href}
                     className='text-[1.125rem] font-medium hover:text-white-100'
                   >
                     {name}
-                  </a>
+                  </Link>
                 ))}
               </nav>
             </div>
@@ -122,7 +123,13 @@ export function Footer({ className }: { className: string }) {
               </ul>
             </div>
           </div>
-          <div className='mt-5 flex justify-end sm:mt-20 sm:justify-start'>
+          <div className='mt-6 flex items-center justify-between pl-2 lg:mt-8 lg:pl-0'>
+            <Link
+              href='/privacy-policy'
+              className='text-[1.125rem] font-medium hover:text-white-100'
+            >
+              Privacy Policy
+            </Link>
             <a href='https://u24.gov.ua/about'>
               <Image src={standWithUkraineImg} alt='Stand with Ukraine' />
             </a>
