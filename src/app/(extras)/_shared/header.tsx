@@ -5,6 +5,7 @@ import { Container } from './container'
 import { CloseIcon, Logo, MenuIcon } from '@/frontend/ui'
 import { DynamicLinkToApp } from './link-to-app'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
+import Link from 'next/link'
 
 export function ExtrasHeader({
   navigationLinks: navigationAnchors,
@@ -25,9 +26,9 @@ export function ExtrasHeader({
           )}
         >
           <div className='flex w-full items-center gap-[6.25rem] lg:gap-20'>
-            <a href='#'>
+            <Link href='/'>
               <Logo variant='full' />
-            </a>
+            </Link>
             <nav className='vertical-alignment-fix flex gap-10 md:hidden'>
               {navigationAnchors.map(({ href, name }) => (
                 <a
