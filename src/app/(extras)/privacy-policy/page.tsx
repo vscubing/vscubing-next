@@ -62,7 +62,7 @@ export default function PrivacyPolicyPage() {
                   <li>
                     OAuth provider identifier (e.g. Google provider account ID)
                   </li>
-                  <li>Authentication session data (via an in-house cookie)</li>
+                  <li>Authentication session data (via in-house cookies)</li>
                 </ul>
                 <p className='mb-2'>
                   This data is necessary to create and manage user accounts and
