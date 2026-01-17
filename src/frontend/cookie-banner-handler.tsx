@@ -20,7 +20,10 @@ export function CookieBannerHandler() {
       Sonner.toast.custom(
         () => (
           <CookieBanner
-            onDismiss={() => Sonner.toast.dismiss(COOKIE_BANNER_TOAST_ID)}
+            onDismiss={() => {
+              Sonner.toast.dismiss(COOKIE_BANNER_TOAST_ID)
+              setSeenCookieBanner(true)
+            }}
           />
         ),
         {
