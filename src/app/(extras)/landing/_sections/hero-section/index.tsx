@@ -3,9 +3,9 @@
 import { LoadingSpinner } from '@/frontend/ui'
 import { StopwatchIcon } from '../../_shared/icons'
 import { KEY_MAP, KeyMapTile } from '@/frontend/shared/key-map-dialog'
-import { Container } from '../../_shared/container'
+import { Container } from '../../../_shared/container'
 import { AnimatedBlob } from '../../_shared/animated-blob'
-import { StaticLinkToApp } from '../../_shared/link-to-app'
+import { StaticLinkToApp } from '../../../_shared/link-to-app'
 import { Suspense, lazy } from 'react'
 import { useMatchesScreen } from '@/frontend/utils/tailwind'
 const TwistySection = lazy(() => import('./twisty-section'))

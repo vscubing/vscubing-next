@@ -39,6 +39,9 @@ export function Sidebar({ className }: { className?: string }) {
       <div className='flex flex-1 flex-col rounded-2xl bg-black-80 py-6 sm:py-3'>
         <Navbar variant='vertical' />
         <SocialLinks className='mb-4 mt-auto' />
+        <Link href='/privacy-policy' className='mb-4 text-center text-grey-40'>
+          Privacy Policy
+        </Link>
         <div className='flex justify-center border-t border-grey-80 pt-2'>
           <Link href='https://u24.gov.ua/about'>
             <Image

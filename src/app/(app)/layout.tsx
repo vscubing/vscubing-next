@@ -5,8 +5,9 @@ import { Sidebar } from './_layout/components/sidebar'
 import { LayoutHeader } from './_layout/layout-header'
 import { cn } from '@/frontend/utils/cn'
 import ClientOnlyPortal from '@/frontend/utils/client-only-portal'
-import type { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import { Toaster } from '@/frontend/ui'
+import { CookieBannerHandler } from '@/frontend/cookie-banner-handler'
 
 export default function AppLayout({
   children,
@@ -23,6 +24,7 @@ export default function AppLayout({
       <Toaster />
       <PickUsernameDialog />
       <PopupSidebar />
+      <CookieBannerHandler />
       <div
         vaul-drawer-wrapper='vaul-drawer-wrapper'
         className='flex h-full gap-3 bg-black-100 p-[1.625rem] lg:p-3 sm:flex-col sm:gap-0 sm:py-0'
