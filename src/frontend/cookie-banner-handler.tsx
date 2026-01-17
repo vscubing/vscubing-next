@@ -35,7 +35,7 @@ export function CookieBannerHandler() {
     }
   }, [seenCookieBanner, setSeenCookieBanner])
 
-  return
+  return null
 }
 
 function CookieBanner({ onDismiss }: { onDismiss: () => void }) {
