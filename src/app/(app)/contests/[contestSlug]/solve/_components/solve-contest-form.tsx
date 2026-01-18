@@ -5,6 +5,8 @@ import { CurrentSolve } from './current-solve'
 import { Progress } from './progress'
 import { SolvePanel } from './solve-panel'
 import { useSolveForm } from '@/frontend/shared/use-solve-form'
+import { useQuery } from '@tanstack/react-query'
+import { useTRPC } from '@/lib/trpc/react'
 
 export function SolveContestForm({
   contestSlug,
@@ -17,7 +19,31 @@ export function SolveContestForm({
     { contestSlug, discipline },
   )
 
+  const trpc = useTRPC()
+
+  const metadataQuery = trpc.userMetadata.userMetadata.queryOptions()
+  const { data: userMetadata } = useQuery(metadataQuery)
+
   if (!state) return // TODO: remove this if we make useSolveForm use useSuspenseQuery (see https://github.com/t3-oss/create-t3-app/issues/1765)
+
+  if (userMetadata?.suspended) {
+    return (
+      <p className='title-lg fixed inset-16 z-[10000] flex flex-1 flex-col items-center justify-center rounded-xl bg-black-100 text-center'>
+        Your account was suspended!
+        <br /> Go do something productive. <br />
+        <span className='mt-2 text-lg text-grey-60'>
+          P.S. if this is a mistake please{' '}
+          <a
+            className='text-primary-100 underline'
+            href='https://discord.gg/PxFrW9vTAy'
+          >
+            let us know
+          </a>
+          , we'll fix it ASAP
+        </span>
+      </p>
+    ) // this is an ad hoc solution for a friend who asked me to suspend his account
+  }
 
   const currentSolveNumber = (state?.submittedSolves?.length ?? 0) + 1
   return (

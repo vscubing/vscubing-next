@@ -33,7 +33,7 @@ export function BaseDialogButton({
   ref?: React.RefObject<ComponentRef<'button'>>
 }) {
   const isSmScreen = useMatchesScreen('sm')
-  if (!size) size = isSmScreen ? 'sm' : 'lg'
+  size ??= isSmScreen ? 'sm' : 'lg'
 
   if (version === 'primary')
     return (

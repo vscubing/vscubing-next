@@ -40,6 +40,7 @@ export const settingsRouter = createTRPCRouter({
           .nullable() satisfies ZodType<
           TwistySimulatorColorscheme | undefined | null
         >,
+        puzzleScale: z.number().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {

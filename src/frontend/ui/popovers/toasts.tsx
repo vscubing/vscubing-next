@@ -10,8 +10,6 @@ export function Toaster() {
       toastOptions={{
         unstyled: true,
         classNames: {
-          toast:
-            'bg-grey-80 py-4 pl-4 pr-10 rounded-xl flex gap-4 right-0 min-w-[20rem]',
           title: 'text-white-100 btn-sm mb-3',
           description: 'text-white caption',
           // we can remove !imporant in actionButton and closeButton after https://github.com/emilkowalski/sonner/issues/321 is fixed
@@ -44,6 +42,7 @@ export const TOASTS_PRESETS = {
 const DURATIONS = {
   short: 3_000,
   normal: 10_000,
+  long: 30_000,
   infinite: Infinity,
 } as const
 
@@ -79,6 +78,7 @@ export function toast({
     duration: DURATIONS[duration],
     id: dedupId,
     className: cn(
+      'bg-grey-80 py-4 pl-4 pr-10 rounded-xl flex gap-4 right-0 min-w-[20rem]',
       {
         "bg-[url('/images/confetti-festive-toast.svg')] bg-no-repeat":
           variant === 'festive',

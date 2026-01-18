@@ -1,3 +1,9 @@
+!!!
+merge:
+- [ ] `bun db:generate --name contest-type-and-round-number`
+
+
+IDK:
 - [x] always show results, without auth, even incomplete sessions
 - [x] join round
 - [x] leave round
@@ -30,4 +36,9 @@ Live streaming:
 Special contests:
 - [ ] round status (registration|ongoing|finished) (+incomplete sessions warning)
 
-Collaboration
+4x4 later:
+- [ ] enable handmarks (with opt-out setting)
+- [ ] handmarks explanation
+
+- [ ] disable touch mode for 4x4, update keymap for 4x4 and 2x2
+- [ ] make migrate-no-legacy default and remove the script

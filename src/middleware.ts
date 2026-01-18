@@ -3,7 +3,12 @@ import { NextResponse } from 'next/server'
 
 import type { NextRequest } from 'next/server'
 
+const WEBHOOKS_PATHS = ['/api/close-ongoing-and-create-new-contest']
+
 export async function middleware(request: NextRequest): Promise<NextResponse> {
+  if (WEBHOOKS_PATHS.includes(request.nextUrl.pathname))
+    return NextResponse.next()
+
   if (request.method === 'GET') {
     const response = NextResponse.next()
     const token = request.cookies.get('session')?.value ?? null

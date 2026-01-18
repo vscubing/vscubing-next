@@ -13,7 +13,7 @@ import {
   KeyMapDialogContent,
 } from '@/frontend/shared/key-map-dialog'
 import { isDiscipline, type Discipline } from '@/types'
-import { CONTEST_UNAUTHORIZED_MESSAGE, DISCIPLINES } from '@/types'
+import { CONTEST_UNAUTHORIZED_MESSAGE } from '@/types'
 import { notFound } from 'next/navigation'
 import { redirect } from 'next/navigation'
 import { Suspense, type ReactNode } from 'react'
@@ -48,6 +48,8 @@ export default async function SolveContestPage({
   const { contestSlug } = await params
   if (!isDiscipline(discipline)) redirect(`/contests/${contestSlug}`)
 
+  const metadata = await api.contest.getContestMetaData({ contestSlug })
+
   return (
     <>
       <PageTitle />
@@ -55,7 +57,7 @@ export default async function SolveContestPage({
       <LayoutSectionHeader>
         <div className='flex gap-3'>
           <DisciplineSwitcher
-            disciplines={DISCIPLINES}
+            disciplines={metadata.disciplines}
             initialDiscipline={discipline}
           />
         </div>

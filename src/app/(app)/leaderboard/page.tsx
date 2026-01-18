@@ -66,10 +66,11 @@ export default async function LeaderboardPage({
         </div>
 
         <HoverPopover
-          content='The leaderboards are updated every time an ongoing contest ends.'
-          contentProps={{
-            className: 'border-b border-secondary-20 whitespace-normal',
-          }}
+          content={
+            <div className='max-w-64 p-3 text-center'>
+              The leaderboards are updated every time an ongoing contest ends.
+            </div>
+          }
         >
           <span className='hidden md:block'>
             <ExclamationCircleIcon />

@@ -20,7 +20,7 @@ export function SettingsPreviewSimulator({
 
   const [scramble, setScramble] = useState('')
   const { applyKeyboardMove, simulatorRef } = useControllableSimulator({
-    discipline: '3by3',
+    discipline: '4by4',
     scramble,
     settings,
     setCameraPosition: ({ phi, theta }) => {
@@ -41,20 +41,20 @@ export function SettingsPreviewSimulator({
 
   useEventListener(
     'dblclick',
-    scrambleOnUnscramble,
+    scrambleOrUnscramble,
     simulatorRef as RefObject<HTMLDivElement>,
   )
 
   useEventListener('keydown', (event) => {
     if (event.key === ' ') {
-      scrambleOnUnscramble()
+      scrambleOrUnscramble()
     }
 
     if (!isDirty && !isRotation(event)) setIsDirty(true)
     applyKeyboardMove(event)
   })
 
-  function scrambleOnUnscramble() {
+  function scrambleOrUnscramble() {
     if (isDirty) {
       setScramble(scramble === '' ? ' ' : '') // HACK: a little hack to trigger a scramble update (changing it form '' to '' wouldn't do anything)
     } else {
@@ -93,8 +93,21 @@ export function SettingsPreviewSimulator({
 }
 
 function badRandomScramble() {
-  const MOVES = ['R', 'U', 'F', 'B', 'L', 'D']
-  return Array.from({ length: 20 })
+  const MOVES = [
+    'R',
+    'U',
+    'F',
+    'B',
+    'L',
+    'D',
+    'Rw',
+    'Uw',
+    'Fw',
+    'Bw',
+    'Lw',
+    'Dw',
+  ]
+  return Array.from({ length: 30 })
     .map(() => MOVES[Math.floor(Math.random() * MOVES.length)])
     .join(' ')
 }

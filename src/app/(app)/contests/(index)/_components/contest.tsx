@@ -31,7 +31,7 @@ export function ContestRowDesktop({
     >
       <div
         className={cn(
-          'text-large flex h-16 items-center justify-between rounded-xl pl-4',
+          'flex h-16 items-center justify-between rounded-xl pl-4 text-base',
           contest.isOngoing ? 'bg-secondary-80' : 'bg-grey-100',
           className,
         )}

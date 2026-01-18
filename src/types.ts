@@ -64,7 +64,7 @@ export const resultDnfable = z.custom<ResultDnfable>(
   },
 )
 
-export const DISCIPLINES = ['3by3', '2by2'] as const
+export const DISCIPLINES = ['3by3', '2by2', '4by4'] as const
 export type Discipline = (typeof DISCIPLINES)[number]
 export const DEFAULT_DISCIPLINE: Discipline = '3by3'
 export function isDiscipline(str: unknown): str is Discipline {
@@ -149,3 +149,10 @@ export const moveSchema = z.enum(MOVES as [Move, ...Move[]])
 export function isMove(moveStr: string): moveStr is Move {
   return (MOVES as readonly string[]).includes(moveStr)
 }
+
+export const PUZZLE_SCALE = {
+  MIN: 0.75,
+  MAX: 1.5,
+  DEFAULT: 1,
+  STEP: 0.05,
+} as const

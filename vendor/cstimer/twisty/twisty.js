@@ -202,6 +202,7 @@ const twistyjs = (function () {
         height: min,
         'font-size': min * 0.15,
       })
+      render()
     }
 
     this.keydown = function (e) {

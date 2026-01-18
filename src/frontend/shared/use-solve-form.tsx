@@ -26,6 +26,14 @@ export function useSolveForm({
     false,
   )
 
+  const metadataQuery = trpc.userMetadata.userMetadata.queryOptions()
+  const { data: userMetadata } = useQuery(metadataQuery)
+  const { mutate: updateUserMetadata } = useMutation(
+    trpc.userMetadata.updateUserMetadata.mutationOptions({
+      onSettled: () => queryClient.invalidateQueries(metadataQuery),
+    }),
+  )
+
   const stateQuery = trpc.roundSession.state.queryOptions({
     contestSlug,
     discipline,
@@ -130,11 +138,15 @@ export function useSolveForm({
       solveId: state.currentSolve!.id,
     })
 
-    if (
-      state.submittedSolves.length === 4 &&
-      payload.type === 'submitted' &&
-      !seenDiscordInvite
-    ) {
+    if (state.submittedSolves.length === 4 && payload.type === 'submitted') {
+      handleSessionFinished()
+    }
+  }
+
+  function handleSessionFinished() {
+    if (!userMetadata) return
+
+    if (!userMetadata.seenDiscordInvite) {
       toast({
         title: 'Great to have you on board',
         description:
@@ -144,7 +156,8 @@ export function useSolveForm({
         duration: 'infinite',
         className: 'w-[23.75rem]',
       })
-      setSeenDiscordInvite(true)
+      updateUserMetadata({ seenDiscordInvite: true })
+      return
     }
   }
 

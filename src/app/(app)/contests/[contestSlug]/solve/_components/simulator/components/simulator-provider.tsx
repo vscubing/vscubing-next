@@ -27,18 +27,11 @@ import {
   KeyMapDialogTrigger,
   KeyMapDialogContent,
 } from '@/frontend/shared/key-map-dialog'
-import {
-  useSimulatorSettings,
-  useMutateSimulatorSettings,
-} from '@/app/(app)/settings'
 import { useEventListener } from 'usehooks-ts'
 import type { Move } from '@/types'
 const Simulator = lazy(() => import('./simulator/simulator.lazy'))
 
 export function SimulatorProvider({ children }: { children: React.ReactNode }) {
-  const { data: settings } = useSimulatorSettings()
-  const { updateSettings } = useMutateSimulatorSettings() // TODO: move this inside useTwistySimulator
-
   const [solveState, setSolveState] = useState<{
     initSolveData: InitSolveData
     inspectionStartCallback: () => void
@@ -152,25 +145,6 @@ export function SimulatorProvider({ children }: { children: React.ReactNode }) {
                     onSolveFinish={handleSolveFinish}
                     onInspectionStart={handleInspectionStart}
                     onMove={solveState.moveCallback}
-                    settings={{
-                      animationDuration: settings?.animationDuration ?? 100, // TODO: defaults don't belong here
-                      cameraPositionPhi: settings?.cameraPositionPhi ?? 6,
-                      cameraPositionTheta: settings?.cameraPositionTheta ?? 0,
-                      inspectionVoiceAlert:
-                        settings?.inspectionVoiceAlert ?? 'Male',
-                      colorscheme: settings?.colorscheme ?? null,
-                    }}
-                    setCameraPosition={({ phi, theta }) => {
-                      if (
-                        phi !== settings?.cameraPositionPhi ||
-                        theta !== settings?.cameraPositionTheta
-                      ) {
-                        updateSettings({
-                          cameraPositionPhi: phi,
-                          cameraPositionTheta: theta,
-                        })
-                      }
-                    }}
                   />
                 )}
               </Suspense>

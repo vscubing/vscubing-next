@@ -1,5 +1,5 @@
 {
-  "id": "4c093d8f-54b6-4c25-a411-9c89a75b5caa",
+  "id": "622fbe72-1c5f-40f8-8c2d-b0d0107700af",
   "prevId": "43ba8b10-b424-43dd-80a2-dba0ad09fb08",
   "version": "7",
   "dialect": "postgresql",
@@ -83,24 +83,24 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "account_user_id_user_id_fk": {
           "name": "account_user_id_user_id_fk",
           "tableFrom": "account",
+          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -152,24 +152,24 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "auth_session_user_id_user_id_fk": {
           "name": "auth_session_user_id_user_id_fk",
           "tableFrom": "auth_session",
+          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -299,10 +299,10 @@
       "uniqueConstraints": {
         "contest_slug_unique": {
           "name": "contest_slug_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "slug"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       },
       "policies": {},
@@ -366,15 +366,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "round_session_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "2147483647",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "contestant_id": {
@@ -421,48 +421,48 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "round_session_contestant_id_user_id_fk": {
           "name": "round_session_contestant_id_user_id_fk",
           "tableFrom": "round_session",
+          "tableTo": "user",
           "columnsFrom": [
             "contestant_id"
           ],
-          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "round_session_round_id_round_id_fk": {
           "name": "round_session_round_id_round_id_fk",
           "tableFrom": "round_session",
+          "tableTo": "round",
           "columnsFrom": [
             "round_id"
           ],
-          "tableTo": "round",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "round_id_contestant_id": {
           "name": "round_id_contestant_id",
+          "nullsNotDistinct": false,
           "columns": [
             "round_id",
             "contestant_id"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       },
       "policies": {},
@@ -493,15 +493,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "round_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "2147483647",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "contest_slug": {
@@ -522,28 +522,28 @@
         "round_contest_slug_contest_slug_fk": {
           "name": "round_contest_slug_contest_slug_fk",
           "tableFrom": "round",
+          "tableTo": "contest",
           "columnsFrom": [
             "contest_slug"
           ],
-          "tableTo": "contest",
           "columnsTo": [
             "slug"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "round_discipline_slug_discipline_slug_fk": {
           "name": "round_discipline_slug_discipline_slug_fk",
           "tableFrom": "round",
+          "tableTo": "discipline",
           "columnsFrom": [
             "discipline_slug"
           ],
-          "tableTo": "discipline",
           "columnsTo": [
             "slug"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -576,15 +576,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "scramble_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "2147483647",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "round_id": {
@@ -605,8 +605,8 @@
           "primaryKey": false,
           "notNull": true,
           "generated": {
-            "type": "stored",
-            "as": "CASE WHEN position IN ('E1', 'E2') THEN TRUE ELSE FALSE END"
+            "as": "CASE WHEN position IN ('E1', 'E2') THEN TRUE ELSE FALSE END",
+            "type": "stored"
           }
         },
         "moves": {
@@ -621,26 +621,26 @@
         "scramble_round_id_round_id_fk": {
           "name": "scramble_round_id_round_id_fk",
           "tableFrom": "scramble",
+          "tableTo": "round",
           "columnsFrom": [
             "round_id"
           ],
-          "tableTo": "round",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "round_position_unique": {
           "name": "round_position_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "round_id",
             "position"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       },
       "policies": {},
@@ -671,15 +671,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "solve_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "2147483647",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "scramble_id": {
@@ -738,50 +738,120 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "solve_scramble_id_scramble_id_fk": {
           "name": "solve_scramble_id_scramble_id_fk",
           "tableFrom": "solve",
+          "tableTo": "scramble",
           "columnsFrom": [
             "scramble_id"
           ],
-          "tableTo": "scramble",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "solve_round_session_id_round_session_id_fk": {
           "name": "solve_round_session_id_round_session_id_fk",
           "tableFrom": "solve",
+          "tableTo": "round_session",
           "columnsFrom": [
             "round_session_id"
           ],
-          "tableTo": "round_session",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "round_session_scramble_unique": {
           "name": "round_session_scramble_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "round_session_id",
             "scramble_id"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.user_metadata": {
+      "name": "user_metadata",
+      "schema": "",
+      "columns": {
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "byDefault",
+            "name": "user_metadata_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "seenSportcubingAd": {
+          "name": "seenSportcubingAd",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "user_metadata_user_id_user_id_fk": {
+          "name": "user_metadata_user_id_user_id_fk",
+          "tableFrom": "user_metadata",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -810,15 +880,15 @@
           "primaryKey": true,
           "notNull": true,
           "identity": {
+            "type": "byDefault",
             "name": "user_simulator_settings_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "2147483647",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public",
-            "type": "byDefault"
+            "cycle": false
           }
         },
         "user_id": {
@@ -867,15 +937,15 @@
         "user_simulator_settings_user_id_user_id_fk": {
           "name": "user_simulator_settings_user_id_user_id_fk",
           "tableFrom": "user_simulator_settings",
+          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -887,10 +957,10 @@
   },
   "enums": {},
   "schemas": {},
-  "views": {},
   "sequences": {},
   "roles": {},
   "policies": {},
+  "views": {},
   "_meta": {
     "columns": {},
     "schemas": {},

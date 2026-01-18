@@ -8,7 +8,6 @@ export async function GET(request: NextRequest): Promise<Response> {
   const state = generateState()
   const codeVerifier = generateCodeVerifier()
   const url = googleOauthClient.createAuthorizationURL(state, codeVerifier, [
-    'openid',
     'email',
   ])
 

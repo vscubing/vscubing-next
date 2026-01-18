@@ -122,7 +122,7 @@ function PageShell({
             >
               Contest {contestSlug}
             </Link>
-            <p className='text-large'>Scramble {scramblePosition}</p>
+            <p className='text-base'>Scramble {scramblePosition}</p>
           </div>
         </LayoutSectionHeader>
         <SpinningBorder
@@ -138,7 +138,7 @@ function PageShell({
           >
             <div className='sm:min-h-14'>
               <p className='title-h3 mb-1'>{username}</p>
-              <p className='text-large text-grey-20'>
+              <p className='text-base text-grey-20'>
                 <SolveTimeLabel
                   timeMs={timeMs ?? 0}
                   className='mr-4 min-w-0 lg:min-w-0'
@@ -177,10 +177,7 @@ function SolveTps({
   return (
     <span>
       {turnCount} turns, {tps} TPS {''}
-      <HoverPopover
-        content='Turns per second'
-        contentProps={{ className: 'border-b-2 border-primary-100' }}
-      >
+      <HoverPopover content={<div className='p-3'>Turns per second</div>}>
         (?)
       </HoverPopover>
     </span>

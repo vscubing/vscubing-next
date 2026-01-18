@@ -12,9 +12,10 @@ import {
 import { initTwistySimulator } from 'vendor/cstimer'
 import { type RefObject, useEffect, useState } from 'react'
 import { useEventCallback } from 'usehooks-ts'
+import { QuantumMove } from '@vscubing/cubing/alg'
 
 export type SimulatorEvent = {
-  move: Move
+  move: QuantumMove
   timestamp: number
   isRotation: boolean
   isSolved: boolean
@@ -49,7 +50,7 @@ export function useTwistySimulator({
     const moveListener: TwistySimulatorMoveListener = (rawMove, timestamp) => {
       if (!_puzzle) throw new Error('[SIMULATOR] puzzle undefined')
 
-      const move = parseCstimerMove(_puzzle.move2str(rawMove))
+      const move = new QuantumMove(_puzzle.move2str(rawMove))
       const isSolved = _puzzle.isSolved() === 0
       stableOnMove({
         move,
@@ -119,6 +120,10 @@ export function useTwistySimulator({
     puzzle,
     scramble,
   ])
+
+  useEffect(() => {
+    puzzle?.resize()
+  }, [settings.puzzleScale, puzzle])
 }
 
 export const SIMULATOR_DISCIPLINES_MAP = {
@@ -129,6 +134,10 @@ export const SIMULATOR_DISCIPLINES_MAP = {
   '2by2': {
     dimension: 2,
     puzzle: 'cube2',
+  },
+  '4by4': {
+    dimension: 4,
+    puzzle: 'cube4',
   },
 } as const
 

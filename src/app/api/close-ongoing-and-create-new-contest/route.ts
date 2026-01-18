@@ -1,22 +1,15 @@
 import { tryCatch } from '@/lib/utils/try-catch'
 import { env } from '@/env'
-import {
-  closeOngoingAndCreateNewContest,
-  NO_ONGOING_CONTEST_ERROR_MESSAGE,
-} from '@/backend/shared/contest-management'
-import type { NextRequest } from 'next/server'
+import { closeOngoingAndCreateNewContest } from '@/backend/shared/contest-management'
 import { sendTelegramMessage } from '@/backend/shared/telegram'
 
-export async function POST(request: NextRequest) {
-  const token = new Headers(request.headers)
-    .get('Authorization')
-    ?.slice('Bearer '.length)
+export async function POST(request: Request): Promise<Response> {
+  const url = new URL(request.url)
+  const token = url.searchParams.get('secret')
   if (!token) {
-    console.error('[CONTEST MANAGEMENT] Webhook secret required')
     return new Response('Webhook secret required', { status: 401 })
   }
   if (token !== env.CONTEST_CREATION_WEBHOOK_SECRET) {
-    console.error('[CONTEST MANAGEMENT] Incorrect webhook secret')
     // console.error(
     //   `[CONTEST MANAGEMENT] Incorrect webhook secret. Expected: \n"${env.CONTEST_CREATION_WEBHOOK_SECRET}" (${env.CONTEST_CREATION_WEBHOOK_SECRET.length}) \n Received:\n"${token}" (${token.length})`,
     // )
@@ -24,21 +17,25 @@ export async function POST(request: NextRequest) {
   }
 
   const { data, error } = await tryCatch(closeOngoingAndCreateNewContest())
-  if (error?.message === NO_ONGOING_CONTEST_ERROR_MESSAGE) {
-    console.error(`[CONTEST MANAGEMENT] ${NO_ONGOING_CONTEST_ERROR_MESSAGE}`)
-    return new Response(error.message, { status: 412 })
+  if (error) {
+    await sendTelegramMessage(
+      "Couldn't close ongoing and create new contest\n" +
+        error.message +
+        '\n' +
+        JSON.stringify(error),
+      'contest-management',
+    )
+    return new Response(error.message + '\n' + JSON.stringify(error), {
+      status: 500,
+    })
   }
-  if (error) throw error
 
   const { newContestSlug } = data
 
-  console.error(
-    `[CONTEST MANAGEMENT] Closed ongoing and published Contest ${newContestSlug} (cause: webhook)`,
+  // if (env.NEXT_PUBLIC_APP_ENV !== 'development')
+  await sendTelegramMessage(
+    `Closed ongoing and published Contest ${newContestSlug}`,
+    'contest-management',
   )
-  if (env.NEXT_PUBLIC_APP_ENV !== 'development')
-    await sendTelegramMessage(
-      `Closed ongoing and published Contest ${newContestSlug} (cause: webhook)`,
-      'contest-management',
-    )
   return new Response(`Successfully published Contest ${newContestSlug}`)
 }

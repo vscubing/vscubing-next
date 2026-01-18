@@ -22,7 +22,6 @@ export const env = createEnv({
     TELEGRAM_TOKEN: z.string(),
     TELEGRAM_CHAT_ID: z.number(),
     TELEGRAM_CONTEST_MANAGEMENT_THREAD_ID: z.number(),
-    CONTEST_CREATION_WEBHOOK_SECRET: z.string(),
     TNOODLE_URL:
       process.env.NEXT_PUBLIC_APP_ENV === 'development'
         ? z.string().url().optional()
@@ -35,6 +34,8 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_APP_ENV === 'development'
         ? z.literal('ENABLED').optional()
         : z.undefined(),
+    CONTEST_CREATION_WEBHOOK_SECRET: z.string(),
+    NEXT_TELEMETRY_DISABLED: z.literal('1'),
   },
 
   /**
@@ -74,13 +75,14 @@ export const env = createEnv({
     TELEGRAM_CONTEST_MANAGEMENT_THREAD_ID: Number(
       process.env.TELEGRAM_CONTEST_MANAGEMENT_THREAD_ID,
     ),
-    CONTEST_CREATION_WEBHOOK_SECRET:
-      process.env.CONTEST_CREATION_WEBHOOK_SECRET,
     TNOODLE_URL: process.env.TNOODLE_URL,
     TNOODLE_SECRET: process.env.TNOODLE_SECRET,
+    CONTEST_CREATION_WEBHOOK_SECRET:
+      process.env.CONTEST_CREATION_WEBHOOK_SECRET,
     NEXT_PUBLIC_APP_ENV: process.env.NEXT_PUBLIC_APP_ENV,
     NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
     NEXT_PUBLIC_SOLVE_SECRET: process.env.NEXT_PUBLIC_SOLVE_SECRET,
+    NEXT_TELEMETRY_DISABLED: process.env.NEXT_TELEMETRY_DISABLED,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

@@ -6,12 +6,25 @@ import {
   INSPECTION_DNF_THRESHHOLD_MS,
   INSPECTION_PLUS_TWO_THRESHHOLD_MS,
 } from './constants'
-import type { Discipline, Move, ResultDnfable } from '@/types'
 import type { userSimulatorSettingsTable } from '@/backend/db/schema'
 import type { SimulatorCameraPosition } from 'vendor/cstimer/types'
+import {
+  PUZZLE_SCALE,
+  type Move,
+  type Discipline,
+  type ResultDnfable,
+} from '@/types'
 import { useIsTouchDevice } from '@/frontend/utils/use-media-query'
 import { cn } from '@/frontend/utils/cn'
+import { type QuantumMove } from '@vscubing/cubing/alg'
+import { useEventCallback, useEventListener } from 'usehooks-ts'
+import { toast } from '@/frontend/ui'
+import {
+  useSimulatorSettings,
+  useMutateSimulatorSettings,
+} from '@/app/(app)/settings'
 
+export const MOVECOUNT_LIMIT = 2000
 export type InitSolveData = { scramble: string; discipline: Discipline }
 
 export type SimulatorSolve = {
@@ -24,21 +37,25 @@ type SimulatorProps = {
   initSolveData: InitSolveData
   onInspectionStart: () => void
   onSolveFinish: SimulatorSolveFinishCallback
-  onMove: (move: Move, event?: 'solve-start' | 'solve-end') => void
-  settings: Omit<
-    typeof userSimulatorSettingsTable.$inferSelect,
-    'id' | 'createdAt' | 'updatedAt' | 'userId'
-  >
-  setCameraPosition: (pos: SimulatorCameraPosition) => void
 }
 export default function Simulator({
   initSolveData,
-  onMove,
   onInspectionStart,
   onSolveFinish,
-  settings,
-  setCameraPosition,
 }: SimulatorProps) {
+  const { data: settingsWithoutDefaults, isLoading: settingsLoading } =
+    useSimulatorSettings()
+  const { updateSettings } = useMutateSimulatorSettings()
+  const settings = {
+    animationDuration: settingsWithoutDefaults?.animationDuration ?? 100, // TODO: defaults don't belong here
+    cameraPositionPhi: settingsWithoutDefaults?.cameraPositionPhi ?? 6,
+    cameraPositionTheta: settingsWithoutDefaults?.cameraPositionTheta ?? 0,
+    inspectionVoiceAlert:
+      settingsWithoutDefaults?.inspectionVoiceAlert ?? 'Male',
+    colorscheme: settingsWithoutDefaults?.colorscheme ?? null,
+    puzzleScale: settingsWithoutDefaults?.puzzleScale ?? 1,
+  }
+
   const containerRef = useRef<HTMLDivElement>(null)
   const isTouchDevice = useIsTouchDevice()
   const [status, setStatus] = useState<
@@ -48,9 +65,9 @@ export default function Simulator({
     useState<number>()
   const [solveStartTimestamp, setSolveStartTimestamp] = useState<number>()
   const [currentTimestamp, setCurrentTimestamp] = useState<number>()
-  const [solution, setSolution] = useState<{ move: Move; timestamp: number }[]>(
-    [],
-  )
+  const [solution, setSolution] = useState<
+    { move: QuantumMove; timestamp: number }[]
+  >([])
 
   const [heard8sAlert, setHeard8sAlert] = useState(false)
   const [heard12sAlert, setHeard12sAlert] = useState(false)
@@ -147,19 +164,52 @@ export default function Simulator({
     settings.inspectionVoiceAlert,
   ])
 
+  // IDK what this comment meant
   // WARN: keep an eye on it, I removed useCallback here and added useEventCallback in useTwistySimulator instead, it might not work correctly
-  function moveHandler({ move, isRotation, isSolved }: SimulatorEvent) {
+  function unstableMoveHandler({ move, isRotation, isSolved }: SimulatorEvent) {
     if (!solution) throw new Error('[SIMULATOR] moves undefined')
-    setSolution((prev) => [...prev, { move, timestamp: getCurrentTimestamp() }])
+    // NOTE: very important that this uses prevSolution from the argument and not from the state to avoid race conditions on double moves
+    setSolution((prevSolution) => [
+      ...prevSolution,
+      { move, timestamp: getCurrentTimestamp() },
+    ])
 
     const solveJustStarted = status === 'inspecting' && !isRotation
 
     if (solveJustStarted) setStatus('solving')
     else if (status === 'solving' && isSolved) setStatus('solved')
 
-    if (solveJustStarted) onMove(move, 'solve-start')
-    else if (isSolved) onMove(move, 'solve-end')
-    else onMove(move)
+    // if (solveJustStarted) onMove(move, 'solve-start')
+    // else if (isSolved) onMove(move, 'solve-end')
+    // else onMove(move)
+  }
+
+  const moveHandler = useEventCallback(unstableMoveHandler)
+
+  if (solution.length > MOVECOUNT_LIMIT) {
+    toast({
+      title: 'Move count limit exceeded',
+      duration: 'infinite',
+      description: (
+        <p>
+          For reasons of storage space, solves are limited to {MOVECOUNT_LIMIT}{' '}
+          moves. Please practice at{' '}
+          <a
+            className='text-primary-60 hover:underline'
+            href='https://cstimer.net/'
+          >
+            csTimer.net
+          </a>{' '}
+          first if necessary.
+        </p>
+      ),
+    })
+    setStatus('idle')
+    setSolution([])
+    onSolveFinish({
+      result: { isDnf: true, timeMs: null, plusTwoIncluded: false },
+      solution: '',
+    })
   }
 
   useEffect(() => {
@@ -167,7 +217,6 @@ export default function Simulator({
 
     const lastMoveTimestamp = solution.at(-1)?.timestamp
     if (
-      !solution ||
       !lastMoveTimestamp ||
       !currentTimestamp ||
       !solveStartTimestamp ||
@@ -184,7 +233,7 @@ export default function Simulator({
     const solutionStr = solution
       .map(
         ({ move, timestamp }) =>
-          `${move} /*${Math.max(timestamp - solveStartTimestamp, 0)}*/`,
+          `${move.toString()} /*${Math.max(timestamp - solveStartTimestamp, 0)}*/`,
       )
       .join(' ')
     onSolveFinish({
@@ -206,6 +255,7 @@ export default function Simulator({
   ])
 
   const hasRevealedScramble = status !== 'idle' && status !== 'ready'
+
   useTwistySimulator({
     containerRef,
     onMove: moveHandler,
@@ -213,7 +263,42 @@ export default function Simulator({
     touchCubeEnabled: isTouchDevice ?? false,
     discipline: initSolveData.discipline,
     settings,
-    setCameraPosition,
+    setCameraPosition: ({ phi, theta }) => {
+      if (
+        phi !== settings?.cameraPositionPhi ||
+        theta !== settings?.cameraPositionTheta
+      ) {
+        updateSettings({
+          cameraPositionPhi: phi,
+          cameraPositionTheta: theta,
+        })
+      }
+    },
+  })
+
+  useEventListener('keydown', (e) => {
+    const prevScale = settingsWithoutDefaults?.puzzleScale
+    if (!prevScale) return
+
+    if (e.key === '+') {
+      const newScale = Math.min(
+        PUZZLE_SCALE.MAX,
+        Number((prevScale + PUZZLE_SCALE.STEP).toFixed(2)),
+      )
+      updateSettings({
+        puzzleScale: newScale,
+      })
+    }
+    if (e.key === '-') {
+      const newScale = Math.max(
+        PUZZLE_SCALE.MIN,
+        Number((prevScale - PUZZLE_SCALE.STEP).toFixed(2)),
+      )
+      updateSettings({ puzzleScale: newScale })
+    }
+    if (e.key === '=') {
+      updateSettings({ puzzleScale: PUZZLE_SCALE.DEFAULT })
+    }
   })
 
   return (
@@ -249,7 +334,11 @@ export default function Simulator({
           </span>
         )}
         <div
-          className='aspect-square h-[60%] outline-none sm:h-auto sm:w-full sm:max-w-[34rem] [&>div]:flex'
+          className='aspect-square h-[60%] outline-none sm:!h-auto sm:w-full sm:max-w-[34rem] [&>div]:flex'
+          style={{
+            height: `calc(60% * ${settings.puzzleScale})`,
+            opacity: settingsLoading ? 0 : 1,
+          }}
           tabIndex={-1}
           ref={containerRef}
         ></div>

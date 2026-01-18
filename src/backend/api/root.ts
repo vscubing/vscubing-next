@@ -7,6 +7,7 @@ import { settingsRouter } from './routers/settings'
 import { adminRouter } from './routers/admin'
 import { specialContestRouter } from './routers/special-contest'
 import { solveStreamRouter } from './routers/solve-stream'
+import { userMetadataRouter } from './routers/user-metadata'
 
 /**
  * This is the primary router for your server.
@@ -22,6 +23,7 @@ export const appRouter = createTRPCRouter({
   leaderboard: leaderboardRouter,
   settings: settingsRouter,
   solveStream: solveStreamRouter,
+  userMetadata: userMetadataRouter,
 })
 
 // export type definition of API

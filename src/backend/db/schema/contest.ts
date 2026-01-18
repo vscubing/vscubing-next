@@ -48,7 +48,6 @@ export const roundTable = pgTable('round', (d) => ({
     .notNull()
     .references(() => disciplineTable.slug, { onDelete: 'cascade' })
     .$type<Discipline>(),
-  number: d.integer(),
 }))
 
 export const scrambleTable = pgTable(
@@ -112,7 +111,7 @@ export const solveTable = pgTable(
     timeMs: d.integer('time_ms'),
     isDnf: d.boolean('is_dnf').notNull(),
     plusTwoIncluded: d.boolean('plus_two_included').notNull(),
-    solution: d.varchar('solution', { length: 10000 }),
+    solution: d.varchar('solution', { length: 500000 }),
   }),
   (t) => [
     unique('round_session_scramble_unique').on(t.roundSessionId, t.scrambleId),

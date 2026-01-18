@@ -4,5 +4,5 @@
 FILE="drizzle/0001_legacy-import.sql" 
 
 sed -i'.bak' 's/^/-- /' $FILE
-bun run db:migrate
+bunx drizzle-kit migrate
 mv $FILE.bak $FILE
