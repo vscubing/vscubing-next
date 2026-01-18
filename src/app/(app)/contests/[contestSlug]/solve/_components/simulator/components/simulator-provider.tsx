@@ -144,7 +144,6 @@ export function SimulatorProvider({ children }: { children: React.ReactNode }) {
                     initSolveData={solveState.initSolveData}
                     onSolveFinish={handleSolveFinish}
                     onInspectionStart={handleInspectionStart}
-                    onMove={solveState.moveCallback}
                   />
                 )}
               </Suspense>
