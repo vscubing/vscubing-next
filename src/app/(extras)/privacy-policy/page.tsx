@@ -26,8 +26,7 @@ export default function PrivacyPolicyPage() {
                 personal data in accordance with the General Data Protection
                 Regulation (GDPR).
               </p>
-              <p className='text-grey-60'>Last Updated: TBD</p>{' '}
-              {/* TODO: FILL THIS OUT!!! */}
+              <p className='text-grey-60'>Last Updated: 17.01.2026</p>
             </div>
           </section>
           <div>
