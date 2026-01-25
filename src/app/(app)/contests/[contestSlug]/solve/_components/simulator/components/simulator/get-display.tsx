@@ -4,7 +4,7 @@ import {
   MINUTE_IN_MS,
   MINUTE_IN_SECONDS,
   SECOND_IN_MS,
-} from '@/utils/format-solve-time'
+} from '@/lib/utils/format-solve-time'
 
 export function getDisplay(
   solveStartTimestamp?: number,

@@ -1,18 +1,23 @@
-import { DEFAULT_DISCIPLINE, isDiscipline, type Discipline } from '@/types'
-import { api } from '@/trpc/server'
-import { DisciplineSwitcher } from '@/frontend/shared/discipline-switcher'
-import { NavigateBackButton } from '@/frontend/shared/navigate-back-button'
-import { LayoutPageTitleMobile } from '@/app/(app)/_layout/layout-page-title-mobile'
-import { LayoutHeaderTitlePortal } from '@/app/(app)/_layout/layout-header'
-import { tryCatchTRPC } from '@/utils/try-catch'
-import { redirect } from 'next/navigation'
-import { HintSignInSection } from '@/frontend/shared/hint-section'
-import { CONTEST_UNAUTHORIZED_MESSAGE } from '@/types'
-import { SessionList, SessionListShell } from './_components/session-list'
 import { LayoutSectionHeader } from '@/app/(app)/_layout'
+import { LayoutHeaderTitlePortal } from '@/app/(app)/_layout/layout-header'
+import { LayoutPageTitleMobile } from '@/app/(app)/_layout/layout-page-title-mobile'
+import { DisciplineSwitcher } from '@/frontend/shared/discipline-switcher'
+import { HintSection } from '@/frontend/shared/hint-section'
+import { NavigateBackButton } from '@/frontend/shared/navigate-back-button'
+import { api } from '@/lib/trpc/server'
+import { DEFAULT_DISCIPLINE, isDiscipline, type Discipline } from '@/types'
+import { formatContestDuration } from '@/lib/utils/format-date'
+import { tryCatchTRPC } from '@/lib/utils/try-catch'
+import { notFound, redirect } from 'next/navigation'
 import { Suspense } from 'react'
-import { RoundSessionRowSkeleton } from '../../../../../frontend/shared/round-session-row'
-import { formatContestDuration } from '@/utils/format-date'
+import { SessionList } from './_components/session-list'
+import { LeaveRoundButton } from './_components/leave-round-button'
+import { JoinRoundButton } from './_components/join-round-button'
+import { ClassicSolveViewLink } from './_components/legacy-solve-page-link'
+import {
+  RoundSessionHeader,
+  RoundSessionRowSkeleton,
+} from '@/frontend/shared/round-session-row'
 
 export default async function ContestResultsPage({
   params,
@@ -28,7 +33,13 @@ export default async function ContestResultsPage({
       `/contests/${contestSlug}/results?discipline=${DEFAULT_DISCIPLINE}`,
     )
 
-  const contest = await api.contest.getContestMetaData({ contestSlug })
+  const { data: contest, error } = await tryCatchTRPC(
+    api.contest.getContestMetaData({
+      contestSlug,
+    }),
+  )
+  if (error?.code === 'NOT_FOUND') notFound()
+  if (error) throw error
 
   let title = ''
   if (contest.isOngoing) {
@@ -36,6 +47,7 @@ export default async function ContestResultsPage({
   } else {
     title = 'Look through the contest results'
   }
+
   return (
     <>
       <LayoutPageTitleMobile>{title}</LayoutPageTitleMobile>
@@ -47,23 +59,34 @@ export default async function ContestResultsPage({
           initialDiscipline={discipline}
         />
         <div>
-          <h2 className='title-h2 mb-1'>Contest {contestSlug}</h2>
+          <h2 className='title-h2 mb-1'>
+            Contest {contestSlug} {contest.isOngoing ? ' (ongoing)' : ''}
+          </h2>
           <p className='min-w-1 text-grey-40'>
             {formatContestDuration(contest)}
           </p>
+        </div>
+        <div className='ml-auto flex gap-2 whitespace-nowrap sm:hidden'>
+          <JoinRoundButton contestSlug={contestSlug} discipline={discipline} />
+          <LeaveRoundButton contestSlug={contestSlug} discipline={discipline} />
+          <ClassicSolveViewLink
+            contestSlug={contestSlug}
+            discipline={discipline}
+          />
         </div>
       </LayoutSectionHeader>
 
       <Suspense
         key={discipline}
         fallback={
-          <SessionListShell>
+          <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 lg:p-4 sm:p-3'>
+            <RoundSessionHeader />
             <div className='space-y-2'>
               {Array.from({ length: 20 }).map((_, idx) => (
                 <RoundSessionRowSkeleton key={idx} />
               ))}
             </div>
-          </SessionListShell>
+          </div>
         }
       >
         <PageContent
@@ -71,6 +94,7 @@ export default async function ContestResultsPage({
           discipline={discipline}
           scrollToId={Number(scrollToId)}
           scrollToOwn={Boolean(scrollToOwn)}
+          isOngoing={contest.isOngoing}
         />
       </Suspense>
     </>
@@ -82,34 +106,38 @@ async function PageContent({
   discipline,
   scrollToId,
   scrollToOwn,
+  isOngoing,
 }: {
   contestSlug: string
   discipline: Discipline
   scrollToId?: number
   scrollToOwn?: boolean
+  isOngoing: boolean
 }) {
-  const { data: initialData, error } = await tryCatchTRPC(
-    api.contest.getContestResults({
-      contestSlug,
-      discipline,
-    }),
-  )
+  let sessions = await api.contest.getContestResults({
+    contestSlug,
+    discipline,
+  })
 
-  if (error?.code === 'UNAUTHORIZED')
-    return <HintSignInSection description={CONTEST_UNAUTHORIZED_MESSAGE} />
+  if (!isOngoing)
+    sessions = sessions.filter((session) => session.session.isFinished) // TODO: remove this when we implement autocompleting all incomplete sessions on contest end
 
-  if (error?.code === 'FORBIDDEN')
-    redirect(`/contests/${contestSlug}/solve?discipline=${discipline}`)
-
-  if (error) throw error
+  if (sessions.length === 0 && !isOngoing) {
+    return (
+      <HintSection>
+        <p>It seems no one participated in this round.</p>
+      </HintSection>
+    )
+  }
 
   return (
     <SessionList
-      initialData={initialData}
+      initialData={sessions}
       contestSlug={contestSlug}
       discipline={discipline}
       scrollToId={scrollToId}
       scrollToOwn={scrollToOwn}
+      isOngoing={isOngoing}
     />
   )
 }

@@ -1,4 +1,9 @@
-import { type Discipline, type SimulatorSettings } from '@/types'
+import {
+  isMove,
+  type Discipline,
+  type Move,
+  type SimulatorSettings,
+} from '@/types'
 import {
   type SimulatorCameraPosition,
   type TwistySimulatorMoveListener,
@@ -9,16 +14,13 @@ import { type RefObject, useEffect, useState } from 'react'
 import { useEventCallback } from 'usehooks-ts'
 import { QuantumMove } from '@vscubing/cubing/alg'
 
-export type SimulatorMoveListener = ({
-  move,
-  isRotation,
-  isSolved,
-}: {
+export type SimulatorEvent = {
   move: QuantumMove
   timestamp: number
   isRotation: boolean
   isSolved: boolean
-}) => void
+}
+
 export function useTwistySimulator({
   // TODO: use useControllableSimulator instead?
   containerRef,
@@ -30,13 +32,14 @@ export function useTwistySimulator({
   setCameraPosition,
 }: {
   containerRef: RefObject<HTMLElement | null>
-  onMove: SimulatorMoveListener
+  onMove: (event: SimulatorEvent) => void
   scramble: string | undefined
   discipline: Discipline
   settings: SimulatorSettings
   touchCubeEnabled: boolean
   setCameraPosition: (pos: SimulatorCameraPosition) => void
 }) {
+  const stableOnMove = useEventCallback(onMove)
   const [puzzle, setPuzzle] = useState<TwistySimulatorPuzzle | undefined>()
 
   const stableSetCameraPosition = useEventCallback(setCameraPosition)
@@ -49,7 +52,7 @@ export function useTwistySimulator({
 
       const move = new QuantumMove(_puzzle.move2str(rawMove))
       const isSolved = _puzzle.isSolved() === 0
-      onMove({
+      stableOnMove({
         move,
         timestamp,
         isRotation: _puzzle.isRotation(rawMove),
@@ -59,7 +62,7 @@ export function useTwistySimulator({
 
     void initTwistySimulator(
       {
-        puzzle: SIMULATOR_DISCIPLINES_MAP[discipline],
+        puzzle: SIMULATOR_DISCIPLINES_MAP[discipline].puzzle,
         animationDuration: settings.animationDuration,
         colorscheme: settings.colorscheme,
         allowDragging: touchCubeEnabled,
@@ -77,7 +80,7 @@ export function useTwistySimulator({
     settings.colorscheme,
     containerRef,
     discipline,
-    onMove,
+    stableOnMove,
     touchCubeEnabled,
     stableSetCameraPosition,
   ])
@@ -123,8 +126,32 @@ export function useTwistySimulator({
   }, [settings.puzzleScale, puzzle])
 }
 
-const SIMULATOR_DISCIPLINES_MAP = {
-  '3by3': 'cube3',
-  '2by2': 'cube2',
-  '4by4': 'cube4',
+export const SIMULATOR_DISCIPLINES_MAP = {
+  '3by3': {
+    dimension: 3,
+    puzzle: 'cube3',
+  },
+  '2by2': {
+    dimension: 2,
+    puzzle: 'cube2',
+  },
+  '4by4': {
+    dimension: 4,
+    puzzle: 'cube4',
+  },
 } as const
+
+function parseCstimerMove(moveCstimer: string): Move {
+  const move = moveCstimer
+    .replace(/@(\d+)/g, '/*$1*/')
+    .replace(/2-2Rw2/g, 'M2')
+    .replace(/2-2Lw|2-2Rw'/g, 'M')
+    .replace(/2-2Rw/g, "M'")
+    .replace(/2-2Fw/g, 'S')
+    .replace(/2-2Uw'/g, 'E')
+    .replace(/2-2Uw/g, "E'")
+    .trim()
+
+  if (!isMove(move)) throw new Error(`[SIMULATOR] invalid move: ${move}`)
+  return move
+}

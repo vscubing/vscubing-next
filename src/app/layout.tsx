@@ -6,8 +6,10 @@ import { Hind, Kanit } from 'next/font/google'
 import { cn } from '../frontend/utils/cn'
 import { env } from '@/env'
 import { PostHogProvider } from '../frontend/post-hog-provider'
-import { TRPCReactProvider } from '@/trpc/react'
+import { TRPCReactProvider } from '@/lib/trpc/react'
 import { TooltipProvider } from '@/frontend/ui/tooltip'
+import NextTopLoader from 'nextjs-toploader'
+import tailwindConfig from 'tailwind.config'
 
 export const metadata: Metadata = {
   title: 'vscubing',
@@ -43,7 +45,13 @@ export default async function RootLayout({
       <body>
         <TRPCReactProvider>
           <TooltipProvider delayDuration={0}>
-            <PostHogProvider>{children}</PostHogProvider>
+            <PostHogProvider>
+              <NextTopLoader
+                color={tailwindConfig.theme.colors.secondary[40]}
+                showSpinner={false}
+              />
+              {children}
+            </PostHogProvider>
           </TooltipProvider>
         </TRPCReactProvider>
       </body>

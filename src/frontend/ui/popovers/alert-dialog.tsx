@@ -9,7 +9,7 @@ import {
   baseDialogTitle,
 } from './base-dialog'
 import { cn } from '@/frontend/utils/cn'
-import type { SetOptional } from '@/utils/types'
+import type { SetOptional } from '@/lib/utils/set-optional'
 
 const AlertDialog = AlertDialogPrimitive.Root
 

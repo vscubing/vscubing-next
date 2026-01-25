@@ -30,7 +30,7 @@ The application is hosted on a `DigitalOcean` Droplet with `Dokploy`.
         + S3 backups (daily)
     * [vscubing/vscubing-tnoodle](https://github.com/vscubing/vscubing-tnoodle)
     * [vscubing/vscubing-cron](https://github.com/vscubing/vscubing-cron)
-        + automatic publishing of new weekly contests
+        + automatic publishing of new weekly contests (currently disabled because it doesn't work and doing it by hand is easier than fixing it)
 
 - staging: deployed from `dev`
     * Next.js app
@@ -44,3 +44,4 @@ The application is hosted on a `DigitalOcean` Droplet with `Dokploy`.
 - when setting up Provider (docker image) with ghcr in Dockploy, set Docker Image to `ghcr.io/vscubing/vscubing-next` and registry url to `ghcr.io`
 - when setting up a staging db next to the production one, make sure to use different ports
 - use `ssh -L REMOTE_PORT:localhost:LOCAL_PORT user@remote` to port to local a port from staging/production (for example, to debug a db via drizzle studio)
+- to start a local soketi server for live solves, run `docker run -p 6001:6001 -p 9601:9601 quay.io/soketi/soketi:1.4-16-debian`

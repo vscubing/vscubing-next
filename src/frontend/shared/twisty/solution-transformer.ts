@@ -6,9 +6,9 @@ import {
 } from '@vscubing/cubing/twisty'
 import { Alg, LineComment } from '@vscubing/cubing/alg'
 import type { Discipline } from '@/types'
-import { formatSolveTime } from '@/utils/format-solve-time'
-import { removeSolutionComments } from '@/utils/remove-solution-comments'
-import { isRotation } from '@/utils/is-rotation'
+import { formatSolveTime } from '@/lib/utils/format-solve-time'
+import { removeSolutionComments } from '@/lib/utils/remove-solution-comments'
+import { isRotation } from '@/lib/utils/is-rotation'
 
 // TODO: simultaneous moves???
 export async function doEverything(

@@ -9,8 +9,8 @@ test('5 successes', async () => {
     { isDnf: false, timeMs: 4, plusTwoIncluded: false },
     { isDnf: false, timeMs: 5, plusTwoIncluded: false },
   ])
-  expect(res.isDnf === false)
-  expect(res.timeMs === 3)
+  expect(res.isDnf).toBe(false)
+  expect(res.timeMs).toBe(3)
 })
 
 test('4 successes best dnf', async () => {
@@ -21,8 +21,8 @@ test('4 successes best dnf', async () => {
     { isDnf: false, timeMs: 4, plusTwoIncluded: false },
     { isDnf: false, timeMs: 5, plusTwoIncluded: false },
   ])
-  expect(res.isDnf === false)
-  expect(res.timeMs === 4)
+  expect(res.isDnf).toBe(false)
+  expect(res.timeMs).toBe(4)
 })
 
 test('4 successes worst dnf', async () => {
@@ -33,8 +33,8 @@ test('4 successes worst dnf', async () => {
     { isDnf: false, timeMs: 4, plusTwoIncluded: false },
     { isDnf: true, timeMs: 5, plusTwoIncluded: false },
   ])
-  expect(res.isDnf === false)
-  expect(res.timeMs === 3)
+  expect(res.isDnf).toBe(false)
+  expect(res.timeMs).toBe(3)
 })
 
 test('3 successes', async () => {
@@ -45,6 +45,6 @@ test('3 successes', async () => {
     { isDnf: false, timeMs: 4, plusTwoIncluded: false },
     { isDnf: false, timeMs: 5, plusTwoIncluded: false },
   ])
-  expect(res.isDnf === true)
-  expect(res.timeMs === null)
+  expect(res.isDnf).toBe(true)
+  expect(res.timeMs).toBe(null)
 })

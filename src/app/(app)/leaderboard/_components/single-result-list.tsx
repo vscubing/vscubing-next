@@ -3,7 +3,7 @@
 import { HintSection } from '@/frontend/shared/hint-section'
 import { type Discipline } from '@/types'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { useTRPC, type RouterOutputs } from '@/trpc/react'
+import { useTRPC, type RouterOutputs } from '@/lib/trpc/react'
 import { SingleResult, SingleResultListShell } from './single-result'
 import { cn } from '@/frontend/utils/cn'
 import { useScrollToIndex } from '@/frontend/utils/use-scroll-to-index'

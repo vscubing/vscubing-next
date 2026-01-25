@@ -15,7 +15,7 @@ import {
   getPersonalRecordSessionSubquery,
 } from '@/backend/shared/personal-record'
 import { sortWithRespectToExtras } from '@/backend/shared/sort-with-respect-to-extras'
-import { groupBy } from '@/utils/group-by'
+import { groupBy } from '@/lib/utils/group-by'
 import { getWcaIdSubquery } from '@/backend/shared/wca-id-subquery'
 import { getGlobalRecordsByUser } from '@/backend/shared/global-record'
 
@@ -139,6 +139,7 @@ export const leaderboardRouter = createTRPCRouter({
             result: resultDnfable.parse(session[0]!.session),
             id: session[0]!.session.id,
             isOwn: session[0]!.user.id === ctx.session?.user.id,
+            isFinished: true,
           },
           solves: sortWithRespectToExtras(
             session.map(
@@ -149,6 +150,7 @@ export const leaderboardRouter = createTRPCRouter({
                 position,
                 result: resultDnfable.parse({ timeMs, isDnf, plusTwoIncluded }),
                 isPersonalRecord: false,
+                status: 'submitted',
               }),
             ),
           ),

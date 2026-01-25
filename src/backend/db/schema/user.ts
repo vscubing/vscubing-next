@@ -2,7 +2,7 @@ import { pgTable } from 'drizzle-orm/pg-core'
 import { createdUpdatedAtColumns } from './core'
 import { userTable } from './account'
 import type { TwistySimulatorColorscheme } from 'vendor/cstimer/types'
-import type { FieldsNonNullable } from '@/utils/types'
+import type { FieldsNonNullable } from '@/lib/utils/set-optional'
 
 export const userSimulatorSettingsTable = pgTable(
   'user_simulator_settings',

@@ -41,7 +41,7 @@ import {
 } from '@/frontend/shared/use-user'
 import { WCA_AUTH_SUCCESS_SEARCH_PARAM } from '@/app/api/auth/wca/error-search-param'
 import { useSearchParams } from 'next/navigation'
-import { useRemoveSearchParam } from '@/utils/user-remove-search-param'
+import { useRemoveSearchParam } from '@/lib/utils/use-remove-search-param'
 
 export function UserDropdownOrSignIn() {
   const { user, isLoading } = useUser()
@@ -149,7 +149,7 @@ function LogoutButton({
       </DropdownButton>
       <DialogPortal>
         <DialogOverlay />
-        <DialogContent aria-describedby={undefined}>
+        <DialogContent aria-describedby={undefined} className='gap-8 sm:gap-6'>
           <DialogTitle>Are you sure you want to log out?</DialogTitle>
           <DialogFooter className='sm:grid sm:grid-cols-2'>
             <DialogClose version='secondary'>Stay</DialogClose>

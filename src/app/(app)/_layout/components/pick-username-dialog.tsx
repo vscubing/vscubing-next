@@ -13,7 +13,7 @@ import {
 } from '@/frontend/ui'
 import { useForm } from 'react-hook-form'
 import { Input } from '@/frontend/ui'
-import { useTRPC } from '@/trpc/react'
+import { useTRPC } from '@/lib/trpc/react'
 import { useMutation } from '@tanstack/react-query'
 import { useLogout, useUser } from '@/frontend/shared/use-user'
 
@@ -59,7 +59,7 @@ export function PickUsernameDialog() {
     <AlertDialog open={isVisible}>
       <AlertDialogPortal>
         <AlertDialogOverlay />
-        <AlertDialogContent asChild>
+        <AlertDialogContent asChild className='gap-8 sm:gap-6'>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div>
               <AlertDialogTitle className='mb-4'>

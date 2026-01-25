@@ -20,8 +20,8 @@ import { Suspense, type ReactNode } from 'react'
 import { SimulatorProvider } from './_components'
 import { SolveContestForm } from './_components'
 import Link from 'next/link'
-import { api } from '@/trpc/server'
-import { tryCatchTRPC } from '@/utils/try-catch'
+import { api } from '@/lib/trpc/server'
+import { tryCatchTRPC } from '@/lib/utils/try-catch'
 import { LayoutSectionHeader } from '@/app/(app)/_layout'
 import {
   LayoutHeaderTitlePortal,
@@ -33,7 +33,7 @@ import {
   LayoutPageTitleMobile,
   LayoutPageTitleMobileFallback,
 } from '@/app/(app)/_layout/layout-page-title-mobile'
-import { formatContestDuration } from '@/utils/format-date'
+import { formatContestDuration } from '@/lib/utils/format-date'
 import { NavigateBackButton } from '@/frontend/shared/navigate-back-button'
 
 export default async function SolveContestPage({
@@ -61,13 +61,20 @@ export default async function SolveContestPage({
             initialDiscipline={discipline}
           />
         </div>
-        <div className='ml-10 flex flex-1 items-center gap-4 sm:sr-only'>
+        <div className='ml-10 mr-4 flex flex-1 items-center gap-4 sm:sr-only'>
           <ExclamationCircleIcon className='shrink-0' />
           <p>
             You can't see the results of an ongoing round until you solve all
             scrambles or the round ends
           </p>
         </div>
+        <SecondaryButton className='ml-auto' asChild>
+          <Link
+            href={`/contests/${contestSlug}/results?discipline=${discipline}`}
+          >
+            Experimental view
+          </Link>
+        </SecondaryButton>
       </LayoutSectionHeader>
 
       <Suspense
@@ -116,20 +123,19 @@ async function PageContent({
   contestSlug: string
   discipline: Discipline
 }) {
-  const { data: roundSessionState, error } = await tryCatchTRPC(
+  const { error } = await tryCatchTRPC(
     api.roundSession.state({ contestSlug, discipline }),
   )
   if (error?.code === 'NOT_FOUND') notFound()
   if (error?.code === 'UNAUTHORIZED')
     return <HintSignInSection description={CONTEST_UNAUTHORIZED_MESSAGE} />
-  if (error?.code === 'FORBIDDEN')
-    redirect(`/contests/${contestSlug}/results?discipline=${discipline}`)
-  if (error) throw error
+  if (error?.code === 'PRECONDITION_FAILED')
+    await api.roundSession.create({ contestSlug, discipline })
 
   return (
     <div className='flex-1 rounded-2xl bg-black-80'>
       <div className='relative flex h-full flex-col pb-8 pt-7 xl-short:pb-6 xl-short:pt-4 sm:py-3'>
-        <div className='absolute right-4 top-4 flex items-center gap-4 sm:right-2 sm:top-2'>
+        <div className='absolute right-4 top-4 flex items-center gap-4 sm:right-2 sm:top-2 sm:flex-col-reverse sm:items-end sm:gap-0'>
           <Dialog>
             <KeyMapDialogTrigger className='touch:hidden' />
             <DialogPortal>
@@ -149,11 +155,7 @@ async function PageContent({
         </p>
 
         <SimulatorProvider>
-          <SolveContestForm
-            initialData={roundSessionState}
-            contestSlug={contestSlug}
-            discipline={discipline}
-          />
+          <SolveContestForm contestSlug={contestSlug} discipline={discipline} />
         </SimulatorProvider>
       </div>
     </div>

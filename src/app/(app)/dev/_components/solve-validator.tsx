@@ -3,9 +3,9 @@
 import { Input, PrimaryButton } from '@/frontend/ui'
 import { useForm } from 'react-hook-form'
 import { useState, useTransition } from 'react'
-import { removeSolutionComments } from '@/utils/remove-solution-comments'
+import { removeSolutionComments } from '@/lib/utils/remove-solution-comments'
 import type { Discipline } from '@/types'
-import { useTRPC, type RouterInputs } from '@/trpc/react'
+import { useTRPC, type RouterInputs } from '@/lib/trpc/react'
 import { useMutation } from '@tanstack/react-query'
 
 type Solve = RouterInputs['admin']['validateSolve']

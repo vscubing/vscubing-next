@@ -1,12 +1,19 @@
 import { useRef, useState, useEffect } from 'react'
 import { VOICE_ALERTS } from './voice-alerts-audio'
 import { getDisplay } from './get-display'
-import { type SimulatorMoveListener, useTwistySimulator } from './use-simulator'
+import { type SimulatorEvent, useTwistySimulator } from './use-simulator'
 import {
   INSPECTION_DNF_THRESHHOLD_MS,
   INSPECTION_PLUS_TWO_THRESHHOLD_MS,
 } from './constants'
-import { PUZZLE_SCALE, type Discipline, type ResultDnfable } from '@/types'
+import type { userSimulatorSettingsTable } from '@/backend/db/schema'
+import type { SimulatorCameraPosition } from 'vendor/cstimer/types'
+import {
+  PUZZLE_SCALE,
+  type Move,
+  type Discipline,
+  type ResultDnfable,
+} from '@/types'
 import { useIsTouchDevice } from '@/frontend/utils/use-media-query'
 import { cn } from '@/frontend/utils/cn'
 import { type QuantumMove } from '@vscubing/cubing/alg'
@@ -33,8 +40,8 @@ type SimulatorProps = {
 }
 export default function Simulator({
   initSolveData,
-  onSolveFinish,
   onInspectionStart,
+  onSolveFinish,
 }: SimulatorProps) {
   const { data: settingsWithoutDefaults, isLoading: settingsLoading } =
     useSimulatorSettings()
@@ -157,23 +164,26 @@ export default function Simulator({
     settings.inspectionVoiceAlert,
   ])
 
-  const unstableMoveHandler: SimulatorMoveListener = ({
-    move,
-    isRotation,
-    isSolved,
-  }) => {
+  // IDK what this comment meant
+  // WARN: keep an eye on it, I removed useCallback here and added useEventCallback in useTwistySimulator instead, it might not work correctly
+  function unstableMoveHandler({ move, isRotation, isSolved }: SimulatorEvent) {
+    if (!solution) throw new Error('[SIMULATOR] moves undefined')
+    // NOTE: very important that this uses prevSolution from the argument and not from the state to avoid race conditions on double moves
     setSolution((prevSolution) => [
-      // NOTE: very important that this uses prevSolution from the argument and not from the state to avoid race conditions on double moves
       ...prevSolution,
       { move, timestamp: getCurrentTimestamp() },
     ])
 
-    if (status === 'inspecting' && !isRotation) {
-      setStatus('solving')
-    } else if (status === 'solving' && isSolved) {
-      setStatus('solved')
-    }
+    const solveJustStarted = status === 'inspecting' && !isRotation
+
+    if (solveJustStarted) setStatus('solving')
+    else if (status === 'solving' && isSolved) setStatus('solved')
+
+    // if (solveJustStarted) onMove(move, 'solve-start')
+    // else if (isSolved) onMove(move, 'solve-end')
+    // else onMove(move)
   }
+
   const moveHandler = useEventCallback(unstableMoveHandler)
 
   if (solution.length > MOVECOUNT_LIMIT) {
