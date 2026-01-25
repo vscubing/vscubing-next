@@ -1,7 +1,7 @@
 import { DISCIPLINES, type Discipline } from '@/types'
 import { z } from 'zod'
 import { eq, and, sql, count } from 'drizzle-orm'
-import { createTRPCRouter, protectedProcedure } from '../trpc'
+import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc'
 import { TRPCError } from '@trpc/server'
 import {
   roundTable,
@@ -95,7 +95,7 @@ export const roundSessionRouter = createTRPCRouter({
         discipline: input.discipline,
       }),
     ),
-  canLeaveRound: protectedProcedure
+  hasJoinedRound: publicProcedure
     .input(
       z.object({
         discipline: z.enum(DISCIPLINES),
@@ -103,7 +103,31 @@ export const roundSessionRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      if (!ctx.session.user) return false
+      if (ctx.session === null) return false
+
+      const [roundSession] = await ctx.db
+        .select()
+        .from(roundSessionTable)
+        .innerJoin(roundTable, eq(roundTable.id, roundSessionTable.roundId))
+        .where(
+          and(
+            eq(roundTable.contestSlug, input.contestSlug),
+            eq(roundTable.disciplineSlug, input.discipline),
+            eq(roundSessionTable.contestantId, ctx.session.user.id),
+          ),
+        )
+
+      return !!roundSession
+    }),
+  canLeaveRound: publicProcedure
+    .input(
+      z.object({
+        discipline: z.enum(DISCIPLINES),
+        contestSlug: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      if (ctx.session === null) return false
 
       const [roundSession] = await ctx.db
         .select({ id: roundSessionTable.id })
@@ -126,6 +150,7 @@ export const roundSessionRouter = createTRPCRouter({
 
       return solves?.count === 0
     }),
+
   leaveRound: roundSessionAuthProcedure.mutation(async ({ ctx }) => {
     const solves = await ctx.db
       .select()

@@ -1,25 +1,11 @@
 'use client'
 
 import { SecondaryButton } from '@/frontend/ui'
-import { NoSSR } from '@/frontend/utils/no-ssr'
 import { useTRPC } from '@/lib/trpc/react'
 import type { Discipline } from '@/types'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { ComponentPropsWithoutRef } from 'react'
 
-// NOTE: we disable SSR on this component because it needs getContestResults, which we have to prefetch to prevent hydration error (mismatch because auth isn't available for fetching in 'use client' during SSR), but prefetching it is tedious so we do this for now
-export function LeaveRoundButton(
-  props: ComponentPropsWithoutRef<typeof Component>,
-) {
-  return (
-    <NoSSR>
-      {/* TODO: refactor this to withNoSSR */}
-      <Component {...props} />
-    </NoSSR>
-  )
-}
-
-function Component({
+export function LeaveRoundButton({
   contestSlug,
   discipline,
 }: {
@@ -45,6 +31,12 @@ function Component({
           }),
         )
         void queryClient.invalidateQueries(canLeaveRoundQuery)
+        void queryClient.invalidateQueries(
+          trpc.roundSession.hasJoinedRound.queryOptions({
+            contestSlug,
+            discipline,
+          }),
+        )
       },
     }),
   )

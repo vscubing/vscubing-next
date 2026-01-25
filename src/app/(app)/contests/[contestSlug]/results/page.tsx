@@ -12,7 +12,8 @@ import { notFound, redirect } from 'next/navigation'
 import { Suspense } from 'react'
 import { SessionList } from './_components/session-list'
 import { LeaveRoundButton } from './_components/leave-round-button'
-import { LegacySolvePageLink } from './_components/legacy-solve-page-link'
+import { JoinRoundButton } from './_components/join-round-button'
+import { ClassicSolveViewLink } from './_components/legacy-solve-page-link'
 import {
   RoundSessionHeader,
   RoundSessionRowSkeleton,
@@ -66,8 +67,9 @@ export default async function ContestResultsPage({
           </p>
         </div>
         <div className='ml-auto flex gap-2 whitespace-nowrap sm:hidden'>
+          <JoinRoundButton contestSlug={contestSlug} discipline={discipline} />
           <LeaveRoundButton contestSlug={contestSlug} discipline={discipline} />
-          <LegacySolvePageLink
+          <ClassicSolveViewLink
             contestSlug={contestSlug}
             discipline={discipline}
           />

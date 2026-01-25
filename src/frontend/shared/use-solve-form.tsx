@@ -6,7 +6,6 @@ import type { Discipline, ResultDnfable } from '@/types'
 import { signSolve } from '@/lib/utils/solve-signature'
 import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
-import { useLocalStorage } from 'usehooks-ts'
 import { type Toast, toast } from '../ui'
 import { SolveTimeLinkOrDnf } from './solve-time-button'
 import { v4 as uuid } from 'uuid'
@@ -21,10 +20,6 @@ export function useSolveForm({
   const router = useRouter()
   const trpc = useTRPC()
   const queryClient = useQueryClient()
-  const [seenDiscordInvite, setSeenDiscordInvite] = useLocalStorage(
-    'vs-seenDiscordInvite',
-    false,
-  )
 
   const metadataQuery = trpc.userMetadata.userMetadata.queryOptions()
   const { data: userMetadata } = useQuery(metadataQuery)
@@ -51,8 +46,13 @@ export function useSolveForm({
         onSettled: () => {
           void queryClient.invalidateQueries(stateQuery)
           void queryClient.invalidateQueries(
-            // TODO: we probably should be revalidating queryKeys and not queries
             trpc.contest.getContestResults.queryOptions({
+              contestSlug,
+              discipline,
+            }),
+          )
+          void queryClient.invalidateQueries(
+            trpc.roundSession.canLeaveRound.queryOptions({
               contestSlug,
               discipline,
             }),

@@ -6,18 +6,11 @@ import {
 } from '@/frontend/shared/round-session-row'
 import { SignInButton } from '@/frontend/shared/sign-in-button'
 import { useUser } from '@/frontend/shared/use-user'
-import { GhostButton } from '@/frontend/ui'
 import { cn } from '@/frontend/utils/cn'
-import { NoSSR } from '@/frontend/utils/no-ssr'
 import { useScrollToIndex } from '@/frontend/utils/use-scroll-to-index'
 import { useTRPC, type RouterOutputs } from '@/lib/trpc/react'
 import { type Discipline } from '@/types'
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from '@tanstack/react-query'
-import { LogInIcon } from 'lucide-react'
+import { useSuspenseQuery } from '@tanstack/react-query'
 import { useCallback, useEffect } from 'react'
 
 export function SessionList({
@@ -100,64 +93,20 @@ export function SessionList({
           />
         ))}
       </ul>
-      {isOngoing && ownSessionIdx === -1 && (
-        <NoSSR>
-          <JoinRoundButton contestSlug={contestSlug} discipline={discipline} />
-        </NoSSR>
-      )}
+      <SignInBanner isOngoing={isOngoing} hasOwnSession={ownSessionIdx !== -1} />
     </div>
   )
 }
 
-function JoinRoundButton({
-  contestSlug,
-  discipline,
-}: {
-  contestSlug: string
-  discipline: Discipline
-}) {
-  const trpc = useTRPC()
-  const queryClient = useQueryClient()
-  const { mutate: createRoundSession } = useMutation(
-    trpc.roundSession.create.mutationOptions({
-      onSettled: () => {
-        void queryClient.invalidateQueries(
-          // TODO: we probably should be revalidating queryKeys and not queries
-          trpc.contest.getContestResults.queryOptions({
-            contestSlug,
-            discipline,
-          }),
-        )
-        void queryClient.invalidateQueries(
-          // TODO: we probably should be revalidating queryKeys and not queries
-          trpc.roundSession.canLeaveRound.queryOptions({
-            contestSlug,
-            discipline,
-          }),
-        )
-      },
-    }),
-  )
-  const { user } = useUser()
+function SignInBanner({ isOngoing, hasOwnSession }: { isOngoing: boolean, hasOwnSession: boolean }) {
+  const { user, isLoading } = useUser()
+
+  if (!isOngoing || hasOwnSession || user || isLoading) return null
 
   return (
-    <div className='sticky bottom-0 flex h-16 w-full items-center gap-2 rounded-xl border border-secondary-20 bg-secondary-80 px-4'>
-      {user ? (
-        <GhostButton
-          onClick={() => createRoundSession({ contestSlug, discipline })}
-          size='sm'
-          autoFocus
-          className='text-lg'
-        >
-          Join this round!
-          <LogInIcon />
-        </GhostButton>
-      ) : (
-        <>
-          <span className='title-h3'>To participate in this round:</span>{' '}
-          <SignInButton variant='ghost' />
-        </>
-      )}
+    <div className='sticky bottom-0 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-secondary-20 bg-secondary-80 px-4 py-5'>
+      <span className='title-h3'>To participate in this round:</span>{' '}
+      <SignInButton variant='ghost' />
     </div>
   )
 }
