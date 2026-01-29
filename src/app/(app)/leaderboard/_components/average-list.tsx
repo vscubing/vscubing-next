@@ -6,7 +6,6 @@ import {
   RoundSessionRow,
   RoundSessionRowSkeleton,
 } from '@/frontend/shared/round-session-row'
-import { cn } from '@/frontend/utils/cn'
 import { useScrollToIndex } from '@/frontend/utils/use-scroll-to-index'
 import { useTRPC, type RouterOutputs } from '@/lib/trpc/react'
 import { type Discipline } from '@/types'
@@ -52,10 +51,7 @@ export function AverageList({
             place={idx + 1}
             discipline={discipline}
             isFirstOnPage={idx === 0}
-            className={cn({
-              'sticky bottom-[-2px] top-[calc(var(--layout-section-header-height)-2px)] z-10':
-                idx === stickyItemIdx,
-            })}
+            sticky={idx === stickyItemIdx}
             key={session.session.id}
             onPlaceClick={
               idx === stickyItemIdx

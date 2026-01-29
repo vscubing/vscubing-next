@@ -1,6 +1,6 @@
 'use client'
 
-import { SecondaryButton } from '@/frontend/ui'
+import { UnderlineButton } from '@/frontend/ui'
 import { useTRPC } from '@/lib/trpc/react'
 import type { Discipline } from '@/types'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -43,10 +43,11 @@ export function LeaveRoundButton({
 
   if (canLeaveRound)
     return (
-      <SecondaryButton
+      <UnderlineButton
+        size='sm'
         onClick={() => deleteSession({ contestSlug, discipline })}
       >
         Leave round
-      </SecondaryButton>
+      </UnderlineButton>
     )
 }

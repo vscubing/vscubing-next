@@ -112,7 +112,6 @@ const solveTimeLabelVariants = cva(
       variant: {
         average: 'text-yellow-100',
         dnf: 'text-red-80',
-        placeholder: 'text-grey-40',
       },
     },
   },
@@ -136,12 +135,10 @@ export function SolveTimeLabel({
 }: SolveTimeLabelProps & {
   ref?: React.RefObject<HTMLSpanElement>
 }) {
-  let variant: 'average' | 'dnf' | 'placeholder' | undefined
+  let variant: 'average' | 'dnf' | undefined
 
   if (isDnf) {
     variant = 'dnf'
-  } else if (isPlaceholder) {
-    variant = 'placeholder'
   } else if (isAverage) {
     variant = 'average'
   }

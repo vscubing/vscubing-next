@@ -27,6 +27,7 @@ type SingleResultProps = {
   place: number
   onPlaceClick?: () => void
   className?: string
+  sticky?: boolean
 }
 export function SingleResult({
   className,
@@ -34,9 +35,15 @@ export function SingleResult({
   place,
   result,
   onPlaceClick,
+  sticky = false,
 }: SingleResultProps) {
   return (
-    <li className={className}>
+    <li
+      className={cn(className, {
+        'sticky bottom-[-2px] top-[calc(var(--layout-section-header-height)-2px)] z-10':
+          sticky,
+      })}
+    >
       <SingleResultDesktop
         className='md:hidden'
         discipline={discipline}

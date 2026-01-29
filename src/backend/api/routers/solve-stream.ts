@@ -25,27 +25,27 @@ export const solveStreamRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input }) => {
-      solveStreams.set(input.streamId, {
-        discipline: input.discipline,
-        scramble: input.scramble,
-        moves: [],
-        ended: false,
-      })
-      console.log('updated getSolveStreams:', solveStreams)
-      await pusherServer.trigger('presence-solve-streams', 'created', input)
-      console.log('presence-solve-streams', 'created', input)
+      // solveStreams.set(input.streamId, {
+      //   discipline: input.discipline,
+      //   scramble: input.scramble,
+      //   moves: [],
+      //   ended: false,
+      // })
+      // console.log('updated getSolveStreams:', solveStreams)
+      // await pusherServer.trigger('presence-solve-streams', 'created', input)
+      // console.log('presence-solve-streams', 'created', input)
     }),
 
   unregisterSolveStream: liveStreamProcedure
     .input(z.object({ streamId: z.string() }))
     .mutation(async ({ input }) => {
-      const stream = solveStreams.get(input.streamId)
-      if (!stream) {
-        console.log('error', solveStreams, input.streamId)
-        throw new Error('stream not found')
-      }
-      stream.ended = true
-      await pusherServer.trigger('presence-solve-streams', 'ended', input)
+      // const stream = solveStreams.get(input.streamId)
+      // if (!stream) {
+      //   console.log('error', solveStreams, input.streamId)
+      //   throw new Error('stream not found')
+      // }
+      // stream.ended = true
+      // await pusherServer.trigger('presence-solve-streams', 'ended', input)
     }),
 
   sendMove: protectedProcedure

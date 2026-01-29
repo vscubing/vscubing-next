@@ -12,7 +12,6 @@ import {
   PlusIcon,
   PrimaryButton,
   SecondaryButton,
-  UnderlineButton,
 } from '@/frontend/ui'
 import { SpinningBorder } from '@/frontend/ui/spinning-border'
 import { cn } from '@/frontend/utils/cn'
@@ -39,6 +38,7 @@ type RoundSessionRowProps = {
   onPlaceClick?: () => void
   revealedAttemptsNumber?: number
   isPlacePreliminary?: boolean
+  sticky?: boolean
 }
 export function RoundSessionRow({
   discipline,
@@ -52,9 +52,16 @@ export function RoundSessionRow({
   onPlaceClick,
   revealedAttemptsNumber = 5,
   isPlacePreliminary = false,
+  sticky = false,
 }: RoundSessionRowProps & { ref?: RefObject<HTMLLIElement | null> }) {
   return (
-    <li ref={ref} className={className}>
+    <li
+      ref={ref}
+      className={cn(className, {
+        'sticky bottom-[-2px] top-[calc(var(--layout-section-header-height)-2px)] z-10':
+          sticky,
+      })}
+    >
       <RoundSessionRowDesktop
         className='md:hidden'
         discipline={discipline}
@@ -179,8 +186,9 @@ function RoundSessionRowTablet({
                   <SolveTimeLabel
                     timeMs={session.result?.timeMs ?? undefined}
                     isDnf={session.result?.isDnf}
-                    isAverage={session.isFinished}
+                    isAverage={session.isFinished && revealedAverage}
                     isPlaceholder={!session.isFinished || !revealedAverage}
+                    className={cn({ 'text-grey-60': !revealedAverage })}
                   />
                 </span>
                 <Accordion.Trigger className='outline-ring group sm:py-2'>
@@ -282,9 +290,12 @@ function RoundSessionRowDesktop({
           <SolveTimeLabel
             timeMs={session.result?.timeMs ?? undefined}
             isDnf={session.result?.isDnf}
-            isAverage={session.isFinished}
+            isAverage={session.isFinished && revealedAverage}
             isPlaceholder={!session.isFinished || !revealedAverage}
-            className='relative mr-4 after:absolute after:-right-2 after:top-1/2 after:h-6 after:w-px after:-translate-y-1/2 after:bg-grey-60'
+            className={cn(
+              'relative mr-4 after:absolute after:-right-2 after:top-1/2 after:h-6 after:w-px after:-translate-y-1/2 after:bg-grey-60',
+              { 'text-grey-60': !revealedAverage },
+            )}
           />
 
           <ul className='mr-2 grid grid-cols-[repeat(5,min-content)] gap-x-2 lg:gap-x-1'>
@@ -382,7 +393,7 @@ function SingleAttempt({
       revealedAttemptsNumber !== undefined &&
       idx >= revealedAttemptsNumber)
   ) {
-    return <SolveTimeLabel isPlaceholder />
+    return <SolveTimeLabel isPlaceholder className='text-grey-60' />
   }
 
   return (
@@ -438,51 +449,52 @@ function OwnSolveInProgress({
       </span>
     )
 
-  return (
-    <div className='relative flex md:h-14 md:flex-col md:items-center'>
-      <SolveTimeLinkOrDnf
-        result={state.currentSolve.result}
-        contestSlug={contestSlug}
-        discipline={discipline}
-        solveId={state.currentSolve.id}
-        isFestive={state.currentSolve.isPersonalRecord}
-        canShowHint={false}
-        backgroundColorClass='bg-secondary-80'
-        extraNumber={getExtraNumber(state.currentScramble.position)}
-        variant={
-          state.currentSolve.id === bestId
-            ? 'best'
-            : state.currentSolve.id === worstId
-              ? 'worst'
-              : undefined
-        }
-      />
-      <div className='absolute -bottom-3 left-1/2 flex -translate-x-1/2 gap-2 bg-secondary-80 md:static md:translate-x-0'>
-        {state.canChangeToExtra && (
-          <UnderlineButton
-            size='sm'
-            disabled={isPending}
-            onClick={() =>
-              handleSubmitSolve({
-                type: 'changed_to_extra',
-                reason: 'not implemented yet',
-              })
-            }
-            className='h-5 text-red-80 hover:text-red-100 active:text-red-80'
-          >
-            Extra
-          </UnderlineButton>
-        )}
-        <UnderlineButton
-          size='sm'
-          disabled={isPending}
-          onClick={() => handleSubmitSolve({ type: 'submitted' })}
-          className='h-5'
-          autoFocus
-        >
-          Submit
-        </UnderlineButton>
-      </div>
-    </div>
-  )
+  return null
+  // return (
+  //   <div className='relative flex md:h-14 md:flex-col md:items-center'>
+  //     <SolveTimeLinkOrDnf
+  //       result={state.currentSolve.result}
+  //       contestSlug={contestSlug}
+  //       discipline={discipline}
+  //       solveId={state.currentSolve.id}
+  //       isFestive={state.currentSolve.isPersonalRecord}
+  //       canShowHint={false}
+  //       backgroundColorClass='bg-secondary-80'
+  //       extraNumber={getExtraNumber(state.currentScramble.position)}
+  //       variant={
+  //         state.currentSolve.id === bestId
+  //           ? 'best'
+  //           : state.currentSolve.id === worstId
+  //             ? 'worst'
+  //             : undefined
+  //       }
+  //     />
+  //     <div className='absolute -bottom-3 left-1/2 flex -translate-x-1/2 gap-2 bg-secondary-80 md:static md:translate-x-0'>
+  //       {state.canChangeToExtra && (
+  //         <UnderlineButton
+  //           size='sm'
+  //           disabled={isPending}
+  //           onClick={() =>
+  //             handleSubmitSolve({
+  //               type: 'changed_to_extra',
+  //               reason: 'not implemented yet',
+  //             })
+  //           }
+  //           className='h-5 text-red-80 hover:text-red-100 active:text-red-80'
+  //         >
+  //           Extra
+  //         </UnderlineButton>
+  //       )}
+  //       <UnderlineButton
+  //         size='sm'
+  //         disabled={isPending}
+  //         onClick={() => handleSubmitSolve({ type: 'submitted' })}
+  //         className='h-5'
+  //         autoFocus
+  //       >
+  //         Submit
+  //       </UnderlineButton>
+  //     </div>
+  //   </div>
+  // )
 }
