@@ -9,11 +9,13 @@ import { useUser } from '@/frontend/shared/use-user'
 import { useSolveForm } from '@/frontend/shared/use-solve-form'
 import { useScrollToIndex } from '@/frontend/utils/use-scroll-to-index'
 import { useTRPC, type RouterOutputs } from '@/lib/trpc/react'
-import { type Discipline } from '@/types'
+import { type Discipline, getExtraNumber } from '@/types'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { useCallback, useEffect } from 'react'
-import { SimulatorProvider } from '@/app/(app)/contests/[contestSlug]/solve/_components'
-import { PrimaryButton } from '@/frontend/ui'
+import { PrimaryButton, SecondaryButton, Ellipsis } from '@/frontend/ui'
+import { ExtraPrompt } from '../../solve/_components/extra-prompt'
+import { SolveTimeLabel } from '@/frontend/shared/solve-time-button'
+import { ExtraLabel } from '@/frontend/shared/extra-label'
 
 export function SessionList({
   contestSlug,
@@ -122,7 +124,7 @@ function OwnRoundSessionInProgressRow({
   place: number
   contestSlug: string
 }) {
-  const { state } = useSolveForm({
+  const { state, isPending, handleSubmitSolve } = useSolveForm({
     contestSlug,
     discipline,
   })
@@ -143,21 +145,58 @@ function OwnRoundSessionInProgressRow({
     )
   }
 
-  // If there is a current solve, render the in-progress UI
+  const currentSolveNumber = (state.submittedSolves?.length ?? 0) + 1
+  const extraNumber = getExtraNumber(state.currentScramble.position)
+
   return (
-    <SimulatorProvider>
-      <li className='flex items-center gap-4 rounded-xl bg-secondary-80 px-4 py-3'>
-        <span className='title-h3'>You have a solve in progress</span>
-        <PrimaryButton
-          size='sm'
-          onClick={() =>
-            (window.location.href = `/contests/${contestSlug}/solve?discipline=${discipline}`)
-          }
-        >
-          Go to solve
-        </PrimaryButton>
-      </li>
-    </SimulatorProvider>
+    <li className='sticky bottom-4 top-[calc(var(--layout-section-header-height)-2px)] z-10 flex flex-col gap-1 rounded-xl border border-dashed border-secondary-20 bg-black-80 px-4 py-3'>
+      <div className='flex gap-8'>
+        <span className='w-16 text-center text-grey-40'>Attempt</span>
+        <span className='w-24 text-center text-grey-40'>Single time</span>
+        <span className='text-grey-40'>Scramble</span>
+      </div>
+      <div className='flex h-11 items-center gap-8 rounded-xl bg-grey-100 pl-4'>
+        <span className='relative flex w-16 items-center justify-center'>
+          No {currentSolveNumber}
+          <ExtraLabel
+            extraNumber={extraNumber}
+            className='absolute right-0 top-0'
+          />
+        </span>
+        <SolveTimeLabel
+          timeMs={state.currentSolve.result.timeMs ?? undefined}
+          isDnf={state.currentSolve.result.isDnf}
+          className='w-24'
+        />
+        <Ellipsis className='flex-1'>{state.currentScramble.moves}</Ellipsis>
+        <div className='ml-auto flex gap-1 pl-2'>
+          {state.canChangeToExtra && (
+            <ExtraPrompt
+              onSubmit={(reason) =>
+                handleSubmitSolve({ type: 'changed_to_extra', reason })
+              }
+              trigger={
+                <SecondaryButton
+                  size='sm'
+                  className='w-[5.25rem]'
+                  disabled={isPending}
+                >
+                  Extra
+                </SecondaryButton>
+              }
+            />
+          )}
+          <PrimaryButton
+            size='sm'
+            className='w-[5.25rem]'
+            onClick={() => handleSubmitSolve({ type: 'submitted' })}
+            disabled={isPending}
+          >
+            Submit
+          </PrimaryButton>
+        </div>
+      </div>
+    </li>
   )
 }
 
