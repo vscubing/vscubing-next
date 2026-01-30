@@ -64,8 +64,8 @@ export default async function SolveContestPage({
         <div className='ml-10 mr-4 flex flex-1 items-center gap-4 sm:sr-only'>
           <ExclamationCircleIcon className='shrink-0' />
           <p>
-            You can't see the results of an ongoing round until you solve all
-            scrambles or the round ends
+            You can see other contestant's results in the attempts you have
+            completed in the experimental view.
           </p>
         </div>
         <SecondaryButton className='ml-auto' asChild>

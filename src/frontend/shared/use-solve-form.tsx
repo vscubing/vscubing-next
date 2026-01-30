@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation'
 import { type Toast, toast } from '../ui'
 import { SolveTimeLinkOrDnf } from './solve-time-button'
 import { v4 as uuid } from 'uuid'
+import state from 'pusher-js/types/src/core/http/state'
 
 export function useSolveForm({
   contestSlug,
@@ -65,20 +66,22 @@ export function useSolveForm({
     )
   const { mutate: submitSolve, isPending: isSubmitSolvePending } = useMutation(
     trpc.roundSession.submitSolve.mutationOptions({
-      onSuccess: () => {
-        const TOTAL_ROUND_ATTEMPTS = 5
-        const justFinishedRound =
-          state?.submittedSolves.length === TOTAL_ROUND_ATTEMPTS - 1
-        if (justFinishedRound) {
+      onSuccess: ({ sessionFinished }) => {
+        if (sessionFinished)
           void router.push(
             `/contests/${contestSlug}/results?discipline=${discipline}&scrollToOwn=true`,
           )
-        }
       },
       onSettled: () => {
         void queryClient.invalidateQueries(stateQuery)
         void queryClient.invalidateQueries(
           trpc.contest.getContestResults.queryOptions({
+            contestSlug,
+            discipline,
+          }),
+        )
+        void queryClient.invalidateQueries(
+          trpc.roundSession.canSolve.queryOptions({
             contestSlug,
             discipline,
           }),
