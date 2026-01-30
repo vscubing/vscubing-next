@@ -57,13 +57,16 @@ export function RoundSessionRow({
   return (
     <li
       ref={ref}
-      className={cn(className, {
-        'sticky bottom-[-2px] top-[calc(var(--layout-section-header-height)-2px)] z-10':
-          sticky,
-      })}
+      className={cn(
+        {
+          'sticky bottom-[-2px] top-[calc(var(--layout-section-header-height)-2px)] z-10':
+            sticky,
+        },
+        className,
+      )}
     >
       <RoundSessionRowDesktop
-        className='md:hidden'
+        className='h-full md:hidden'
         discipline={discipline}
         isFirstOnPage={isFirstOnPage}
         withContestLink={withContestLink}
@@ -114,7 +117,6 @@ export function RoundSessionHeader({
           </span>
         ))}
       </span>
-
       {withContestLink && <div className='w-[9.25rem] lg:w-28' />}
     </div>
   )
@@ -269,7 +271,7 @@ function RoundSessionRowDesktop({
       >
         <div
           className={cn(
-            'flex h-16 w-full items-center rounded-xl pl-2',
+            'flex h-full min-h-16 w-full items-center rounded-xl pl-2',
             session.isOwn ? 'bg-secondary-80' : 'bg-grey-100',
           )}
         >
@@ -299,24 +301,26 @@ function RoundSessionRowDesktop({
           />
 
           <ul className='mr-2 grid grid-cols-[repeat(5,min-content)] gap-x-2 lg:gap-x-1'>
-            {Array.from({ length: 5 }).map((_, idx) => (
-              <li key={solves[idx]?.id ?? idx} className='contents'>
-                <span className='sr-only'>Attempt {idx + 1}</span>
-                <span className='relative flex items-center'>
-                  <SingleAttempt
-                    contestSlug={contestSlug}
-                    session={session}
-                    isFirstOnPage={isFirstOnPage}
-                    idx={idx}
-                    discipline={discipline}
-                    solves={solves}
-                    bestId={bestId}
-                    worstId={worstId}
-                    revealedAttemptsNumber={revealedAttemptsNumber}
-                  />
-                </span>
-              </li>
-            ))}
+            {Array.from({ length: 5 }).map((_, idx) => {
+              return (
+                <li key={solves[idx]?.id ?? idx} className='contents'>
+                  <span className='sr-only'>Attempt {idx + 1}</span>
+                  <span className='relative flex items-center'>
+                    <SingleAttempt
+                      contestSlug={contestSlug}
+                      session={session}
+                      isFirstOnPage={isFirstOnPage}
+                      idx={idx}
+                      discipline={discipline}
+                      solves={solves}
+                      bestId={bestId}
+                      worstId={worstId}
+                      revealedAttemptsNumber={revealedAttemptsNumber}
+                    />
+                  </span>
+                </li>
+              )
+            })}
           </ul>
           {withContestLink && (
             <SecondaryButton
@@ -420,17 +424,13 @@ function SingleAttempt({
 function OwnSolveInProgress({
   contestSlug,
   discipline,
-  worstId,
-  bestId,
 }: {
   contestSlug: string
   discipline: Discipline
   bestId?: number
   worstId?: number
 }) {
-  const { state, isPending, handleSubmitSolve, handleInitSolve } = useSolveForm(
-    { contestSlug, discipline },
-  )
+  const { state, handleInitSolve } = useSolveForm({ contestSlug, discipline })
   const { isClient } = useClient()
 
   if (!state || !isClient)
@@ -443,58 +443,14 @@ function OwnSolveInProgress({
   if (!state.currentSolve)
     return (
       <span className='inline-flex h-full w-24 items-center justify-center lg:w-20 md:h-14'>
-        <PrimaryButton size='sm' autoFocus onClick={handleInitSolve}>
+        <PrimaryButton
+          size='sm'
+          autoFocus
+          onClick={handleInitSolve}
+          className='w-full'
+        >
           Solve
         </PrimaryButton>
       </span>
     )
-
-  return null
-  // return (
-  //   <div className='relative flex md:h-14 md:flex-col md:items-center'>
-  //     <SolveTimeLinkOrDnf
-  //       result={state.currentSolve.result}
-  //       contestSlug={contestSlug}
-  //       discipline={discipline}
-  //       solveId={state.currentSolve.id}
-  //       isFestive={state.currentSolve.isPersonalRecord}
-  //       canShowHint={false}
-  //       backgroundColorClass='bg-secondary-80'
-  //       extraNumber={getExtraNumber(state.currentScramble.position)}
-  //       variant={
-  //         state.currentSolve.id === bestId
-  //           ? 'best'
-  //           : state.currentSolve.id === worstId
-  //             ? 'worst'
-  //             : undefined
-  //       }
-  //     />
-  //     <div className='absolute -bottom-3 left-1/2 flex -translate-x-1/2 gap-2 bg-secondary-80 md:static md:translate-x-0'>
-  //       {state.canChangeToExtra && (
-  //         <UnderlineButton
-  //           size='sm'
-  //           disabled={isPending}
-  //           onClick={() =>
-  //             handleSubmitSolve({
-  //               type: 'changed_to_extra',
-  //               reason: 'not implemented yet',
-  //             })
-  //           }
-  //           className='h-5 text-red-80 hover:text-red-100 active:text-red-80'
-  //         >
-  //           Extra
-  //         </UnderlineButton>
-  //       )}
-  //       <UnderlineButton
-  //         size='sm'
-  //         disabled={isPending}
-  //         onClick={() => handleSubmitSolve({ type: 'submitted' })}
-  //         className='h-5'
-  //         autoFocus
-  //       >
-  //         Submit
-  //       </UnderlineButton>
-  //     </div>
-  //   </div>
-  // )
 }

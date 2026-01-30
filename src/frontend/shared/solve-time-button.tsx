@@ -54,7 +54,7 @@ export function SolveTimeLinkOrDnf({
   if (result.isDnf) {
     return (
       <span className='relative z-10'>
-        <span className='absolute top-[-0.9rem] flex min-w-full items-center'>
+        <span className='absolute left-4 top-[-0.7rem] flex min-w-full items-center'>
           {extraNumber !== undefined && (
             <ExtraLabel
               extraNumber={extraNumber}

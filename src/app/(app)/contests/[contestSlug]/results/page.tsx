@@ -1,14 +1,15 @@
+'use client'
+
 import { LayoutSectionHeader } from '@/app/(app)/_layout'
 import { LayoutHeaderTitlePortal } from '@/app/(app)/_layout/layout-header'
 import { LayoutPageTitleMobile } from '@/app/(app)/_layout/layout-page-title-mobile'
 import { DisciplineSwitcher } from '@/frontend/shared/discipline-switcher'
 import { HintSection } from '@/frontend/shared/hint-section'
 import { NavigateBackButton } from '@/frontend/shared/navigate-back-button'
-import { api } from '@/lib/trpc/server'
+import { useTRPC } from '@/lib/trpc/react'
 import { DEFAULT_DISCIPLINE, isDiscipline, type Discipline } from '@/types'
 import { formatContestDuration } from '@/lib/utils/format-date'
-import { tryCatchTRPC } from '@/lib/utils/try-catch'
-import { notFound, redirect } from 'next/navigation'
+import { redirect, useParams, useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import { SessionList } from './_components/session-list'
 import { LeaveRoundButton } from './_components/leave-round-button'
@@ -18,28 +19,27 @@ import {
   RoundSessionHeader,
   RoundSessionRowSkeleton,
 } from '@/frontend/shared/round-session-row'
+import { useSuspenseQuery } from '@tanstack/react-query'
 
-export default async function ContestResultsPage({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ contestSlug: string }>
-  searchParams: Promise<Record<string, string | string[] | undefined>>
-}) {
-  const { contestSlug } = await params
-  const { discipline, scrollToId, scrollToOwn } = await searchParams
+export default function ContestResultsPage() {
+  const { contestSlug } = useParams<{ contestSlug: string }>()
+  const searchParams = useSearchParams()
+
+  const discipline = searchParams.get('discipline')
+  const scrollToId = searchParams.get('scrollToId')
+  const scrollToOwn = searchParams.get('scrollToOwn')
+
   if (!isDiscipline(discipline))
     redirect(
       `/contests/${contestSlug}/results?discipline=${DEFAULT_DISCIPLINE}`,
     )
 
-  const { data: contest, error } = await tryCatchTRPC(
-    api.contest.getContestMetaData({
+  const trpc = useTRPC()
+  const { data: contest } = useSuspenseQuery(
+    trpc.contest.getContestMetaData.queryOptions({
       contestSlug,
     }),
   )
-  if (error?.code === 'NOT_FOUND') notFound()
-  if (error) throw error
 
   let title = ''
   if (contest.isOngoing) {
@@ -92,7 +92,7 @@ export default async function ContestResultsPage({
         <PageContent
           contestSlug={contestSlug}
           discipline={discipline}
-          scrollToId={Number(scrollToId)}
+          scrollToId={scrollToId ? Number(scrollToId) : undefined}
           scrollToOwn={Boolean(scrollToOwn)}
           isOngoing={contest.isOngoing}
         />
@@ -101,7 +101,7 @@ export default async function ContestResultsPage({
   )
 }
 
-async function PageContent({
+function PageContent({
   contestSlug,
   discipline,
   scrollToId,
@@ -114,20 +114,30 @@ async function PageContent({
   scrollToOwn?: boolean
   isOngoing: boolean
 }) {
-  let sessions = await api.contest.getContestResults({
-    contestSlug,
-    discipline,
-  })
+  const trpc = useTRPC()
+  let { data: sessions } = useSuspenseQuery(
+    trpc.contest.getContestResults.queryOptions({
+      contestSlug,
+      discipline,
+    }),
+  )
 
   if (!isOngoing)
     sessions = sessions.filter((session) => session.session.isFinished) // TODO: remove this when we implement autocompleting all incomplete sessions on contest end
 
-  if (sessions.length === 0 && !isOngoing) {
-    return (
-      <HintSection>
-        <p>It seems no one participated in this round.</p>
-      </HintSection>
-    )
+  if (sessions.length === 0) {
+    if (isOngoing)
+      return (
+        <HintSection>
+          <p>Be the first to participate in this round!</p>
+        </HintSection>
+      )
+    else
+      return (
+        <HintSection>
+          <p>It seems no one participated in this round.</p>
+        </HintSection>
+      )
   }
 
   return (

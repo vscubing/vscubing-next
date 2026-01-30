@@ -74,7 +74,8 @@ export function ExtraPrompt({
                 error={!!errors.reason}
                 {...register('reason')}
                 onKeyDown={(e) => {
-                  if (e.ctrlKey && e.key === 'Enter') void handleSubmit()
+                  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter')
+                    void handleSubmit()
                 }}
                 autoFocus
                 className='mb-1 h-24 w-full'

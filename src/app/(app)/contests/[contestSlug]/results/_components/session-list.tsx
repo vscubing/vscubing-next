@@ -105,10 +105,7 @@ export function SessionList({
           ),
         )}
       </ul>
-      <SignInBanner
-        isOngoing={isOngoing}
-        hasOwnSession={ownSessionIdx !== -1}
-      />
+      <SignInBanner isOngoing={isOngoing} />
     </div>
   )
 }
@@ -138,7 +135,7 @@ function OwnRoundSessionInProgressRow({
         podiumColors
         isFirstOnPage={false}
         revealedAttemptsNumber={session.solves.length}
-        className='rounded-xl'
+        className='h-[5.5rem] rounded-xl'
         sticky
         isPlacePreliminary
       />
@@ -149,27 +146,31 @@ function OwnRoundSessionInProgressRow({
   const extraNumber = getExtraNumber(state.currentScramble.position)
 
   return (
-    <li className='sticky bottom-4 top-[calc(var(--layout-section-header-height)-2px)] z-10 flex flex-col gap-1 rounded-xl border border-dashed border-secondary-20 bg-black-80 px-4 py-3'>
-      <div className='flex gap-8'>
-        <span className='w-16 text-center text-grey-40'>Attempt</span>
-        <span className='w-24 text-center text-grey-40'>Single time</span>
-        <span className='text-grey-40'>Scramble</span>
+    <li className='sticky bottom-4 top-[calc(var(--layout-section-header-height)-2px)] z-10 flex h-[5.5rem] flex-col gap-1 rounded-xl border border-dashed border-secondary-20 bg-black-80 p-2'>
+      <div className='flex'>
+        <span className='w-24 text-center text-grey-40'>Attempt</span>
+        <span className='w-32 text-center text-grey-40'>Single time</span>
+        <span className='flex-1 pl-4 text-left text-grey-40'>Scramble</span>
       </div>
-      <div className='flex h-11 items-center gap-8 rounded-xl bg-grey-100 pl-4'>
-        <span className='relative flex w-16 items-center justify-center'>
+      <div className='flex h-11 items-center rounded-xl bg-grey-100'>
+        <span className='relative w-24 text-center text-[1rem]'>
           No {currentSolveNumber}
           <ExtraLabel
             extraNumber={extraNumber}
-            className='absolute right-0 top-0'
+            className='absolute right-4 top-[-0.6rem]'
           />
         </span>
+        <div className='h-6 w-px bg-grey-60' />
         <SolveTimeLabel
           timeMs={state.currentSolve.result.timeMs ?? undefined}
           isDnf={state.currentSolve.result.isDnf}
-          className='w-24'
+          className='w-32'
         />
-        <Ellipsis className='flex-1'>{state.currentScramble.moves}</Ellipsis>
-        <div className='ml-auto flex gap-1 pl-2'>
+        <div className='h-6 w-px bg-grey-60' />
+        <Ellipsis className='flex-1 px-4'>
+          {state.currentScramble.moves}
+        </Ellipsis>
+        <div className='flex h-full gap-1'>
           {state.canChangeToExtra && (
             <ExtraPrompt
               onSubmit={(reason) =>
@@ -178,7 +179,7 @@ function OwnRoundSessionInProgressRow({
               trigger={
                 <SecondaryButton
                   size='sm'
-                  className='w-[5.25rem]'
+                  className='h-full w-[5.25rem]'
                   disabled={isPending}
                 >
                   Extra
@@ -188,9 +189,10 @@ function OwnRoundSessionInProgressRow({
           )}
           <PrimaryButton
             size='sm'
-            className='w-[5.25rem]'
+            className='h-full w-[5.25rem]'
             onClick={() => handleSubmitSolve({ type: 'submitted' })}
             disabled={isPending}
+            autoFocus
           >
             Submit
           </PrimaryButton>
@@ -200,16 +202,10 @@ function OwnRoundSessionInProgressRow({
   )
 }
 
-function SignInBanner({
-  isOngoing,
-  hasOwnSession,
-}: {
-  isOngoing: boolean
-  hasOwnSession: boolean
-}) {
+function SignInBanner({ isOngoing }: { isOngoing: boolean }) {
   const { user, isLoading } = useUser()
 
-  if (!isOngoing || hasOwnSession || user || isLoading) return null
+  if (!isOngoing || user || isLoading) return null
 
   return (
     <div className='sticky bottom-0 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-secondary-20 bg-secondary-80 px-4 py-5'>
