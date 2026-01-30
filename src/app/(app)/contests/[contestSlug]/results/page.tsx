@@ -14,12 +14,14 @@ import { Suspense } from 'react'
 import { SessionList } from './_components/session-list'
 import { LeaveRoundButton } from './_components/leave-round-button'
 import { JoinRoundButton } from './_components/join-round-button'
-import { ClassicSolveViewLink } from './_components/legacy-solve-page-link'
+import { ClassicSolveViewLink } from './_components/classic-solve-view-link'
 import {
   RoundSessionHeader,
   RoundSessionRowSkeleton,
 } from '@/frontend/shared/round-session-row'
 import { useSuspenseQuery } from '@tanstack/react-query'
+import { useSuspenseUser } from '@/frontend/shared/use-user'
+import { SignInButton } from '@/frontend/shared/sign-in-button'
 
 export default function ContestResultsPage() {
   const { contestSlug } = useParams<{ contestSlug: string }>()
@@ -121,6 +123,7 @@ function PageContent({
       discipline,
     }),
   )
+  const { user } = useSuspenseUser()
 
   if (!isOngoing)
     sessions = sessions.filter((session) => session.session.isFinished) // TODO: remove this when we implement autocompleting all incomplete sessions on contest end
@@ -129,7 +132,17 @@ function PageContent({
     if (isOngoing)
       return (
         <HintSection>
-          <p>Be the first to participate in this round!</p>
+          <div>
+            <p className='mb-2'>Be the first to participate in this round!</p>
+            {user ? (
+              <JoinRoundButton
+                contestSlug={contestSlug}
+                discipline={discipline}
+              />
+            ) : (
+              <SignInButton variant='primary' />
+            )}
+          </div>
         </HintSection>
       )
     else

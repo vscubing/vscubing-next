@@ -46,6 +46,12 @@ export function JoinRoundButton({
             discipline,
           }),
         )
+        void queryClient.invalidateQueries(
+          trpc.roundSession.hasJoinedRound.queryOptions({
+            contestSlug,
+            discipline,
+          }),
+        )
       },
     }),
   )

@@ -151,6 +151,23 @@ export const roundSessionRouter = createTRPCRouter({
       return solves?.count === 0
     }),
 
+  canSolve: publicProcedure
+    .input(
+      z.object({
+        discipline: z.enum(DISCIPLINES),
+        contestSlug: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      if (ctx.session === null) return false
+
+      const userCapabilities = await getContestUserCapabilities({
+        contestSlug: input.contestSlug,
+        discipline: input.discipline,
+      })
+      return userCapabilities === 'SOLVE'
+    }),
+
   leaveRound: roundSessionAuthProcedure.mutation(async ({ ctx }) => {
     const solves = await ctx.db
       .select()

@@ -20,8 +20,14 @@ export function ClassicSolveViewLink({
       discipline,
     }),
   )
+  const { data: canSolve } = useQuery(
+    trpc.roundSession.canSolve.queryOptions({
+      contestSlug,
+      discipline,
+    }),
+  )
 
-  if (hasJoinedRound)
+  if (hasJoinedRound && canSolve)
     return (
       <SecondaryButton asChild>
         <Link href={`/contests/${contestSlug}/solve?discipline=${discipline}`}>

@@ -24,6 +24,7 @@ import { UserBadges } from './user-badges'
 import { useSolveForm } from './use-solve-form'
 import { SimulatorProvider } from '@/app/(app)/contests/[contestSlug]/solve/_components'
 import { LoadingDots } from '../ui/loading-dots'
+import { useIsClient } from 'usehooks-ts'
 
 // HACK: we can't just use useMatchesScreen for switching between Desktop and Tablet because then it won't be SSRed properly
 type RoundSessionRowProps = {
@@ -295,7 +296,7 @@ function RoundSessionRowDesktop({
             isPlaceholder={!session.isFinished || !revealedAverage}
             className={cn(
               'relative mr-4 after:absolute after:-right-2 after:top-1/2 after:h-6 after:w-px after:-translate-y-1/2 after:bg-grey-60',
-              { 'text-grey-60': !revealedAverage },
+              { 'text-grey-60': !session.isFinished || !revealedAverage },
             )}
           />
 
@@ -430,25 +431,25 @@ function OwnSolveInProgress({
   worstId?: number
 }) {
   const { state, handleInitSolve } = useSolveForm({ contestSlug, discipline })
+  const isClient = useIsClient()
 
-  if (!state)
+  if (!state || !isClient)
     return (
       <div className='flex w-24 items-center justify-center lg:w-20 md:h-14'>
         <LoadingDots />
       </div>
     )
 
-  if (!state.currentSolve)
-    return (
-      <span className='inline-flex h-full w-24 items-center justify-center lg:w-20 md:h-14'>
-        <PrimaryButton
-          size='sm'
-          autoFocus
-          onClick={handleInitSolve}
-          className='w-full'
-        >
-          Solve
-        </PrimaryButton>
-      </span>
-    )
+  return (
+    <span className='inline-flex h-full w-24 items-center justify-center lg:w-20 md:h-14'>
+      <PrimaryButton
+        size='sm'
+        autoFocus
+        onClick={handleInitSolve}
+        className='w-full'
+      >
+        Solve
+      </PrimaryButton>
+    </span>
+  )
 }
