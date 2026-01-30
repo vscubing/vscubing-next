@@ -10,6 +10,7 @@ import SuperJSON from 'superjson'
 import { type AppRouter } from '@/backend/api/root'
 import { createQueryClient } from './query-client'
 import { env } from '@/env'
+import { readSSROnlySecret } from 'ssr-only-secrets'
 
 let clientQueryClientSingleton: QueryClient | undefined = undefined
 const getQueryClient = () => {
@@ -39,7 +40,10 @@ export type RouterInputs = inferRouterInputs<AppRouter>
  */
 export type RouterOutputs = inferRouterOutputs<AppRouter>
 
-export function TRPCReactProvider(props: { children: React.ReactNode }) {
+export function TRPCReactProvider(props: {
+  children: React.ReactNode
+  ssrOnlySecret: string
+}) {
   const queryClient = getQueryClient()
 
   const [trpcClient] = useState(() =>
@@ -53,9 +57,18 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
         httpBatchLink({
           transformer: SuperJSON,
           url: getBaseUrl() + '/api/trpc',
-          headers: () => {
+          headers: async () => {
             const headers = new Headers()
             headers.set('x-trpc-source', 'nextjs-react')
+
+            const cookieHeaderValue = await readSSROnlySecret(
+              props.ssrOnlySecret,
+              'SECRET_CLIENT_COOKIE_VAR',
+            )
+            if (cookieHeaderValue) {
+              headers.set('cookie', cookieHeaderValue)
+            }
+
             return headers
           },
         }),
@@ -75,4 +88,12 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
 function getBaseUrl() {
   if (typeof window !== 'undefined') return window.location.origin
   return `http://localhost:${process.env.PORT ?? 3000}`
+}
+
+function deserialize(serialized) {
+  const [_, crypt, iv] = serialized.split(':')
+  return [
+    Buffer.from(crypt, 'base64'),
+    Uint8Array.from(Buffer.from(iv, 'base64')),
+  ]
 }
