@@ -21,15 +21,15 @@ export function sortWithRespectToExtras<
     ) {
       const extra = extraSolvesPool.shift()
       if (!extra) {
-        console.log(JSON.stringify(solves))
-        throw new Error('not enough extras')
+        console.error('[ERROR] NOT ENOUGH EXTRAS', JSON.stringify(solves))
+        return solves
       }
       sorted.push(extra)
     } else {
       const regular = regularSolvesPool.shift()
       if (!regular) {
-        console.log(JSON.stringify(solves))
-        throw new Error('not enough regulars')
+        console.error('[ERROR] NOT ENOUGH REGULARS', JSON.stringify(solves))
+        return solves
       }
       sorted.push(regular)
     }
