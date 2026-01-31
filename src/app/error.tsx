@@ -1,7 +1,7 @@
 'use client'
 
 import { env } from '@/env'
-import { PrimaryButton } from '../frontend/ui'
+import { PrimaryButton, SecondaryButton } from '../frontend/ui'
 import {
   ParallaxCubes,
   ParallaxCubesWrapper,
@@ -37,7 +37,7 @@ export default function Error({
       <Layout withoutHeader>
         <div className='flex flex-1 flex-col gap-3 sm:gap-0'>
           <div className='relative flex-1 rounded-xl bg-black-80 p-16 sm:p-8'>
-            <ParallaxCubes mainImgSrc={img500} mainImgAlt='505' />
+            <ParallaxCubes mainImgSrc={img500} mainImgAlt='500' />
             <div className='relative max-w-[35rem] sm:max-w-none'>
               <p className='title-lg mb-4'>
                 Oops!
@@ -45,13 +45,24 @@ export default function Error({
                 Technical glitch detected
               </p>
               <p className='mb-8 text-base'>{error.message}</p>
-              <PrimaryButton
-                className='sm:w-full'
-                size={isSmScreen ? 'sm' : 'lg'}
-                onClick={reset}
-              >
-                Retry
-              </PrimaryButton>
+              <div className='flex gap-4 sm:flex-col'>
+                <SecondaryButton
+                  className='sm:w-full'
+                  size={isSmScreen ? 'sm' : 'lg'}
+                  onClick={reset}
+                >
+                  Retry
+                </SecondaryButton>
+                <PrimaryButton
+                  className='sm:w-full'
+                  size={isSmScreen ? 'sm' : 'lg'}
+                  onClick={() =>
+                    window.open('https://discord.gg/PxFrW9vTAy', '_blank')
+                  }
+                >
+                  Contact us
+                </PrimaryButton>
+              </div>
             </div>
           </div>
         </div>
