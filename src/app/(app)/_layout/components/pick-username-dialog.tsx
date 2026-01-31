@@ -60,7 +60,10 @@ export function PickUsernameDialog() {
       <AlertDialogPortal>
         <AlertDialogOverlay />
         <AlertDialogContent>
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className='flex flex-col items-center gap-8 sm:gap-6'
+          >
             <div>
               <AlertDialogTitle className='mb-4'>
                 Greetings, Speedcuber
