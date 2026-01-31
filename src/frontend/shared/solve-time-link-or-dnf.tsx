@@ -53,8 +53,8 @@ export function SolveTimeLinkOrDnf({
 }: SolveTimeLinkOrDnfProps) {
   if (result.isDnf) {
     return (
-      <span className='relative z-10'>
-        <span className='absolute left-4 top-[-0.7rem] flex min-w-full items-center'>
+      <span className='relative z-10 inline-block'>
+        <span className='absolute left-[0.7rem] top-[-0.5rem] flex min-w-full items-center'>
           {extraNumber !== undefined && (
             <ExtraLabel
               extraNumber={extraNumber}
@@ -62,7 +62,7 @@ export function SolveTimeLinkOrDnf({
             />
           )}
         </span>
-        <SolveTimeLabel isDnf className={cn('h-auto', className)} />
+        <SolveTimeLabel isDnf className={className} />
       </span>
     )
   }

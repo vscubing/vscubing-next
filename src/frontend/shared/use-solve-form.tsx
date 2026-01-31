@@ -7,9 +7,8 @@ import { signSolve } from '@/lib/utils/solve-signature'
 import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { type Toast, toast } from '../ui'
-import { SolveTimeLinkOrDnf } from './solve-time-button'
+import { SolveTimeLinkOrDnf } from './solve-time-link-or-dnf'
 import { v4 as uuid } from 'uuid'
-import state from 'pusher-js/types/src/core/http/state'
 
 export function useSolveForm({
   contestSlug,

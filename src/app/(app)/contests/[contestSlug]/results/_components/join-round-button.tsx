@@ -65,6 +65,7 @@ export function JoinRoundButton({
       onClick={() => createRoundSession({ contestSlug, discipline })}
       size='sm'
       className='h-15'
+      autoFocus
     >
       Join this round
     </PrimaryButton>

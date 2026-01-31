@@ -9,7 +9,7 @@ import {
 } from '@/frontend/ui'
 import { SpinningBorder } from '@/frontend/ui/spinning-border'
 import { PlaceLabel } from '@/frontend/shared/place-label'
-import { SolveTimeLinkOrDnf } from '@/frontend/shared/solve-time-button'
+import { SolveTimeLinkOrDnf } from '@/frontend/shared/solve-time-link-or-dnf'
 import type { Discipline } from '@/types'
 import { cn } from '@/frontend/utils/cn'
 import { formatDate } from '@/lib/utils/format-date'

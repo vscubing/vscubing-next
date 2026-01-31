@@ -17,7 +17,7 @@ import { cn } from '@/frontend/utils/cn'
 import { Alg } from '@vscubing/cubing/alg'
 import { isRotation } from '@/lib/utils/is-rotation'
 import { removeSolutionComments } from '@/lib/utils/remove-solution-comments'
-import { SolveTimeLabel } from '@/frontend/shared/solve-time-button'
+import { SolveTimeLabel } from '@/frontend/shared/solve-time-link-or-dnf'
 
 type PathParams = { contestSlug: string; solveId: string }
 export default async function WatchSolvePage(props: {

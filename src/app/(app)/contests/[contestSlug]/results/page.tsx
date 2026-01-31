@@ -61,7 +61,7 @@ export default function ContestResultsPage() {
           initialDiscipline={discipline}
         />
         <div>
-          <h2 className='title-h2 mb-1'>
+          <h2 className='title-h2 mb-3 leading-none sm:mb-1'>
             Contest {contestSlug} {contest.isOngoing ? ' (ongoing)' : ''}
           </h2>
           <p className='min-w-1 text-grey-40'>
