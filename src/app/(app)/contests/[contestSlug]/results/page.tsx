@@ -24,6 +24,7 @@ import {
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { useSuspenseUser } from '@/frontend/shared/use-user'
 import { SignInButton } from '@/frontend/shared/sign-in-button'
+import { ResultsRevealHintPopover } from './_components/results-reveal-hint-popover.client'
 
 export default function ContestResultsPage() {
   const { contestSlug } = useParams<{ contestSlug: string }>()
@@ -70,6 +71,8 @@ export default function ContestResultsPage() {
             {formatContestDuration(contest)}
           </p>
         </div>
+        <ResultsRevealHintPopover />
+
         <div className='ml-auto flex items-center gap-4 whitespace-nowrap sm:hidden'>
           <JoinRoundButton contestSlug={contestSlug} discipline={discipline}>
             {(onClick) => (

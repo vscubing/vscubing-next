@@ -34,7 +34,7 @@ export function OwnRoundSessionInProgressRow({
         podiumColors
         isFirstOnPage={false}
         revealedAttemptsNumber={session.solves.length}
-        className='h-[5.5rem] rounded-xl sm:h-auto'
+        className='h-[5.5rem] rounded-xl md:h-auto'
         sticky
         isPlacePreliminary
       />

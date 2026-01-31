@@ -61,7 +61,7 @@ export function RoundSessionRow({
       ref={ref}
       className={cn(
         {
-          'sticky bottom-[-2px] top-[calc(var(--layout-section-header-height)-2px)] z-10':
+          'sticky bottom-0 top-[calc(var(--layout-section-header-height)-2px)] z-10':
             sticky,
         },
         className,
@@ -392,9 +392,7 @@ function SingleAttempt({
   worstId?: number
   revealedAttemptsNumber?: number
 }) {
-  const isInProgress =
-    solves[idx]?.status === 'pending' ||
-    (solves.at(-1)?.status !== 'pending' && idx === solves.length)
+  const isInProgress = idx === solves.length
   if (session.isOwn && isInProgress) {
     return (
       <SimulatorProvider>

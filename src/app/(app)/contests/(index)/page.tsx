@@ -20,6 +20,7 @@ import ContestList from './_components/contest-list-client'
 import { LayoutHeaderTitlePortal } from '../../_layout/layout-header'
 import { DisciplineSwitcher } from '@/frontend/shared/discipline-switcher'
 import { SpecialContestCreationDialog } from './_components/special-contest-creation-dialog'
+import { withSuspense } from '@/frontend/utils/with-suspense'
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>
 export default async function ContestsIndexPage(props: {
@@ -42,9 +43,7 @@ export default async function ContestsIndexPage(props: {
           disciplines={DISCIPLINES}
           initialDiscipline={discipline}
         />
-        <Suspense>
-          <SpecialContestsManagementOverlay />
-        </Suspense>
+        <SpecialContestsManagementOverlay />
       </LayoutSectionHeader>
       <Suspense
         key={discipline}
@@ -103,7 +102,7 @@ function ContestListShell({ children }: { children: ReactNode }) {
   )
 }
 
-async function SpecialContestsManagementOverlay() {
+const SpecialContestsManagementOverlay = withSuspense(async function () {
   const authorized = await api.specialContest.canManage()
   if (!authorized) return
   return (
@@ -111,4 +110,4 @@ async function SpecialContestsManagementOverlay() {
       <PrimaryButton className='ml-auto'>New special</PrimaryButton>
     </SpecialContestCreationDialog>
   )
-}
+})
