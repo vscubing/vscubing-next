@@ -88,6 +88,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@tailwindcss/postcss": "^4.0.15",
+    "@tanstack/react-query-devtools": "^5.91.3",
     "@types/bun": "^1.2.10",
     "@types/cheerio": "^0.22.35",
     "@types/jws": "^3.2.10",

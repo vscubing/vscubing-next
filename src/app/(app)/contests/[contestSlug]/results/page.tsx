@@ -6,10 +6,12 @@ import { LayoutPageTitleMobile } from '@/app/(app)/_layout/layout-page-title-mob
 import { DisciplineSwitcher } from '@/frontend/shared/discipline-switcher'
 import { HintSection } from '@/frontend/shared/hint-section'
 import { NavigateBackButton } from '@/frontend/shared/navigate-back-button'
+import { PrimaryButton, SecondaryButton } from '@/frontend/ui'
 import { useTRPC } from '@/lib/trpc/react'
 import { DEFAULT_DISCIPLINE, isDiscipline, type Discipline } from '@/types'
 import { formatContestDuration } from '@/lib/utils/format-date'
 import { redirect, useParams, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 import { Suspense } from 'react'
 import { SessionList } from './_components/session-list'
 import { LeaveRoundButton } from './_components/leave-round-button'
@@ -69,12 +71,29 @@ export default function ContestResultsPage() {
           </p>
         </div>
         <div className='ml-auto flex items-center gap-4 whitespace-nowrap sm:hidden'>
-          <JoinRoundButton contestSlug={contestSlug} discipline={discipline} />
+          <JoinRoundButton contestSlug={contestSlug} discipline={discipline}>
+            {(onClick) => (
+              <PrimaryButton
+                onClick={onClick}
+                size='sm'
+                className='h-15'
+                autoFocus
+              >
+                Join this round
+              </PrimaryButton>
+            )}
+          </JoinRoundButton>
           <LeaveRoundButton contestSlug={contestSlug} discipline={discipline} />
           <ClassicSolveViewLink
             contestSlug={contestSlug}
             discipline={discipline}
-          />
+          >
+            {(href) => (
+              <SecondaryButton asChild>
+                <Link href={href}>Classic solve view</Link>
+              </SecondaryButton>
+            )}
+          </ClassicSolveViewLink>
         </div>
       </LayoutSectionHeader>
 
@@ -117,16 +136,13 @@ function PageContent({
   isOngoing: boolean
 }) {
   const trpc = useTRPC()
-  let { data: sessions } = useSuspenseQuery(
+  const { data: sessions } = useSuspenseQuery(
     trpc.contest.getContestResults.queryOptions({
       contestSlug,
       discipline,
     }),
   )
   const { user } = useSuspenseUser()
-
-  if (!isOngoing)
-    sessions = sessions.filter((session) => session.session.isFinished) // TODO: remove this when we implement autocompleting all incomplete sessions on contest end
 
   if (sessions.length === 0) {
     if (isOngoing)
@@ -138,7 +154,13 @@ function PageContent({
               <JoinRoundButton
                 contestSlug={contestSlug}
                 discipline={discipline}
-              />
+              >
+                {(onClick) => (
+                  <SecondaryButton onClick={onClick} size='sm'>
+                    Join this round
+                  </SecondaryButton>
+                )}
+              </JoinRoundButton>
             ) : (
               <SignInButton variant='primary' />
             )}

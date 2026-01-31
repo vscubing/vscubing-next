@@ -11,6 +11,7 @@ import { type AppRouter } from '@/backend/api/root'
 import { createQueryClient } from './query-client'
 import { env } from '@/env'
 import { readSSROnlySecret } from 'ssr-only-secrets'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 let clientQueryClientSingleton: QueryClient | undefined = undefined
 const getQueryClient = () => {
@@ -80,6 +81,9 @@ export function TRPCReactProvider(props: {
     <QueryClientProvider client={queryClient}>
       <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
         {props.children}
+        {env.NEXT_PUBLIC_APP_ENV !== 'production' && (
+          <ReactQueryDevtools initialIsOpen={false} />
+        )}
       </TRPCProvider>
     </QueryClientProvider>
   )

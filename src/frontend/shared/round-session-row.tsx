@@ -12,6 +12,7 @@ import {
   PlusIcon,
   PrimaryButton,
   SecondaryButton,
+  UnderlineButton,
 } from '@/frontend/ui'
 import { SpinningBorder } from '@/frontend/ui/spinning-border'
 import { cn } from '@/frontend/utils/cn'
@@ -25,6 +26,7 @@ import { useSolveForm } from './use-solve-form'
 import { SimulatorProvider } from '@/app/(app)/contests/[contestSlug]/solve/_components'
 import { LoadingDots } from '../ui/loading-dots'
 import { useIsClient } from 'usehooks-ts'
+import { ClassicSolveViewLink } from '@/app/(app)/contests/[contestSlug]/results/_components/classic-solve-view-link'
 
 // HACK: we can't just use useMatchesScreen for switching between Desktop and Tablet because then it won't be SSRed properly
 type RoundSessionRowProps = {
@@ -180,6 +182,18 @@ function RoundSessionRowTablet({
                 <span className='vertical-alignment-fix flex flex-1 items-center gap-2 sm:col-span-2 sm:w-auto'>
                   <span>{user.name}</span>
                   <UserBadges user={user} />
+                  {session.isOwn && (
+                    <ClassicSolveViewLink
+                      contestSlug={contestSlug}
+                      discipline={discipline}
+                    >
+                      {(href) => (
+                        <UnderlineButton asChild size='sm' className='ml-auto'>
+                          <Link href={href}>Classic solve view</Link>
+                        </UnderlineButton>
+                      )}
+                    </ClassicSolveViewLink>
+                  )}
                 </span>
                 <span className='mr-10 sm:mr-0 sm:flex sm:items-center'>
                   <span className='sm:vertical-alignment-fix block text-center text-grey-40'>

@@ -162,6 +162,14 @@ export const contestRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }): Promise<RoundSession[]> => {
+      const [contestMetadata] = await ctx.db
+        .select({
+          isOngoing: contestTable.isOngoing,
+        })
+        .from(contestTable)
+        .where(eq(contestTable.slug, input.contestSlug))
+      if (!contestMetadata) throw new TRPCError({ code: 'NOT_FOUND' })
+
       const bestSolveSubquery = getPersonalRecordSolveSubquery({
         db: ctx.db,
         discipline: input.discipline,
@@ -221,39 +229,6 @@ export const contestRouter = createTRPCRouter({
       const solvesBySessionId = groupBy(solveRows, ({ session }) => session.id)
       const globalRecordsByUser = await getGlobalRecordsByUser()
 
-      const emptySessionRows = await ctx.db
-        .select({
-          session: {
-            id: roundSessionTable.id,
-          },
-          user: {
-            name: userTable.name,
-            id: userTable.id,
-            wcaId: wcaIdSubquery.wcaId,
-            role: userTable.role,
-          },
-        })
-        .from(roundTable)
-        .innerJoin(
-          roundSessionTable,
-          eq(roundSessionTable.roundId, roundTable.id),
-        )
-        .innerJoin(userTable, eq(userTable.id, roundSessionTable.contestantId))
-        .leftJoin(wcaIdSubquery, eq(wcaIdSubquery.userId, userTable.id))
-        .where(
-          and(
-            eq(roundTable.contestSlug, input.contestSlug),
-            eq(roundTable.disciplineSlug, input.discipline),
-            eq(
-              ctx.db.$count(
-                solveTable,
-                eq(solveTable.roundSessionId, roundSessionTable.id),
-              ),
-              0,
-            ),
-          ),
-        )
-
       const preparedNonEmptyRoundSessions = Array.from(
         solvesBySessionId.values(),
       ).map((rows) => {
@@ -292,6 +267,45 @@ export const contestRouter = createTRPCRouter({
           contestSlug: input.contestSlug,
         }
       })
+
+      if (!contestMetadata.isOngoing) {
+        return preparedNonEmptyRoundSessions.filter(
+          (session) => session.session.isFinished,
+        )
+      }
+
+      const emptySessionRows = await ctx.db
+        .select({
+          session: {
+            id: roundSessionTable.id,
+          },
+          user: {
+            name: userTable.name,
+            id: userTable.id,
+            wcaId: wcaIdSubquery.wcaId,
+            role: userTable.role,
+          },
+        })
+        .from(roundTable)
+        .innerJoin(
+          roundSessionTable,
+          eq(roundSessionTable.roundId, roundTable.id),
+        )
+        .innerJoin(userTable, eq(userTable.id, roundSessionTable.contestantId))
+        .leftJoin(wcaIdSubquery, eq(wcaIdSubquery.userId, userTable.id))
+        .where(
+          and(
+            eq(roundTable.contestSlug, input.contestSlug),
+            eq(roundTable.disciplineSlug, input.discipline),
+            eq(
+              ctx.db.$count(
+                solveTable,
+                eq(solveTable.roundSessionId, roundSessionTable.id),
+              ),
+              0,
+            ),
+          ),
+        )
 
       preparedNonEmptyRoundSessions.sort(
         (a, b) => b.solves.length - a.solves.length,

@@ -52,7 +52,7 @@ export function useSolveForm({
             }),
           )
           void queryClient.invalidateQueries(
-            trpc.roundSession.canLeaveRound.queryOptions({
+            trpc.roundSession.roundPermissions.queryOptions({
               contestSlug,
               discipline,
             }),
@@ -80,7 +80,7 @@ export function useSolveForm({
           }),
         )
         void queryClient.invalidateQueries(
-          trpc.roundSession.canSolve.queryOptions({
+          trpc.roundSession.roundPermissions.queryOptions({
             contestSlug,
             discipline,
           }),

@@ -8,6 +8,7 @@ import {
   roundSessionTable,
   scrambleTable,
   solveTable,
+  contestTable,
 } from '@/backend/db/schema'
 import { resultDnfable, SCRAMBLE_POSITIONS, SOLVE_STATUSES } from '@/types'
 import { sortWithRespectToExtras } from '../../shared/sort-with-respect-to-extras'
@@ -95,7 +96,8 @@ export const roundSessionRouter = createTRPCRouter({
         discipline: input.discipline,
       }),
     ),
-  hasJoinedRound: publicProcedure
+
+  roundPermissions: publicProcedure
     .input(
       z.object({
         discipline: z.enum(DISCIPLINES),
@@ -103,10 +105,34 @@ export const roundSessionRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      if (ctx.session === null) return false
+      if (ctx.session === null) {
+        return {
+          sessionInProgress: false,
+          canLeaveRound: false,
+          canJoinRound: false,
+        }
+      }
+
+      const [contestMetadata] = await ctx.db
+        .select({
+          isOngoing: contestTable.isOngoing,
+        })
+        .from(contestTable)
+        .where(eq(contestTable.slug, input.contestSlug))
+      if (!contestMetadata) throw new TRPCError({ code: 'NOT_FOUND' })
+
+      if (!contestMetadata.isOngoing)
+        return {
+          sessionInProgress: false,
+          canLeaveRound: false,
+          canJoinRound: false,
+        }
 
       const [roundSession] = await ctx.db
-        .select()
+        .select({
+          id: roundSessionTable.id,
+          isFinished: roundSessionTable.isFinished,
+        })
         .from(roundSessionTable)
         .innerJoin(roundTable, eq(roundTable.id, roundSessionTable.roundId))
         .where(
@@ -117,55 +143,23 @@ export const roundSessionRouter = createTRPCRouter({
           ),
         )
 
-      return !!roundSession
-    }),
-  canLeaveRound: publicProcedure
-    .input(
-      z.object({
-        discipline: z.enum(DISCIPLINES),
-        contestSlug: z.string(),
-      }),
-    )
-    .query(async ({ ctx, input }) => {
-      if (ctx.session === null) return false
-
-      const [roundSession] = await ctx.db
-        .select({ id: roundSessionTable.id })
-        .from(roundSessionTable)
-        .innerJoin(roundTable, eq(roundTable.id, roundSessionTable.roundId))
-        .where(
-          and(
-            eq(roundTable.contestSlug, input.contestSlug),
-            eq(roundTable.disciplineSlug, input.discipline),
-            eq(roundSessionTable.contestantId, ctx.session.user.id),
-          ),
-        )
-
-      if (!roundSession) return false
+      if (!roundSession)
+        return {
+          sessionInProgress: false,
+          canLeaveRound: false,
+          canJoinRound: true,
+        }
 
       const [solves] = await ctx.db
         .select({ count: count() })
         .from(solveTable)
-        .where(and(eq(solveTable.roundSessionId, roundSession.id)))
+        .where(eq(solveTable.roundSessionId, roundSession.id))
 
-      return solves?.count === 0
-    }),
-
-  canSolve: publicProcedure
-    .input(
-      z.object({
-        discipline: z.enum(DISCIPLINES),
-        contestSlug: z.string(),
-      }),
-    )
-    .query(async ({ ctx, input }) => {
-      if (ctx.session === null) return false
-
-      const userCapabilities = await getContestUserCapabilities({
-        contestSlug: input.contestSlug,
-        discipline: input.discipline,
-      })
-      return userCapabilities === 'SOLVE'
+      return {
+        sessionInProgress: !roundSession.isFinished,
+        canLeaveRound: solves!.count === 0,
+        canJoinRound: !roundSession,
+      }
     }),
 
   leaveRound: roundSessionAuthProcedure.mutation(async ({ ctx }) => {

@@ -14,12 +14,14 @@ export function LeaveRoundButton({
 }) {
   const queryClient = useQueryClient()
   const trpc = useTRPC()
-  const canLeaveRoundQuery = trpc.roundSession.canLeaveRound.queryOptions({
-    contestSlug,
-    discipline,
-  })
+  const roundPermissionsQuery = trpc.roundSession.roundPermissions.queryOptions(
+    {
+      contestSlug,
+      discipline,
+    },
+  )
 
-  const { data: canLeaveRound } = useQuery(canLeaveRoundQuery)
+  const { data: permissions } = useQuery(roundPermissionsQuery)
 
   const { mutateAsync: deleteSession } = useMutation(
     trpc.roundSession.leaveRound.mutationOptions({
@@ -30,18 +32,12 @@ export function LeaveRoundButton({
             discipline,
           }),
         )
-        void queryClient.invalidateQueries(canLeaveRoundQuery)
-        void queryClient.invalidateQueries(
-          trpc.roundSession.hasJoinedRound.queryOptions({
-            contestSlug,
-            discipline,
-          }),
-        )
+        void queryClient.invalidateQueries(roundPermissionsQuery)
       },
     }),
   )
 
-  if (canLeaveRound)
+  if (permissions?.canLeaveRound)
     return (
       <UnderlineButton
         size='sm'
