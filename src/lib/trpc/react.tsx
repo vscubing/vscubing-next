@@ -89,11 +89,3 @@ function getBaseUrl() {
   if (typeof window !== 'undefined') return window.location.origin
   return `http://localhost:${process.env.PORT ?? 3000}`
 }
-
-function deserialize(serialized) {
-  const [_, crypt, iv] = serialized.split(':')
-  return [
-    Buffer.from(crypt, 'base64'),
-    Uint8Array.from(Buffer.from(iv, 'base64')),
-  ]
-}
