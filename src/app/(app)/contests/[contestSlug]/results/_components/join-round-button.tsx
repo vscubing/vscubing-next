@@ -13,7 +13,7 @@ export function JoinRoundButton({
   contestSlug: string
   discipline: Discipline
 }) {
-  const { user } = useUser()
+  const { user, isLoading: isUserLoading } = useUser()
   const trpc = useTRPC()
   const queryClient = useQueryClient()
 
@@ -22,7 +22,8 @@ export function JoinRoundButton({
     discipline,
   })
 
-  const { data: sessions } = useQuery(contestResultsQuery)
+  const { data: sessions, isLoading: isSessionsLoading } =
+    useQuery(contestResultsQuery)
 
   const { mutate: createRoundSession } = useMutation(
     trpc.roundSession.create.mutationOptions({
@@ -57,7 +58,7 @@ export function JoinRoundButton({
   )
 
   const hasSession = sessions?.some((result) => result.session.isOwn)
-  if (!user || hasSession) return null
+  if (isUserLoading || isSessionsLoading || !user || hasSession) return null
 
   return (
     <PrimaryButton

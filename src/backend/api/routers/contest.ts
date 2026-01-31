@@ -254,59 +254,65 @@ export const contestRouter = createTRPCRouter({
           ),
         )
 
-      return Array.from(solvesBySessionId.values())
-        .map((rows) => {
-          if (!rows[0]) {
-            console.error(`no 1st row for ${JSON.stringify(input)}`)
-            throw new Error(`no 1st row for ${JSON.stringify(input)}`)
-          }
+      const preparedNonEmptyRoundSessions = Array.from(
+        solvesBySessionId.values(),
+      ).map((rows) => {
+        if (!rows[0]) {
+          console.error(`no 1st row for ${JSON.stringify(input)}`)
+          throw new Error(`no 1st row for ${JSON.stringify(input)}`)
+        }
 
-          const { session, user } = rows[0]
-          return {
-            session: {
-              result: session.isFinished ? resultDnfable.parse(session) : null,
-              id: session.id,
-              isOwn: user.id === ctx.session?.user.id,
-              isFinished: session.isFinished,
-            },
-            solves: sortWithRespectToExtras(
-              rows
-                .filter(({ solve }) => solve.status === 'submitted')
-                .map(({ solve }) => ({
-                  id: solve.id,
-                  position: solve.position,
-                  result: resultDnfable.parse({
-                    timeMs: solve.timeMs,
-                    isDnf: solve.isDnf,
-                    plusTwoIncluded: solve.plusTwoIncluded,
-                  }),
-                  status: solve.status,
-                  isPersonalRecord: solve.id === solve.personalRecordId,
-                })),
-            ),
-            user: {
-              ...user,
-              globalRecords: globalRecordsByUser.get(user.id) ?? null,
-            },
-            contestSlug: input.contestSlug,
-          }
-        })
-        .concat(
-          emptySessionRows.map(({ user, session }) => ({
-            session: {
-              result: null,
-              id: session.id,
-              isOwn: user.id === ctx.session?.user.id,
-              isFinished: false,
-            },
-            solves: [],
-            user: {
-              ...user,
-              globalRecords: globalRecordsByUser.get(user.id) ?? null,
-            },
-            contestSlug: input.contestSlug,
-          })),
-        )
+        const { session, user } = rows[0]
+        return {
+          session: {
+            result: session.isFinished ? resultDnfable.parse(session) : null,
+            id: session.id,
+            isOwn: user.id === ctx.session?.user.id,
+            isFinished: session.isFinished,
+          },
+          solves: sortWithRespectToExtras(
+            rows
+              .filter(({ solve }) => solve.status === 'submitted')
+              .map(({ solve }) => ({
+                id: solve.id,
+                position: solve.position,
+                result: resultDnfable.parse({
+                  timeMs: solve.timeMs,
+                  isDnf: solve.isDnf,
+                  plusTwoIncluded: solve.plusTwoIncluded,
+                }),
+                status: solve.status,
+                isPersonalRecord: solve.id === solve.personalRecordId,
+              })),
+          ),
+          user: {
+            ...user,
+            globalRecords: globalRecordsByUser.get(user.id) ?? null,
+          },
+          contestSlug: input.contestSlug,
+        }
+      })
+
+      preparedNonEmptyRoundSessions.sort(
+        (a, b) => b.solves.length - a.solves.length,
+      )
+
+      return preparedNonEmptyRoundSessions.concat(
+        emptySessionRows.map(({ user, session }) => ({
+          session: {
+            result: null,
+            id: session.id,
+            isOwn: user.id === ctx.session?.user.id,
+            isFinished: false,
+          },
+          solves: [],
+          user: {
+            ...user,
+            globalRecords: globalRecordsByUser.get(user.id) ?? null,
+          },
+          contestSlug: input.contestSlug,
+        })),
+      )
     }),
 
   getSolve: publicProcedure
