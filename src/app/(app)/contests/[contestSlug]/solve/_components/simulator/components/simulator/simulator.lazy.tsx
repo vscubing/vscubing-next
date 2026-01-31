@@ -6,14 +6,7 @@ import {
   INSPECTION_DNF_THRESHHOLD_MS,
   INSPECTION_PLUS_TWO_THRESHHOLD_MS,
 } from './constants'
-import type { userSimulatorSettingsTable } from '@/backend/db/schema'
-import type { SimulatorCameraPosition } from 'vendor/cstimer/types'
-import {
-  PUZZLE_SCALE,
-  type Move,
-  type Discipline,
-  type ResultDnfable,
-} from '@/types'
+import { PUZZLE_SCALE, type Discipline, type ResultDnfable } from '@/types'
 import { useIsTouchDevice } from '@/frontend/utils/use-media-query'
 import { cn } from '@/frontend/utils/cn'
 import { type QuantumMove } from '@vscubing/cubing/alg'

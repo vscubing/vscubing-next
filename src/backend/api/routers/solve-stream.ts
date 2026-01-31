@@ -24,7 +24,7 @@ export const solveStreamRouter = createTRPCRouter({
         streamId: z.string(),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async () => {
       // solveStreams.set(input.streamId, {
       //   discipline: input.discipline,
       //   scramble: input.scramble,
@@ -38,7 +38,7 @@ export const solveStreamRouter = createTRPCRouter({
 
   unregisterSolveStream: liveStreamProcedure
     .input(z.object({ streamId: z.string() }))
-    .mutation(async ({ input }) => {
+    .mutation(async () => {
       // const stream = solveStreams.get(input.streamId)
       // if (!stream) {
       //   console.log('error', solveStreams, input.streamId)

@@ -1,9 +1,4 @@
-import {
-  isMove,
-  type Discipline,
-  type Move,
-  type SimulatorSettings,
-} from '@/types'
+import { type Discipline, type SimulatorSettings } from '@/types'
 import {
   type SimulatorCameraPosition,
   type TwistySimulatorMoveListener,
@@ -140,18 +135,3 @@ export const SIMULATOR_DISCIPLINES_MAP = {
     puzzle: 'cube4',
   },
 } as const
-
-function parseCstimerMove(moveCstimer: string): Move {
-  const move = moveCstimer
-    .replace(/@(\d+)/g, '/*$1*/')
-    .replace(/2-2Rw2/g, 'M2')
-    .replace(/2-2Lw|2-2Rw'/g, 'M')
-    .replace(/2-2Rw/g, "M'")
-    .replace(/2-2Fw/g, 'S')
-    .replace(/2-2Uw'/g, 'E')
-    .replace(/2-2Uw/g, "E'")
-    .trim()
-
-  if (!isMove(move)) throw new Error(`[SIMULATOR] invalid move: ${move}`)
-  return move
-}
