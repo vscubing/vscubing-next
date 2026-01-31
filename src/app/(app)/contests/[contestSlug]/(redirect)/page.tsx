@@ -1,6 +1,6 @@
-import { getContestUserCapabilities } from '@/backend/shared/get-contest-user-capabilities'
-import { DEFAULT_DISCIPLINE, isDiscipline } from '@/types'
-import { assertUnreachable } from '@/lib/utils/assert-unreachable'
+import { api } from '@/lib/trpc/server'
+import { tryCatchTRPC } from '@/lib/utils/try-catch'
+import { castDiscipline } from '@/types'
 import { notFound, redirect, RedirectType } from 'next/navigation'
 
 export default async function ContestPage(props: {
@@ -10,28 +10,16 @@ export default async function ContestPage(props: {
   const { contestSlug } = await props.params
   const searchParams = await props.searchParams
   const discipline = searchParams.discipline
-  if (!isDiscipline(discipline))
-    redirect(
-      `/contests/${contestSlug}?discipline=${DEFAULT_DISCIPLINE}`,
-      RedirectType.replace,
-    )
 
-  const userCapabilities = await getContestUserCapabilities({
-    contestSlug,
-    discipline,
-  })
+  const { error } = await tryCatchTRPC(
+    api.contest.getContestMetaData({ contestSlug }),
+  )
 
-  switch (userCapabilities) {
-    case 'CONTEST_NOT_FOUND':
-      notFound()
-    case 'VIEW_RESULTS':
-    case 'SOLVE':
-    case 'UNAUTHORIZED':
-      redirect(
-        `/contests/${contestSlug}/results?discipline=${discipline}`,
-        RedirectType.replace,
-      )
-    default:
-      assertUnreachable(userCapabilities)
-  }
+  if (error?.code === 'NOT_FOUND') notFound()
+  if (error) throw error
+
+  redirect(
+    `/contests/${contestSlug}/results?discipline=${castDiscipline(discipline)}`,
+    RedirectType.replace,
+  )
 }

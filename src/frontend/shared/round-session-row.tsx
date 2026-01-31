@@ -188,7 +188,11 @@ function RoundSessionRowTablet({
                       discipline={discipline}
                     >
                       {(href) => (
-                        <UnderlineButton asChild size='sm' className='ml-auto'>
+                        <UnderlineButton
+                          asChild
+                          size='sm'
+                          className='ml-auto hidden sm:block'
+                        >
                           <Link href={href}>Classic solve view</Link>
                         </UnderlineButton>
                       )}

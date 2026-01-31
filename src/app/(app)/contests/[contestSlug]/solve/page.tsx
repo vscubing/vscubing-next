@@ -12,7 +12,7 @@ import {
   KeyMapDialogTrigger,
   KeyMapDialogContent,
 } from '@/frontend/shared/key-map-dialog'
-import { isDiscipline, type Discipline } from '@/types'
+import { DEFAULT_DISCIPLINE, isDiscipline, type Discipline } from '@/types'
 import { CONTEST_UNAUTHORIZED_MESSAGE } from '@/types'
 import { notFound } from 'next/navigation'
 import { redirect } from 'next/navigation'
@@ -46,7 +46,8 @@ export default async function SolveContestPage({
 }) {
   const { discipline } = await searchParams
   const { contestSlug } = await params
-  if (!isDiscipline(discipline)) redirect(`/contests/${contestSlug}`)
+  if (!isDiscipline(discipline))
+    redirect(`/contests/${contestSlug}/solve?discipline=${DEFAULT_DISCIPLINE}`)
 
   const metadata = await api.contest.getContestMetaData({ contestSlug })
 
@@ -127,6 +128,7 @@ async function PageContent({
     api.roundSession.state({ contestSlug, discipline }),
   )
   if (error?.code === 'NOT_FOUND') notFound()
+  if (error?.code === 'FORBIDDEN') redirect(`/contests/${contestSlug}/results`)
   if (error?.code === 'UNAUTHORIZED')
     return <HintSignInSection description={CONTEST_UNAUTHORIZED_MESSAGE} />
   if (error?.code === 'PRECONDITION_FAILED')

@@ -2,9 +2,10 @@
 
 import { useTRPC } from '@/lib/trpc/react'
 import type { Discipline } from '@/types'
-import { useQuery } from '@tanstack/react-query'
+import { withSuspense } from '@/frontend/utils/with-suspense'
+import { useSuspenseQuery } from '@tanstack/react-query'
 
-export function ClassicSolveViewLink({
+export const ClassicSolveViewLink = withSuspense(function ({
   contestSlug,
   discipline,
   children,
@@ -14,7 +15,7 @@ export function ClassicSolveViewLink({
   children: (href: string) => React.ReactNode
 }) {
   const trpc = useTRPC()
-  const { data: permissions } = useQuery(
+  const { data: permissions } = useSuspenseQuery(
     trpc.roundSession.roundPermissions.queryOptions({
       contestSlug,
       discipline,
@@ -23,4 +24,4 @@ export function ClassicSolveViewLink({
 
   if (permissions?.sessionInProgress)
     return children(`/contests/${contestSlug}/solve?discipline=${discipline}`)
-}
+})
