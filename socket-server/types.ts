@@ -4,7 +4,6 @@ import { type Socket } from 'socket.io-client'
 
 export interface ServerToClientEvents {
   pattern: (binaryPattern: ExperimentalBinary3x3x3Pattern) => void
-  history: (history: string) => void
   onMove: (move: Move) => void
 }
 

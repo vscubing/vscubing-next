@@ -47,10 +47,14 @@ export function OwnRoundSessionInProgressRow({
   return (
     <li className='sticky bottom-4 top-[calc(var(--layout-section-header-height)-2px)] z-10 flex h-[5.5rem] flex-col gap-1 rounded-xl border border-dashed border-secondary-20 bg-black-80 p-2 sm:h-auto'>
       <div className='flex items-center'>
-        <span className='w-24 sm:w-16 text-center text-grey-40'>Attempt</span>
-        <span className='w-32 sm:w-20 text-center text-grey-40'>Single time</span>
-        <span className='flex-1 pl-4 text-left text-grey-40 sm:hidden'>Scramble</span>
-        <div className='h-6 ml-auto'>
+        <span className='w-24 text-center text-grey-40 sm:w-16'>Attempt</span>
+        <span className='w-32 text-center text-grey-40 sm:w-20'>
+          Single time
+        </span>
+        <span className='flex-1 pl-4 text-left text-grey-40 sm:hidden'>
+          Scramble
+        </span>
+        <div className='ml-auto h-6'>
           <OwnAttemptsPopover
             submittedSolves={state.submittedSolves}
             contestSlug={contestSlug}
@@ -79,7 +83,7 @@ export function OwnRoundSessionInProgressRow({
         <Ellipsis className='vertical-alignment-fix flex-1 px-4 sm:hidden'>
           {state.currentScramble.moves}
         </Ellipsis>
-        <div className='flex h-full gap-1 ml-auto'>
+        <div className='ml-auto flex h-full gap-1'>
           {state.canChangeToExtra && (
             <ExtraPrompt
               onSubmit={(reason) =>

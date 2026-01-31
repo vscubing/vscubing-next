@@ -3,11 +3,10 @@
 import { useEffect, useState } from 'react'
 import { LayoutHeaderTitlePortal } from '../_layout'
 import { useEventCallback, useEventListener } from 'usehooks-ts'
-import { keyToMove } from '@vscubing/cubing/alg'
+import { keyToMove, type AlgLeaf, Move } from '@vscubing/cubing/alg'
 import { isMove } from '@/types'
 import { cn } from '@/frontend/utils/cn'
 import { LoadingSpinner } from '@/frontend/ui'
-import { puzzles } from '@vscubing/cubing/puzzles'
 import { useControllableSimulator } from '@/frontend/shared/simulator/use-controllable-simulator'
 import { type KPattern } from '@vscubing/cubing/kpuzzle'
 import { useUser } from '@/frontend/shared/use-user'
@@ -26,15 +25,9 @@ export default function CubeTogetherPage() {
   })
 
   useEventListener('keydown', (e) => {
-    async function handle() {
-      const keyMapping = await puzzles['3x3x3']!.keyMapping!()
-
-      // TODO: sync keyToMove with cstimer mappings
-      const move = keyToMove(keyMapping, e)?.toString()
-      if (!move || !isMove(move)) return
-      onMove(move)
-    }
-    void handle()
+    const move = keyToMove(cube3x3x3KeyMapping, e)?.toString()
+    if (!move || !isMove(move)) return
+    onMove(move)
   })
 
   return (
@@ -98,4 +91,48 @@ function useCubeTogetherWebsocket({
   }, [stableHandleMove, identifier])
 
   return { pattern, onMove }
+}
+
+const cube3x3x3KeyMapping: Record<number | string, AlgLeaf> = {
+  Digit1: new Move("S'"),
+  Digit2: new Move('E'),
+  Digit5: new Move('M'),
+  Digit6: new Move('M'),
+  Digit9: new Move("E'"),
+  Digit0: new Move('S'),
+
+  KeyI: new Move('R'),
+  KeyK: new Move("R'"),
+  KeyW: new Move('B'),
+  KeyO: new Move("B'"),
+  KeyS: new Move('D'),
+  KeyL: new Move("D'"),
+  KeyD: new Move('L'),
+  KeyE: new Move("L'"),
+  KeyJ: new Move('U'),
+  KeyF: new Move("U'"),
+  KeyH: new Move('F'),
+  KeyG: new Move("F'"),
+
+  KeyC: new Move("Uw'"),
+  KeyR: new Move("Lw'"),
+  KeyU: new Move('Rw'),
+  KeyM: new Move("Rw'"),
+
+  KeyX: new Move("M'"),
+  Comma: new Move('Uw'),
+
+  KeyT: new Move('x'),
+  KeyY: new Move('x'),
+  KeyV: new Move('Lw'),
+  KeyN: new Move("x'"),
+  Semicolon: new Move('y'),
+  KeyA: new Move("y'"),
+  KeyP: new Move('z'),
+  KeyQ: new Move("z'"),
+
+  KeyZ: new Move('Dw'),
+  KeyB: new Move("x'"),
+  Period: new Move("M'"),
+  Slash: new Move("Dw'"),
 }
