@@ -105,7 +105,6 @@ export function useSolveForm({
     // const streamId = uuid()
     initSolve({
       initSolveData: { discipline, scramble: state.currentScramble.moves },
-      inspectionStartCallback: () => {},
       // inspectionStartCallback: () =>
       //   void registerSolveStream({
       //     streamId: streamId,
@@ -113,7 +112,6 @@ export function useSolveForm({
       //     scramble: state.currentScramble.moves,
       //   }),
       // moveCallback: (move, event) => void sendMove({ streamId, move, event }),
-      moveCallback: () => {},
       solveCallback: (solve) => {
         postSolveResult({
           solve: signSolve(solve),

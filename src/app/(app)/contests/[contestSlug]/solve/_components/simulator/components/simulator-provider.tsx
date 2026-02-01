@@ -34,8 +34,8 @@ const Simulator = lazy(() => import('./simulator/simulator.lazy'))
 export function SimulatorProvider({ children }: { children: React.ReactNode }) {
   const [solveState, setSolveState] = useState<{
     initSolveData: InitSolveData
-    inspectionStartCallback: () => void
-    moveCallback: (move: Move, event?: 'solve-start' | 'solve-end') => void
+    inspectionStartCallback?: () => void
+    moveCallback?: (move: Move, event?: 'solve-start' | 'solve-end') => void
     solveCallback: SimulatorSolveFinishCallback
     wasInspectionStarted: boolean
   } | null>(null)
@@ -44,8 +44,8 @@ export function SimulatorProvider({ children }: { children: React.ReactNode }) {
   const initSolve = useCallback(
     (params: {
       initSolveData: InitSolveData
-      inspectionStartCallback: () => void
-      moveCallback: (move: Move, event?: 'solve-start' | 'solve-end') => void
+      inspectionStartCallback?: () => void
+      moveCallback?: (move: Move, event?: 'solve-start' | 'solve-end') => void
       solveCallback: SimulatorSolveFinishCallback
     }) => {
       setIsAbortPromptVisible(false)
@@ -190,8 +190,8 @@ export function SimulatorProvider({ children }: { children: React.ReactNode }) {
 type SimulatorContextValue = {
   initSolve: (params: {
     initSolveData: InitSolveData
-    inspectionStartCallback: () => void
-    moveCallback: (move: Move, event?: 'solve-start' | 'solve-end') => void
+    inspectionStartCallback?: () => void
+    moveCallback?: (move: Move, event?: 'solve-start' | 'solve-end') => void
     solveCallback: SimulatorSolveFinishCallback
   }) => void
 }
