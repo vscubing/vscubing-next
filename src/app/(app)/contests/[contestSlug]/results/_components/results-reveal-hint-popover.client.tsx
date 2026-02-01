@@ -6,6 +6,7 @@ import {
   PopoverContent,
   ExclamationCircleIcon,
   PopoverTrigger,
+  PopoverPortal,
 } from '@/frontend/ui'
 import { cn } from '@/frontend/utils/cn'
 import { useEffect, useState } from 'react'
@@ -31,20 +32,20 @@ export function ResultsRevealHintPopover({
 
   return (
     <Popover open={open}>
-      <PopoverContent
-        aria-label='The results will be revealed as you go'
-        className='max-w-[16rem] p-4 text-center'
-      >
-        <p>
-          Other participants' results are revealed as you complete each attempt.
-        </p>
-        <PopoverCloseButton
-          onClick={() => {
-            setSeenHint(true)
-            setOpen(false)
-          }}
-        />
-      </PopoverContent>
+      <PopoverPortal>
+        <PopoverContent className='max-w-[16rem] p-4 text-center'>
+          <p>
+            Other participants' results are revealed as you complete each
+            attempt. If this is distracting, switch to Classic solve view.
+          </p>
+          <PopoverCloseButton
+            onClick={() => {
+              setSeenHint(true)
+              setOpen(false)
+            }}
+          />
+        </PopoverContent>
+      </PopoverPortal>
 
       <PopoverTrigger
         className={cn(
