@@ -12,7 +12,7 @@ export const KEY_MAP: { keyName: string; cubeMovement?: string }[] = [
   { keyName: '9', cubeMovement: "E'" },
   { keyName: '0', cubeMovement: 'S' },
   { keyName: 'Q', cubeMovement: "z'" },
-  { keyName: 'W', cubeMovement: "B'" },
+  { keyName: 'W', cubeMovement: 'B' },
   { keyName: 'E', cubeMovement: "L'" },
   { keyName: 'R', cubeMovement: "Lw'" },
   { keyName: 'T', cubeMovement: 'x' },

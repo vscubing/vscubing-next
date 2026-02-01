@@ -36,6 +36,7 @@ export const env = createEnv({
         : z.undefined(),
     CONTEST_CREATION_WEBHOOK_SECRET: z.string(),
     NEXT_TELEMETRY_DISABLED: z.literal('1'),
+    SECRET_CLIENT_COOKIE_VAR: z.string(),
   },
 
   /**
@@ -83,6 +84,7 @@ export const env = createEnv({
     NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
     NEXT_PUBLIC_SOLVE_SECRET: process.env.NEXT_PUBLIC_SOLVE_SECRET,
     NEXT_TELEMETRY_DISABLED: process.env.NEXT_TELEMETRY_DISABLED,
+    SECRET_CLIENT_COOKIE_VAR: process.env.SECRET_CLIENT_COOKIE_VAR,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

@@ -3,7 +3,7 @@ import { ExtraLabel } from '@/frontend/shared/extra-label'
 import {
   SolveTimeLabel,
   SolveTimeLinkOrDnf,
-} from '@/frontend/shared/solve-time-button'
+} from '@/frontend/shared/solve-time-link-or-dnf'
 import {
   type ScramblePosition,
   type ResultDnfable,

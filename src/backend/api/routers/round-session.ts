@@ -1,23 +1,24 @@
 import { DISCIPLINES, type Discipline } from '@/types'
 import { z } from 'zod'
-import { eq, and, sql } from 'drizzle-orm'
-import { createTRPCRouter, protectedProcedure } from '../trpc'
+import { eq, and, sql, count } from 'drizzle-orm'
+import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc'
 import { TRPCError } from '@trpc/server'
 import {
   roundTable,
   roundSessionTable,
   scrambleTable,
   solveTable,
+  contestTable,
 } from '@/backend/db/schema'
 import { resultDnfable, SCRAMBLE_POSITIONS, SOLVE_STATUSES } from '@/types'
 import { sortWithRespectToExtras } from '../../shared/sort-with-respect-to-extras'
 import { calculateAvg } from '../../shared/calculate-avg'
 import { validateSolve } from '@/backend/shared/validate-solve'
 import { getContestUserCapabilities } from '../../shared/get-contest-user-capabilities'
-import { removeSolutionComments } from '@/utils/remove-solution-comments'
+import { removeSolutionComments } from '@/lib/utils/remove-solution-comments'
 import { getPersonalRecordSolveSubquery } from '@/backend/shared/personal-record'
-import type { db } from '@/backend/db'
-import { decodeSolve } from '@/utils/solve-signature'
+import { db } from '@/backend/db'
+import { decodeSolve } from '@/lib/utils/solve-signature'
 
 const EXTRAS_PER_ROUND = 2
 const ROUND_ATTEMPTS_QTY = 5
@@ -61,16 +62,10 @@ export const roundSessionAuthProcedure = protectedProcedure
         message: "You can't participate in a round you've already completed.",
       })
 
-    const roundSubquery = ctx.db
-      .select()
-      .from(roundTable)
-      .where(
-        and(
-          eq(roundTable.contestSlug, input.contestSlug),
-          eq(roundTable.disciplineSlug, input.discipline),
-        ),
-      )
-      .as('subquery')
+    const roundSubquery = getRoundSubquery({
+      contestSlug: input.contestSlug,
+      discipline: input.discipline,
+    })
 
     const [roundSession] = await ctx.db
       .select({ id: roundSessionTable.id, roundId: roundSubquery.id })
@@ -83,34 +78,105 @@ export const roundSessionAuthProcedure = protectedProcedure
       .where(eq(roundSessionTable.contestantId, ctx.session.user.id))
 
     if (roundSession) return next({ ctx: { roundSession } })
-
-    const [createdRoundSession] = await ctx.db
-      .with(roundSubquery)
-      .insert(roundSessionTable)
-      .values({
-        roundId: sql`(select id from ${roundSubquery})`,
-        contestantId: ctx.session.user.id,
-      })
-      .returning({ id: roundSessionTable.id, roundId: roundSubquery.id })
-    if (!createdRoundSession)
-      throw new Error(
-        `Error while creating a round session for ${JSON.stringify(input)}`,
-      )
-
-    ctx.analytics.groupIdentify({
-      groupType: 'roundSession',
-      groupKey: String(createdRoundSession.id),
-      distinctId: ctx.session.user.id,
-      properties: {
-        discipline: input.discipline,
-        contest: input.contestSlug,
-        roundId: createdRoundSession.roundId,
-      },
-    })
-    return next({ ctx: { roundSession: createdRoundSession } })
+    else throw new TRPCError({ code: 'PRECONDITION_FAILED' })
   })
 
 export const roundSessionRouter = createTRPCRouter({
+  create: protectedProcedure
+    .input(
+      z.object({
+        discipline: z.enum(DISCIPLINES),
+        contestSlug: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) =>
+      createRoundSession({
+        userId: ctx.session.userId,
+        contestSlug: input.contestSlug,
+        discipline: input.discipline,
+      }),
+    ),
+
+  roundPermissions: publicProcedure
+    .input(
+      z.object({
+        discipline: z.enum(DISCIPLINES),
+        contestSlug: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      if (ctx.session === null) {
+        return {
+          sessionInProgress: false,
+          canLeaveRound: false,
+          canJoinRound: false,
+        }
+      }
+
+      const [contestMetadata] = await ctx.db
+        .select({
+          isOngoing: contestTable.isOngoing,
+        })
+        .from(contestTable)
+        .where(eq(contestTable.slug, input.contestSlug))
+      if (!contestMetadata) throw new TRPCError({ code: 'NOT_FOUND' })
+
+      if (!contestMetadata.isOngoing)
+        return {
+          sessionInProgress: false,
+          canLeaveRound: false,
+          canJoinRound: false,
+        }
+
+      const [roundSession] = await ctx.db
+        .select({
+          id: roundSessionTable.id,
+          isFinished: roundSessionTable.isFinished,
+        })
+        .from(roundSessionTable)
+        .innerJoin(roundTable, eq(roundTable.id, roundSessionTable.roundId))
+        .where(
+          and(
+            eq(roundTable.contestSlug, input.contestSlug),
+            eq(roundTable.disciplineSlug, input.discipline),
+            eq(roundSessionTable.contestantId, ctx.session.user.id),
+          ),
+        )
+
+      if (!roundSession)
+        return {
+          sessionInProgress: false,
+          canLeaveRound: false,
+          canJoinRound: true,
+        }
+
+      const [solves] = await ctx.db
+        .select({ count: count() })
+        .from(solveTable)
+        .where(eq(solveTable.roundSessionId, roundSession.id))
+
+      return {
+        sessionInProgress: !roundSession.isFinished,
+        canLeaveRound: solves!.count === 0,
+        canJoinRound: !roundSession,
+      }
+    }),
+
+  leaveRound: roundSessionAuthProcedure.mutation(async ({ ctx }) => {
+    const solves = await ctx.db
+      .select()
+      .from(roundSessionTable)
+      .innerJoin(
+        solveTable,
+        eq(solveTable.roundSessionId, roundSessionTable.id),
+      )
+      .where(eq(roundSessionTable.id, ctx.roundSession.id))
+    if (solves.length > 0) throw new TRPCError({ code: 'FORBIDDEN' })
+
+    await ctx.db
+      .delete(roundSessionTable)
+      .where(and(eq(roundSessionTable.id, ctx.roundSession.id)))
+  }),
   state: roundSessionAuthProcedure.query(async ({ ctx, input }) => {
     const allRows = await ctx.db
       .select({
@@ -366,6 +432,8 @@ export const roundSessionRouter = createTRPCRouter({
           },
         })
       }
+
+      return { sessionFinished }
     }),
 })
 
@@ -403,4 +471,58 @@ async function getPersonalRecordSolveIncludingOngoing(
         result: resultDnfable.parse(activeBest?.result),
       }
     : undefined
+}
+
+async function createRoundSession({
+  userId,
+  contestSlug,
+  discipline,
+}: {
+  userId: string
+  contestSlug: string
+  discipline: Discipline
+}) {
+  const roundSubquery = getRoundSubquery({ contestSlug, discipline })
+  console.log(contestSlug, discipline, userId)
+  console.log(
+    await db
+      .select()
+      .from(roundSubquery)
+      .where(
+        and(
+          eq(roundSubquery.disciplineSlug, discipline),
+          eq(roundSubquery.contestSlug, contestSlug),
+        ),
+      ),
+  )
+  const [roundSession] = await db
+    .with(roundSubquery)
+    .insert(roundSessionTable)
+    .values({
+      roundId: sql`(select id from ${roundSubquery})`,
+      contestantId: userId,
+    })
+    .returning({ id: roundSessionTable.id, roundId: roundSubquery.id })
+
+  if (!roundSession) throw new Error("couldn't create a round session")
+  return roundSession
+}
+
+function getRoundSubquery({
+  contestSlug,
+  discipline,
+}: {
+  contestSlug: string
+  discipline: Discipline
+}) {
+  return db
+    .select()
+    .from(roundTable)
+    .where(
+      and(
+        eq(roundTable.contestSlug, contestSlug),
+        eq(roundTable.disciplineSlug, discipline),
+      ),
+    )
+    .as('subquery')
 }

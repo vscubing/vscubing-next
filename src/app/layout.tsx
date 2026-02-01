@@ -1,4 +1,5 @@
 import '@/globals.css'
+
 import { type Metadata } from 'next'
 import { headers } from 'next/headers'
 import type { ReactNode } from 'react'
@@ -6,8 +7,11 @@ import { Hind, Kanit } from 'next/font/google'
 import { cn } from '../frontend/utils/cn'
 import { env } from '@/env'
 import { PostHogProvider } from '../frontend/post-hog-provider'
-import { TRPCReactProvider } from '@/trpc/react'
+import { TRPCReactProvider } from '@/lib/trpc/react'
 import { TooltipProvider } from '@/frontend/ui/tooltip'
+import NextTopLoader from 'nextjs-toploader'
+import tailwindConfig from 'tailwind.config'
+import { cloakSSROnlySecret } from 'ssr-only-secrets'
 
 export const metadata: Metadata = {
   title: 'vscubing',
@@ -38,12 +42,24 @@ export default async function RootLayout({
       throw new Error("use localhost:3000, auth won't work otherwise")
   }
 
+  const cookie = (await headers()).get('cookie')
+  const encryptedCookie = await cloakSSROnlySecret(
+    cookie ?? '',
+    'SECRET_CLIENT_COOKIE_VAR',
+  )
+
   return (
     <html lang='en' className={cn(hind.className, kanit.className)}>
       <body>
-        <TRPCReactProvider>
+        <TRPCReactProvider ssrOnlySecret={encryptedCookie}>
           <TooltipProvider delayDuration={0}>
-            <PostHogProvider>{children}</PostHogProvider>
+            <PostHogProvider>
+              <NextTopLoader
+                color={tailwindConfig.theme.colors.secondary[40]}
+                showSpinner={false}
+              />
+              {children}
+            </PostHogProvider>
           </TooltipProvider>
         </TRPCReactProvider>
       </body>

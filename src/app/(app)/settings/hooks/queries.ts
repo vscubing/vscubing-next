@@ -1,5 +1,5 @@
 import { toast, TOASTS_PRESETS } from '@/frontend/ui'
-import { useTRPC, type RouterOutputs } from '@/trpc/react'
+import { type RouterOutputs, useTRPC } from '@/lib/trpc/react'
 import type { SimulatorSettings } from '@/types'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 

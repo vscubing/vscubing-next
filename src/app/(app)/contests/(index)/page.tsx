@@ -1,4 +1,4 @@
-import { SecondaryButton } from '@/frontend/ui'
+import { PrimaryButton, SecondaryButton } from '@/frontend/ui'
 import { LayoutSectionHeader } from '@/app/(app)/_layout/index'
 import { Suspense, type ReactNode } from 'react'
 import {
@@ -10,7 +10,7 @@ import {
 import { LayoutPageTitleMobile } from '@/app/(app)/_layout/layout-page-title-mobile'
 import { NavigateBackButton } from '@/frontend/shared/navigate-back-button'
 import { redirect } from 'next/navigation'
-import { api } from '@/trpc/server'
+import { api } from '@/lib/trpc/server'
 import { HintSection } from '@/frontend/shared/hint-section'
 import {
   ContestRowSkeletonDesktop,
@@ -19,6 +19,8 @@ import {
 import ContestList from './_components/contest-list-client'
 import { LayoutHeaderTitlePortal } from '../../_layout/layout-header'
 import { DisciplineSwitcher } from '@/frontend/shared/discipline-switcher'
+import { SpecialContestCreationDialog } from './_components/special-contest-creation-dialog'
+import { withSuspense } from '@/frontend/utils/with-suspense'
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>
 export default async function ContestsIndexPage(props: {
@@ -41,6 +43,7 @@ export default async function ContestsIndexPage(props: {
           disciplines={DISCIPLINES}
           initialDiscipline={discipline}
         />
+        <SpecialContestsManagementOverlay />
       </LayoutSectionHeader>
       <Suspense
         key={discipline}
@@ -98,3 +101,13 @@ function ContestListShell({ children }: { children: ReactNode }) {
     </div>
   )
 }
+
+const SpecialContestsManagementOverlay = withSuspense(async function () {
+  const authorized = await api.specialContest.canManage()
+  if (!authorized) return
+  return (
+    <SpecialContestCreationDialog>
+      <PrimaryButton className='ml-auto'>New special</PrimaryButton>
+    </SpecialContestCreationDialog>
+  )
+})

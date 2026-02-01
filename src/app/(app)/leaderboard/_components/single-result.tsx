@@ -9,11 +9,11 @@ import {
 } from '@/frontend/ui'
 import { SpinningBorder } from '@/frontend/ui/spinning-border'
 import { PlaceLabel } from '@/frontend/shared/place-label'
-import { SolveTimeLinkOrDnf } from '@/frontend/shared/solve-time-button'
+import { SolveTimeLinkOrDnf } from '@/frontend/shared/solve-time-link-or-dnf'
 import type { Discipline } from '@/types'
 import { cn } from '@/frontend/utils/cn'
-import { formatDate } from '@/utils/format-date'
-import type { RouterOutputs } from '@/trpc/react'
+import { formatDate } from '@/lib/utils/format-date'
+import type { RouterOutputs } from '@/lib/trpc/react'
 import * as Accordion from '@radix-ui/react-accordion'
 import Link from 'next/link'
 import { type ReactNode } from 'react'
@@ -27,6 +27,7 @@ type SingleResultProps = {
   place: number
   onPlaceClick?: () => void
   className?: string
+  sticky?: boolean
 }
 export function SingleResult({
   className,
@@ -34,9 +35,15 @@ export function SingleResult({
   place,
   result,
   onPlaceClick,
+  sticky = false,
 }: SingleResultProps) {
   return (
-    <li className={className}>
+    <li
+      className={cn(className, {
+        'sticky bottom-[-2px] top-[calc(var(--layout-section-header-height)-2px)] z-10':
+          sticky,
+      })}
+    >
       <SingleResultDesktop
         className='md:hidden'
         discipline={discipline}

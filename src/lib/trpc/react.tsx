@@ -10,6 +10,8 @@ import SuperJSON from 'superjson'
 import { type AppRouter } from '@/backend/api/root'
 import { createQueryClient } from './query-client'
 import { env } from '@/env'
+import { readSSROnlySecret } from 'ssr-only-secrets'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 let clientQueryClientSingleton: QueryClient | undefined = undefined
 const getQueryClient = () => {
@@ -39,7 +41,10 @@ export type RouterInputs = inferRouterInputs<AppRouter>
  */
 export type RouterOutputs = inferRouterOutputs<AppRouter>
 
-export function TRPCReactProvider(props: { children: React.ReactNode }) {
+export function TRPCReactProvider(props: {
+  children: React.ReactNode
+  ssrOnlySecret: string
+}) {
   const queryClient = getQueryClient()
 
   const [trpcClient] = useState(() =>
@@ -53,9 +58,18 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
         httpBatchLink({
           transformer: SuperJSON,
           url: getBaseUrl() + '/api/trpc',
-          headers: () => {
+          headers: async () => {
             const headers = new Headers()
             headers.set('x-trpc-source', 'nextjs-react')
+
+            const cookieHeaderValue = await readSSROnlySecret(
+              props.ssrOnlySecret,
+              'SECRET_CLIENT_COOKIE_VAR',
+            )
+            if (cookieHeaderValue) {
+              headers.set('cookie', cookieHeaderValue)
+            }
+
             return headers
           },
         }),
@@ -67,6 +81,9 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
         {props.children}
+        {env.NEXT_PUBLIC_APP_ENV !== 'production' && (
+          <ReactQueryDevtools initialIsOpen={false} />
+        )}
       </TRPCProvider>
     </QueryClientProvider>
   )

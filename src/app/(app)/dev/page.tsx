@@ -1,4 +1,4 @@
-import { api } from '@/trpc/server'
+import { api } from '@/lib/trpc/server'
 import { notFound } from 'next/navigation'
 import { SolveValidator } from './_components/solve-validator'
 import { db } from '@/backend/db'
@@ -38,8 +38,8 @@ export async function OngoingContestInfo() {
     .where(
       and(
         or(
-          ...ongoingContest.disciplines.map(({ slug }) =>
-            eq(roundTable.disciplineSlug, slug),
+          ...ongoingContest.disciplines.map((discipline) =>
+            eq(roundTable.disciplineSlug, discipline),
           ),
         ),
         eq(roundTable.contestSlug, ongoingContest.slug),

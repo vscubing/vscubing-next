@@ -14,12 +14,12 @@ export type MoveListener = (
 ) => void
 type CameraPositionListener = (pos: CameraPosition) => void
 
-type PuzzleFaces = 'U' | 'R' | 'F' | 'D' | 'L' | 'B'
+export type PuzzleFace = 'U' | 'R' | 'F' | 'D' | 'L' | 'B'
 
 /**
  * @description hex colors (default: white red green yellow orange blue)
  */
-type Colorscheme = Record<PuzzleFaces, number>
+type Colorscheme = Record<PuzzleFace, number>
 
 type Options = {
   puzzle: 'cube2' | 'cube3' | 'cube4'
@@ -31,14 +31,14 @@ export type CameraPosition = { theta: number; phi: number }
 
 export class Puzzle {
   constructor(twistyScene, twisty)
-  keydown(args): unknown
-  resize(): unknown
-  addMoves(args): unknown
+  keydown(event: KeyboardEvent): void
+  resize(): void
+  addMoves(...args): unknown
   applyMoves(
     args,
     timestamp: number | undefined,
     applyingScramble: boolean,
-  ): unknown
+  ): void
   setCameraPosition(position: CameraPosition): void
   addMoveListener(listener): unknown
   getDomElement(): unknown
@@ -52,6 +52,9 @@ export class Puzzle {
     scramble,
     addPreScr?: boolean,
   ): [number, number, string, number][]
+  applyPattern(
+    pattern: Record<string, { pieces: number[]; orientation: number[] }>,
+  ): void
 }
 
 type CsMove = [number, number, string, number]

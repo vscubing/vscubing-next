@@ -5,7 +5,7 @@ import { GhostButton, GoogleIcon, PrimaryButton, toast } from '@/frontend/ui'
 import { useEffect, type MouseEventHandler } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { GOOGLE_AUTH_ERROR_SEARCH_PARAM } from '../../app/api/auth/google/error-search-param'
-import { useRemoveSearchParam } from '@/utils/user-remove-search-param'
+import { useRemoveSearchParam } from '@/lib/utils/use-remove-search-param'
 
 const GOOGLE_AUTH_HREF = '/api/auth/google'
 type SignInButtonProps = { variant: 'primary' | 'ghost'; className?: string }
@@ -35,7 +35,10 @@ export function SignInButton({ variant, className }: SignInButtonProps) {
   if (variant === 'primary') {
     return (
       <PrimaryButton
-        className={cn('h-12 gap-3 px-4 text-[1.125rem] sm:h-12', className)}
+        className={cn(
+          'h-12 gap-3 whitespace-nowrap px-4 text-[1.125rem] sm:h-12',
+          className,
+        )}
         asChild
       >
         <a href={GOOGLE_AUTH_HREF} onClick={signIn}>
@@ -49,7 +52,7 @@ export function SignInButton({ variant, className }: SignInButtonProps) {
   return (
     <GhostButton
       className={cn(
-        'h-12 gap-3 px-4 text-[1.125rem] hover:border hover:border-white-100 hover:bg-transparent active:bg-white-100 active:text-black-100 sm:h-10 sm:border sm:border-white-100 sm:px-3',
+        'h-12 gap-3 whitespace-nowrap px-4 text-[1.125rem] hover:border hover:border-white-100 hover:bg-transparent active:bg-white-100 active:text-black-100 sm:h-10 sm:border sm:border-white-100 sm:px-3',
         className,
       )}
       asChild

@@ -5,6 +5,7 @@
 import $ from 'jquery'
 import THREE from '../threemin'
 import kernel from '../kernel'
+// import type { KPatternData } from '@vscubing/cubing/kpuzzle'
 
 const touchGridStyles = `
 body {
@@ -618,6 +619,160 @@ const twistyjs = (function () {
         pendingAnimationLoop = requestAnimationFrame(animateLoop, twistyCanvas)
       }
     }
+
+    /**
+     *
+     * @param {{face: import('../puzzlefactory').PuzzleFace, sv: number, su: number}} from
+     * @param {{face: import('../puzzlefactory').PuzzleFace, sv: number, su: number}} to
+     * @description sv and su are grid axis coordinates on the face (0..2/0..2 for 3x3)
+     */
+    this.moveSticker = (...args) => {
+      twisty.moveSticker(...args)
+      render()
+    }
+
+    this.checkSticker = (s) => {
+      this.moveSticker(s, { face: 'D', su: 0, sv: 0 })
+      render()
+    }
+
+    /**
+     *
+     * @param {Record<string, {pieces: number[], orientation: number[]} pattern
+     */
+    function applyPattern(pattern) {
+      // TODO: write an explanation for this abomination
+
+      if (!pattern.EDGES || !pattern.CORNERS || !pattern.CENTERS)
+        throw new Error('bad pattern')
+
+      const CENTERS = ['U', 'L', 'F', 'R', 'B', 'D']
+      for (const [slot, piece] of pattern.CENTERS.pieces.entries()) {
+        twisty.moveSticker(
+          { face: CENTERS[piece], sv: 1, su: 1 },
+          { face: CENTERS[slot], sv: 1, su: 1 },
+        )
+      }
+
+      const CORNERS = [
+        [
+          { face: 'U', sv: 2, su: 2 },
+          { face: 'R', sv: 0, su: 0 },
+          { face: 'F', sv: 0, su: 2 },
+        ],
+        [
+          { face: 'U', sv: 0, su: 2 },
+          { face: 'B', sv: 0, su: 0 },
+          { face: 'R', sv: 0, su: 2 },
+        ],
+        [
+          { face: 'U', sv: 0, su: 0 },
+          { face: 'L', sv: 0, su: 0 },
+          { face: 'B', sv: 0, su: 2 },
+        ],
+        [
+          { face: 'U', sv: 2, su: 0 },
+          { face: 'F', sv: 0, su: 0 },
+          { face: 'L', sv: 0, su: 2 },
+        ],
+        [
+          { face: 'D', sv: 0, su: 2 },
+          { face: 'F', sv: 2, su: 2 },
+          { face: 'R', sv: 2, su: 0 },
+        ],
+        [
+          { face: 'D', sv: 0, su: 0 },
+          { face: 'L', sv: 2, su: 2 },
+          { face: 'F', sv: 2, su: 0 },
+        ],
+        [
+          { face: 'D', sv: 2, su: 0 },
+          { face: 'B', sv: 2, su: 2 },
+          { face: 'L', sv: 2, su: 0 },
+        ],
+        [
+          { face: 'D', sv: 2, su: 2 },
+          { face: 'R', sv: 2, su: 2 },
+          { face: 'B', sv: 2, su: 0 },
+        ],
+      ]
+      for (let slot = 0; slot < 8; slot++) {
+        const piece = pattern.CORNERS.pieces[slot]
+        for (let i = 0; i < 3; i++) {
+          const orientation = pattern.CORNERS.orientation[slot]
+          twisty.moveSticker(
+            CORNERS[piece][i],
+            CORNERS[slot][(i + orientation) % 3],
+          )
+        }
+      }
+
+      const EDGES = [
+        [
+          { face: 'U', sv: 2, su: 1 },
+          { face: 'F', sv: 0, su: 1 },
+        ],
+        [
+          { face: 'U', sv: 1, su: 2 },
+          { face: 'R', sv: 0, su: 1 },
+        ],
+        [
+          { face: 'U', sv: 0, su: 1 },
+          { face: 'B', sv: 0, su: 1 },
+        ],
+        [
+          { face: 'U', sv: 1, su: 0 },
+          { face: 'L', sv: 0, su: 1 },
+        ],
+
+        [
+          { face: 'D', sv: 0, su: 1 },
+          { face: 'F', sv: 2, su: 1 },
+        ],
+        [
+          { face: 'D', sv: 1, su: 2 },
+          { face: 'R', sv: 2, su: 1 },
+        ],
+        [
+          { face: 'D', sv: 2, su: 1 },
+          { face: 'B', sv: 2, su: 1 },
+        ],
+        [
+          { face: 'D', sv: 1, su: 0 },
+          { face: 'L', sv: 2, su: 1 },
+        ],
+
+        [
+          { face: 'F', sv: 1, su: 2 },
+          { face: 'R', sv: 1, su: 0 },
+        ],
+        [
+          { face: 'F', sv: 1, su: 0 },
+          { face: 'L', sv: 1, su: 2 },
+        ],
+        [
+          { face: 'B', sv: 1, su: 0 },
+          { face: 'R', sv: 1, su: 2 },
+        ],
+        [
+          { face: 'B', sv: 1, su: 2 },
+          { face: 'L', sv: 1, su: 0 },
+        ],
+      ]
+      for (let slot = 0; slot < 12; slot++) {
+        const piece = pattern.EDGES.pieces[slot]
+        for (let i = 0; i < 2; i++) {
+          const orientation = pattern.EDGES.orientation[slot]
+          twisty.moveSticker(
+            EDGES[piece][(i + orientation) % 2],
+            EDGES[slot][i],
+          )
+        }
+      }
+
+      render()
+    }
+    this.applyPattern = applyPattern
 
     function createTwisty(twistyType) {
       var twistyCreateFunction = twisties[twistyType.type]

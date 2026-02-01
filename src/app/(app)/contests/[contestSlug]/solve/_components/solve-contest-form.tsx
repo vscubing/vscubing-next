@@ -1,200 +1,30 @@
 'use client'
 
-import type { Discipline, ResultDnfable } from '@/types'
+import type { Discipline } from '@/types'
 import { CurrentSolve } from './current-solve'
 import { Progress } from './progress'
 import { SolvePanel } from './solve-panel'
-import { useTRPC, type RouterOutputs } from '@/trpc/react'
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-  useSuspenseQuery,
-} from '@tanstack/react-query'
-import { redirect, RedirectType } from 'next/navigation'
-import { useSimulator } from './simulator'
-import { toast, type Toast } from '@/frontend/ui'
-import { TRPCError } from '@trpc/server'
-import { SolveTimeLinkOrDnf } from '@/frontend/shared/solve-time-button'
-import { signSolve } from '@/utils/solve-signature'
-import { useEffect } from 'react'
+import { useSolveForm } from '@/frontend/shared/use-solve-form'
+import { useQuery } from '@tanstack/react-query'
+import { useTRPC } from '@/lib/trpc/react'
 
 export function SolveContestForm({
   contestSlug,
   discipline,
-  initialData,
 }: {
   contestSlug: string
   discipline: Discipline
-  initialData: RouterOutputs['roundSession']['state']
 }) {
+  const { state, isPending, handleSubmitSolve, handleInitSolve } = useSolveForm(
+    { contestSlug, discipline },
+  )
+
   const trpc = useTRPC()
-  const queryClient = useQueryClient()
-
-  const stateQuery = trpc.roundSession.state.queryOptions(
-    {
-      contestSlug,
-      discipline,
-    },
-    {
-      retry: (_, err) =>
-        err.data?.code !== 'FORBIDDEN' && err.data?.code !== 'UNAUTHORIZED', // TODO: why does removing unauthorized result in server errors?
-      initialData,
-    },
-  )
-  const {
-    data: state,
-    isFetching: isStateFetching,
-    error,
-  } = useSuspenseQuery(stateQuery)
-  if (error?.data?.code === 'FORBIDDEN') {
-    redirect(
-      `/contests/${contestSlug}/results?discipline=${discipline}&scrollToOwn=true`,
-      RedirectType.replace,
-    )
-  }
-
-  if (error)
-    throw new TRPCError({ message: error.message, code: error.data!.code })
-
-  const { mutate: postSolveResult, isPending: isPostSolvePending } =
-    useMutation(
-      trpc.roundSession.postSolve.mutationOptions({
-        onSuccess: (res) => {
-          if (res?.setNewPersonalRecord)
-            handlePersonalRecord(res.previousPersonalRecord)
-        },
-        onSettled: () => queryClient.invalidateQueries(stateQuery),
-        onError: (error) => {
-          if (error?.data?.code === 'BAD_REQUEST') toast(SOLVE_REJECTED_TOAST)
-        },
-      }),
-    )
-  const { mutate: submitSolve, isPending: isSubmitSolvePending } = useMutation(
-    trpc.roundSession.submitSolve.mutationOptions({
-      onSettled: () => queryClient.invalidateQueries(stateQuery),
-    }),
-  )
 
   const metadataQuery = trpc.userMetadata.userMetadata.queryOptions()
   const { data: userMetadata } = useQuery(metadataQuery)
-  const { mutate: updateUserMetadata } = useMutation(
-    trpc.userMetadata.updateUserMetadata.mutationOptions({
-      onSettled: () => queryClient.invalidateQueries(metadataQuery),
-    }),
-  )
 
-  useEffect(() => {
-    // migration
-    const LS_LEGACY_KEY = 'vs-seenDiscordInvite'
-    if (localStorage.getItem(LS_LEGACY_KEY) === 'true') {
-      updateUserMetadata({ seenDiscordInvite: true })
-      localStorage.removeItem(LS_LEGACY_KEY)
-    }
-  }, [updateUserMetadata])
-
-  const isFormPending =
-    isStateFetching || isPostSolvePending || isSubmitSolvePending
-
-  const { initSolve } = useSimulator()
-
-  function handleInitSolve() {
-    initSolve(
-      { discipline, scramble: state.currentScramble.moves },
-      (solve) => {
-        return postSolveResult({
-          solve: signSolve(solve),
-          scrambleId: state.currentScramble.id,
-          contestSlug,
-          discipline,
-        })
-      },
-    )
-  }
-
-  async function handleSubmitSolve(
-    payload:
-      | { type: 'changed_to_extra'; reason: string }
-      | { type: 'submitted' },
-  ) {
-    submitSolve({
-      contestSlug,
-      discipline,
-      type: payload.type,
-      solveId: state.currentSolve!.id,
-    })
-
-    if (state.submittedSolves.length === 4 && payload.type === 'submitted') {
-      handleSessionFinished()
-    }
-  }
-
-  function handleSessionFinished() {
-    if (!userMetadata) return
-
-    if (!userMetadata.seenDiscordInvite) {
-      toast({
-        title: 'Great to have you on board',
-        description:
-          'Join our Discord community to connect with other vscubers',
-        contactUsButton: true,
-        contactUsButtonLabel: 'Discord',
-        duration: 'infinite',
-        className: 'w-[23.75rem]',
-      })
-      updateUserMetadata({ seenDiscordInvite: true })
-      return
-    }
-
-    if (!userMetadata.seenSportcubingAd) {
-      toast({
-        title: 'Want more contests?',
-        description: (
-          <>
-            Also check out{' '}
-            <a
-              href='https://sportcubing.in.ua/lang/en'
-              className='border-b border-secondary-20 text-secondary-20'
-            >
-              Sportcubing
-            </a>{' '}
-            for online contests with physical puzzles
-          </>
-        ),
-        duration: 'long',
-      })
-      updateUserMetadata({ seenSportcubingAd: true })
-      return
-    }
-  }
-
-  function handlePersonalRecord(previousPersonalRecord?: {
-    id: number
-    result: ResultDnfable
-    contestSlug: string
-  }) {
-    toast({
-      title: 'Wow, new personal best single!',
-      description: previousPersonalRecord ? (
-        <>
-          Previous personal best:{' '}
-          {
-            <SolveTimeLinkOrDnf
-              className='h-auto min-w-0'
-              canShowHint={false}
-              result={previousPersonalRecord.result}
-              discipline={discipline}
-              contestSlug={previousPersonalRecord.contestSlug}
-              solveId={previousPersonalRecord.id}
-            />
-          }
-        </>
-      ) : (
-        'You can check out the reconstruction by clicking on the solve time.'
-      ),
-      variant: 'festive',
-    })
-  }
+  if (!state) return // TODO: remove this if we make useSolveForm use useSuspenseQuery (see https://github.com/t3-oss/create-t3-app/issues/1765)
 
   if (userMetadata?.suspended) {
     return (
@@ -250,7 +80,7 @@ export function SolveContestForm({
           <CurrentSolve
             contestSlug={contestSlug}
             discipline={discipline}
-            areActionsDisabled={isFormPending}
+            areActionsDisabled={isPending}
             canChangeToExtra={state.canChangeToExtra}
             position={state.currentScramble.position}
             scramble={state.currentScramble.moves}
@@ -269,11 +99,3 @@ export function SolveContestForm({
     </div>
   )
 }
-
-const SOLVE_REJECTED_TOAST = {
-  title: 'Uh-oh! Solve rejected by the server',
-  description:
-    "Under normal circumstances this shouldn't happen. Feel free to take an extra.",
-  duration: 'infinite',
-  contactUsButton: true,
-} satisfies Toast

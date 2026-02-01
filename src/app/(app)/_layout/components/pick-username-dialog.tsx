@@ -13,7 +13,7 @@ import {
 } from '@/frontend/ui'
 import { useForm } from 'react-hook-form'
 import { Input } from '@/frontend/ui'
-import { useTRPC } from '@/trpc/react'
+import { useTRPC } from '@/lib/trpc/react'
 import { useMutation } from '@tanstack/react-query'
 import { useLogout, useUser } from '@/frontend/shared/use-user'
 

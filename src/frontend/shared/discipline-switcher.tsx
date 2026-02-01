@@ -32,7 +32,7 @@ export function DisciplineSwitcher({
   )
 
   return (
-    <div className='flex gap-3'>
+    <div className='flex gap-3 sm:gap-2'>
       {disciplines.map((discipline) => (
         <Link
           href={{

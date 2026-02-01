@@ -1,17 +1,16 @@
 'use client'
 
 import { HintSection } from '@/frontend/shared/hint-section'
-import { type Discipline } from '@/types'
-import { useSuspenseQuery } from '@tanstack/react-query'
-import { useTRPC, type RouterOutputs } from '@/trpc/react'
-import { type ReactNode } from 'react'
 import {
-  RoundSessionRow,
   RoundSessionHeader,
+  RoundSessionRow,
   RoundSessionRowSkeleton,
 } from '@/frontend/shared/round-session-row'
 import { useScrollToIndex } from '@/frontend/utils/use-scroll-to-index'
-import { cn } from '@/frontend/utils/cn'
+import { useTRPC, type RouterOutputs } from '@/lib/trpc/react'
+import { type Discipline } from '@/types'
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { type ReactNode } from 'react'
 
 export function AverageList({
   discipline,
@@ -52,10 +51,7 @@ export function AverageList({
             place={idx + 1}
             discipline={discipline}
             isFirstOnPage={idx === 0}
-            className={cn({
-              'sticky bottom-[-2px] top-[calc(var(--layout-section-header-height)-2px)] z-10':
-                idx === stickyItemIdx,
-            })}
+            sticky={idx === stickyItemIdx}
             key={session.session.id}
             onPlaceClick={
               idx === stickyItemIdx

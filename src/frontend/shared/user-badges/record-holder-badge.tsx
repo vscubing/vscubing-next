@@ -7,7 +7,7 @@ import {
   TrophyIcon,
   SecondaryButton,
 } from '@/frontend/ui'
-import { SolveTimeLabel, SolveTimeLinkOrDnf } from '../solve-time-button'
+import { SolveTimeLabel, SolveTimeLinkOrDnf } from '../solve-time-link-or-dnf'
 import Link from 'next/link'
 
 export function RecordHolderBadge({

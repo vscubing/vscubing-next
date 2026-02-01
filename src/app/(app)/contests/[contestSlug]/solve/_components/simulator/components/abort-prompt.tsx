@@ -22,6 +22,7 @@ export function AbortPrompt({
       <DialogPortal>
         <DialogOverlay onClick={onCancel} />
         <DialogContent
+          className='gap-8 sm:gap-6'
           onEscapeKeyDown={(e) => {
             e.stopPropagation()
             onCancel()

@@ -7,7 +7,7 @@ import { type ReactNode, useEffect, useState } from 'react'
 import { useSetAtom } from 'jotai'
 import { mobileMenuOpenAtom } from '../store/mobile-menu-open-atom'
 import type { Route } from 'next'
-import { useTRPC, type RouterOutputs } from '@/trpc/react'
+import { useTRPC, type RouterOutputs } from '@/lib/trpc/react'
 import { useQuery } from '@tanstack/react-query'
 import {
   DashboardIcon,
@@ -17,6 +17,11 @@ import {
   CodeXmlIcon,
 } from '@/frontend/ui'
 import { DEFAULT_DISCIPLINE } from '@/types'
+import { HandshakeIcon, RadioTowerIcon } from 'lucide-react'
+import {
+  LIVE_STREAMS_ENABLED,
+  CUBE_TOGETHER_ENABLED,
+} from '@/lib/pusher/streams'
 
 type NavbarProps = {
   variant: 'vertical' | 'horizontal'
@@ -128,9 +133,9 @@ function parsePathname(
     if (
       pathname === '/contests/ongoing' ||
       removePrefix(pathname, '/contests/').startsWith(ongoingContestSlug)
-    ) {
+    )
       return '/contests/ongoing'
-    }
+
     return '/contests'
   }
 }
@@ -142,9 +147,19 @@ type NavbarRoute =
   | '/contests/ongoing'
   | '/settings'
   | '/dev'
+  | '/live-streams'
+  | '/cube-together'
 
 function isStaticNavbarRoute(pathname: string): pathname is NavbarRoute {
-  return ['/', '/contests', '/dev'].includes(pathname)
+  return (
+    [
+      '/',
+      '/contests',
+      '/dev',
+      '/live-streams',
+      '/cube-together',
+    ] satisfies NavbarRoute[] as string[]
+  ).includes(pathname)
 }
 function getNavbarLinks(
   ongoingContest: RouterOutputs['contest']['getOngoing'] | undefined,
@@ -178,10 +193,26 @@ function getNavbarLinks(
       icon: <OngoingContestIcon />,
       name: 'Ongoing contest',
       route: '/contests/ongoing',
-      href: getOngoingLink(ongoingContest),
+      href: ongoingContest
+        ? `/contests/${ongoingContest.slug}/results?discipline=${DEFAULT_DISCIPLINE}`
+        : undefined,
       disabled: ongoingContest === null,
     },
   ]
+
+  if (LIVE_STREAMS_ENABLED)
+    links.push({
+      icon: <RadioTowerIcon />,
+      name: 'Live streams',
+      route: '/live-streams',
+    })
+
+  if (CUBE_TOGETHER_ENABLED)
+    links.push({
+      icon: <HandshakeIcon />,
+      name: 'Cube together',
+      route: '/cube-together',
+    })
 
   if (devToolsEnabled) {
     links.push({
@@ -196,15 +227,4 @@ function getNavbarLinks(
 
 function removePrefix(value: string, prefix: string) {
   return value.startsWith(prefix) ? value.slice(prefix.length) : value
-}
-
-function getOngoingLink(
-  ongoingContest: RouterOutputs['contest']['getOngoing'] | undefined,
-) {
-  if (!ongoingContest) return undefined
-  const page = ongoingContest?.disciplines.find(
-    (d) => d.slug === DEFAULT_DISCIPLINE,
-  )?.capabilities
-
-  return `/contests/${ongoingContest.slug}/${page}?discipline=${DEFAULT_DISCIPLINE}`
 }

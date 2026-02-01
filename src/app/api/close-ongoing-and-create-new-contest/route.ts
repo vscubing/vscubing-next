@@ -1,7 +1,7 @@
+import { tryCatch } from '@/lib/utils/try-catch'
+import { env } from '@/env'
 import { closeOngoingAndCreateNewContest } from '@/backend/shared/contest-management'
 import { sendTelegramMessage } from '@/backend/shared/telegram'
-import { env } from '@/env'
-import { tryCatch } from '@/utils/try-catch'
 
 export async function POST(request: Request): Promise<Response> {
   const url = new URL(request.url)

@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        
+
       - name: Populate .env file
         run: |
           cat <<EOF > .env
@@ -45,6 +45,7 @@ jobs:
           TNOODLE_SECRET=${{ secrets.TNOODLE_SECRET }}
           CONTEST_CREATION_WEBHOOK_SECRET=${{ secrets.CONTEST_CREATION_WEBHOOK_SECRET }}
           NEXT_TELEMETRY_DISABLED=${{ vars.NEXT_TELEMETRY_DISABLED }}
+          SECRET_CLIENT_COOKIE_VAR=${{ secrets.SECRET_CLIENT_COOKIE_VAR }}
           EOF
 
       - name: Set Docker timestamp tag
@@ -77,5 +78,5 @@ jobs:
             ${{ env.IMAGE_NAME }}:${{ env.DATE_STAMP }}
 
       - name: Deploy to Dokploy
-        run: | 
+        run: |
           curl --fail-with-body --request GET '${{ secrets.GH_DOKPLOY_WEBHOOK_URL }}'

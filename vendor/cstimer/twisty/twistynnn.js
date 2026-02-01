@@ -41,15 +41,10 @@ import kernel from '../kernel'
   var yyi = new THREE.Vector3(0, -1, 0)
   var zzi = new THREE.Vector3(0, 0, -1)
 
-  var side_index = {
-    U: 0,
-    R: 1,
-    F: 2,
-    D: 3,
-    L: 4,
-    B: 5,
-  }
-  var index_side = ['U', 'R', 'F', 'D', 'L', 'B']
+  /**
+   * @type {import('../puzzlefactory').PuzzleFace[]}
+   */
+  var FACE_INDEXES = ['U', 'R', 'F', 'D', 'L', 'B']
 
   var sidesRot = {
     U: axify(zz, yy, xxi),
@@ -117,15 +112,7 @@ import kernel from '../kernel'
       }
     }
 
-    // URFDLB
-    const faceColors = [
-      cubeOptions.colorscheme.U,
-      cubeOptions.colorscheme.R,
-      cubeOptions.colorscheme.F,
-      cubeOptions.colorscheme.D,
-      cubeOptions.colorscheme.L,
-      cubeOptions.colorscheme.B,
-    ]
+    const faceColors = FACE_INDEXES.map((face) => cubeOptions.colorscheme[face])
 
     // Cube Materials
     var materials = {}
@@ -151,18 +138,20 @@ import kernel from '../kernel'
         for (var sv = 0; sv < cubeOptions.dimension; sv++) {
           var sticker = new THREE.Object3D()
 
-          var key = i
+          var key = i + ',' + su + ',' + sv
           if (cubeOptions.dimension > 7) {
             var su1 = Math.min(su, cubeOptions.dimension - 1 - su)
             var sv1 = Math.min(sv, cubeOptions.dimension - 1 - sv)
             key += ',' + (su1 + sv1) + ',' + su1 * sv1
           }
+
           materials[key] =
             materials[key] ||
             new THREE.MeshBasicMaterial({
               color: faceColors[i],
               opacity: cubeOptions.opacity,
             })
+
           var meshes = [materials[key]]
           if (cubeOptions.stickerBorder) {
             meshes.push(borderMaterial)
@@ -243,6 +232,31 @@ import kernel from '../kernel'
 
     var actualScale = (cubeOptions.scale * 0.5) / cubeOptions.dimension
     cubeObject.scale = new THREE.Vector3(actualScale, actualScale, actualScale)
+
+    /**
+     *
+     * @param {{face: import('../puzzlefactory').PuzzleFace, sv: number, su: number}} from
+     * @param {{face: import('../puzzlefactory').PuzzleFace, sv: number, su: number}} to
+     * @description sv and su are grid axis coordinates on the face (0..2/0..2 for 3x3)
+     */
+    function moveSticker(from, to) {
+      const stickerIndex = from.su * 3 + from.sv
+      const faceIndex = FACE_INDEXES.indexOf(from.face)
+      var sticker = cubePieces[faceIndex][stickerIndex]
+
+      const transformationMatrix = new THREE.Matrix4().multiply(
+        sidesUV[FACE_INDEXES.indexOf(to.face)],
+        new THREE.Matrix4().setTranslation(
+          to.su * 2 - cubeOptions.dimension + 1,
+          -(to.sv * 2 - cubeOptions.dimension + 1),
+          cubeOptions.dimension,
+        ),
+      )
+
+      sticker[0] = transformationMatrix
+      sticker[1].matrix.copy(sticker[0])
+      sticker[1].update()
+    }
 
     function animateMoveCallback(twisty, currentMove, moveProgress, moveStep) {
       //          var rott = new THREE.Matrix4();
@@ -536,7 +550,7 @@ import kernel from '../kernel'
       var xy = xyXchg[axis]
       var x = (coord[xy] * xInv[axis] + dimension - 1) / 2
       var y = (coord[1 - xy] * yInv[axis] + dimension - 1) / 2
-      var axisNorm = sidesNorm[index_side[axis]]
+      var axisNorm = sidesNorm[FACE_INDEXES[axis]]
 
       var ret = []
       var move
@@ -545,7 +559,7 @@ import kernel from '../kernel'
           continue
         }
         var dvec3 = new THREE.Vector3().cross(
-          sidesNorm[index_side[i]],
+          sidesNorm[FACE_INDEXES[i]],
           intObjs[0].point,
         )
         var ddot = dvec3.dot(axisNorm)
@@ -554,7 +568,7 @@ import kernel from '../kernel'
         var yo = dimension - 1 - y
         if (xo == x && yo == y) {
           // cube rotate
-          move = [1, iSi, index_side[i], -1]
+          move = [1, iSi, FACE_INDEXES[i], -1]
           ret.push([move, move2str(move), dvec3])
           continue
         }
@@ -563,7 +577,7 @@ import kernel from '../kernel'
         var d2 = xy ? xo : yo
         var opp = d1 > d2 ? -1 : 1
         opp *= xy ? xInv[axis] : yInv[axis]
-        move = [1, Math.min(d1, d2) + 1, index_side[opp < 0 ? i : i + 3], opp]
+        move = [1, Math.min(d1, d2) + 1, FACE_INDEXES[opp < 0 ? i : i + 3], opp]
         if (d1 == d2) {
           move[0] = d1 + 1
         }
@@ -607,7 +621,7 @@ import kernel from '../kernel'
             Math.abs(
               matrixVector3Dot(
                 faceStickers[0][0],
-                (normVector = sidesNorm[index_side[faceSideIndex]]),
+                (normVector = sidesNorm[FACE_INDEXES[faceSideIndex]]),
               ) - dimension,
             )
           ) {
@@ -657,7 +671,7 @@ import kernel from '../kernel'
           var x = (coord[xy] * xInv[axis] + dimension - 1) / 2
           var y = (coord[1 - xy] * yInv[axis] + dimension - 1) / 2
           ret[axis * dimension * dimension + x * dimension + y] =
-            index_side[faceIndex]
+            FACE_INDEXES[faceIndex]
         }
       }
       return ret.join('')
@@ -891,6 +905,7 @@ import kernel from '../kernel'
       borderMaterial: borderMaterial,
       move2str: move2str,
       moveInv: moveInv,
+      moveSticker,
     }
   }
 })()
