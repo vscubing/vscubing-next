@@ -42,7 +42,7 @@ export function ExtraPrompt({
 
   const [open, setOpen] = useState(false)
 
-  const handleSubmit = hookFormSubmitWrapper(({ reason }: ReasonForm) => {
+  const handleSubmit = hookFormSubmitWrapper(({ reason }) => {
     onSubmit(reason)
     setOpen(false)
   })
@@ -58,7 +58,7 @@ export function ExtraPrompt({
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogPortal>
         <DialogOverlay withCubes={false} className='bg-black-1000/25' />
-        <DialogContent className='max-w-[35rem] p-0 sm:py-4'>
+        <DialogContent className='max-w-[35rem] gap-8 p-0 sm:gap-6 sm:py-4'>
           <form
             className='relative h-full w-full px-24 py-16 md:px-12 md:py-12 sm:px-2 sm:py-4'
             onSubmit={handleSubmit}
@@ -74,7 +74,8 @@ export function ExtraPrompt({
                 error={!!errors.reason}
                 {...register('reason')}
                 onKeyDown={(e) => {
-                  if (e.ctrlKey && e.key === 'Enter') void handleSubmit()
+                  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter')
+                    void handleSubmit()
                 }}
                 autoFocus
                 className='mb-1 h-24 w-full'

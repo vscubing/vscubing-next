@@ -7,7 +7,7 @@ import {
   DisciplineIcon,
 } from '@/frontend/ui'
 import { SpinningBorder } from '@/frontend/ui/spinning-border'
-import { SolveTimeLinkOrDnf } from '@/frontend/shared/solve-time-button'
+import { SolveTimeLinkOrDnf } from '@/frontend/shared/solve-time-link-or-dnf'
 import { cn } from '@/frontend/utils/cn'
 import { tailwindConfig } from '@/frontend/utils/tailwind'
 import Link from 'next/link'

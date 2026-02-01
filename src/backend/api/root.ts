@@ -5,6 +5,8 @@ import { roundSessionRouter } from './routers/round-session'
 import { leaderboardRouter } from './routers/leaderboard'
 import { settingsRouter } from './routers/settings'
 import { adminRouter } from './routers/admin'
+import { specialContestRouter } from './routers/special-contest'
+import { solveStreamRouter } from './routers/solve-stream'
 import { userMetadataRouter } from './routers/user-metadata'
 
 /**
@@ -16,9 +18,11 @@ export const appRouter = createTRPCRouter({
   user: userRouter,
   admin: adminRouter,
   contest: contestRouter,
+  specialContest: specialContestRouter,
   roundSession: roundSessionRouter,
   leaderboard: leaderboardRouter,
   settings: settingsRouter,
+  solveStream: solveStreamRouter,
   userMetadata: userMetadataRouter,
 })
 

@@ -1,5 +1,5 @@
 import { DisciplineIcon } from '@/frontend/ui'
-import { SolveTimeLabel } from '@/frontend/shared/solve-time-button'
+import { SolveTimeLabel } from '@/frontend/shared/solve-time-link-or-dnf'
 import { AnimationItem } from './animations'
 import { type CSSProperties } from 'react'
 

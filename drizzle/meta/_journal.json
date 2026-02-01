@@ -127,6 +127,13 @@
       "when": 1760551732749,
       "tag": "0017_purple_sway",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1768744494472,
+      "tag": "0018_low_vampiro",
+      "breakpoints": true
     }
   ]
 }

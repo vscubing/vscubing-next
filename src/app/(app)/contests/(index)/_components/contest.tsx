@@ -1,6 +1,6 @@
 import { type ContestMetadata, type Discipline } from '@/types'
 import { DisciplineIcon, SecondaryButton } from '@/frontend/ui'
-import { formatContestDuration } from '@/utils/format-date'
+import { formatContestDuration } from '@/lib/utils/format-date'
 import Link from 'next/link'
 import { cn } from '@/frontend/utils/cn'
 import tailwindConfig from 'tailwind.config'
@@ -13,7 +13,7 @@ export {
 
 type ContestProps = {
   contest: ContestMetadata
-  discipline: Discipline
+  discipline?: Discipline
   height?: number
   className?: string
 }
@@ -37,7 +37,9 @@ export function ContestRowDesktop({
         )}
         style={{ height }}
       >
-        <DisciplineIcon discipline={discipline} className='mr-4' />
+        {discipline && (
+          <DisciplineIcon discipline={discipline} className='mr-4' />
+        )}
         <span className='vertical-alignment-fix relative mr-4 flex-1 pr-4 after:absolute after:right-0 after:top-1/2 after:h-6 after:w-px after:-translate-y-1/2 after:bg-grey-60'>
           Contest {contest.slug} {contest.isOngoing && '(ongoing)'}
         </span>

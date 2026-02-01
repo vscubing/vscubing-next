@@ -3,30 +3,36 @@ import { z } from 'zod'
 import { createTRPCRouter, publicProcedure } from '@/backend/api/trpc'
 import {
   contestTable,
-  roundTable,
   disciplineTable,
   roundSessionTable,
+  roundTable,
   scrambleTable,
   solveTable,
   userTable,
 } from '@/backend/db/schema'
-import { DISCIPLINES, CONTEST_UNAUTHORIZED_MESSAGE } from '@/types'
-import { eq, desc, and, lte } from 'drizzle-orm'
-import { TRPCError } from '@trpc/server'
-import { resultDnfable, type RoundSession } from '@/types'
-import { groupBy } from '@/utils/group-by'
-import { sortWithRespectToExtras } from '../../shared/sort-with-respect-to-extras'
-import { getContestUserCapabilities } from '../../shared/get-contest-user-capabilities'
+import { getGlobalRecordsByUser } from '@/backend/shared/global-record'
 import { getPersonalRecordSolveSubquery } from '@/backend/shared/personal-record'
 import { getWcaIdSubquery } from '@/backend/shared/wca-id-subquery'
-import { getGlobalRecordsByUser } from '@/backend/shared/global-record'
+import {
+  CONTEST_TYPES,
+  DISCIPLINES,
+  resultDnfable,
+  type RoundSession,
+} from '@/types'
+import { groupBy } from '@/lib/utils/group-by'
+import { TRPCError } from '@trpc/server'
+import { and, desc, eq, lte } from 'drizzle-orm'
+import { getContestUserCapabilities } from '../../shared/get-contest-user-capabilities'
+import { sortWithRespectToExtras } from '../../shared/sort-with-respect-to-extras'
+import { env } from '@/env'
 
 export const contestRouter = createTRPCRouter({
   getAllContests: publicProcedure
     .input(
       z.object({
-        discipline: z.enum(DISCIPLINES),
+        discipline: z.enum(DISCIPLINES).optional(),
         cursor: z.string().optional(),
+        type: z.enum(CONTEST_TYPES).optional(),
         limit: z.number().min(1).default(15),
       }),
     )
@@ -48,7 +54,12 @@ export const contestRouter = createTRPCRouter({
         )
         .where(
           and(
-            eq(disciplineTable.slug, input.discipline),
+            env.NEXT_PUBLIC_APP_ENV === 'production'
+              ? eq(contestTable.type, 'weekly')
+              : input.type && eq(contestTable.type, input.type),
+            input.discipline
+              ? eq(disciplineTable.slug, input.discipline)
+              : undefined,
             input.cursor
               ? lte(contestTable.startDate, input.cursor)
               : undefined,
@@ -73,10 +84,7 @@ export const contestRouter = createTRPCRouter({
         expectedEndDate: contestTable.expectedEndDate,
         endDate: contestTable.endDate,
         isOngoing: contestTable.isOngoing,
-        discipline: {
-          slug: roundTable.disciplineSlug,
-          roundSessionFinished: roundSessionTable.isFinished,
-        },
+        discipline: roundTable.disciplineSlug,
       })
       .from(contestTable)
       .innerJoin(roundTable, eq(roundTable.contestSlug, contestTable.slug))
@@ -91,7 +99,9 @@ export const contestRouter = createTRPCRouter({
         disciplineTable,
         eq(disciplineTable.slug, roundTable.disciplineSlug),
       )
-      .where(eq(contestTable.isOngoing, true))
+      .where(
+        and(eq(contestTable.isOngoing, true), eq(contestTable.type, 'weekly')),
+      )
       .orderBy(disciplineTable.createdAt)
 
     const ongoing = rows[0]
@@ -102,12 +112,7 @@ export const contestRouter = createTRPCRouter({
       startDate: ongoing.startDate,
       expectedEndDate: ongoing.expectedEndDate,
       endDate: ongoing.endDate,
-      disciplines: rows.map(({ discipline }) => ({
-        slug: discipline.slug,
-        capabilities: discipline.roundSessionFinished
-          ? ('results' as const)
-          : ('solve' as const),
-      })),
+      disciplines: rows.map(({ discipline }) => discipline),
     }
   }),
 
@@ -157,24 +162,13 @@ export const contestRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }): Promise<RoundSession[]> => {
-      const userCapabilities = await getContestUserCapabilities({
-        contestSlug: input.contestSlug,
-        discipline: input.discipline,
-      })
-      if (userCapabilities === 'CONTEST_NOT_FOUND')
-        throw new TRPCError({ code: 'NOT_FOUND' })
-
-      if (userCapabilities === 'UNAUTHORIZED')
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: CONTEST_UNAUTHORIZED_MESSAGE,
+      const [contestMetadata] = await ctx.db
+        .select({
+          isOngoing: contestTable.isOngoing,
         })
-      if (userCapabilities === 'SOLVE')
-        throw new TRPCError({
-          code: 'FORBIDDEN',
-          message:
-            "You can't see the results of an ongoing contest round before finishing it",
-        })
+        .from(contestTable)
+        .where(eq(contestTable.slug, input.contestSlug))
+      if (!contestMetadata) throw new TRPCError({ code: 'NOT_FOUND' })
 
       const bestSolveSubquery = getPersonalRecordSolveSubquery({
         db: ctx.db,
@@ -183,12 +177,13 @@ export const contestRouter = createTRPCRouter({
       })
       const wcaIdSubquery = getWcaIdSubquery({ db: ctx.db })
 
-      const queryRes = await ctx.db
+      const solveRows = await ctx.db
         .select({
           session: {
             id: roundSessionTable.id,
             timeMs: roundSessionTable.avgMs,
             isDnf: roundSessionTable.isDnf,
+            isFinished: roundSessionTable.isFinished,
           },
           solve: {
             timeMs: solveTable.timeMs,
@@ -197,6 +192,7 @@ export const contestRouter = createTRPCRouter({
             id: solveTable.id,
             position: scrambleTable.position,
             personalRecordId: bestSolveSubquery.id,
+            status: solveTable.status,
           },
           user: {
             name: userTable.name,
@@ -222,46 +218,115 @@ export const contestRouter = createTRPCRouter({
           and(
             eq(roundTable.contestSlug, input.contestSlug),
             eq(roundTable.disciplineSlug, input.discipline),
-            eq(roundSessionTable.isFinished, true),
-            eq(solveTable.status, 'submitted'),
           ),
         )
-        .orderBy(roundSessionTable.avgMs)
+        .orderBy(
+          desc(roundSessionTable.isFinished),
+          roundSessionTable.avgMs,
+          roundSessionTable.createdAt,
+        )
 
-      const solvesBySessionId = groupBy(queryRes, ({ session }) => session.id)
+      const solvesBySessionId = groupBy(solveRows, ({ session }) => session.id)
       const globalRecordsByUser = await getGlobalRecordsByUser()
 
-      return Array.from(solvesBySessionId.values()).map((session) => ({
-        session: {
-          result: resultDnfable.parse(session[0]!.session),
-          id: session[0]!.session.id,
-          isOwn: session[0]!.user.id === ctx.session?.user.id,
-        },
-        solves: sortWithRespectToExtras(
-          session.map(
-            ({
-              solve: {
-                id,
-                personalRecordId,
-                position,
-                isDnf,
-                timeMs,
-                plusTwoIncluded,
-              },
-            }) => ({
-              id,
-              position,
-              result: resultDnfable.parse({ timeMs, isDnf, plusTwoIncluded }),
-              isPersonalRecord: id === personalRecordId,
-            }),
+      const preparedNonEmptyRoundSessions = Array.from(
+        solvesBySessionId.values(),
+      ).map((rows) => {
+        if (!rows[0]) {
+          console.error(`no 1st row for ${JSON.stringify(input)}`)
+          throw new Error(`no 1st row for ${JSON.stringify(input)}`)
+        }
+
+        const { session, user } = rows[0]
+        return {
+          session: {
+            result: session.isFinished ? resultDnfable.parse(session) : null,
+            id: session.id,
+            isOwn: user.id === ctx.session?.user.id,
+            isFinished: session.isFinished,
+          },
+          solves: sortWithRespectToExtras(
+            rows
+              .filter(({ solve }) => solve.status === 'submitted')
+              .map(({ solve }) => ({
+                id: solve.id,
+                position: solve.position,
+                result: resultDnfable.parse({
+                  timeMs: solve.timeMs,
+                  isDnf: solve.isDnf,
+                  plusTwoIncluded: solve.plusTwoIncluded,
+                }),
+                status: solve.status,
+                isPersonalRecord: solve.id === solve.personalRecordId,
+              })),
           ),
-        ),
-        user: {
-          ...session[0]!.user,
-          globalRecords: globalRecordsByUser.get(session[0]!.user.id) ?? null,
-        },
-        contestSlug: input.contestSlug,
-      }))
+          user: {
+            ...user,
+            globalRecords: globalRecordsByUser.get(user.id) ?? null,
+          },
+          contestSlug: input.contestSlug,
+        }
+      })
+
+      if (!contestMetadata.isOngoing) {
+        return preparedNonEmptyRoundSessions.filter(
+          (session) => session.session.isFinished,
+        )
+      }
+
+      const emptySessionRows = await ctx.db
+        .select({
+          session: {
+            id: roundSessionTable.id,
+          },
+          user: {
+            name: userTable.name,
+            id: userTable.id,
+            wcaId: wcaIdSubquery.wcaId,
+            role: userTable.role,
+          },
+        })
+        .from(roundTable)
+        .innerJoin(
+          roundSessionTable,
+          eq(roundSessionTable.roundId, roundTable.id),
+        )
+        .innerJoin(userTable, eq(userTable.id, roundSessionTable.contestantId))
+        .leftJoin(wcaIdSubquery, eq(wcaIdSubquery.userId, userTable.id))
+        .where(
+          and(
+            eq(roundTable.contestSlug, input.contestSlug),
+            eq(roundTable.disciplineSlug, input.discipline),
+            eq(
+              ctx.db.$count(
+                solveTable,
+                eq(solveTable.roundSessionId, roundSessionTable.id),
+              ),
+              0,
+            ),
+          ),
+        )
+
+      preparedNonEmptyRoundSessions.sort(
+        (a, b) => b.solves.length - a.solves.length,
+      )
+
+      return preparedNonEmptyRoundSessions.concat(
+        emptySessionRows.map(({ user, session }) => ({
+          session: {
+            result: null,
+            id: session.id,
+            isOwn: user.id === ctx.session?.user.id,
+            isFinished: false,
+          },
+          solves: [],
+          user: {
+            ...user,
+            globalRecords: globalRecordsByUser.get(user.id) ?? null,
+          },
+          contestSlug: input.contestSlug,
+        })),
+      )
     }),
 
   getSolve: publicProcedure

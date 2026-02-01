@@ -21,6 +21,7 @@ export type ScramblePosition = (typeof SCRAMBLE_POSITIONS)[number]
 export function isExtra(position: ScramblePosition) {
   return position.startsWith('E')
 }
+
 export function getExtraNumber(
   position: ScramblePosition,
 ): '1' | '2' | undefined {
@@ -72,6 +73,9 @@ export function isDiscipline(str: unknown): str is Discipline {
 export function castDiscipline(str: unknown): Discipline {
   return z.enum(DISCIPLINES).catch(DEFAULT_DISCIPLINE).parse(str)
 }
+export function assertDiscipline(str: string): Discipline {
+  return z.enum(DISCIPLINES).parse(str)
+}
 
 export const LEADERBOARD_TYPES = ['single', 'average'] as const
 export type LeaderboardType = (typeof LEADERBOARD_TYPES)[number]
@@ -90,15 +94,17 @@ export type ContestMetadata = Pick<
 
 export type RoundSession = {
   session: {
-    result: ResultDnfable
+    result: ResultDnfable | null
     id: number
     isOwn: boolean
+    isFinished: boolean
   }
   solves: {
     id: number
     position: ScramblePosition
     result: ResultDnfable
     isPersonalRecord: boolean
+    status: SolveStatus
   }[]
   contestSlug: string
   user: User
@@ -111,6 +117,38 @@ export type SimulatorSettings = Omit<
   typeof userSimulatorSettingsTable.$inferSelect,
   'id' | 'createdAt' | 'updatedAt' | 'userId'
 >
+
+export type ContestType = (typeof CONTEST_TYPES)[number]
+export const CONTEST_TYPES = ['weekly', 'special'] as const
+
+const SIMPLE_MOVES = [
+  'R',
+  'U',
+  'F',
+  'B',
+  'L',
+  'D',
+  'M',
+  'E',
+  'S',
+  'Rw',
+  'Uw',
+  'Fw',
+  'Bw',
+  'Lw',
+  'Dw',
+  'x',
+  'y',
+  'z',
+] as const
+export const MOVES = SIMPLE_MOVES.flatMap(
+  (move) => [move, `${move}'`, `${move}2`] as const,
+)
+export type Move = (typeof MOVES)[number]
+export const moveSchema = z.enum(MOVES as [Move, ...Move[]])
+export function isMove(moveStr: string): moveStr is Move {
+  return (MOVES as readonly string[]).includes(moveStr)
+}
 
 export const PUZZLE_SCALE = {
   MIN: 0.75,

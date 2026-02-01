@@ -39,6 +39,7 @@ export const adminRouter = createTRPCRouter({
           expectedEndDate: dayjs().toISOString(),
           slug: '0',
           systemInitial: true,
+          type: 'weekly',
         })
         .onConflictDoNothing()
     }),
@@ -79,6 +80,7 @@ export const adminRouter = createTRPCRouter({
           tx,
           easyScrambles: input.easyScrambles,
           slug: getNextContestSlug(latestContest.slug),
+          type: 'weekly',
         }),
       )
     }),

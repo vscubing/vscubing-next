@@ -28,34 +28,40 @@ import {
   KeyMapDialogContent,
 } from '@/frontend/shared/key-map-dialog'
 import { useEventListener } from 'usehooks-ts'
+import type { Move } from '@/types'
 const Simulator = lazy(() => import('./simulator/simulator.lazy'))
 
 export function SimulatorProvider({ children }: { children: React.ReactNode }) {
   const [solveState, setSolveState] = useState<{
     initSolveData: InitSolveData
+    inspectionStartCallback?: () => void
+    moveCallback?: (move: Move, event?: 'solve-start' | 'solve-end') => void
     solveCallback: SimulatorSolveFinishCallback
     wasInspectionStarted: boolean
   } | null>(null)
   const [isAbortPromptVisible, setIsAbortPromptVisible] = useState(false)
 
   const initSolve = useCallback(
-    (
-      initSolveData: InitSolveData,
-      solveCallback: SimulatorSolveFinishCallback,
-    ) => {
+    (params: {
+      initSolveData: InitSolveData
+      inspectionStartCallback?: () => void
+      moveCallback?: (move: Move, event?: 'solve-start' | 'solve-end') => void
+      solveCallback: SimulatorSolveFinishCallback
+    }) => {
       setIsAbortPromptVisible(false)
       setSolveState({
-        initSolveData,
-        solveCallback,
+        ...params,
         wasInspectionStarted: false,
       })
     },
     [],
   )
 
+  const inspectionStartCallback = solveState?.inspectionStartCallback
   const handleInspectionStart = useCallback(() => {
+    inspectionStartCallback?.()
     setSolveState((prev) => prev && { ...prev, wasInspectionStarted: true })
-  }, [])
+  }, [inspectionStartCallback])
 
   const solveCallback = solveState?.solveCallback
   const handleSolveFinish = useCallback(
@@ -182,13 +188,15 @@ export function SimulatorProvider({ children }: { children: React.ReactNode }) {
 }
 
 type SimulatorContextValue = {
-  initSolve: (
-    data: InitSolveData,
-    onSolveFinish: SimulatorSolveFinishCallback,
-  ) => void
+  initSolve: (params: {
+    initSolveData: InitSolveData
+    inspectionStartCallback?: () => void
+    moveCallback?: (move: Move, event?: 'solve-start' | 'solve-end') => void
+    solveCallback: SimulatorSolveFinishCallback
+  }) => void
 }
 export const SimulatorContext = createContext<SimulatorContextValue>({
   initSolve: () => {
-    throw new Error('cube context is missing')
+    throw new Error('`SimulatorContest` is missing')
   },
 })

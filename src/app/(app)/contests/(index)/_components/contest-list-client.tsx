@@ -1,7 +1,7 @@
 'use client'
 import type { Discipline } from '@/types'
-import { useTRPC, type RouterOutputs } from '@/trpc/react'
-import React, { useEffect } from 'react'
+import { useTRPC, type RouterOutputs } from '@/lib/trpc/react'
+import { useEffect } from 'react'
 import { ContestRowDesktop, ContestRowMobile } from './contest'
 import { useInView } from 'react-intersection-observer'
 import { useInfiniteQuery } from '@tanstack/react-query'
@@ -19,6 +19,7 @@ export default function ContestList({
   const { data, fetchNextPage, isFetchingNextPage } = useInfiniteQuery(
     trpc.contest.getAllContests.infiniteQueryOptions(
       {
+        type: 'weekly',
         discipline,
       },
       {

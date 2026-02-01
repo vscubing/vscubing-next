@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { TwistySection } from './_components/twisty-section'
-import { api } from '@/trpc/server'
-import { tryCatchTRPC } from '@/utils/try-catch'
+import { api } from '@/lib/trpc/server'
+import { tryCatchTRPC } from '@/lib/utils/try-catch'
 import { notFound } from 'next/navigation'
 import { DisciplineBadge, HoverPopover, LoadingSpinner } from '@/frontend/ui'
 import { type Discipline, castDiscipline } from '@/types'
@@ -15,9 +15,9 @@ import { SpinningBorder } from '@/frontend/ui/spinning-border'
 import tailwindConfig from 'tailwind.config'
 import { cn } from '@/frontend/utils/cn'
 import { Alg } from '@vscubing/cubing/alg'
-import { isRotation } from '@/utils/is-rotation'
-import { removeSolutionComments } from '@/utils/remove-solution-comments'
-import { SolveTimeLabel } from '@/frontend/shared/solve-time-button'
+import { isRotation } from '@/lib/utils/is-rotation'
+import { removeSolutionComments } from '@/lib/utils/remove-solution-comments'
+import { SolveTimeLabel } from '@/frontend/shared/solve-time-link-or-dnf'
 
 type PathParams = { contestSlug: string; solveId: string }
 export default async function WatchSolvePage(props: {

@@ -14,20 +14,24 @@ export function sortWithRespectToExtras<
   const extraSolvesPool = solves.filter(({ position }) => isExtra(position))
 
   const sorted: T[] = []
-  let i = 0
-  while (i < solves.length) {
-    const regular = regularSolvesPool.shift()
-
-    if (!regular || regular.position !== String(i + 1)) {
+  while (sorted.length < solves.length) {
+    if (
+      regularSolvesPool[0] === undefined ||
+      regularSolvesPool[0].position !== String(sorted.length + 1)
+    ) {
       const extra = extraSolvesPool.shift()
-      if (!extra) throw new Error('not enough extras')
+      if (!extra) {
+        console.error('[ERROR] NOT ENOUGH EXTRAS', JSON.stringify(solves))
+        return solves
+      }
       sorted.push(extra)
-      i++
-    }
-
-    if (regular) {
+    } else {
+      const regular = regularSolvesPool.shift()
+      if (!regular) {
+        console.error('[ERROR] NOT ENOUGH REGULARS', JSON.stringify(solves))
+        return solves
+      }
       sorted.push(regular)
-      i++
     }
   }
 

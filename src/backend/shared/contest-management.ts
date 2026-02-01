@@ -1,4 +1,9 @@
-import { DISCIPLINES, SCRAMBLE_POSITIONS, type Discipline } from '@/types'
+import {
+  DISCIPLINES,
+  SCRAMBLE_POSITIONS,
+  type ContestType,
+  type Discipline,
+} from '@/types'
 import dayjs from 'dayjs'
 import { eq, desc } from 'drizzle-orm'
 import { db } from '../db'
@@ -6,7 +11,7 @@ import { contestTable, roundTable, scrambleTable } from '../db/schema'
 import { env } from '@/env'
 import { posthogClient } from '../posthog'
 import { generateScrambles } from './generate-scrambles'
-import type { Transaction } from '@/utils/types'
+import type { Transaction } from '@/lib/utils/set-optional'
 
 const PREFIX = '[CONTEST_MANAGEMENT]'
 export const NO_ONGOING_CONTEST_ERROR_MESSAGE = `${PREFIX} no ongoing contest. Please create one manually from the developer tools`
@@ -23,6 +28,7 @@ export async function closeOngoingAndCreateNewContest(
     const ongoing = await closeOngoingContest(tx)
 
     return createNewContest({
+      type: 'weekly',
       slug: getNextContestSlug(ongoing.slug),
       tx,
       easyScrambles,
@@ -32,10 +38,12 @@ export async function closeOngoingAndCreateNewContest(
 
 export async function createNewContest({
   slug,
+  type,
   tx = db,
   easyScrambles = false,
 }: {
   slug: string
+  type: ContestType
   tx?: Transaction | typeof db
   easyScrambles?: boolean
 }) {
@@ -43,6 +51,7 @@ export async function createNewContest({
   const now = dayjs()
   await tx.insert(contestTable).values({
     slug,
+    type,
     isOngoing: true,
     startDate: now.toISOString(),
     expectedEndDate: now.add(7, 'day').toISOString(),
@@ -156,6 +165,7 @@ export async function getLatestContest() {
         systemInitial: contestTable.systemInitial,
       })
       .from(contestTable)
+      .where(eq(contestTable.type, 'weekly'))
       .orderBy(desc(contestTable.endDate))
       .limit(1)
   )?.[0]

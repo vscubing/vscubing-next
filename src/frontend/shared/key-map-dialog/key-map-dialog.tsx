@@ -35,7 +35,7 @@ export function KeyMapDialogContent({
 }) {
   return (
     <DialogContent
-      className={cn('max-w-none p-10', className)}
+      className={cn('max-w-none gap-8 p-10 sm:gap-6', className)}
       {...props}
       ref={ref}
       aria-describedby={undefined}

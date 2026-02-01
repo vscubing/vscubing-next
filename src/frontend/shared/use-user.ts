@@ -1,9 +1,15 @@
-import { useTRPC } from '@/trpc/react'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useTRPC } from '@/lib/trpc/react'
+import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query'
 
 export function useUser() {
   const trpc = useTRPC()
   const { data: user, ...res } = useQuery(trpc.user.me.queryOptions())
+  return { ...res, user }
+}
+
+export function useSuspenseUser() {
+  const trpc = useTRPC()
+  const { data: user, ...res } = useSuspenseQuery(trpc.user.me.queryOptions())
   return { ...res, user }
 }
 

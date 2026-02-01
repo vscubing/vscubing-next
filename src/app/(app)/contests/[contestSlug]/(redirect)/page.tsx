@@ -1,8 +1,6 @@
-import { HintSignInSection } from '@/frontend/shared/hint-section'
-import { DEFAULT_DISCIPLINE, isDiscipline } from '@/types'
-import { assertUnreachable } from '@/utils/assert-unreachable'
-import { getContestUserCapabilities } from '@/backend/shared/get-contest-user-capabilities'
-import { CONTEST_UNAUTHORIZED_MESSAGE } from '@/types'
+import { api } from '@/lib/trpc/server'
+import { tryCatchTRPC } from '@/lib/utils/try-catch'
+import { castDiscipline } from '@/types'
 import { notFound, redirect, RedirectType } from 'next/navigation'
 
 export default async function ContestPage(props: {
@@ -12,37 +10,16 @@ export default async function ContestPage(props: {
   const { contestSlug } = await props.params
   const searchParams = await props.searchParams
   const discipline = searchParams.discipline
-  if (!isDiscipline(discipline))
-    redirect(
-      `/contests/${contestSlug}?discipline=${DEFAULT_DISCIPLINE}`,
-      RedirectType.replace,
-    )
 
-  const userCapabilities = await getContestUserCapabilities({
-    contestSlug,
-    discipline,
-  })
+  const { error } = await tryCatchTRPC(
+    api.contest.getContestMetaData({ contestSlug }),
+  )
 
-  switch (userCapabilities) {
-    case 'CONTEST_NOT_FOUND':
-      notFound()
-    case 'VIEW_RESULTS':
-      redirect(
-        `/contests/${contestSlug}/results?discipline=${discipline}`,
-        RedirectType.replace,
-      )
-    case 'SOLVE':
-      redirect(
-        `/contests/${contestSlug}/solve?discipline=${discipline}`,
-        RedirectType.replace,
-      )
-    case 'UNAUTHORIZED':
-      return (
-        <section className='flex flex-1 flex-col gap-3 sm:gap-2'>
-          <HintSignInSection description={CONTEST_UNAUTHORIZED_MESSAGE} />
-        </section>
-      )
-    default:
-      assertUnreachable(userCapabilities)
-  }
+  if (error?.code === 'NOT_FOUND') notFound()
+  if (error) throw error
+
+  redirect(
+    `/contests/${contestSlug}/results?discipline=${castDiscipline(discipline)}`,
+    RedirectType.replace,
+  )
 }
