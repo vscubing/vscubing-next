@@ -64,14 +64,18 @@ export default function ContestResultsPage() {
           initialDiscipline={discipline}
         />
         <div>
-          <h2 className='title-h2 mb-3 leading-none sm:mb-1'>
-            Contest {contestSlug} {contest.isOngoing ? ' (ongoing)' : ''}
-          </h2>
+          <div className='mb-3 flex items-center sm:mb-1'>
+            <h2 className='title-h2 leading-none'>
+              Contest {contestSlug} {contest.isOngoing ? ' (ongoing)' : ''}
+            </h2>
+            {contest.isOngoing && (
+              <ResultsRevealHintPopover className='ml-4 sm:ml-2' />
+            )}
+          </div>
           <p className='min-w-1 text-grey-40'>
             {formatContestDuration(contest)}
           </p>
         </div>
-        <ResultsRevealHintPopover />
 
         <div className='ml-auto flex items-center gap-4 whitespace-nowrap sm:hidden'>
           <JoinRoundButton contestSlug={contestSlug} discipline={discipline}>

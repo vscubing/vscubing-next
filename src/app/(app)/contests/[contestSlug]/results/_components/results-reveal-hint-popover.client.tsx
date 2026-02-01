@@ -7,29 +7,37 @@ import {
   ExclamationCircleIcon,
   PopoverTrigger,
 } from '@/frontend/ui'
-import { useLocalStorage } from '@/frontend/utils/use-local-storage'
-import { useState } from 'react'
+import { cn } from '@/frontend/utils/cn'
+import { useEffect, useState } from 'react'
+import { useLocalStorage } from 'usehooks-ts'
 
-export function ResultsRevealHintPopover() {
+export function ResultsRevealHintPopover({
+  className,
+}: {
+  className?: string
+}) {
   const [seenHint, setSeenHint] = useLocalStorage(
     'vs-seenResultsRevealHint',
     false,
   )
 
-  const [open, setOpen] = useState(!seenHint)
+  const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    if (!seenHint) {
+      setOpen(true)
+    }
+  }, [seenHint])
 
   return (
-    <Popover
-      open={open}
-      onOpenChange={(open) => {
-        if (!open) setSeenHint(true)
-      }}
-    >
+    <Popover open={open}>
       <PopoverContent
         aria-label='The results will be revealed as you go'
         className='max-w-[16rem] p-4 text-center'
       >
-        <p>Other participants' results will be revealed as you go</p>
+        <p>
+          Other participants' results are revealed as you complete each attempt.
+        </p>
         <PopoverCloseButton
           onClick={() => {
             setSeenHint(true)
@@ -39,7 +47,10 @@ export function ResultsRevealHintPopover() {
       </PopoverContent>
 
       <PopoverTrigger
-        className='text-grey-40 transition-colors hover:text-grey-20'
+        className={cn(
+          'text-white-100 transition-colors hover:text-grey-20',
+          className,
+        )}
         aria-label='Information about results reveal'
         onClick={() => {
           setSeenHint(true)
