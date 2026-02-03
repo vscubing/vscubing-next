@@ -37,3 +37,4 @@ Virtual speedcubing platform built with Next.js 15 (App Router), tRPC, Drizzle O
 - use <SolveTimeLabel> component for displaying average times and placeholders, they look like 00:00:000 or DNF
 - Use types from ./src/types.ts if applicable
 - Use `cn` utility for conditional classNames or merging
+- Only use typescript `type`'s, no interfaces

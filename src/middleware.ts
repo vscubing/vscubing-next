@@ -3,11 +3,16 @@ import { NextResponse } from 'next/server'
 
 import type { NextRequest } from 'next/server'
 
-const WEBHOOKS_PATHS = ['/api/close-ongoing-and-create-new-contest']
+function isAuthCookieExempt(pathname: string): boolean {
+  const WEBHOOK_PATHS = ['/api/close-ongoing-and-create-new-contest']
+  if (WEBHOOK_PATHS.includes(pathname)) return true
+  if (pathname === '/api/socket-auth') return true
+
+  return false
+}
 
 export async function middleware(request: NextRequest): Promise<NextResponse> {
-  if (WEBHOOKS_PATHS.includes(request.nextUrl.pathname))
-    return NextResponse.next()
+  if (isAuthCookieExempt(request.nextUrl.pathname)) return NextResponse.next()
 
   if (request.method === 'GET') {
     const response = NextResponse.next()

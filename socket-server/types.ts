@@ -2,13 +2,80 @@ import type { Move } from '@/types'
 import type { ExperimentalBinary3x3x3Pattern } from '@vscubing/cubing/protocol'
 import { type Socket } from 'socket.io-client'
 
-export interface ServerToClientEvents {
-  pattern: (binaryPattern: ExperimentalBinary3x3x3Pattern) => void
-  onMove: (move: Move) => void
+// Room types
+export type RoomUser = {
+  odol: string // unique ID: odol ID for logged-in, socket ID for guests
+  displayName: string // username or "GuestXXX"
+  isAuthenticated: boolean
+  socketId: string
 }
 
-export interface ClientToServerEvents {
+export type RoomUserInfo = Omit<RoomUser, 'socketId'>
+
+export type RoomInfo = {
+  id: string
+  name: string
+  userCount: number
+  hasPassword: boolean
+  allowGuests: boolean
+}
+
+export type RoomSettings = {
+  password: string | null
+  allowGuests: boolean
+}
+
+export type CreateRoomOptions = {
+  password?: string
+  allowGuests?: boolean
+}
+
+export type RoomState = {
+  id: string
+  name: string
+  ownerId: string
+  users: RoomUserInfo[]
+  hasPassword: boolean
+  allowGuests: boolean
+}
+
+// Socket events
+export type ServerToClientEvents = {
+  roomList: (rooms: RoomInfo[]) => void
+  roomState: (state: RoomState) => void
+  yourOdol: (odol: string) => void
+  userJoined: (user: RoomUserInfo) => void
+  userLeft: (odol: string) => void
+  pattern: (binaryPattern: ExperimentalBinary3x3x3Pattern) => void
   onMove: (move: Move) => void
+  kicked: () => void
+  roomSettingsChanged: (settings: RoomSettings) => void
+  error: (message: string) => void
+}
+
+export type JoinRoomResult =
+  | { success: true; state: RoomState }
+  | { success: false; error: string }
+
+export type CreateRoomResult =
+  | { success: true; roomId: string }
+  | { success: false; error: string }
+
+export type ClientToServerEvents = {
+  getRoomList: () => void
+  createRoom: (
+    options: CreateRoomOptions,
+    callback: (result: CreateRoomResult) => void,
+  ) => void
+  joinRoom: (
+    roomId: string,
+    password: string | undefined,
+    callback: (result: JoinRoomResult) => void,
+  ) => void
+  leaveRoom: () => void
+  onMove: (move: Move) => void
+  kickUser: (odol: string) => void
+  updateRoomSettings: (settings: Partial<RoomSettings>) => void
 }
 
 export type SocketClient = Socket<ServerToClientEvents, ClientToServerEvents>
