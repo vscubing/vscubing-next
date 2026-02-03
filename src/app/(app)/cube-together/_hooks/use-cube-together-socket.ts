@@ -7,7 +7,7 @@ import type {
   RoomInfo,
   RoomState,
   CreateRoomOptions,
-  RoomSettings,
+  PartialRoomSettings,
 } from 'socket-server/types'
 import type { KPattern } from '@vscubing/cubing/kpuzzle'
 import { experimentalTwizzleBinaryToReid3x3x3 } from '@vscubing/cubing/protocol'
@@ -35,10 +35,11 @@ export function useCubeTogetherSocket(
   useEffect(() => {
     const _socket: SocketClient = io('ws://localhost:3001', {
       withCredentials: true,
+      transports: ['websocket', 'polling', 'webtransport'],
     })
     socketRef.current = _socket
 
-    _socket.on('connect', () => {
+    _socket.on('ready', () => {
       setIsConnected(true)
     })
 
@@ -100,7 +101,6 @@ export function useCubeTogetherSocket(
         return {
           ...prev,
           hasPassword: settings.password !== null,
-          allowGuests: settings.allowGuests,
         }
       })
     })
@@ -144,15 +144,15 @@ export function useCubeTogetherSocket(
     > => {
       return new Promise((resolve) => {
         const socket = socketRef.current
-        console.log('joinRoom called, socket:', socket?.id, 'roomId:', roomId)
         if (!socket) {
-          console.log('No socket!')
           resolve({ success: false, error: 'Not connected' })
           return
         }
-        console.log('Emitting joinRoom event...')
-        socket.emit('joinRoom', roomId, password, (result) => {
-          console.log('joinRoom callback received:', result)
+        if (!socket.connected) {
+          resolve({ success: false, error: 'Socket not connected' })
+          return
+        }
+        socket.emit('joinRoom', { roomId, password }, (result) => {
           if (result.success) {
             setCurrentRoom(result.state)
           }
@@ -175,7 +175,7 @@ export function useCubeTogetherSocket(
     (move: Move) => {
       const socket = socketRef.current
       if (!socket || !currentRoom) return
-      socket.emit('onMove', move)
+      socket.emit('onMove', { move })
     },
     [currentRoom],
   )
@@ -184,13 +184,13 @@ export function useCubeTogetherSocket(
     (odol: string) => {
       const socket = socketRef.current
       if (!socket || !currentRoom) return
-      socket.emit('kickUser', odol)
+      socket.emit('kickUser', { odol })
     },
     [currentRoom],
   )
 
   const updateSettings = useCallback(
-    (settings: Partial<RoomSettings>) => {
+    (settings: PartialRoomSettings) => {
       const socket = socketRef.current
       if (!socket || !currentRoom) return
       socket.emit('updateRoomSettings', settings)

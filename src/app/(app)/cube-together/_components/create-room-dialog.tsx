@@ -13,7 +13,6 @@ import {
 } from '@/frontend/ui/popovers'
 import { Input } from '@/frontend/ui'
 import { PrimaryButton } from '@/frontend/ui/buttons'
-import { Checkbox } from '@/frontend/ui/checkbox'
 import type { CreateRoomOptions } from 'socket-server/types'
 
 type CreateRoomDialogProps = {
@@ -28,7 +27,6 @@ export function CreateRoomDialog({
   onCreateRoom,
 }: CreateRoomDialogProps) {
   const [password, setPassword] = useState('')
-  const [allowGuests, setAllowGuests] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -37,11 +35,8 @@ export function CreateRoomDialog({
     try {
       await onCreateRoom({
         password: password || undefined,
-        allowGuests,
       })
-      // Reset form
       setPassword('')
-      setAllowGuests(true)
     } finally {
       setIsLoading(false)
     }
@@ -68,16 +63,6 @@ export function CreateRoomDialog({
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder='Leave empty for no password'
               />
-            </div>
-            <div className='flex items-center gap-2'>
-              <Checkbox
-                id='allowGuests'
-                checked={allowGuests}
-                onCheckedChange={(checked) => setAllowGuests(checked === true)}
-              />
-              <label htmlFor='allowGuests' className='text-sm'>
-                Allow guests to join
-              </label>
             </div>
             <DialogFooter className='mt-2'>
               <DialogClose version='secondary'>Cancel</DialogClose>

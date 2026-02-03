@@ -8,7 +8,6 @@ export type Room = {
   name: string
   ownerId: string
   password: string | null
-  allowGuests: boolean
   pattern: KPattern
   users: Map<string, RoomUser>
   createdAt: number
@@ -30,7 +29,7 @@ export class RoomManager {
   createRoom(
     ownerOdol: string,
     ownerName: string,
-    options: { password?: string; allowGuests?: boolean } = {},
+    options: { password?: string } = {},
   ): Room {
     if (!this.defaultPattern) {
       throw new Error('RoomManager not initialized')
@@ -42,7 +41,6 @@ export class RoomManager {
       name: `${ownerName}'s room`,
       ownerId: ownerOdol,
       password: options.password ?? null,
-      allowGuests: options.allowGuests ?? true,
       pattern: this.defaultPattern,
       users: new Map(),
       createdAt: Date.now(),
@@ -62,9 +60,9 @@ export class RoomManager {
     return Array.from(this.rooms.values()).map((room) => ({
       id: room.id,
       name: room.name,
+      ownerId: room.ownerId,
       userCount: room.users.size,
       hasPassword: room.password !== null,
-      allowGuests: room.allowGuests,
     }))
   }
 
@@ -92,7 +90,7 @@ export class RoomManager {
 
     const removed = room.users.delete(odol)
     if (removed && room.users.size === 0) {
-      this.scheduleCleanup(roomId)
+      // this.scheduleCleanup(roomId)
     }
     return removed
   }
@@ -127,9 +125,6 @@ export class RoomManager {
     if (settings.password !== undefined) {
       room.password = settings.password
     }
-    if (settings.allowGuests !== undefined) {
-      room.allowGuests = settings.allowGuests
-    }
     room.lastActivityAt = Date.now()
     return true
   }
@@ -149,7 +144,6 @@ export class RoomManager {
     ownerId: string
     users: RoomUserInfo[]
     hasPassword: boolean
-    allowGuests: boolean
   } {
     return {
       id: room.id,
@@ -159,7 +153,6 @@ export class RoomManager {
         ({ socketId, ...rest }) => rest,
       ),
       hasPassword: room.password !== null,
-      allowGuests: room.allowGuests,
     }
   }
 

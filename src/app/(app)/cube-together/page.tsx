@@ -16,7 +16,8 @@ import type { RoomInfo, CreateRoomOptions } from 'socket-server/types'
 export default function CubeTogetherLobbyPage() {
   const router = useRouter()
   const { user } = useUser()
-  const { rooms, isConnected, createRoom, joinRoom } = useCubeTogetherSocket()
+  const { rooms, myOdol, isConnected, createRoom, joinRoom } =
+    useCubeTogetherSocket()
 
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
   const [joinDialogRoom, setJoinDialogRoom] = useState<RoomInfo | null>(null)
@@ -30,21 +31,21 @@ export default function CubeTogetherLobbyPage() {
   }
 
   const handleJoinRoom = (room: RoomInfo) => {
-    if (room.hasPassword) {
+    const isMyRoom = room.ownerId === myOdol
+    if (room.hasPassword && !isMyRoom) {
       setJoinDialogRoom(room)
     } else {
-      // Just navigate - the room page will handle joining
       router.push(`/cube-together/${room.id}`)
     }
   }
 
   const handleJoinWithPassword = async (password: string) => {
     if (!joinDialogRoom) return { success: false, error: 'No room selected' }
-    // For password rooms, we need to validate first before navigating
     const result = await joinRoom(joinDialogRoom.id, password)
     if (result.success) {
-      // Pass password via URL so room page can use it
-      router.push(`/cube-together/${joinDialogRoom.id}?p=${encodeURIComponent(password)}`)
+      router.push(
+        `/cube-together/${joinDialogRoom.id}?p=${encodeURIComponent(password)}`,
+      )
     }
     return result
   }
@@ -78,7 +79,7 @@ export default function CubeTogetherLobbyPage() {
             <LoadingSpinner size='lg' />
           </div>
         ) : (
-          <RoomList rooms={rooms} onJoinRoom={handleJoinRoom} />
+          <RoomList rooms={rooms} myOdol={myOdol} onJoinRoom={handleJoinRoom} />
         )}
       </div>
 

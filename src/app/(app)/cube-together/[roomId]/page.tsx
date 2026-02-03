@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useRouter, useParams, useSearchParams } from 'next/navigation'
 import { LayoutHeaderTitlePortal } from '../../_layout'
 import { useEventListener } from 'usehooks-ts'
@@ -13,8 +13,9 @@ import { useControllableSimulator } from '@/frontend/shared/simulator/use-contro
 import { useCubeTogetherSocket } from '../_hooks/use-cube-together-socket'
 import { RoomUserList } from '../_components/room-user-list'
 import { RoomSettingsDialog } from '../_components/room-settings-dialog'
+import { JoinRoomDialog } from '../_components/join-room-dialog'
 import { SettingsIcon, ArrowLeftIcon } from 'lucide-react'
-import { toast } from 'sonner'
+import { toast } from '@/frontend/ui/popovers'
 
 export default function CubeTogetherRoomPage() {
   const router = useRouter()
@@ -24,6 +25,9 @@ export default function CubeTogetherRoomPage() {
   const password = searchParams.get('p') ?? undefined
 
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false)
+  const joinAttempted = useRef(false)
+  const joinedSuccessfully = useRef(false)
 
   const {
     pattern,
@@ -39,7 +43,7 @@ export default function CubeTogetherRoomPage() {
   } = useCubeTogetherSocket({
     onMove: (move) => applyMove(move),
     onKicked: () => {
-      toast.error('You have been kicked from the room')
+      toast({ title: 'Kicked', description: 'You have been kicked from the room' })
       router.push('/cube-together')
     },
   })
@@ -51,19 +55,39 @@ export default function CubeTogetherRoomPage() {
 
   // Join room on mount
   useEffect(() => {
-    console.log('Join effect:', { isConnected, roomId, currentRoomId: currentRoom?.id })
     if (!isConnected) return
     if (currentRoom?.id === roomId) return
+    if (joinAttempted.current) return
 
-    console.log('Calling joinRoom...')
+    joinAttempted.current = true
     void joinRoom(roomId, password).then((result) => {
-      console.log('joinRoom result:', result)
       if (!result.success) {
-        toast.error(result.error)
-        router.push('/cube-together')
+        if (result.error === 'Incorrect password') {
+          setPasswordDialogOpen(true)
+        } else {
+          toast({ title: 'Error', description: result.error })
+          router.push('/cube-together')
+        }
       }
     })
   }, [isConnected, roomId, password, joinRoom, currentRoom?.id, router])
+
+  const handleJoinWithPassword = async (enteredPassword: string) => {
+    const result = await joinRoom(roomId, enteredPassword)
+    if (result.success) {
+      joinedSuccessfully.current = true
+      setPasswordDialogOpen(false)
+    }
+    return result
+  }
+
+  const handlePasswordDialogClose = (open: boolean) => {
+    setPasswordDialogOpen(open)
+    // Only redirect if user explicitly closed dialog (not after successful join)
+    if (!open && !joinedSuccessfully.current) {
+      router.push('/cube-together')
+    }
+  }
 
   // Leave room on unmount
   useEffect(() => {
@@ -83,6 +107,23 @@ export default function CubeTogetherRoomPage() {
     router.push('/cube-together')
   }
 
+  // Show password dialog when needed
+  if (passwordDialogOpen) {
+    return (
+      <>
+        <LayoutHeaderTitlePortal>Cube together</LayoutHeaderTitlePortal>
+        <div className='flex flex-1 items-center justify-center rounded-2xl bg-black-80'>
+          <JoinRoomDialog
+            open={passwordDialogOpen}
+            onOpenChange={handlePasswordDialogClose}
+            roomName={`Room ${roomId}`}
+            onJoinRoom={handleJoinWithPassword}
+          />
+        </div>
+      </>
+    )
+  }
+
   if (!isConnected || !currentRoom) {
     return (
       <>
@@ -100,20 +141,14 @@ export default function CubeTogetherRoomPage() {
       <div className='flex flex-1 gap-4'>
         {/* Main cube area */}
         <div className='relative flex flex-1 items-center justify-center rounded-2xl bg-black-80 p-4'>
-          <div
-            ref={simulatorRef}
-            className={cn(
-              'aspect-square h-[70%] outline-none sm:h-auto sm:w-full sm:max-w-[34rem]',
-              { 'opacity-0': pattern === undefined },
-            )}
-          />
-          <LoadingSpinner
-            size='lg'
-            className={cn(
-              'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0',
-              { 'opacity-100': pattern === undefined },
-            )}
-          />
+          {pattern === undefined ? (
+            <LoadingSpinner size='lg' />
+          ) : (
+            <div
+              ref={simulatorRef}
+              className='aspect-square h-[70%] outline-none sm:h-auto sm:w-full sm:max-w-[34rem]'
+            />
+          )}
         </div>
 
         {/* Sidebar */}
@@ -149,7 +184,6 @@ export default function CubeTogetherRoomPage() {
           onOpenChange={setSettingsOpen}
           currentSettings={{
             hasPassword: currentRoom.hasPassword,
-            allowGuests: currentRoom.allowGuests,
           }}
           onUpdateSettings={updateSettings}
         />

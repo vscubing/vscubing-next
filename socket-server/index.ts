@@ -4,9 +4,14 @@ import type {
   ClientToServerEvents,
   ServerToClientEvents,
   RoomUser,
-  CreateRoomOptions,
-  RoomSettings,
 } from './types'
+import {
+  createRoomOptionsSchema,
+  joinRoomPayloadSchema,
+  kickUserPayloadSchema,
+  onMovePayloadSchema,
+  partialRoomSettingsSchema,
+} from './schemas'
 import { experimentalReid3x3x3ToTwizzleBinary } from '@vscubing/cubing/protocol'
 import { roomManager } from './rooms'
 import {
@@ -43,6 +48,13 @@ const io = new Server<
 
 await roomManager.init()
 
+io.engine.on('connection_error', (err) => {
+  console.log(err.req) // the request object
+  console.log(err.code) // the error code, for example 1
+  console.log(err.message) // the error message, for example "Session ID unknown"
+  console.log(err.context) // some additional error context
+})
+
 io.on('connection', async (socket: TypedSocket) => {
   // Authenticate user
   const cookieHeader = socket.handshake.headers.cookie
@@ -53,10 +65,6 @@ io.on('connection', async (socket: TypedSocket) => {
   socket.data.user = user
   socket.data.odol = user?.id ?? socket.id
   socket.data.displayName = user?.name ?? generateGuestName()
-
-  console.log(
-    `Connected: ${socket.data.displayName} (${user ? 'authenticated' : 'guest'})`,
-  )
 
   // Send odol to client so they know their identity
   socket.emit('yourOdol', socket.data.odol)
@@ -70,9 +78,19 @@ io.on('connection', async (socket: TypedSocket) => {
   })
 
   // Handle create room
-  socket.on('createRoom', (options: CreateRoomOptions, callback) => {
+  socket.on('createRoom', (payloadRaw, callback) => {
+    const parsed = createRoomOptionsSchema.safeParse(payloadRaw)
+    if (!parsed.success) {
+      callback?.({ success: false, error: 'Invalid options' })
+      return
+    }
+    const options = parsed.data
+
     if (!socket.data.user) {
-      callback({ success: false, error: 'Must be logged in to create a room' })
+      callback?.({
+        success: false,
+        error: 'Must be logged in to create a room',
+      })
       return
     }
 
@@ -98,31 +116,29 @@ io.on('connection', async (socket: TypedSocket) => {
     // Broadcast updated room list
     io.emit('roomList', roomManager.getAllRooms())
 
-    callback({ success: true, roomId: room.id })
+    callback?.({ success: true, roomId: room.id })
   })
 
   // Handle join room
-  socket.on('joinRoom', (...args) => {
-    console.log('joinRoom args:', args)
-    const [roomId, password, callback] = args as [string, string | undefined, (result: { success: true; state: ReturnType<typeof roomManager.getRoomState> } | { success: false; error: string }) => void]
-    console.log('joinRoom received:', { roomId, password, hasCallback: typeof callback === 'function' })
-    
+  socket.on('joinRoom', (payloadRaw, callback) => {
+    const parsed = joinRoomPayloadSchema.safeParse(payloadRaw)
+    if (!parsed.success) {
+      callback?.({ success: false, error: 'Invalid payload' })
+      return
+    }
+    const { roomId, password } = parsed.data
+
     const room = roomManager.getRoom(roomId)
 
     if (!room) {
-      callback({ success: false, error: 'Room not found' })
+      callback?.({ success: false, error: 'Room not found' })
       return
     }
 
-    // Check if guests are allowed
-    if (!socket.data.user && !room.allowGuests) {
-      callback({ success: false, error: 'This room does not allow guests' })
-      return
-    }
-
-    // Check password
-    if (room.password && room.password !== password) {
-      callback({ success: false, error: 'Incorrect password' })
+    // Check password (skip for room owner)
+    const isOwner = socket.data.odol === room.ownerId
+    if (room.password && !isOwner && room.password !== password) {
+      callback?.({ success: false, error: 'Incorrect password' })
       return
     }
 
@@ -157,7 +173,8 @@ io.on('connection', async (socket: TypedSocket) => {
     // Broadcast updated room list
     io.emit('roomList', roomManager.getAllRooms())
 
-    callback({ success: true, state: roomManager.getRoomState(room) })
+    const state = roomManager.getRoomState(room)
+    callback?.({ success: true, state })
   })
 
   // Handle leave room
@@ -177,7 +194,14 @@ io.on('connection', async (socket: TypedSocket) => {
   })
 
   // Handle moves
-  socket.on('onMove', async (move) => {
+  socket.on('onMove', async (payloadRaw) => {
+    const parsed = onMovePayloadSchema.safeParse(payloadRaw)
+    if (!parsed.success) {
+      socket.emit('error', 'Invalid move')
+      return
+    }
+    const { move } = parsed.data
+
     const found = roomManager.findUserRoomBySocketId(socket.id)
     if (!found) return
 
@@ -190,7 +214,14 @@ io.on('connection', async (socket: TypedSocket) => {
   })
 
   // Handle kick user
-  socket.on('kickUser', (odol) => {
+  socket.on('kickUser', (payloadRaw) => {
+    const parsed = kickUserPayloadSchema.safeParse(payloadRaw)
+    if (!parsed.success) {
+      socket.emit('error', 'Invalid payload')
+      return
+    }
+    const { odol } = parsed.data
+
     const found = roomManager.findUserRoomBySocketId(socket.id)
     if (!found) return
 
@@ -223,7 +254,14 @@ io.on('connection', async (socket: TypedSocket) => {
   })
 
   // Handle update room settings
-  socket.on('updateRoomSettings', (settings: Partial<RoomSettings>) => {
+  socket.on('updateRoomSettings', (settingsRaw) => {
+    const parsed = partialRoomSettingsSchema.safeParse(settingsRaw)
+    if (!parsed.success) {
+      socket.emit('error', 'Invalid settings')
+      return
+    }
+    const settings = parsed.data
+
     const found = roomManager.findUserRoomBySocketId(socket.id)
     if (!found) return
 
@@ -237,7 +275,6 @@ io.on('connection', async (socket: TypedSocket) => {
     // Notify all in room
     io.to(room.id).emit('roomSettingsChanged', {
       password: room.password,
-      allowGuests: room.allowGuests,
     })
 
     // Broadcast updated room list (hasPassword might have changed)
@@ -246,8 +283,6 @@ io.on('connection', async (socket: TypedSocket) => {
 
   // Handle disconnect
   socket.on('disconnect', () => {
-    console.log(`Disconnected: ${socket.data.displayName}`)
-
     const found = roomManager.findUserRoomBySocketId(socket.id)
     if (!found) return
 
@@ -260,6 +295,9 @@ io.on('connection', async (socket: TypedSocket) => {
     // Broadcast updated room list
     io.emit('roomList', roomManager.getAllRooms())
   })
+
+  // Signal that the server is ready to receive events
+  socket.emit('ready')
 })
 
 const port = 3001

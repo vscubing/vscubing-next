@@ -1,6 +1,24 @@
 import type { Move } from '@/types'
 import type { ExperimentalBinary3x3x3Pattern } from '@vscubing/cubing/protocol'
 import { type Socket } from 'socket.io-client'
+import type {
+  CreateRoomOptions,
+  RoomSettings,
+  PartialRoomSettings,
+  JoinRoomPayload,
+  KickUserPayload,
+  OnMovePayload,
+} from './schemas'
+
+// Re-export schema types
+export type {
+  CreateRoomOptions,
+  RoomSettings,
+  PartialRoomSettings,
+  JoinRoomPayload,
+  KickUserPayload,
+  OnMovePayload,
+}
 
 // Room types
 export type RoomUser = {
@@ -15,19 +33,9 @@ export type RoomUserInfo = Omit<RoomUser, 'socketId'>
 export type RoomInfo = {
   id: string
   name: string
+  ownerId: string
   userCount: number
   hasPassword: boolean
-  allowGuests: boolean
-}
-
-export type RoomSettings = {
-  password: string | null
-  allowGuests: boolean
-}
-
-export type CreateRoomOptions = {
-  password?: string
-  allowGuests?: boolean
 }
 
 export type RoomState = {
@@ -36,11 +44,11 @@ export type RoomState = {
   ownerId: string
   users: RoomUserInfo[]
   hasPassword: boolean
-  allowGuests: boolean
 }
 
 // Socket events
 export type ServerToClientEvents = {
+  ready: () => void
   roomList: (rooms: RoomInfo[]) => void
   roomState: (state: RoomState) => void
   yourOdol: (odol: string) => void
@@ -64,18 +72,17 @@ export type CreateRoomResult =
 export type ClientToServerEvents = {
   getRoomList: () => void
   createRoom: (
-    options: CreateRoomOptions,
-    callback: (result: CreateRoomResult) => void,
+    payload: CreateRoomOptions,
+    callback?: (result: CreateRoomResult) => void,
   ) => void
   joinRoom: (
-    roomId: string,
-    password: string | undefined,
-    callback: (result: JoinRoomResult) => void,
+    payload: JoinRoomPayload,
+    callback?: (result: JoinRoomResult) => void,
   ) => void
   leaveRoom: () => void
-  onMove: (move: Move) => void
-  kickUser: (odol: string) => void
-  updateRoomSettings: (settings: Partial<RoomSettings>) => void
+  onMove: (payload: OnMovePayload) => void
+  kickUser: (payload: KickUserPayload) => void
+  updateRoomSettings: (payload: PartialRoomSettings) => void
 }
 
 export type SocketClient = Socket<ServerToClientEvents, ClientToServerEvents>

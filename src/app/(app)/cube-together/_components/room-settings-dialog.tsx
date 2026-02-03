@@ -19,7 +19,7 @@ import type { RoomSettings } from 'socket-server/types'
 type RoomSettingsDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
-  currentSettings: { hasPassword: boolean; allowGuests: boolean }
+  currentSettings: { hasPassword: boolean }
   onUpdateSettings: (settings: Partial<RoomSettings>) => void
 }
 
@@ -31,13 +31,11 @@ export function RoomSettingsDialog({
 }: RoomSettingsDialogProps) {
   const [password, setPassword] = useState('')
   const [removePassword, setRemovePassword] = useState(false)
-  const [allowGuests, setAllowGuests] = useState(currentSettings.allowGuests)
 
   useEffect(() => {
-    setAllowGuests(currentSettings.allowGuests)
     setRemovePassword(false)
     setPassword('')
-  }, [currentSettings, open])
+  }, [open])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -48,10 +46,6 @@ export function RoomSettingsDialog({
       settings.password = null
     } else if (password) {
       settings.password = password
-    }
-
-    if (allowGuests !== currentSettings.allowGuests) {
-      settings.allowGuests = allowGuests
     }
 
     if (Object.keys(settings).length > 0) {
@@ -104,16 +98,6 @@ export function RoomSettingsDialog({
                   </label>
                 </div>
               )}
-            </div>
-            <div className='flex items-center gap-2'>
-              <Checkbox
-                id='settingsAllowGuests'
-                checked={allowGuests}
-                onCheckedChange={(checked) => setAllowGuests(checked === true)}
-              />
-              <label htmlFor='settingsAllowGuests' className='text-sm'>
-                Allow guests to join
-              </label>
             </div>
             <DialogFooter className='mt-2'>
               <DialogClose version='secondary'>Cancel</DialogClose>
