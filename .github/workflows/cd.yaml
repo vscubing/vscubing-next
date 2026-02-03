@@ -29,7 +29,6 @@ jobs:
           NEXT_PUBLIC_APP_ENV=${{ vars.NEXT_PUBLIC_APP_ENV }}
           NEXT_PUBLIC_POSTHOG_KEY=${{ vars.NEXT_PUBLIC_POSTHOG_KEY }}
           NEXT_PUBLIC_SOLVE_SECRET=${{ vars.NEXT_PUBLIC_SOLVE_SECRET }}
-          NEXT_PUBLIC_SOCKET_URL=${{ vars.NEXT_PUBLIC_SOCKET_URL }}
           DATABASE_URL=${{ secrets.DATABASE_URL }}
           GH_DOKPLOY_WEBHOOK_URL=${{ secrets.GH_DOKPLOY_WEBHOOK_URL }}
           AUTH_SECRET=${{ secrets.AUTH_SECRET }}
@@ -47,6 +46,7 @@ jobs:
           CONTEST_CREATION_WEBHOOK_SECRET=${{ secrets.CONTEST_CREATION_WEBHOOK_SECRET }}
           NEXT_TELEMETRY_DISABLED=${{ vars.NEXT_TELEMETRY_DISABLED }}
           SECRET_CLIENT_COOKIE_VAR=${{ secrets.SECRET_CLIENT_COOKIE_VAR }}
+          SOCKET_SERVER_URL=${{ vars.SOCKET_SERVER_URL }}
           EOF
 
       - name: Set Docker timestamp tag

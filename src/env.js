@@ -37,6 +37,10 @@ export const env = createEnv({
     CONTEST_CREATION_WEBHOOK_SECRET: z.string(),
     NEXT_TELEMETRY_DISABLED: z.literal('1'),
     SECRET_CLIENT_COOKIE_VAR: z.string(),
+    SOCKET_SERVER_URL:
+      process.env.NEXT_PUBLIC_APP_ENV === 'development'
+        ? z.string().url().optional()
+        : z.string().url(),
   },
 
   /**
@@ -54,10 +58,6 @@ export const env = createEnv({
               'NEXT_PUBLIC_POSTHOG_KEY must contain the key in production or DISABLED otherwise',
           }),
     NEXT_PUBLIC_SOLVE_SECRET: z.string(),
-    NEXT_PUBLIC_SOCKET_URL:
-      process.env.NEXT_PUBLIC_APP_ENV === 'development'
-        ? z.string().url().optional()
-        : z.string().url(),
   },
 
   /**
@@ -87,9 +87,9 @@ export const env = createEnv({
     NEXT_PUBLIC_APP_ENV: process.env.NEXT_PUBLIC_APP_ENV,
     NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
     NEXT_PUBLIC_SOLVE_SECRET: process.env.NEXT_PUBLIC_SOLVE_SECRET,
-    NEXT_PUBLIC_SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL,
     NEXT_TELEMETRY_DISABLED: process.env.NEXT_TELEMETRY_DISABLED,
     SECRET_CLIENT_COOKIE_VAR: process.env.SECRET_CLIENT_COOKIE_VAR,
+    SOCKET_SERVER_URL: process.env.SOCKET_SERVER_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
