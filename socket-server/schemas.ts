@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { moveSchema } from '@/types'
+import { moveSchema } from './move-types'
 
 // Client-to-server event payload schemas
 export const createRoomOptionsSchema = z.object({

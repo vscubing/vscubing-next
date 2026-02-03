@@ -37,13 +37,16 @@ type TypedSocket = Socket<
 >
 
 const httpServer = createServer()
+
+const CORS_ORIGIN = process.env.CORS_ORIGIN ?? 'http://localhost:3000'
+
 const io = new Server<
   ClientToServerEvents,
   ServerToClientEvents,
   Record<string, never>,
   SocketData
 >(httpServer, {
-  cors: { origin: 'http://localhost:3000', credentials: true },
+  cors: { origin: CORS_ORIGIN, credentials: true },
 })
 
 await roomManager.init()
@@ -300,6 +303,6 @@ io.on('connection', async (socket: TypedSocket) => {
   socket.emit('ready')
 })
 
-const port = 3001
+const port = process.env.PORT ?? 3002
 httpServer.listen(port)
 console.log(`Socket server listening on ${port}`)

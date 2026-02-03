@@ -1,4 +1,4 @@
-import type { Move } from '@/types'
+import type { Move } from './move-types'
 import type { ExperimentalBinary3x3x3Pattern } from '@vscubing/cubing/protocol'
 import { type Socket } from 'socket.io-client'
 import type {
