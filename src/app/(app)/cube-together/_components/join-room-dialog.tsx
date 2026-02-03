@@ -18,7 +18,9 @@ type JoinRoomDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
   roomName: string
-  onJoinRoom: (password: string) => Promise<{ success: boolean; error?: string }>
+  onJoinRoom: (
+    password: string,
+  ) => Promise<{ success: boolean; error?: string }>
 }
 
 export function JoinRoomDialog({

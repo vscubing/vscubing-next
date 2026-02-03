@@ -20,7 +20,7 @@ export function RoomList({ rooms, myOdol, onJoinRoom }: RoomListProps) {
   }
 
   return (
-    <div className='grid gap-3 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
+    <div className='grid gap-3 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1'>
       {rooms.map((room) => {
         const isMyRoom = room.ownerId === myOdol
         return (

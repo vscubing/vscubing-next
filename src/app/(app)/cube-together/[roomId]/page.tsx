@@ -6,7 +6,6 @@ import { LayoutHeaderTitlePortal } from '../../_layout'
 import { useEventListener } from 'usehooks-ts'
 import { keyToMove, type AlgLeaf, Move } from '@vscubing/cubing/alg'
 import { isMove } from '@/types'
-import { cn } from '@/frontend/utils/cn'
 import { LoadingSpinner } from '@/frontend/ui'
 import { SecondaryButton } from '@/frontend/ui/buttons'
 import { useControllableSimulator } from '@/frontend/shared/simulator/use-controllable-simulator'
@@ -43,7 +42,10 @@ export default function CubeTogetherRoomPage() {
   } = useCubeTogetherSocket({
     onMove: (move) => applyMove(move),
     onKicked: () => {
-      toast({ title: 'Kicked', description: 'You have been kicked from the room' })
+      toast({
+        title: 'Kicked',
+        description: 'You have been kicked from the room',
+      })
       router.push('/cube-together')
     },
   })
