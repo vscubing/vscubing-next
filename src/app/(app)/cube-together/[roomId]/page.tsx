@@ -113,13 +113,6 @@ export default function CubeTogetherRoomPage() {
     }
   }
 
-  // Leave room on unmount
-  useEffect(() => {
-    return () => {
-      leaveRoom()
-    }
-  }, [leaveRoom])
-
   // Handle keyboard shortcuts for cube moves and owner controls
   useEventListener('keydown', (e) => {
     // Owner controls: Space to scramble, Escape to solve
