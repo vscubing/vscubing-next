@@ -37,6 +37,9 @@ The application is hosted on Hetzner with `Dokploy`.
   - postgres db
   - [vscubing/vscubing-tnoodle](https://github.com/vscubing/vscubing-tnoodle)
 
+## Socket-server
+- Setup a Domain: Host is same as Next server's, path: /api/socket.io (need the same subdomain for Https Secure cookie, can't use next rewrites because they don't work with sockets)
+
 ### Notes
 
 - apparently, ghcr.io doesn't support fine-grained access tokens, so you have to create a "Classic" token

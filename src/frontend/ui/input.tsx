@@ -16,7 +16,7 @@ function Input({
   return (
     <input
       className={cn(
-        'h-11 max-w-[calc(100%-0.5rem)] rounded-lg bg-black-100 px-4 text-base placeholder-grey-40 ring-grey-40 transition-shadow duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-1',
+        'h-11 rounded-lg bg-black-100 px-4 text-base placeholder-grey-40 ring-grey-40 transition-shadow duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-1',
         { 'ring-1 ring-red-80': error },
         className,
       )}

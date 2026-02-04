@@ -2,7 +2,6 @@
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
  * for Docker builds.
  */
-import './src/env.js'
 
 /** @type {import("next").NextConfig} */
 const config = {
@@ -29,6 +28,7 @@ const config = {
 
   async rewrites() {
     return [
+      // PostHog
       {
         source: '/ingest/static/:path*',
         destination: 'https://eu-assets.i.posthog.com/static/:path*',
