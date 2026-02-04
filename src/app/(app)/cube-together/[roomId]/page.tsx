@@ -147,7 +147,7 @@ export default function CubeTogetherRoomPage() {
   return (
     <>
       <LayoutHeaderTitlePortal>{currentRoom.name}</LayoutHeaderTitlePortal>
-      <div className='flex flex-1 gap-4'>
+      <div className='flex flex-1 gap-3'>
         {/* Main cube area */}
         <div className='relative flex flex-1 items-center justify-center rounded-2xl bg-black-80 p-4'>
           {pattern === undefined ? (
