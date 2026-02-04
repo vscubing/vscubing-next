@@ -110,7 +110,10 @@ export class RoomManager {
    * Add a user to a room. If user with same odol already exists, adds the socketId to their set.
    * Returns whether this is a new user (true) or existing user adding another socket (false).
    */
-  addUser(roomId: string, user: RoomUser): { success: boolean; isNewUser: boolean } {
+  addUser(
+    roomId: string,
+    user: RoomUser,
+  ): { success: boolean; isNewUser: boolean } {
     const room = this.rooms.get(roomId)
     if (!room) return { success: false, isNewUser: false }
 
@@ -161,7 +164,9 @@ export class RoomManager {
   getUserBySocketId(roomId: string, socketId: string): RoomUser | undefined {
     const room = this.rooms.get(roomId)
     if (!room) return undefined
-    return Array.from(room.users.values()).find((u) => u.socketIds.has(socketId))
+    return Array.from(room.users.values()).find((u) =>
+      u.socketIds.has(socketId),
+    )
   }
 
   findUserRoomBySocketId(

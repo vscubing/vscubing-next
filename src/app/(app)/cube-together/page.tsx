@@ -62,7 +62,10 @@ export default function CubeTogetherLobbyPage() {
           <div className='flex items-center justify-between'>
             <h2 className='text-xl font-medium'>Rooms</h2>
             {canCreateRoom ? (
-              <PrimaryButton size='sm' onClick={() => setCreateDialogOpen(true)}>
+              <PrimaryButton
+                size='sm'
+                onClick={() => setCreateDialogOpen(true)}
+              >
                 Create Room
               </PrimaryButton>
             ) : (
@@ -88,7 +91,11 @@ export default function CubeTogetherLobbyPage() {
               <LoadingSpinner size='lg' />
             </div>
           ) : (
-            <RoomList rooms={rooms} myOdol={myOdol} onJoinRoom={handleJoinRoom} />
+            <RoomList
+              rooms={rooms}
+              myOdol={myOdol}
+              onJoinRoom={handleJoinRoom}
+            />
           )}
         </div>
       </div>

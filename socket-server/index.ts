@@ -213,7 +213,11 @@ io.on('connection', async (socket: TypedSocket) => {
     if (!found) return
 
     const { room, user } = found
-    const wasFullyRemoved = roomManager.removeUserSocket(room.id, user.odol, socket.id)
+    const wasFullyRemoved = roomManager.removeUserSocket(
+      room.id,
+      user.odol,
+      socket.id,
+    )
     socket.leave(room.id)
 
     // Only notify others if user was fully removed
@@ -356,7 +360,11 @@ io.on('connection', async (socket: TypedSocket) => {
     if (!found) return
 
     const { room, user } = found
-    const wasFullyRemoved = roomManager.removeUserSocket(room.id, user.odol, socket.id)
+    const wasFullyRemoved = roomManager.removeUserSocket(
+      room.id,
+      user.odol,
+      socket.id,
+    )
 
     // Only notify others if user was fully removed
     if (wasFullyRemoved) {

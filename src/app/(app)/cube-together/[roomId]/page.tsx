@@ -215,34 +215,43 @@ export default function CubeTogetherRoomPage() {
                 <Link href='/cube-together'>
                   <ArrowLeftIcon className='mr-1 h-4 w-4' />
                   Leave
-              </Link>
-            </SecondaryButton>
-            <SecondaryButton size='iconSm' onClick={handleCopyLink} className='flex-shrink-0'>
-              <CopyIcon className='h-4 w-4' />
-            </SecondaryButton>
-            {isOwner && (
+                </Link>
+              </SecondaryButton>
               <SecondaryButton
                 size='iconSm'
-                onClick={() => setSettingsOpen(true)}
+                onClick={handleCopyLink}
                 className='flex-shrink-0'
               >
-                <SettingsIcon className='h-4 w-4' />
+                <CopyIcon className='h-4 w-4' />
+              </SecondaryButton>
+              {isOwner && (
+                <SecondaryButton
+                  size='iconSm'
+                  onClick={() => setSettingsOpen(true)}
+                  className='flex-shrink-0'
+                >
+                  <SettingsIcon className='h-4 w-4' />
+                </SecondaryButton>
+              )}
+            </div>
+
+            <RoomUserList
+              users={currentRoom.users}
+              ownerId={currentRoom.ownerId}
+              myOdol={myOdol}
+            />
+
+            {isOwner && (
+              <SecondaryButton
+                variant='destructive'
+                size='sm'
+                onClick={handleDeleteRoom}
+                className='mt-auto'
+              >
+                <Trash2Icon className='mr-1 h-4 w-4' />
+                Delete Room
               </SecondaryButton>
             )}
-          </div>
-
-          <RoomUserList
-            users={currentRoom.users}
-            ownerId={currentRoom.ownerId}
-            myOdol={myOdol}
-          />
-
-          {isOwner && (
-            <SecondaryButton variant='destructive' size='sm' onClick={handleDeleteRoom} className='mt-auto'>
-              <Trash2Icon className='mr-1 h-4 w-4' />
-              Delete Room
-            </SecondaryButton>
-          )}
           </div>
         </div>
       </div>

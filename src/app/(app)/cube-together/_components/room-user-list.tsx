@@ -10,11 +10,7 @@ type RoomUserListProps = {
   myOdol: string | null
 }
 
-export function RoomUserList({
-  users,
-  ownerId,
-  myOdol,
-}: RoomUserListProps) {
+export function RoomUserList({ users, ownerId, myOdol }: RoomUserListProps) {
   return (
     <div className='flex flex-col gap-2'>
       <h3 className='text-sm font-medium text-grey-40'>
