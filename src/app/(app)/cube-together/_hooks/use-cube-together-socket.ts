@@ -230,11 +230,61 @@ export function useCubeTogetherSocket(
           resolve({ success: false, error: 'Socket not connected' })
           return
         }
+
+        // Set up a one-time listener for patternSync before joining
+        let patternSyncReceived = false
+        let joinCallbackReceived = false
+        let callbackResult:
+          | { success: true; state: RoomState }
+          | { success: false; error: string }
+          | null = null
+
+        const timeout = setTimeout(() => {
+          if (!patternSyncReceived || !joinCallbackReceived) {
+            console.warn('Join room timeout: pattern sync or callback not received')
+            socket.off('patternSync', patternSyncHandler)
+            if (callbackResult && !callbackResult.success) {
+              // If callback already came back with error, use that
+              resolve(callbackResult)
+            } else {
+              resolve({ success: false, error: 'Connection timeout' })
+            }
+          }
+        }, 10000) // 10 second timeout
+
+        const patternSyncHandler = () => {
+          patternSyncReceived = true
+          socket.off('patternSync', patternSyncHandler)
+          
+          // Only resolve if both patternSync and callback have been received
+          if (joinCallbackReceived && callbackResult) {
+            clearTimeout(timeout)
+            resolve(callbackResult)
+          }
+        }
+
+        // Listen for the next patternSync event
+        socket.once('patternSync', patternSyncHandler)
+
         socket.emit('joinRoom', { roomId, password }, (result) => {
+          joinCallbackReceived = true
+          callbackResult = result
+          
           if (result.success) {
             setCurrentRoom(result.state)
+          } else {
+            // On error, we don't wait for patternSync
+            socket.off('patternSync', patternSyncHandler)
+            clearTimeout(timeout)
+            resolve(result)
+            return
           }
-          resolve(result)
+
+          // Only resolve if both patternSync and callback have been received
+          if (patternSyncReceived) {
+            clearTimeout(timeout)
+            resolve(result)
+          }
         })
       })
     },
