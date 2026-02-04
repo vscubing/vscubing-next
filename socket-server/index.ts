@@ -46,6 +46,7 @@ const io = new Server<
   Record<string, never>,
   SocketData
 >(httpServer, {
+  path: '/api/socket.io',
   cors: { origin: CORS_ORIGIN, credentials: true },
 })
 

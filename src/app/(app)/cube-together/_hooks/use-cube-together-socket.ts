@@ -54,7 +54,7 @@ export function useCubeTogetherSocket(
 
   useEffect(() => {
     const _socket: SocketClient = io({
-      path: '/api/socket',
+      path: '/api/socket.io',
       withCredentials: true,
       transports: ['websocket', 'polling', 'webtransport'],
     })
