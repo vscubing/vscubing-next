@@ -90,7 +90,7 @@ export class RoomManager {
 
     const removed = room.users.delete(odol)
     if (removed && room.users.size === 0) {
-      // this.scheduleCleanup(roomId)
+      this.scheduleCleanup(roomId)
     }
     return removed
   }
