@@ -120,9 +120,9 @@ export function Navbar({ variant }: NavbarProps) {
           >
             <button
               className={cn(
-                'title-h3 transition-base outline-ring flex items-center gap-4 px-4 py-2 text-grey-20 hover:text-primary-60 active:text-primary-80 lg:justify-center sm:hidden sm:gap-3 sm:p-3',
+                'title-h3 transition-base outline-ring after-border-bottom flex items-center gap-4 px-4 py-2 text-grey-20 hover:text-primary-60 active:text-primary-80 lg:justify-center sm:hidden sm:gap-3 sm:p-3',
                 {
-                  'text-primary-80 hover:text-primary-80':
+                  'text-primary-80 after:h-[1.5px] after:scale-x-100 hover:text-primary-80':
                     isExperimentalRouteActive,
                 },
               )}

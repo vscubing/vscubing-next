@@ -64,7 +64,11 @@ export function CreateRoomDialog({
             </div>
             <DialogFooter className='mt-2'>
               <DialogClose version='secondary'>Cancel</DialogClose>
-              <PrimaryButton type='submit' disabled={isLoading} className='whitespace-nowrap'>
+              <PrimaryButton
+                type='submit'
+                disabled={isLoading}
+                className='whitespace-nowrap'
+              >
                 {isLoading ? 'Creating...' : 'Create Room'}
               </PrimaryButton>
             </DialogFooter>
