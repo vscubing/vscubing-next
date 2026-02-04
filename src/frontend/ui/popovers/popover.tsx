@@ -91,7 +91,7 @@ export function HoverPopover({
   asChild,
   content,
   contentClassName,
-  side = 'top',
+  side,
   hideArrow,
 }: {
   children: ReactNode
