@@ -17,6 +17,8 @@ export const kickUserPayloadSchema = z.object({
 
 export const onMovePayloadSchema = z.object({
   move: moveSchema,
+  clientMoveId: z.number(),
+  baseServerMoveId: z.number(),
 })
 
 // Room settings schema (for both input and output)

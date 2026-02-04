@@ -46,6 +46,19 @@ export type RoomState = {
   hasPassword: boolean
 }
 
+// Optimistic sync types
+export type MoveConfirmed = {
+  serverMoveId: number
+  move: Move
+  originClientId: string
+  clientMoveId: number
+}
+
+export type PatternSync = {
+  pattern: ExperimentalBinary3x3x3Pattern
+  serverMoveId: number
+}
+
 // Socket events
 export type ServerToClientEvents = {
   ready: () => void
@@ -54,8 +67,8 @@ export type ServerToClientEvents = {
   yourOdol: (odol: string) => void
   userJoined: (user: RoomUserInfo) => void
   userLeft: (odol: string) => void
-  pattern: (binaryPattern: ExperimentalBinary3x3x3Pattern) => void
-  onMove: (move: Move) => void
+  patternSync: (data: PatternSync) => void
+  moveConfirmed: (data: MoveConfirmed) => void
   kicked: () => void
   roomSettingsChanged: (settings: RoomSettings) => void
   error: (message: string) => void

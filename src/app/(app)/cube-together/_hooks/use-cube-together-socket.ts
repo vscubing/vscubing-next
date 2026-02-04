@@ -8,6 +8,7 @@ import type {
   RoomState,
   CreateRoomOptions,
   PartialRoomSettings,
+  MoveConfirmed,
 } from 'socket-server/types'
 import type { KPattern } from '@vscubing/cubing/kpuzzle'
 import { experimentalTwizzleBinaryToReid3x3x3 } from '@vscubing/cubing/protocol'
@@ -15,8 +16,14 @@ import { useEventCallback } from 'usehooks-ts'
 import type { Move } from '@/types'
 
 type UseCubeTogetherSocketOptions = {
-  onMove?: (move: Move) => void
+  onMove?: (move: Move, isOwnMove: boolean) => void
   onKicked?: () => void
+  onConflict?: () => void // Called when pending moves are discarded due to conflict
+}
+
+type PendingMove = {
+  clientMoveId: number
+  move: Move
 }
 
 export function useCubeTogetherSocket(
@@ -25,12 +32,25 @@ export function useCubeTogetherSocket(
   const socketRef = useRef<SocketClient | null>(null)
   const [rooms, setRooms] = useState<RoomInfo[]>([])
   const [currentRoom, setCurrentRoom] = useState<RoomState | null>(null)
-  const [pattern, setPattern] = useState<KPattern | undefined>()
   const [myOdol, setMyOdol] = useState<string | null>(null)
   const [isConnected, setIsConnected] = useState(false)
 
+  // Optimistic sync state
+  const [confirmedPattern, setConfirmedPattern] = useState<
+    KPattern | undefined
+  >()
+  const [confirmedServerMoveId, setConfirmedServerMoveId] = useState<number>(0)
+  const pendingMovesRef = useRef<PendingMove[]>([])
+  const nextClientMoveIdRef = useRef(0)
+
+  // Visual pattern - only changes on initial sync or conflict (for simulator init)
+  const [pattern, setPattern] = useState<KPattern | undefined>()
+
   const stableOnMove = useEventCallback(options.onMove ?? (() => undefined))
   const stableOnKicked = useEventCallback(options.onKicked ?? (() => undefined))
+  const stableOnConflict = useEventCallback(
+    options.onConflict ?? (() => undefined),
+  )
 
   useEffect(() => {
     const _socket: SocketClient = io({
@@ -50,7 +70,11 @@ export function useCubeTogetherSocket(
     _socket.on('disconnect', () => {
       setIsConnected(false)
       setCurrentRoom(null)
+      setConfirmedPattern(undefined)
       setPattern(undefined)
+      pendingMovesRef.current = []
+      setConfirmedServerMoveId(0)
+      nextClientMoveIdRef.current = 0
     })
 
     _socket.on('roomList', (roomList) => {
@@ -61,12 +85,64 @@ export function useCubeTogetherSocket(
       setCurrentRoom(state)
     })
 
-    _socket.on('pattern', (binaryPattern) => {
-      setPattern(experimentalTwizzleBinaryToReid3x3x3(binaryPattern))
+    // Full pattern sync (on join/reconnect)
+    _socket.on('patternSync', ({ pattern: binaryPattern, serverMoveId }) => {
+      const newPattern = experimentalTwizzleBinaryToReid3x3x3(binaryPattern)
+      setConfirmedPattern(newPattern)
+      setPattern(newPattern)
+      setConfirmedServerMoveId(serverMoveId)
+      pendingMovesRef.current = []
+      nextClientMoveIdRef.current = 0
     })
 
-    _socket.on('onMove', (move) => {
-      stableOnMove(move)
+    // Handle confirmed moves with optimistic reconciliation
+    _socket.on('moveConfirmed', (data: MoveConfirmed) => {
+      const { serverMoveId, move, originClientId, clientMoveId } = data
+      const isOurMove = originClientId === _socket.id
+
+      setConfirmedServerMoveId((prevServerMoveId) => {
+        // Check for gap in serverMoveId (would need resync)
+        if (serverMoveId !== prevServerMoveId + 1) {
+          console.warn('ServerMoveId gap detected, may need resync')
+        }
+        return serverMoveId
+      })
+
+      const pending = pendingMovesRef.current
+      const firstPending = pending[0]
+
+      if (
+        isOurMove &&
+        firstPending &&
+        firstPending.clientMoveId === clientMoveId
+      ) {
+        // Our move was confirmed - remove from pending, no visual update needed (already animated)
+        pendingMovesRef.current = pending.slice(1)
+      } else if (pending.length > 0) {
+        // Conflict: someone else's move arrived while we had pending moves
+        // Discard all pending moves and reset visual to confirmed + this move
+        pendingMovesRef.current = []
+        setConfirmedPattern((prev) => {
+          if (!prev) return prev
+          const newConfirmed = prev.applyMove(move)
+          // Reset visual pattern to trigger simulator re-init
+          setPattern(newConfirmed)
+          return newConfirmed
+        })
+        stableOnConflict()
+        return
+      }
+
+      // Update confirmed pattern (no visual change needed)
+      setConfirmedPattern((prev) => {
+        if (!prev) return prev
+        return prev.applyMove(move)
+      })
+
+      // Notify visual update for moves from others (our moves were already animated optimistically)
+      if (!isOurMove) {
+        stableOnMove(move, false)
+      }
     })
 
     _socket.on('userJoined', (user) => {
@@ -91,7 +167,9 @@ export function useCubeTogetherSocket(
 
     _socket.on('kicked', () => {
       setCurrentRoom(null)
+      setConfirmedPattern(undefined)
       setPattern(undefined)
+      pendingMovesRef.current = []
       stableOnKicked()
     })
 
@@ -113,7 +191,7 @@ export function useCubeTogetherSocket(
       socketRef.current = null
       _socket.close()
     }
-  }, [stableOnMove, stableOnKicked])
+  }, [stableOnMove, stableOnKicked, stableOnConflict])
 
   const createRoom = useCallback(
     (
@@ -168,16 +246,38 @@ export function useCubeTogetherSocket(
     if (!socket) return
     socket.emit('leaveRoom')
     setCurrentRoom(null)
+    setConfirmedPattern(undefined)
     setPattern(undefined)
+    pendingMovesRef.current = []
+    setConfirmedServerMoveId(0)
+    nextClientMoveIdRef.current = 0
   }, [])
 
   const sendMove = useCallback(
     (move: Move) => {
       const socket = socketRef.current
-      if (!socket || !currentRoom) return
-      socket.emit('onMove', { move })
+      if (!socket || !currentRoom || confirmedPattern === undefined) return
+
+      // Get current state for optimistic update
+      const clientMoveId = nextClientMoveIdRef.current++
+
+      // Compute baseServerMoveId: confirmed + pending moves already sent
+      const baseServerMoveId =
+        confirmedServerMoveId + pendingMovesRef.current.length
+
+      // Add to pending moves (optimistic)
+      pendingMovesRef.current = [
+        ...pendingMovesRef.current,
+        { clientMoveId, move },
+      ]
+
+      // Trigger optimistic visual update
+      stableOnMove(move, true)
+
+      // Send to server
+      socket.emit('onMove', { move, clientMoveId, baseServerMoveId })
     },
-    [currentRoom],
+    [currentRoom, confirmedPattern, confirmedServerMoveId, stableOnMove],
   )
 
   const kickUser = useCallback(

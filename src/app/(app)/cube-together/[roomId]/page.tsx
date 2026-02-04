@@ -40,13 +40,20 @@ export default function CubeTogetherRoomPage() {
     kickUser,
     updateSettings,
   } = useCubeTogetherSocket({
-    onMove: (move) => applyMove(move),
+    onMove: (move) => {
+      return applyMove(move)
+    },
     onKicked: () => {
       toast({
         title: 'Kicked',
         description: 'You have been kicked from the room',
       })
       router.push('/cube-together')
+    },
+    onConflict: () => {
+      // Conflict occurred - pending moves discarded
+      // The visual will automatically resync via pattern change
+      // since pattern is computed from confirmedPattern + pendingMoves
     },
   })
 

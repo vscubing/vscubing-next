@@ -9,6 +9,7 @@ export type Room = {
   ownerId: string
   password: string | null
   pattern: KPattern
+  serverMoveId: number
   users: Map<string, RoomUser>
   createdAt: number
   lastActivityAt: number
@@ -42,6 +43,7 @@ export class RoomManager {
       ownerId: ownerOdol,
       password: options.password ?? null,
       pattern: this.defaultPattern,
+      serverMoveId: 0,
       users: new Map(),
       createdAt: Date.now(),
       lastActivityAt: Date.now(),
@@ -136,6 +138,29 @@ export class RoomManager {
     room.pattern = pattern
     room.lastActivityAt = Date.now()
     return true
+  }
+
+  applyMove(
+    roomId: string,
+    move: string,
+    baseServerMoveId: number,
+  ): { success: true; newServerMoveId: number } | { success: false } {
+    const room = this.rooms.get(roomId)
+    if (!room) return { success: false }
+
+    // Only accept if client's base matches current server state
+    if (baseServerMoveId !== room.serverMoveId) {
+      return { success: false }
+    }
+
+    room.pattern = room.pattern.applyMove(move)
+    room.serverMoveId++
+    room.lastActivityAt = Date.now()
+    return { success: true, newServerMoveId: room.serverMoveId }
+  }
+
+  getServerMoveId(roomId: string): number | undefined {
+    return this.rooms.get(roomId)?.serverMoveId
   }
 
   getRoomState(room: Room): {

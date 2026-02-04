@@ -114,7 +114,10 @@ io.on('connection', async (socket: TypedSocket) => {
     void socket.join(room.id)
 
     // Send initial pattern to creator
-    socket.emit('pattern', experimentalReid3x3x3ToTwizzleBinary(room.pattern))
+    socket.emit('patternSync', {
+      pattern: experimentalReid3x3x3ToTwizzleBinary(room.pattern),
+      serverMoveId: room.serverMoveId,
+    })
 
     // Broadcast updated room list
     io.emit('roomList', roomManager.getAllRooms())
@@ -171,7 +174,10 @@ io.on('connection', async (socket: TypedSocket) => {
     })
 
     // Send room state and pattern to joining user
-    socket.emit('pattern', experimentalReid3x3x3ToTwizzleBinary(room.pattern))
+    socket.emit('patternSync', {
+      pattern: experimentalReid3x3x3ToTwizzleBinary(room.pattern),
+      serverMoveId: room.serverMoveId,
+    })
 
     // Broadcast updated room list
     io.emit('roomList', roomManager.getAllRooms())
@@ -196,24 +202,33 @@ io.on('connection', async (socket: TypedSocket) => {
     io.emit('roomList', roomManager.getAllRooms())
   })
 
-  // Handle moves
+  // Handle moves with optimistic sync
   socket.on('onMove', async (payloadRaw) => {
     const parsed = onMovePayloadSchema.safeParse(payloadRaw)
     if (!parsed.success) {
       socket.emit('error', 'Invalid move')
       return
     }
-    const { move } = parsed.data
+    const { move, clientMoveId, baseServerMoveId } = parsed.data
 
     const found = roomManager.findUserRoomBySocketId(socket.id)
     if (!found) return
 
     const { room } = found
-    const newPattern = room.pattern.applyMove(move)
-    roomManager.updatePattern(room.id, newPattern)
+    const result = roomManager.applyMove(room.id, move, baseServerMoveId)
 
-    // Broadcast to all in room (including sender for consistency)
-    io.to(room.id).emit('onMove', move)
+    if (!result.success) {
+      // Move rejected due to stale baseServerMoveId - client will handle via conflict detection
+      return
+    }
+
+    // Broadcast confirmed move to all in room
+    io.to(room.id).emit('moveConfirmed', {
+      serverMoveId: result.newServerMoveId,
+      move,
+      originClientId: socket.id,
+      clientMoveId,
+    })
   })
 
   // Handle kick user
