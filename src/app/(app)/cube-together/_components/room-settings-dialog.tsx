@@ -9,7 +9,6 @@ import {
   DialogPortal,
   DialogTitle,
   DialogClose,
-  DialogCloseCross,
 } from '@/frontend/ui/popovers'
 import { Input } from '@/frontend/ui'
 import { PrimaryButton } from '@/frontend/ui/buttons'
@@ -60,9 +59,8 @@ export function RoomSettingsDialog({
       <DialogPortal>
         <DialogOverlay />
         <DialogContent className='max-w-md'>
-          <div className='mb-4 flex items-center justify-between'>
+          <div className='mb-4'>
             <DialogTitle>Room Settings</DialogTitle>
-            <DialogCloseCross />
           </div>
           <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
             <div className='flex flex-col gap-2'>
@@ -101,7 +99,7 @@ export function RoomSettingsDialog({
             </div>
             <DialogFooter className='mt-2'>
               <DialogClose version='secondary'>Cancel</DialogClose>
-              <PrimaryButton type='submit' size='sm'>
+              <PrimaryButton type='submit' className='whitespace-nowrap'>
                 Save Changes
               </PrimaryButton>
             </DialogFooter>

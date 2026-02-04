@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import type { RoomInfo } from 'socket-server/types'
 import { cn } from '@/frontend/utils/cn'
 import { LockIcon, UsersIcon, StarIcon } from 'lucide-react'
@@ -24,9 +25,15 @@ export function RoomList({ rooms, myOdol, onJoinRoom }: RoomListProps) {
       {rooms.map((room) => {
         const isMyRoom = room.ownerId === myOdol
         return (
-          <button
+          <Link
             key={room.id}
-            onClick={() => onJoinRoom(room)}
+            href={`/cube-together/${room.id}`}
+            onClick={(e) => {
+              if (room.hasPassword && !isMyRoom) {
+                e.preventDefault()
+                onJoinRoom(room)
+              }
+            }}
             className={cn(
               'flex flex-col gap-2 rounded-xl border p-4 text-left transition-colors',
               isMyRoom
@@ -54,7 +61,7 @@ export function RoomList({ rooms, myOdol, onJoinRoom }: RoomListProps) {
                 {room.userCount} {room.userCount === 1 ? 'user' : 'users'}
               </span>
             </div>
-          </button>
+          </Link>
         )
       })}
     </div>

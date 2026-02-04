@@ -6,7 +6,6 @@ import type {
   RoomSettings,
   PartialRoomSettings,
   JoinRoomPayload,
-  KickUserPayload,
   OnMovePayload,
 } from './schemas'
 
@@ -16,7 +15,6 @@ export type {
   RoomSettings,
   PartialRoomSettings,
   JoinRoomPayload,
-  KickUserPayload,
   OnMovePayload,
 }
 
@@ -25,10 +23,10 @@ export type RoomUser = {
   odol: string // unique ID: odol ID for logged-in, socket ID for guests
   displayName: string // username or "GuestXXX"
   isAuthenticated: boolean
-  socketId: string
+  socketIds: Set<string> // all connected socket IDs for this user
 }
 
-export type RoomUserInfo = Omit<RoomUser, 'socketId'>
+export type RoomUserInfo = Omit<RoomUser, 'socketIds'>
 
 export type RoomInfo = {
   id: string
@@ -70,6 +68,7 @@ export type ServerToClientEvents = {
   patternSync: (data: PatternSync) => void
   moveConfirmed: (data: MoveConfirmed) => void
   kicked: () => void
+  roomDeleted: () => void
   roomSettingsChanged: (settings: RoomSettings) => void
   error: (message: string) => void
 }
@@ -94,8 +93,10 @@ export type ClientToServerEvents = {
   ) => void
   leaveRoom: () => void
   onMove: (payload: OnMovePayload) => void
-  kickUser: (payload: KickUserPayload) => void
   updateRoomSettings: (payload: PartialRoomSettings) => void
+  scrambleCube: () => void
+  solveCube: () => void
+  deleteRoom: () => void
 }
 
 export type SocketClient = Socket<ServerToClientEvents, ClientToServerEvents>

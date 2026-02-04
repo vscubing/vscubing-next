@@ -16,7 +16,7 @@ import type { RoomInfo, CreateRoomOptions } from 'socket-server/types'
 export default function CubeTogetherLobbyPage() {
   const router = useRouter()
   const { user } = useUser()
-  const { rooms, myOdol, isConnected, createRoom, joinRoom } =
+  const { rooms, myOdol, isConnected, createRoom, joinRoom, hasOwnRoom } =
     useCubeTogetherSocket()
 
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
@@ -50,13 +50,15 @@ export default function CubeTogetherLobbyPage() {
     return result
   }
 
+  const canCreateRoom = user && !hasOwnRoom
+
   return (
     <>
       <LayoutHeaderTitlePortal>Cube together</LayoutHeaderTitlePortal>
       <div className='flex flex-1 flex-col gap-4 rounded-2xl bg-black-80 p-4'>
         <div className='flex items-center justify-between'>
           <h2 className='text-xl font-medium'>Rooms</h2>
-          {user ? (
+          {canCreateRoom ? (
             <PrimaryButton size='sm' onClick={() => setCreateDialogOpen(true)}>
               Create Room
             </PrimaryButton>
@@ -69,7 +71,11 @@ export default function CubeTogetherLobbyPage() {
                   </PrimaryButton>
                 </span>
               </TooltipTrigger>
-              <TooltipContent>Sign in to create a room</TooltipContent>
+              <TooltipContent>
+                {!user
+                  ? 'Sign in to create a room'
+                  : 'You already have a room'}
+              </TooltipContent>
             </Tooltip>
           )}
         </div>

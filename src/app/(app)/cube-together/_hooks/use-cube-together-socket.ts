@@ -20,6 +20,7 @@ type UseCubeTogetherSocketOptions = {
   onMove?: (move: Move, isOwnMove: boolean) => void
   onKicked?: () => void
   onConflict?: () => void // Called when pending moves are discarded due to conflict
+  onRoomDeleted?: () => void
 }
 
 type PendingMove = {
@@ -51,6 +52,9 @@ export function useCubeTogetherSocket(
   const stableOnKicked = useEventCallback(options.onKicked ?? (() => undefined))
   const stableOnConflict = useEventCallback(
     options.onConflict ?? (() => undefined),
+  )
+  const stableOnRoomDeleted = useEventCallback(
+    options.onRoomDeleted ?? (() => undefined),
   )
 
   useEffect(() => {
@@ -150,6 +154,10 @@ export function useCubeTogetherSocket(
     _socket.on('userJoined', (user) => {
       setCurrentRoom((prev) => {
         if (!prev) return prev
+        // Defensive: don't add if user with same odol already exists
+        if (prev.users.some((u) => u.odol === user.odol)) {
+          return prev
+        }
         return {
           ...prev,
           users: [...prev.users, user],
@@ -175,6 +183,14 @@ export function useCubeTogetherSocket(
       stableOnKicked()
     })
 
+    _socket.on('roomDeleted', () => {
+      setCurrentRoom(null)
+      setConfirmedPattern(undefined)
+      setPattern(undefined)
+      pendingMovesRef.current = []
+      stableOnRoomDeleted()
+    })
+
     _socket.on('roomSettingsChanged', (settings) => {
       setCurrentRoom((prev) => {
         if (!prev) return prev
@@ -193,7 +209,7 @@ export function useCubeTogetherSocket(
       socketRef.current = null
       _socket.close()
     }
-  }, [stableOnMove, stableOnKicked, stableOnConflict])
+  }, [stableOnMove, stableOnKicked, stableOnConflict, stableOnRoomDeleted])
 
   const createRoom = useCallback(
     (
@@ -282,15 +298,6 @@ export function useCubeTogetherSocket(
     [currentRoom, confirmedPattern, confirmedServerMoveId, stableOnMove],
   )
 
-  const kickUser = useCallback(
-    (odol: string) => {
-      const socket = socketRef.current
-      if (!socket || !currentRoom) return
-      socket.emit('kickUser', { odol })
-    },
-    [currentRoom],
-  )
-
   const updateSettings = useCallback(
     (settings: PartialRoomSettings) => {
       const socket = socketRef.current
@@ -306,8 +313,29 @@ export function useCubeTogetherSocket(
     socket.emit('getRoomList')
   }, [])
 
+  const scrambleCube = useCallback(() => {
+    const socket = socketRef.current
+    if (!socket || !currentRoom) return
+    socket.emit('scrambleCube')
+  }, [currentRoom])
+
+  const solveCube = useCallback(() => {
+    const socket = socketRef.current
+    if (!socket || !currentRoom) return
+    socket.emit('solveCube')
+  }, [currentRoom])
+
+  const deleteRoom = useCallback(() => {
+    const socket = socketRef.current
+    if (!socket || !currentRoom) return
+    socket.emit('deleteRoom')
+  }, [currentRoom])
+
   // Determine if current user is the owner
   const isOwner = currentRoom ? currentRoom.ownerId === myOdol : false
+
+  // Check if user already has a room
+  const hasOwnRoom = rooms.some((r) => r.ownerId === myOdol)
 
   return {
     // State
@@ -317,13 +345,16 @@ export function useCubeTogetherSocket(
     pattern,
     isOwner,
     myOdol,
+    hasOwnRoom,
     // Actions
     createRoom,
     joinRoom,
     leaveRoom,
     sendMove,
-    kickUser,
     updateSettings,
     refreshRooms,
+    scrambleCube,
+    solveCube,
+    deleteRoom,
   }
 }

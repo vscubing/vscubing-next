@@ -11,10 +11,6 @@ export const joinRoomPayloadSchema = z.object({
   password: z.string().optional(),
 })
 
-export const kickUserPayloadSchema = z.object({
-  odol: z.string(),
-})
-
 export const onMovePayloadSchema = z.object({
   move: moveSchema,
   clientMoveId: z.number(),
@@ -34,7 +30,6 @@ export const partialRoomSettingsSchema = z.object({
 // Derived types
 export type CreateRoomOptions = z.infer<typeof createRoomOptionsSchema>
 export type JoinRoomPayload = z.infer<typeof joinRoomPayloadSchema>
-export type KickUserPayload = z.infer<typeof kickUserPayloadSchema>
 export type OnMovePayload = z.infer<typeof onMovePayloadSchema>
 export type RoomSettings = z.infer<typeof roomSettingsSchema>
 export type PartialRoomSettings = z.infer<typeof partialRoomSettingsSchema>

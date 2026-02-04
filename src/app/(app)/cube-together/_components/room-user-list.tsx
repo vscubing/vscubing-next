@@ -2,23 +2,18 @@
 
 import type { RoomUserInfo } from 'socket-server/types'
 import { cn } from '@/frontend/utils/cn'
-import { GhostButton } from '@/frontend/ui/buttons'
-import { XIcon, CrownIcon } from 'lucide-react'
+import { CrownIcon } from 'lucide-react'
 
 type RoomUserListProps = {
   users: RoomUserInfo[]
   ownerId: string
   myOdol: string | null
-  isOwner: boolean
-  onKickUser: (odol: string) => void
 }
 
 export function RoomUserList({
   users,
   ownerId,
   myOdol,
-  isOwner,
-  onKickUser,
 }: RoomUserListProps) {
   return (
     <div className='flex flex-col gap-2'>
@@ -31,7 +26,7 @@ export function RoomUserList({
             key={user.odol}
             className={cn(
               'flex items-center justify-between rounded-lg px-3 py-2',
-              user.odol === myOdol ? 'bg-secondary-20' : 'bg-black-100',
+              user.odol === myOdol ? 'bg-secondary-60' : 'bg-black-100',
             )}
           >
             <div className='flex items-center gap-2'>
@@ -50,15 +45,6 @@ export function RoomUserList({
                 </span>
               )}
             </div>
-            {isOwner && user.odol !== myOdol && (
-              <GhostButton
-                size='sm'
-                onClick={() => onKickUser(user.odol)}
-                className='h-7 w-7 p-0 text-grey-40 hover:text-red-80'
-              >
-                <XIcon className='h-4 w-4' />
-              </GhostButton>
-            )}
           </li>
         ))}
       </ul>

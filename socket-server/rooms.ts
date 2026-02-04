@@ -68,6 +68,13 @@ export class RoomManager {
     }))
   }
 
+  hasRoomByOwner(ownerId: string): boolean {
+    for (const room of this.rooms.values()) {
+      if (room.ownerId === ownerId) return true
+    }
+    return false
+  }
+
   deleteRoom(id: string): boolean {
     const room = this.rooms.get(id)
     if (room?.cleanupTimer) {
@@ -76,25 +83,75 @@ export class RoomManager {
     return this.rooms.delete(id)
   }
 
-  addUser(roomId: string, user: RoomUser): boolean {
+  resetPattern(roomId: string): number | undefined {
     const room = this.rooms.get(roomId)
-    if (!room) return false
+    if (!room || !this.defaultPattern) return undefined
+
+    room.pattern = this.defaultPattern
+    room.serverMoveId++
+    room.lastActivityAt = Date.now()
+    return room.serverMoveId
+  }
+
+  scramblePattern(roomId: string): number | undefined {
+    const room = this.rooms.get(roomId)
+    if (!room) return undefined
+
+    const scramble = badRandomScramble()
+    for (const move of scramble) {
+      room.pattern = room.pattern.applyMove(move)
+    }
+    room.serverMoveId++
+    room.lastActivityAt = Date.now()
+    return room.serverMoveId
+  }
+
+  /**
+   * Add a user to a room. If user with same odol already exists, adds the socketId to their set.
+   * Returns whether this is a new user (true) or existing user adding another socket (false).
+   */
+  addUser(roomId: string, user: RoomUser): { success: boolean; isNewUser: boolean } {
+    const room = this.rooms.get(roomId)
+    if (!room) return { success: false, isNewUser: false }
+
+    const existingUser = room.users.get(user.odol)
+    if (existingUser) {
+      // User already in room, add this socket to their set
+      for (const socketId of user.socketIds) {
+        existingUser.socketIds.add(socketId)
+      }
+      room.lastActivityAt = Date.now()
+      this.cancelCleanup(roomId)
+      return { success: true, isNewUser: false }
+    }
 
     room.users.set(user.odol, user)
     room.lastActivityAt = Date.now()
     this.cancelCleanup(roomId)
-    return true
+    return { success: true, isNewUser: true }
   }
 
-  removeUser(roomId: string, odol: string): boolean {
+  /**
+   * Remove a socket from a user. Only removes the user entirely when all sockets are gone.
+   * Returns whether the user was fully removed.
+   */
+  removeUserSocket(roomId: string, odol: string, socketId: string): boolean {
     const room = this.rooms.get(roomId)
     if (!room) return false
 
-    const removed = room.users.delete(odol)
-    if (removed && room.users.size === 0) {
-      this.scheduleCleanup(roomId)
+    const user = room.users.get(odol)
+    if (!user) return false
+
+    user.socketIds.delete(socketId)
+
+    if (user.socketIds.size === 0) {
+      room.users.delete(odol)
+      if (room.users.size === 0) {
+        this.scheduleCleanup(roomId)
+      }
+      return true
     }
-    return removed
+    return false
   }
 
   getUser(roomId: string, odol: string): RoomUser | undefined {
@@ -104,7 +161,7 @@ export class RoomManager {
   getUserBySocketId(roomId: string, socketId: string): RoomUser | undefined {
     const room = this.rooms.get(roomId)
     if (!room) return undefined
-    return Array.from(room.users.values()).find((u) => u.socketId === socketId)
+    return Array.from(room.users.values()).find((u) => u.socketIds.has(socketId))
   }
 
   findUserRoomBySocketId(
@@ -112,7 +169,7 @@ export class RoomManager {
   ): { room: Room; user: RoomUser } | undefined {
     for (const room of this.rooms.values()) {
       for (const user of room.users.values()) {
-        if (user.socketId === socketId) {
+        if (user.socketIds.has(socketId)) {
           return { room, user }
         }
       }
@@ -175,7 +232,7 @@ export class RoomManager {
       name: room.name,
       ownerId: room.ownerId,
       users: Array.from(room.users.values()).map(
-        ({ socketId, ...rest }) => rest,
+        ({ socketIds, ...rest }) => rest,
       ),
       hasPassword: room.password !== null,
     }
@@ -201,6 +258,26 @@ export class RoomManager {
       room.cleanupTimer = null
     }
   }
+}
+
+function badRandomScramble(): string[] {
+  const MOVES = [
+    'R',
+    'U',
+    'F',
+    'B',
+    'L',
+    'D',
+    'Rw',
+    'Uw',
+    'Fw',
+    'Bw',
+    'Lw',
+    'Dw',
+  ]
+  return Array.from({ length: 30 }).map(
+    () => MOVES[Math.floor(Math.random() * MOVES.length)]!,
+  )
 }
 
 export const roomManager = new RoomManager()

@@ -8,7 +8,6 @@ import type {
 import {
   createRoomOptionsSchema,
   joinRoomPayloadSchema,
-  kickUserPayloadSchema,
   onMovePayloadSchema,
   partialRoomSettingsSchema,
 } from './schemas'
@@ -98,6 +97,15 @@ io.on('connection', async (socket: TypedSocket) => {
       return
     }
 
+    // Check if user already has a room
+    if (roomManager.hasRoomByOwner(socket.data.odol)) {
+      callback?.({
+        success: false,
+        error: 'You already have a room',
+      })
+      return
+    }
+
     const room = roomManager.createRoom(
       socket.data.odol,
       socket.data.displayName,
@@ -109,7 +117,7 @@ io.on('connection', async (socket: TypedSocket) => {
       odol: socket.data.odol,
       displayName: socket.data.displayName,
       isAuthenticated: true,
-      socketId: socket.id,
+      socketIds: new Set([socket.id]),
     }
     roomManager.addUser(room.id, roomUser)
     void socket.join(room.id)
@@ -149,12 +157,18 @@ io.on('connection', async (socket: TypedSocket) => {
       return
     }
 
-    // Check if already in a room
+    // Check if already in a different room with this socket
     const existingRoom = roomManager.findUserRoomBySocketId(socket.id)
-    if (existingRoom) {
-      roomManager.removeUser(existingRoom.room.id, existingRoom.user.odol)
+    if (existingRoom && existingRoom.room.id !== roomId) {
+      const wasFullyRemoved = roomManager.removeUserSocket(
+        existingRoom.room.id,
+        existingRoom.user.odol,
+        socket.id,
+      )
       socket.leave(existingRoom.room.id)
-      io.to(existingRoom.room.id).emit('userLeft', existingRoom.user.odol)
+      if (wasFullyRemoved) {
+        io.to(existingRoom.room.id).emit('userLeft', existingRoom.user.odol)
+      }
     }
 
     // Add user to room
@@ -162,17 +176,23 @@ io.on('connection', async (socket: TypedSocket) => {
       odol: socket.data.odol,
       displayName: socket.data.displayName,
       isAuthenticated: !!socket.data.user,
-      socketId: socket.id,
+      socketIds: new Set([socket.id]),
     }
-    roomManager.addUser(room.id, roomUser)
+    const { success, isNewUser } = roomManager.addUser(room.id, roomUser)
+    if (!success) {
+      callback?.({ success: false, error: 'Failed to join room' })
+      return
+    }
     socket.join(room.id)
 
-    // Notify others in room
-    socket.to(room.id).emit('userJoined', {
-      odol: roomUser.odol,
-      displayName: roomUser.displayName,
-      isAuthenticated: roomUser.isAuthenticated,
-    })
+    // Only notify others if this is a new user (not just another tab)
+    if (isNewUser) {
+      socket.to(room.id).emit('userJoined', {
+        odol: roomUser.odol,
+        displayName: roomUser.displayName,
+        isAuthenticated: roomUser.isAuthenticated,
+      })
+    }
 
     // Send room state and pattern to joining user
     socket.emit('patternSync', {
@@ -193,11 +213,13 @@ io.on('connection', async (socket: TypedSocket) => {
     if (!found) return
 
     const { room, user } = found
-    roomManager.removeUser(room.id, user.odol)
+    const wasFullyRemoved = roomManager.removeUserSocket(room.id, user.odol, socket.id)
     socket.leave(room.id)
 
-    // Notify others
-    io.to(room.id).emit('userLeft', user.odol)
+    // Only notify others if user was fully removed
+    if (wasFullyRemoved) {
+      io.to(room.id).emit('userLeft', user.odol)
+    }
 
     // Broadcast updated room list
     io.emit('roomList', roomManager.getAllRooms())
@@ -232,46 +254,6 @@ io.on('connection', async (socket: TypedSocket) => {
     })
   })
 
-  // Handle kick user
-  socket.on('kickUser', (payloadRaw) => {
-    const parsed = kickUserPayloadSchema.safeParse(payloadRaw)
-    if (!parsed.success) {
-      socket.emit('error', 'Invalid payload')
-      return
-    }
-    const { odol } = parsed.data
-
-    const found = roomManager.findUserRoomBySocketId(socket.id)
-    if (!found) return
-
-    const { room } = found
-
-    // Only owner can kick
-    if (room.ownerId !== socket.data.odol) return
-
-    // Can't kick yourself
-    if (odol === socket.data.odol) return
-
-    const userToKick = roomManager.getUser(room.id, odol)
-    if (!userToKick) return
-
-    // Remove user
-    roomManager.removeUser(room.id, odol)
-
-    // Notify the kicked user
-    io.to(userToKick.socketId).emit('kicked')
-
-    // Remove from socket.io room
-    const kickedSocket = io.sockets.sockets.get(userToKick.socketId)
-    kickedSocket?.leave(room.id)
-
-    // Notify others
-    io.to(room.id).emit('userLeft', odol)
-
-    // Broadcast updated room list
-    io.emit('roomList', roomManager.getAllRooms())
-  })
-
   // Handle update room settings
   socket.on('updateRoomSettings', (settingsRaw) => {
     const parsed = partialRoomSettingsSchema.safeParse(settingsRaw)
@@ -300,16 +282,86 @@ io.on('connection', async (socket: TypedSocket) => {
     io.emit('roomList', roomManager.getAllRooms())
   })
 
+  // Handle scramble cube (owner only)
+  socket.on('scrambleCube', () => {
+    const found = roomManager.findUserRoomBySocketId(socket.id)
+    if (!found) return
+
+    const { room } = found
+
+    // Only owner can scramble
+    if (room.ownerId !== socket.data.odol) return
+
+    const newServerMoveId = roomManager.scramblePattern(room.id)
+    if (newServerMoveId === undefined) return
+
+    // Broadcast new pattern to all in room
+    io.to(room.id).emit('patternSync', {
+      pattern: experimentalReid3x3x3ToTwizzleBinary(room.pattern),
+      serverMoveId: newServerMoveId,
+    })
+  })
+
+  // Handle solve cube (owner only)
+  socket.on('solveCube', () => {
+    const found = roomManager.findUserRoomBySocketId(socket.id)
+    if (!found) return
+
+    const { room } = found
+
+    // Only owner can solve
+    if (room.ownerId !== socket.data.odol) return
+
+    const newServerMoveId = roomManager.resetPattern(room.id)
+    if (newServerMoveId === undefined) return
+
+    // Broadcast new pattern to all in room
+    io.to(room.id).emit('patternSync', {
+      pattern: experimentalReid3x3x3ToTwizzleBinary(room.pattern),
+      serverMoveId: newServerMoveId,
+    })
+  })
+
+  // Handle delete room (owner only)
+  socket.on('deleteRoom', () => {
+    const found = roomManager.findUserRoomBySocketId(socket.id)
+    if (!found) return
+
+    const { room } = found
+
+    // Only owner can delete
+    if (room.ownerId !== socket.data.odol) return
+
+    // Notify all users in room
+    io.to(room.id).emit('roomDeleted')
+
+    // Remove all users from socket.io room
+    for (const user of room.users.values()) {
+      for (const socketId of user.socketIds) {
+        const userSocket = io.sockets.sockets.get(socketId)
+        userSocket?.leave(room.id)
+      }
+    }
+
+    // Delete the room
+    roomManager.deleteRoom(room.id)
+
+    // Broadcast updated room list
+    io.emit('roomList', roomManager.getAllRooms())
+  })
+
   // Handle disconnect
   socket.on('disconnect', () => {
     const found = roomManager.findUserRoomBySocketId(socket.id)
     if (!found) return
 
     const { room, user } = found
-    roomManager.removeUser(room.id, user.odol)
+    const wasFullyRemoved = roomManager.removeUserSocket(room.id, user.odol, socket.id)
 
-    // Notify others
-    io.to(room.id).emit('userLeft', user.odol)
+    // Only notify others if user was fully removed
+    if (wasFullyRemoved) {
+      io.to(room.id).emit('userLeft', user.odol)
+    }
 
     // Broadcast updated room list
     io.emit('roomList', roomManager.getAllRooms())

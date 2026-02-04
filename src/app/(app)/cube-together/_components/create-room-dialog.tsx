@@ -9,7 +9,6 @@ import {
   DialogPortal,
   DialogTitle,
   DialogClose,
-  DialogCloseCross,
 } from '@/frontend/ui/popovers'
 import { Input } from '@/frontend/ui'
 import { PrimaryButton } from '@/frontend/ui/buttons'
@@ -47,9 +46,8 @@ export function CreateRoomDialog({
       <DialogPortal>
         <DialogOverlay />
         <DialogContent className='max-w-md'>
-          <div className='mb-4 flex items-center justify-between'>
+          <div className='mb-4'>
             <DialogTitle>Create Room</DialogTitle>
-            <DialogCloseCross />
           </div>
           <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
             <div className='flex flex-col gap-2'>
@@ -66,7 +64,7 @@ export function CreateRoomDialog({
             </div>
             <DialogFooter className='mt-2'>
               <DialogClose version='secondary'>Cancel</DialogClose>
-              <PrimaryButton type='submit' size='sm' disabled={isLoading}>
+              <PrimaryButton type='submit' disabled={isLoading} className='whitespace-nowrap'>
                 {isLoading ? 'Creating...' : 'Create Room'}
               </PrimaryButton>
             </DialogFooter>
