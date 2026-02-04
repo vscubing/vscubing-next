@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { LayoutHeaderTitlePortal } from '../_layout'
 import { useUser } from '@/frontend/shared/use-user'
+import { ExperimentalBadge } from '@/frontend/shared/experimental-badge'
 import { PrimaryButton } from '@/frontend/ui/buttons'
 import { LoadingSpinner } from '@/frontend/ui'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/frontend/ui/tooltip'
@@ -55,38 +56,41 @@ export default function CubeTogetherLobbyPage() {
   return (
     <>
       <LayoutHeaderTitlePortal>Cube together</LayoutHeaderTitlePortal>
-      <div className='flex flex-1 flex-col gap-4 rounded-2xl bg-black-80 p-4'>
-        <div className='flex items-center justify-between'>
-          <h2 className='text-xl font-medium'>Rooms</h2>
-          {canCreateRoom ? (
-            <PrimaryButton size='sm' onClick={() => setCreateDialogOpen(true)}>
-              Create Room
-            </PrimaryButton>
+      <div className='flex flex-1 flex-col gap-3'>
+        <ExperimentalBadge />
+        <div className='flex flex-1 flex-col gap-4 rounded-2xl bg-black-80 p-4'>
+          <div className='flex items-center justify-between'>
+            <h2 className='text-xl font-medium'>Rooms</h2>
+            {canCreateRoom ? (
+              <PrimaryButton size='sm' onClick={() => setCreateDialogOpen(true)}>
+                Create Room
+              </PrimaryButton>
+            ) : (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span>
+                    <PrimaryButton size='sm' disabled>
+                      Create Room
+                    </PrimaryButton>
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {!user
+                    ? 'Sign in to create a room'
+                    : 'You already have a room'}
+                </TooltipContent>
+              </Tooltip>
+            )}
+          </div>
+
+          {!isConnected ? (
+            <div className='flex flex-1 items-center justify-center'>
+              <LoadingSpinner size='lg' />
+            </div>
           ) : (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span>
-                  <PrimaryButton size='sm' disabled>
-                    Create Room
-                  </PrimaryButton>
-                </span>
-              </TooltipTrigger>
-              <TooltipContent>
-                {!user
-                  ? 'Sign in to create a room'
-                  : 'You already have a room'}
-              </TooltipContent>
-            </Tooltip>
+            <RoomList rooms={rooms} myOdol={myOdol} onJoinRoom={handleJoinRoom} />
           )}
         </div>
-
-        {!isConnected ? (
-          <div className='flex flex-1 items-center justify-center'>
-            <LoadingSpinner size='lg' />
-          </div>
-        ) : (
-          <RoomList rooms={rooms} myOdol={myOdol} onJoinRoom={handleJoinRoom} />
-        )}
       </div>
 
       <CreateRoomDialog

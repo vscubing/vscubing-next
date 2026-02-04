@@ -1,0 +1,10 @@
+import { FlaskConicalIcon } from 'lucide-react'
+
+export function ExperimentalBadge() {
+  return (
+    <div className='flex items-center gap-2 rounded-lg bg-yellow-80/20 px-3 py-2 text-sm text-yellow-100'>
+      <FlaskConicalIcon className='h-4 w-4 flex-shrink-0' />
+      <span>Experimental feature — may be unstable or removed</span>
+    </div>
+  )
+}

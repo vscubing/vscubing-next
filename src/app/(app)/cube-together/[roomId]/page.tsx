@@ -10,6 +10,7 @@ import { isMove } from '@/types'
 import { LoadingSpinner } from '@/frontend/ui'
 import { SecondaryButton } from '@/frontend/ui/buttons'
 import { useControllableSimulator } from '@/frontend/shared/simulator/use-controllable-simulator'
+import { ExperimentalBadge } from '@/frontend/shared/experimental-badge'
 import { useCubeTogetherSocket } from '../_hooks/use-cube-together-socket'
 import { RoomUserList } from '../_components/room-user-list'
 import { RoomSettingsDialog } from '../_components/room-settings-dialog'
@@ -185,33 +186,35 @@ export default function CubeTogetherRoomPage() {
   return (
     <>
       <LayoutHeaderTitlePortal>{currentRoom.name}</LayoutHeaderTitlePortal>
-      <div className='flex flex-1 gap-3'>
-        {/* Main cube area */}
-        <div className='relative flex flex-1 flex-col items-center justify-center rounded-2xl bg-black-80 p-4'>
-          {pattern === undefined ? (
-            <LoadingSpinner size='lg' />
-          ) : (
-            <>
-              <div
-                ref={simulatorRef}
-                className='aspect-square h-[70%] outline-none sm:h-auto sm:w-full sm:max-w-[34rem]'
-              />
-              {isOwner && (
-                <p className='mt-2 text-center text-sm text-grey-40'>
-                  Space to scramble • Escape to solve
-                </p>
-              )}
-            </>
-          )}
-        </div>
+      <div className='flex flex-1 flex-col gap-3'>
+        <ExperimentalBadge />
+        <div className='flex flex-1 gap-3'>
+          {/* Main cube area */}
+          <div className='relative flex flex-1 flex-col items-center justify-center rounded-2xl bg-black-80 p-4'>
+            {pattern === undefined ? (
+              <LoadingSpinner size='lg' />
+            ) : (
+              <>
+                <div
+                  ref={simulatorRef}
+                  className='aspect-square h-[70%] outline-none sm:h-auto sm:w-full sm:max-w-[34rem]'
+                />
+                {isOwner && (
+                  <p className='mt-2 text-center text-sm text-grey-40'>
+                    Space to scramble • Escape to solve
+                  </p>
+                )}
+              </>
+            )}
+          </div>
 
-        {/* Sidebar */}
-        <div className='flex w-64 flex-col gap-4 rounded-2xl bg-black-80 p-4'>
-          <div className='flex items-center gap-2'>
-            <SecondaryButton asChild onClick={leaveRoom}>
-              <Link href='/cube-together'>
-                <ArrowLeftIcon className='mr-1 h-4 w-4' />
-                Leave
+          {/* Sidebar */}
+          <div className='flex w-64 flex-col gap-4 rounded-2xl bg-black-80 p-4'>
+            <div className='flex items-center gap-2'>
+              <SecondaryButton asChild onClick={leaveRoom}>
+                <Link href='/cube-together'>
+                  <ArrowLeftIcon className='mr-1 h-4 w-4' />
+                  Leave
               </Link>
             </SecondaryButton>
             <SecondaryButton size='iconSm' onClick={handleCopyLink} className='flex-shrink-0'>
@@ -240,6 +243,7 @@ export default function CubeTogetherRoomPage() {
               Delete Room
             </SecondaryButton>
           )}
+          </div>
         </div>
       </div>
 
