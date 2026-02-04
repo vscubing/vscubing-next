@@ -30,14 +30,14 @@ const config = {
   async rewrites() {
     return [
       // Socket.io proxy
-      {
-        source: '/api/socket',
-        destination: `${env.SOCKET_SERVER_URL}/socket.io/`,
-      },
-      {
-        source: '/api/socket/:path*',
-        destination: `${env.SOCKET_SERVER_URL}/socket.io/:path*`,
-      },
+      // {
+      //   source: '/api/socket',
+      //   destination: `${env.SOCKET_SERVER_URL}/socket.io/`,
+      // },
+      // {
+      //   source: '/api/socket/:path*',
+      //   destination: `${env.SOCKET_SERVER_URL}/socket.io/:path*`,
+      // },
       // PostHog
       {
         source: '/ingest/static/:path*',
