@@ -246,6 +246,11 @@ export function useCubeTogetherSocket(
             if (callbackResult && !callbackResult.success) {
               // If callback already came back with error, use that
               resolve(callbackResult)
+            } else if (callbackResult && callbackResult.success) {
+              // Join was successful but patternSync didn't arrive - still resolve successfully
+              // The patternSync will arrive eventually and update the state via the permanent handler
+              console.warn('Join successful but patternSync delayed')
+              resolve(callbackResult)
             } else {
               resolve({ success: false, error: 'Connection timeout' })
             }
@@ -263,8 +268,8 @@ export function useCubeTogetherSocket(
           }
         }
 
-        // Listen for the next patternSync event
-        socket.once('patternSync', patternSyncHandler)
+        // Listen for the next patternSync event with explicit cleanup
+        socket.on('patternSync', patternSyncHandler)
 
         socket.emit('joinRoom', { roomId, password }, (result) => {
           joinCallbackReceived = true
