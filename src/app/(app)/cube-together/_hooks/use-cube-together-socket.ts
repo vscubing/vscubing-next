@@ -14,6 +14,7 @@ import type { KPattern } from '@vscubing/cubing/kpuzzle'
 import { experimentalTwizzleBinaryToReid3x3x3 } from '@vscubing/cubing/protocol'
 import { useEventCallback } from 'usehooks-ts'
 import type { Move } from '@/types'
+import { env } from '@/env'
 
 type UseCubeTogetherSocketOptions = {
   onMove?: (move: Move, isOwnMove: boolean) => void
@@ -53,7 +54,7 @@ export function useCubeTogetherSocket(
   )
 
   useEffect(() => {
-    const _socket: SocketClient = io({
+    const _socket: SocketClient = io(env.NEXT_PUBLIC_SOCKET_SERVER_URL, {
       path: '/api/socket.io',
       withCredentials: true,
       transports: ['websocket', 'polling', 'webtransport'],

@@ -2,7 +2,6 @@
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
  * for Docker builds.
  */
-import { env } from './src/env.js'
 
 /** @type {import("next").NextConfig} */
 const config = {
@@ -29,15 +28,6 @@ const config = {
 
   async rewrites() {
     return [
-      // Socket.io proxy
-      // {
-      //   source: '/api/socket',
-      //   destination: `${env.SOCKET_SERVER_URL}/socket.io/`,
-      // },
-      // {
-      //   source: '/api/socket/:path*',
-      //   destination: `${env.SOCKET_SERVER_URL}/socket.io/:path*`,
-      // },
       // PostHog
       {
         source: '/ingest/static/:path*',
