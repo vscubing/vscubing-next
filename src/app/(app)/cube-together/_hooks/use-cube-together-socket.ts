@@ -56,6 +56,7 @@ export function useCubeTogetherSocket(
     const _socket: SocketClient = io({
       path: '/api/socket',
       withCredentials: true,
+      transports: ['websocket', 'polling', 'webtransport'],
     })
     socketRef.current = _socket
 
