@@ -9,8 +9,13 @@ import { keyToMove, type AlgLeaf, Move } from '@vscubing/cubing/alg'
 import { isMove } from '@/types'
 import { LoadingSpinner } from '@/frontend/ui'
 import { SecondaryButton } from '@/frontend/ui/buttons'
+import { Dialog, DialogPortal, DialogOverlay } from '@/frontend/ui/popovers'
 import { useControllableSimulator } from '@/frontend/shared/simulator/use-controllable-simulator'
 import { ExperimentalBadge } from '@/frontend/shared/experimental-badge'
+import {
+  KeyMapDialogTrigger,
+  KeyMapDialogContent,
+} from '@/frontend/shared/key-map-dialog'
 import { useCubeTogetherSocket } from '../_hooks/use-cube-together-socket'
 import { RoomUserList } from '../_components/room-user-list'
 import { RoomSettingsDialog } from '../_components/room-settings-dialog'
@@ -206,6 +211,13 @@ export default function CubeTogetherRoomPage() {
                 )}
               </>
             )}
+            <Dialog>
+              <KeyMapDialogTrigger className='absolute right-4 top-4 touch:hidden' />
+              <DialogPortal>
+                <DialogOverlay className='bg-black-1000/40' withCubes={false} />
+                <KeyMapDialogContent />
+              </DialogPortal>
+            </Dialog>
           </div>
 
           {/* Sidebar */}
