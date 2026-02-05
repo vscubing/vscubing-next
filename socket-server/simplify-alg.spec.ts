@@ -1,4 +1,4 @@
-import { MOVES } from '@/types'
+import { MOVES } from './move-types'
 import { Alg } from '@vscubing/cubing/alg'
 import { expect, test } from 'bun:test'
 import { simplifyAlg } from './simplify-alg'
