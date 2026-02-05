@@ -18,10 +18,7 @@ import {
 } from '@/frontend/ui'
 import { DEFAULT_DISCIPLINE } from '@/types'
 import { FlaskConicalIcon, HandshakeIcon, RadioTowerIcon } from 'lucide-react'
-import {
-  LIVE_STREAMS_ENABLED,
-  CUBE_TOGETHER_ENABLED,
-} from '@/lib/pusher/streams'
+import { LIVE_STREAMS_ENABLED } from '@/lib/pusher/streams'
 import { HoverPopover } from '@/frontend/ui/popovers'
 
 type NavbarProps = {
