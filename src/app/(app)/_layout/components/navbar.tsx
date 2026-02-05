@@ -268,21 +268,19 @@ function getNavbarLinks(
 }
 
 function getExperimentalLinks(): NavbarLink[] {
-  const links: NavbarLink[] = []
+  const links: NavbarLink[] = [
+    {
+      icon: <HandshakeIcon className='h-5 w-5' />,
+      name: 'Cube together',
+      route: '/cube-together',
+    },
+  ]
 
   if (LIVE_STREAMS_ENABLED) {
     links.push({
       icon: <RadioTowerIcon className='h-5 w-5' />,
       name: 'Live streams',
       route: '/live-streams',
-    })
-  }
-
-  if (CUBE_TOGETHER_ENABLED) {
-    links.push({
-      icon: <HandshakeIcon className='h-5 w-5' />,
-      name: 'Cube together',
-      route: '/cube-together',
     })
   }
 

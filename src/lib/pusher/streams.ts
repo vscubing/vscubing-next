@@ -17,4 +17,3 @@ export type SolveStreamMove = {
 }
 
 export const LIVE_STREAMS_ENABLED = env.NEXT_PUBLIC_APP_ENV !== 'production'
-export const CUBE_TOGETHER_ENABLED = env.NEXT_PUBLIC_APP_ENV !== 'production'
