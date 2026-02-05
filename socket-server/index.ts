@@ -305,7 +305,7 @@ io.on('connection', async (socket: TypedSocket) => {
   })
 
   // Handle scramble cube (owner only)
-  socket.on('scrambleCube', () => {
+  socket.on('scrambleCube', async () => {
     const found = roomManager.findUserRoomBySocketId(socket.id)
     if (!found) return
 
@@ -314,7 +314,7 @@ io.on('connection', async (socket: TypedSocket) => {
     // Only owner can scramble
     if (room.ownerId !== socket.data.odol) return
 
-    const newServerMoveId = roomManager.scramblePattern(room.id)
+    const newServerMoveId = await roomManager.scramblePattern(room.id)
     if (newServerMoveId === undefined) return
 
     // Broadcast new pattern to all in room

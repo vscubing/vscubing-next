@@ -1,4 +1,5 @@
 import { puzzles } from '@vscubing/cubing/puzzles'
+import { randomScrambleForEvent } from '@vscubing/cubing/scramble'
 import type { KPattern } from '@vscubing/cubing/kpuzzle'
 import { v4 as uuidv4 } from 'uuid'
 import type { RoomUser, RoomInfo, RoomSettings, RoomUserInfo } from './types'
@@ -93,14 +94,12 @@ export class RoomManager {
     return room.serverMoveId
   }
 
-  scramblePattern(roomId: string): number | undefined {
+  async scramblePattern(roomId: string): Promise<number | undefined> {
     const room = this.rooms.get(roomId)
     if (!room) return undefined
 
-    const scramble = badRandomScramble()
-    for (const move of scramble) {
-      room.pattern = room.pattern.applyMove(move)
-    }
+    const scramble = await randomScrambleForEvent('333')
+    room.pattern = room.pattern.applyAlg(scramble)
     room.serverMoveId++
     room.lastActivityAt = Date.now()
     return room.serverMoveId
@@ -263,26 +262,6 @@ export class RoomManager {
       room.cleanupTimer = null
     }
   }
-}
-
-function badRandomScramble(): string[] {
-  const MOVES = [
-    'R',
-    'U',
-    'F',
-    'B',
-    'L',
-    'D',
-    'Rw',
-    'Uw',
-    'Fw',
-    'Bw',
-    'Lw',
-    'Dw',
-  ]
-  return Array.from({ length: 30 }).map(
-    () => MOVES[Math.floor(Math.random() * MOVES.length)]!,
-  )
 }
 
 export const roomManager = new RoomManager()
