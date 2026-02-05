@@ -116,12 +116,15 @@ export async function init(
     child[2].addMoveListener(moveListener)
     child[2].addCameraPositionListener(cameraPositionListener)
   }
-  var puzzle = options['puzzle']
-  // if (puzzle.startsWith('cube')) {
-  options['type'] = 'cube'
-  options['colorscheme'] = options.colorscheme
-  options['dimension'] = ~~puzzle.slice(4) || 3
-  options['stickerWidth'] = 1.7
+
+  const twistyInternalOptions = {
+    type: 'cube',
+    colorscheme: options.colorscheme,
+    dimension: options.dimension,
+    stickerWidth: 1.7,
+    scale: 0.9,
+  }
+
   // } else if (puzzle == 'skb') {
   //   options['type'] = 'skewb'
   //   options['faceColors'] = col2std(kernel.getProp('colskb'), [0, 5, 4, 2, 1, 3])
@@ -138,8 +141,8 @@ export async function init(
   //   options['type'] = 'clk'
   //   options['faceColors'] = col2std(kernel.getProp('colclk'), [1, 2, 0, 3, 4])
   // }
-  options['scale'] = 0.9
-  child[2].twistyScene.initializeTwisty(options)
+
+  child[2].twistyScene.initializeTwisty(twistyInternalOptions)
   child[2].twisty = child[2].twistyScene.getTwisty()
   child[2].resize()
   window.t = child[2]

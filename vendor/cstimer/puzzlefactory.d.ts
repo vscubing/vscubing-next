@@ -22,7 +22,7 @@ export type PuzzleFace = 'U' | 'R' | 'F' | 'D' | 'L' | 'B'
 type Colorscheme = Record<PuzzleFace, number>
 
 type Options = {
-  puzzle: 'cube2' | 'cube3' | 'cube4'
+  dimension: 2 | 3 | 4
   animationDuration: number
   allowDragging: boolean
   colorscheme?: Colorscheme

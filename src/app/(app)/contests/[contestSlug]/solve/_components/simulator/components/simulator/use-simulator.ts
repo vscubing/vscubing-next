@@ -57,7 +57,7 @@ export function useTwistySimulator({
 
     void initTwistySimulator(
       {
-        puzzle: SIMULATOR_DISCIPLINES_MAP[discipline].puzzle,
+        dimension: DISCIPLINE_DIMENSION_MAP[discipline],
         animationDuration: settings.animationDuration,
         colorscheme: settings.colorscheme,
         allowDragging: touchCubeEnabled,
@@ -121,17 +121,8 @@ export function useTwistySimulator({
   }, [settings.puzzleScale, puzzle])
 }
 
-export const SIMULATOR_DISCIPLINES_MAP = {
-  '3by3': {
-    dimension: 3,
-    puzzle: 'cube3',
-  },
-  '2by2': {
-    dimension: 2,
-    puzzle: 'cube2',
-  },
-  '4by4': {
-    dimension: 4,
-    puzzle: 'cube4',
-  },
+const DISCIPLINE_DIMENSION_MAP = {
+  '3by3': 3,
+  '2by2': 2,
+  '4by4': 4,
 } as const

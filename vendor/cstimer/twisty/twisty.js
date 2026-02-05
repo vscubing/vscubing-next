@@ -100,7 +100,6 @@ const twistyjs = (function () {
     // these must be initialized by calling `this.setCameraPosition` externally
     var cameraTheta
     var cameraPhi
-    var cameraInitialized = false
 
     /*
      * Initialization Methods
@@ -185,7 +184,6 @@ const twistyjs = (function () {
 				twistyCanvas.addEventListener('touchend', onCanvasUp);
 				*/
       }
-      // resize creates the camera and calls render()
       that.resize()
     }
 
@@ -452,19 +450,23 @@ const twistyjs = (function () {
     }
 
     function moveCamera(theta, phi, doRender) {
-      cameraTheta = theta
-      cameraPhi = phi
-      var z = 2 * Math.sqrt(2) * Math.sin((phi * Math.TAU) / 48)
-      var xy = 2 * Math.sqrt(2) * Math.cos((phi * Math.TAU) / 48)
-      camera.position = new THREE.Vector3(
-        xy * Math.sin((theta * Math.TAU) / 48),
-        z,
-        xy * Math.cos((theta * Math.TAU) / 48),
-      )
+      camera.position = calculateCameraPosition(theta, phi)
       if (doRender) {
         render()
       }
       fireCameraPositionChanged(theta, phi)
+    }
+
+    function calculateCameraPosition(theta, phi) {
+      cameraTheta = theta
+      cameraPhi = phi
+      var z = 2 * Math.sqrt(2) * Math.sin((phi * Math.TAU) / 48)
+      var xy = 2 * Math.sqrt(2) * Math.cos((phi * Math.TAU) / 48)
+      return new THREE.Vector3(
+        xy * Math.sin((theta * Math.TAU) / 48),
+        z,
+        xy * Math.cos((theta * Math.TAU) / 48),
+      )
     }
 
     //callback(move, step), step: 0 move added, 1 move animation started, 2 move animation finished
