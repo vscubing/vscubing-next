@@ -18,7 +18,7 @@ import * as SelectPrimitive from '@radix-ui/react-select'
 import {
   useSimulatorSettings,
   useMutateSimulatorSettings,
-} from '../hooks/queries'
+} from '@/frontend/shared/simulator/use-simulator-settings'
 import { ColorschemeSetting } from './colorscheme-setting'
 import { PUZZLE_SCALE } from '@/types'
 

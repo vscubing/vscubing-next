@@ -4,11 +4,8 @@ import { useControllableSimulator } from '@/frontend/shared/simulator/use-contro
 import { cn } from '@/frontend/utils/cn'
 import { useEffect, useState, type RefObject } from 'react'
 import { useEventListener } from 'usehooks-ts'
-import {
-  useSimulatorSettings,
-  useMutateSimulatorSettings,
-} from '../hooks/queries'
 import { LoadingSpinner } from '@/frontend/ui'
+import { useSimulatorSettings } from '@/frontend/shared/simulator/use-simulator-settings'
 
 export function SettingsPreviewSimulator({
   className,
@@ -16,23 +13,11 @@ export function SettingsPreviewSimulator({
   className?: string
 }) {
   const { data: settings } = useSimulatorSettings()
-  const { updateSettings } = useMutateSimulatorSettings()
 
   const [scramble, setScramble] = useState('')
   const { applyKeyboardMove, simulatorRef } = useControllableSimulator({
     discipline: '4by4',
     scramble,
-    settings,
-    setCameraPosition: ({ phi, theta }) => {
-      if (
-        phi !== settings?.cameraPositionPhi ||
-        theta !== settings?.cameraPositionTheta
-      )
-        updateSettings({
-          cameraPositionPhi: phi,
-          cameraPositionTheta: theta,
-        })
-    },
   })
 
   useEffect(() => setScramble(''), [settings?.colorscheme])

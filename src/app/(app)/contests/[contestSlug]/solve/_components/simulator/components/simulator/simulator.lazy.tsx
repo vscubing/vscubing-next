@@ -15,7 +15,7 @@ import { toast } from '@/frontend/ui'
 import {
   useSimulatorSettings,
   useMutateSimulatorSettings,
-} from '@/app/(app)/settings'
+} from '@/frontend/shared/simulator/use-simulator-settings'
 
 export const MOVECOUNT_LIMIT = 2000
 export type InitSolveData = { scramble: string; discipline: Discipline }

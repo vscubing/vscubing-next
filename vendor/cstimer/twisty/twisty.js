@@ -93,14 +93,10 @@ const twistyjs = (function () {
     var currentMove = null
     var moveQueue = []
 
-    var camera, scene, renderer
+    var camera // HACK: camera MUST be initialized by calling setCameraPosition
+    var scene, renderer
     var twistyCanvas
     var touchCube
-
-    // these must be initialized by calling `this.setCameraPosition` externally
-    var cameraTheta
-    var cameraPhi
-    var cameraInitialized = false
 
     /*
      * Initialization Methods
@@ -185,7 +181,6 @@ const twistyjs = (function () {
 				twistyCanvas.addEventListener('touchend', onCanvasUp);
 				*/
       }
-      // resize creates the camera and calls render()
       that.resize()
     }
 
@@ -206,29 +201,8 @@ const twistyjs = (function () {
     }
 
     this.keydown = function (e) {
-      var keyCode = e.keyCode
       var ret = twisty.keydownCallback(twisty, e)
-
-      switch (keyCode) {
-        case 37:
-          moveCameraDelta(1, 0)
-          e.preventDefault && e.preventDefault()
-          break
-        case 38:
-          moveCameraDelta(0, 1)
-          e.preventDefault && e.preventDefault()
-          break
-        case 39:
-          moveCameraDelta(-1, 0)
-          e.preventDefault && e.preventDefault()
-          break
-        case 40:
-          moveCameraDelta(0, -1)
-          e.preventDefault && e.preventDefault()
-          break
-        default:
-          ret && render()
-      }
+      ret && render()
     }
 
     var startIdx = null
@@ -419,52 +393,23 @@ const twistyjs = (function () {
       }
     }
 
-    var cameraPositionListeners = []
-    this.addCameraPositionListener = function (listener) {
-      cameraPositionListeners.push(listener)
-    }
-    this.removeCameraPositionListener = function (listener) {
-      var index = cameraPositionListeners.indexOf(listener)
-      delete cameraPositionListeners[index]
-    }
-    function fireCameraPositionChanged(theta, phi) {
-      for (var i = 0; i < cameraPositionListeners.length; i++) {
-        cameraPositionListeners[i]({ theta, phi })
-      }
-    }
     this.setCameraPosition = function ({ theta, phi }) {
       if (!camera) {
         camera = new THREE.Camera(30, 1, 0, 1000)
         camera.target.position = new THREE.Vector3(0, -0.075, 0)
       }
-      if (cameraTheta === theta && cameraPhi === phi) {
-        render()
-      }
-      moveCamera(theta, phi, true)
+      camera.position = calculateCameraPosition(theta, phi)
+      render()
     }
 
-    function moveCameraDelta(deltaTheta, deltaPhi) {
-      cameraTheta += deltaTheta
-      cameraTheta = Math.max(Math.min(cameraTheta, 6), -6)
-      cameraPhi += deltaPhi
-      cameraPhi = Math.max(Math.min(cameraPhi, 6), -6)
-      moveCamera(cameraTheta, cameraPhi, true)
-    }
-
-    function moveCamera(theta, phi, doRender) {
-      cameraTheta = theta
-      cameraPhi = phi
+    function calculateCameraPosition(theta, phi) {
       var z = 2 * Math.sqrt(2) * Math.sin((phi * Math.TAU) / 48)
       var xy = 2 * Math.sqrt(2) * Math.cos((phi * Math.TAU) / 48)
-      camera.position = new THREE.Vector3(
+      return new THREE.Vector3(
         xy * Math.sin((theta * Math.TAU) / 48),
         z,
         xy * Math.cos((theta * Math.TAU) / 48),
       )
-      if (doRender) {
-        render()
-      }
-      fireCameraPositionChanged(theta, phi)
     }
 
     //callback(move, step), step: 0 move added, 1 move animation started, 2 move animation finished

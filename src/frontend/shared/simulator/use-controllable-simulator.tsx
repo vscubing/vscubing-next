@@ -1,38 +1,30 @@
 import { useIsTouchDevice } from '@/frontend/utils/use-media-query'
 import { useResizeObserver } from '@/frontend/utils/use-resize-observer'
-import type { Discipline, SimulatorSettings } from '@/types'
+import type { Discipline } from '@/types'
 import type { KPattern } from '@vscubing/cubing/kpuzzle'
 import { useRef, useState, useEffect, useMemo } from 'react'
-import { useEventCallback } from 'usehooks-ts'
+import { useEventCallback, useEventListener } from 'usehooks-ts'
 import { initTwistySimulator } from 'vendor/cstimer'
-import type {
-  SimulatorCameraPosition,
-  TwistySimulatorPuzzle,
-} from 'vendor/cstimer/types'
+import type { TwistySimulatorPuzzle } from 'vendor/cstimer/types'
+import {
+  useSimulatorSettings,
+  useMutateSimulatorSettings,
+} from './use-simulator-settings'
 
 const CAMERA_POSITION_DEFAULTS = { phi: 6, theta: 0 } as const
 
 export function useControllableSimulator({
   discipline,
   scramble,
-  settings,
-  setCameraPosition,
   pattern,
 }: {
   discipline: Discipline
-  settings?: Partial<
-    Pick<
-      SimulatorSettings,
-      | 'animationDuration'
-      | 'cameraPositionPhi'
-      | 'cameraPositionTheta'
-      | 'colorscheme'
-    >
-  >
   scramble?: string
-  setCameraPosition?: (pos: SimulatorCameraPosition) => void
   pattern?: KPattern
 }) {
+  const { data: settings } = useSimulatorSettings()
+  const { updateSettings } = useMutateSimulatorSettings()
+
   const simulatorRef = useRef<HTMLDivElement>(null)
   const [puzzle, setPuzzle] = useState<TwistySimulatorPuzzle | undefined>()
 
@@ -43,7 +35,6 @@ export function useControllableSimulator({
     }),
     [settings?.animationDuration, settings?.colorscheme],
   )
-  const stableSetCameraPosition = useEventCallback(setCameraPosition)
 
   const cameraPosition = useMemo(
     () => ({
@@ -53,6 +44,31 @@ export function useControllableSimulator({
     [settings?.cameraPositionPhi, settings?.cameraPositionTheta],
   )
 
+  useEventListener('keydown', (e) => {
+    switch (e.code) {
+      case 'ArrowLeft':
+        moveCameraDelta(1, 0)
+        break
+      case 'ArrowUp':
+        moveCameraDelta(0, 1)
+        break
+      case 'ArrowRight':
+        moveCameraDelta(-1, 0)
+        break
+      case 'ArrowDown':
+        moveCameraDelta(0, -1)
+        break
+    }
+
+    function moveCameraDelta(deltaTheta: number, deltaPhi: number) {
+      let theta = cameraPosition.theta + deltaTheta
+      theta = Math.max(Math.min(theta, 6), -6)
+      let phi = cameraPosition.phi + deltaPhi
+      phi = Math.max(Math.min(phi, 6), -6)
+      updateSettings({ cameraPositionPhi: phi, cameraPositionTheta: theta })
+    }
+  })
+
   const isTouchDevice = useIsTouchDevice()
   useEffect(() => {
     const simulatorElem = simulatorRef.current
@@ -61,15 +77,13 @@ export function useControllableSimulator({
 
     void initTwistySimulator(
       {
-        puzzle: SIMULATOR_DISCIPLINES_MAP[discipline],
+        dimension: DISCIPLINE_DIMENSION_MAP[discipline],
         animationDuration: memoizedSettings.animationDuration ?? 100,
         allowDragging: isTouchDevice ?? false,
         colorscheme: memoizedSettings.colorscheme,
       },
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       () => {},
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      stableSetCameraPosition ?? (() => {}),
       simulatorElem,
     ).then(async (pzl) => {
       setTimeout(() => pzl.resize())
@@ -92,7 +106,6 @@ export function useControllableSimulator({
     pattern,
     memoizedSettings,
     isTouchDevice,
-    stableSetCameraPosition,
   ])
 
   const applyMove = useEventCallback((move: string) => {
@@ -118,10 +131,10 @@ export function useControllableSimulator({
   return { applyMove, simulatorRef, applyKeyboardMove, puzzle }
 }
 
-const SIMULATOR_DISCIPLINES_MAP = {
-  '3by3': 'cube3',
-  '2by2': 'cube2',
-  '4by4': 'cube4',
+const DISCIPLINE_DIMENSION_MAP = {
+  '3by3': 3,
+  '2by2': 2,
+  '4by4': 4,
 } as const
 
 // HACK: twisty simulator doesn't support double prime moves like z2' that `cubing.js`'s .invert() outputs a lot

@@ -6,7 +6,7 @@ import {
 } from 'vendor/cstimer/types'
 import { initTwistySimulator } from 'vendor/cstimer'
 import { type RefObject, useEffect, useState } from 'react'
-import { useEventCallback } from 'usehooks-ts'
+import { useEventCallback, useEventListener } from 'usehooks-ts'
 import { QuantumMove } from '@vscubing/cubing/alg'
 
 export type SimulatorEvent = {
@@ -37,7 +37,30 @@ export function useTwistySimulator({
   const stableOnMove = useEventCallback(onMove)
   const [puzzle, setPuzzle] = useState<TwistySimulatorPuzzle | undefined>()
 
-  const stableSetCameraPosition = useEventCallback(setCameraPosition)
+  useEventListener('keydown', (e) => {
+    switch (e.code) {
+      case 'ArrowLeft':
+        moveCameraDelta(1, 0)
+        break
+      case 'ArrowUp':
+        moveCameraDelta(0, 1)
+        break
+      case 'ArrowRight':
+        moveCameraDelta(-1, 0)
+        break
+      case 'ArrowDown':
+        moveCameraDelta(0, -1)
+        break
+    }
+
+    function moveCameraDelta(deltaTheta: number, deltaPhi: number) {
+      let theta = settings.cameraPositionTheta + deltaTheta
+      theta = Math.max(Math.min(theta, 6), -6)
+      let phi = settings.cameraPositionPhi + deltaPhi
+      phi = Math.max(Math.min(phi, 6), -6)
+      setCameraPosition({ phi, theta })
+    }
+  })
 
   useEffect(() => {
     let _puzzle: TwistySimulatorPuzzle | undefined // we need this because move2str is tightly coupled with Puzzle
@@ -57,13 +80,12 @@ export function useTwistySimulator({
 
     void initTwistySimulator(
       {
-        puzzle: SIMULATOR_DISCIPLINES_MAP[discipline].puzzle,
+        dimension: DISCIPLINE_DIMENSION_MAP[discipline],
         animationDuration: settings.animationDuration,
         colorscheme: settings.colorscheme,
         allowDragging: touchCubeEnabled,
       },
       moveListener,
-      stableSetCameraPosition,
       containerRef.current!,
     ).then((pzl) => {
       setTimeout(() => pzl.resize())
@@ -77,7 +99,6 @@ export function useTwistySimulator({
     discipline,
     stableOnMove,
     touchCubeEnabled,
-    stableSetCameraPosition,
   ])
 
   useEffect(() => {
@@ -91,9 +112,7 @@ export function useTwistySimulator({
     window.addEventListener(
       'keydown',
       (e) => {
-        const cameraAdjustment = e.key.startsWith('Arrow')
-        if (!scramble && !cameraAdjustment) return
-        puzzle.keydown(e)
+        if (scramble) puzzle.keydown(e)
       },
       abortSignal,
     )
@@ -121,17 +140,8 @@ export function useTwistySimulator({
   }, [settings.puzzleScale, puzzle])
 }
 
-export const SIMULATOR_DISCIPLINES_MAP = {
-  '3by3': {
-    dimension: 3,
-    puzzle: 'cube3',
-  },
-  '2by2': {
-    dimension: 2,
-    puzzle: 'cube2',
-  },
-  '4by4': {
-    dimension: 4,
-    puzzle: 'cube4',
-  },
+const DISCIPLINE_DIMENSION_MAP = {
+  '3by3': 3,
+  '2by2': 2,
+  '4by4': 4,
 } as const
