@@ -3,7 +3,7 @@ import { useResizeObserver } from '@/frontend/utils/use-resize-observer'
 import type { Discipline } from '@/types'
 import type { KPattern } from '@vscubing/cubing/kpuzzle'
 import { useRef, useState, useEffect, useMemo } from 'react'
-import { useEventCallback } from 'usehooks-ts'
+import { useEventCallback, useEventListener } from 'usehooks-ts'
 import { initTwistySimulator } from 'vendor/cstimer'
 import type { TwistySimulatorPuzzle } from 'vendor/cstimer/types'
 import {
@@ -36,20 +36,6 @@ export function useControllableSimulator({
     [settings?.animationDuration, settings?.colorscheme],
   )
 
-  const handleCameraPositionChange = useEventCallback(
-    ({ phi, theta }: { phi: number; theta: number }) => {
-      if (
-        phi !== settings?.cameraPositionPhi ||
-        theta !== settings?.cameraPositionTheta
-      ) {
-        updateSettings({
-          cameraPositionPhi: phi,
-          cameraPositionTheta: theta,
-        })
-      }
-    },
-  )
-
   const cameraPosition = useMemo(
     () => ({
       phi: settings?.cameraPositionPhi ?? CAMERA_POSITION_DEFAULTS.phi,
@@ -57,6 +43,31 @@ export function useControllableSimulator({
     }),
     [settings?.cameraPositionPhi, settings?.cameraPositionTheta],
   )
+
+  useEventListener('keydown', (e) => {
+    switch (e.code) {
+      case 'ArrowLeft':
+        moveCameraDelta(1, 0)
+        break
+      case 'ArrowUp':
+        moveCameraDelta(0, 1)
+        break
+      case 'ArrowRight':
+        moveCameraDelta(-1, 0)
+        break
+      case 'ArrowDown':
+        moveCameraDelta(0, -1)
+        break
+    }
+
+    function moveCameraDelta(deltaTheta: number, deltaPhi: number) {
+      let theta = cameraPosition.theta + deltaTheta
+      theta = Math.max(Math.min(theta, 6), -6)
+      let phi = cameraPosition.phi + deltaPhi
+      phi = Math.max(Math.min(phi, 6), -6)
+      updateSettings({ cameraPositionPhi: phi, cameraPositionTheta: theta })
+    }
+  })
 
   const isTouchDevice = useIsTouchDevice()
   useEffect(() => {
@@ -73,7 +84,6 @@ export function useControllableSimulator({
       },
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       () => {},
-      handleCameraPositionChange,
       simulatorElem,
     ).then(async (pzl) => {
       setTimeout(() => pzl.resize())
@@ -96,7 +106,6 @@ export function useControllableSimulator({
     pattern,
     memoizedSettings,
     isTouchDevice,
-    handleCameraPositionChange,
   ])
 
   const applyMove = useEventCallback((move: string) => {

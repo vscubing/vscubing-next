@@ -3,7 +3,6 @@ import type { TwistySimulatorColorscheme as Colorscheme } from '.'
 export function init(
   options: Options,
   moveListener: MoveListener,
-  cameraPositionListener: CameraPositionListener,
   parent,
 ): Promise<Puzzle>
 
@@ -12,7 +11,6 @@ export type MoveListener = (
   mstep: Mstep,
   timestamp: number,
 ) => void
-type CameraPositionListener = (pos: CameraPosition) => void
 
 export type PuzzleFace = 'U' | 'R' | 'F' | 'D' | 'L' | 'B'
 
