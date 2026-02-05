@@ -1,38 +1,30 @@
 import { useIsTouchDevice } from '@/frontend/utils/use-media-query'
 import { useResizeObserver } from '@/frontend/utils/use-resize-observer'
-import type { Discipline, SimulatorSettings } from '@/types'
+import type { Discipline } from '@/types'
 import type { KPattern } from '@vscubing/cubing/kpuzzle'
 import { useRef, useState, useEffect, useMemo } from 'react'
 import { useEventCallback } from 'usehooks-ts'
 import { initTwistySimulator } from 'vendor/cstimer'
-import type {
-  SimulatorCameraPosition,
-  TwistySimulatorPuzzle,
-} from 'vendor/cstimer/types'
+import type { TwistySimulatorPuzzle } from 'vendor/cstimer/types'
+import {
+  useSimulatorSettings,
+  useMutateSimulatorSettings,
+} from './use-simulator-settings'
 
 const CAMERA_POSITION_DEFAULTS = { phi: 6, theta: 0 } as const
 
 export function useControllableSimulator({
   discipline,
   scramble,
-  settings,
-  setCameraPosition,
   pattern,
 }: {
   discipline: Discipline
-  settings?: Partial<
-    Pick<
-      SimulatorSettings,
-      | 'animationDuration'
-      | 'cameraPositionPhi'
-      | 'cameraPositionTheta'
-      | 'colorscheme'
-    >
-  >
   scramble?: string
-  setCameraPosition?: (pos: SimulatorCameraPosition) => void
   pattern?: KPattern
 }) {
+  const { data: settings } = useSimulatorSettings()
+  const { updateSettings } = useMutateSimulatorSettings()
+
   const simulatorRef = useRef<HTMLDivElement>(null)
   const [puzzle, setPuzzle] = useState<TwistySimulatorPuzzle | undefined>()
 
@@ -43,7 +35,20 @@ export function useControllableSimulator({
     }),
     [settings?.animationDuration, settings?.colorscheme],
   )
-  const stableSetCameraPosition = useEventCallback(setCameraPosition)
+
+  const handleCameraPositionChange = useEventCallback(
+    ({ phi, theta }: { phi: number; theta: number }) => {
+      if (
+        phi !== settings?.cameraPositionPhi ||
+        theta !== settings?.cameraPositionTheta
+      ) {
+        updateSettings({
+          cameraPositionPhi: phi,
+          cameraPositionTheta: theta,
+        })
+      }
+    },
+  )
 
   const cameraPosition = useMemo(
     () => ({
@@ -68,8 +73,7 @@ export function useControllableSimulator({
       },
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       () => {},
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      stableSetCameraPosition ?? (() => {}),
+      handleCameraPositionChange,
       simulatorElem,
     ).then(async (pzl) => {
       setTimeout(() => pzl.resize())
@@ -92,7 +96,7 @@ export function useControllableSimulator({
     pattern,
     memoizedSettings,
     isTouchDevice,
-    stableSetCameraPosition,
+    handleCameraPositionChange,
   ])
 
   const applyMove = useEventCallback((move: string) => {

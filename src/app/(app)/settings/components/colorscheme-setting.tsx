@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import {
   useSimulatorSettings,
   useMutateSimulatorSettings,
-} from '../hooks/queries'
+} from '@/frontend/shared/simulator/use-simulator-settings'
 import * as PopoverPrimitive from '@radix-ui/react-popover'
 import { cn } from '@/frontend/utils/cn'
 import { HexColorPicker } from 'react-colorful'
