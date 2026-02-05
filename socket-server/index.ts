@@ -19,8 +19,10 @@ import {
   generateGuestName,
   type AuthUser,
 } from './auth'
+import { trackEvent } from './posthog'
 
 // NOTE: bun --watch socket-server/index.ts
+// TODO: use env.js for env vars in socket-server
 
 type SocketData = {
   user: AuthUser | null
@@ -131,6 +133,9 @@ io.on('connection', async (socket: TypedSocket) => {
     // Broadcast updated room list
     io.emit('roomList', roomManager.getAllRooms())
 
+    // Track room creation
+    trackEvent('cube_together_room_created', socket.data.odol)
+
     callback?.({ success: true, roomId: room.id })
   })
 
@@ -192,6 +197,9 @@ io.on('connection', async (socket: TypedSocket) => {
         displayName: roomUser.displayName,
         isAuthenticated: roomUser.isAuthenticated,
       })
+
+      // Track room join (only for new users, not additional tabs)
+      trackEvent('cube_together_room_joined', socket.data.odol)
     }
 
     // Send room state and pattern to joining user
@@ -223,6 +231,9 @@ io.on('connection', async (socket: TypedSocket) => {
     // Only notify others if user was fully removed
     if (wasFullyRemoved) {
       io.to(room.id).emit('userLeft', user.odol)
+
+      // Track room leave
+      trackEvent('cube_together_room_left', user.odol)
     }
 
     // Broadcast updated room list
@@ -256,6 +267,13 @@ io.on('connection', async (socket: TypedSocket) => {
       originClientId: socket.id,
       clientMoveId,
     })
+
+    // Track move (sampling to avoid too many events)
+    if (result.newServerMoveId % 100 === 0) {
+      trackEvent('cube_together_move_made', socket.data.odol, {
+        moveCount: result.newServerMoveId,
+      })
+    }
   })
 
   // Handle update room settings
@@ -335,6 +353,11 @@ io.on('connection', async (socket: TypedSocket) => {
 
     // Only owner can delete
     if (room.ownerId !== socket.data.odol) return
+
+    // Track room deletion
+    trackEvent('cube_together_room_deleted', socket.data.odol, {
+      roomId: room.id,
+    })
 
     // Notify all users in room
     io.to(room.id).emit('roomDeleted')
