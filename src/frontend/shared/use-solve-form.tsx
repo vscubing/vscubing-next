@@ -90,28 +90,11 @@ export function useSolveForm({
 
   const { initSolve } = useSimulator()
 
-  // const { mutate: registerSolveStream } = useMutation(
-  //   trpc.solveStream.registerSolveStream.mutationOptions(),
-  // )
-  // const { mutate: sendMove } = useMutation(
-  //   trpc.solveStream.sendMove.mutationOptions(),
-  // )
-  // const { mutate: unregisterSolveStream } = useMutation(
-  //   trpc.solveStream.unregisterSolveStream.mutationOptions(),
-  // )
   function handleInitSolve() {
     if (!state)
       throw new Error('useSolveForm handler called with undefined state')
-    // const streamId = uuid()
     initSolve({
       initSolveData: { discipline, scramble: state.currentScramble.moves },
-      // inspectionStartCallback: () =>
-      //   void registerSolveStream({
-      //     streamId: streamId,
-      //     discipline,
-      //     scramble: state.currentScramble.moves,
-      //   }),
-      // moveCallback: (move, event) => void sendMove({ streamId, move, event }),
       solveCallback: (solve) => {
         postSolveResult({
           solve: signSolve(solve),
@@ -119,7 +102,6 @@ export function useSolveForm({
           contestSlug,
           discipline,
         })
-        // unregisterSolveStream({ streamId })
       },
     })
   }
