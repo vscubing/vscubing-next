@@ -275,7 +275,7 @@ export default function CubeTogetherRoomPage() {
   )
 }
 
-const cube3x3x3KeyMapping: Record<number | string, AlgLeaf> = {
+export const cube3x3x3KeyMapping: Record<number | string, AlgLeaf> = {
   Digit1: new Move("S'"),
   Digit2: new Move('E'),
   Digit5: new Move('M'),
