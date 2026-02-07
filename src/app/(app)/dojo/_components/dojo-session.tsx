@@ -11,8 +11,8 @@ import {
 } from 'react'
 import { LoadingSpinner } from '@/frontend/ui'
 import { useScramble } from './use-scramble'
+import { usePersistedSession } from './use-persisted-session'
 import { DojoSidebar } from './dojo-sidebar'
-import type { DojoSolve } from './calculate-stats'
 import type { Discipline, ResultDnfable } from '@/types'
 import { useEventListener } from 'usehooks-ts'
 import {
@@ -26,73 +26,15 @@ const Simulator = lazy(
     import('@/app/(app)/contests/[contestSlug]/solve/_components/simulator/components/simulator/simulator.lazy'),
 )
 
-const STORAGE_KEY = 'dojo-session'
-
-type StoredSession = {
-  solves: DojoSolve[]
-  solveIdCounter: number
-}
-
-function loadSession(): StoredSession | null {
-  if (typeof window === 'undefined') return null
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    if (!stored) return null
-    return JSON.parse(stored) as StoredSession
-  } catch {
-    return null
-  }
-}
-
-function saveSession(session: StoredSession) {
-  if (typeof window === 'undefined') return
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(session))
-  } catch {
-    // Ignore storage errors
-  }
-}
-
 type DojoSessionProps = {
   discipline: Discipline
 }
 
 export function DojoSession({ discipline }: DojoSessionProps) {
-  const {
-    scramble,
-    isLoading: scrambleLoading,
-    generateNewScramble,
-  } = useScramble(discipline)
+  const { scramble, generateNewScramble } = useScramble(discipline)
 
-  const [solves, setSolves] = useState<DojoSolve[]>([])
-  const [solveIdCounter, setSolveIdCounter] = useState(1)
-  const [isHydrated, setIsHydrated] = useState(false)
-
-  // Load from localStorage on mount
-  useEffect(() => {
-    const stored = loadSession()
-    if (stored) {
-      setSolves(stored.solves)
-      setSolveIdCounter(stored.solveIdCounter)
-    }
-    setIsHydrated(true)
-  }, [])
-
-  // Save to localStorage when solves change
-  useEffect(() => {
-    if (!isHydrated) return
-    saveSession({ solves, solveIdCounter })
-  }, [solves, solveIdCounter, isHydrated])
-
-  const handleDeleteSolve = useCallback((id: number) => {
-    setSolves((prev) => prev.filter((s) => s.id !== id))
-  }, [])
-
-  const handleClearSession = useCallback(() => {
-    setSolves([])
-    setSolveIdCounter(1)
-    setLastResult(null)
-  }, [])
+  const { solves, isHydrated, addSolve, deleteSolve, clearSession } =
+    usePersistedSession()
 
   const [status, setStatus] = useState<'idle' | 'solving' | 'result'>('idle')
   const [lastResult, setLastResult] = useState<ResultDnfable | null>(null)
@@ -100,6 +42,11 @@ export function DojoSession({ discipline }: DojoSessionProps) {
 
   // Track if inspection has started (for DNF on escape)
   const [inspectionStarted, setInspectionStarted] = useState(false)
+
+  const handleClearSession = useCallback(() => {
+    clearSession()
+    setLastResult(null)
+  }, [clearSession])
 
   useEffect(() => {
     if (scramble) {
@@ -115,22 +62,19 @@ export function DojoSession({ discipline }: DojoSessionProps) {
 
   const handleSolveFinish = useCallback(
     (solve: { result: ResultDnfable; solution: string }) => {
-      const newSolve: DojoSolve = {
-        id: solveIdCounter,
+      addSolve({
         result: solve.result,
         scramble: currentScrambleRef.current ?? '',
         timestamp: Date.now(),
-      }
+      })
 
-      setSolves((prev) => [newSolve, ...prev])
-      setSolveIdCounter((prev) => prev + 1)
       setLastResult(solve.result)
       setStatus('result')
       setInspectionStarted(false)
 
       void generateNewScramble()
     },
-    [solveIdCounter, generateNewScramble],
+    [addSolve, generateNewScramble],
   )
 
   const handleDnf = useCallback(() => {
@@ -153,7 +97,7 @@ export function DojoSession({ discipline }: DojoSessionProps) {
     [scramble, discipline],
   )
 
-  if (scrambleLoading || !initSolveData || !isHydrated) {
+  if (!initSolveData || !isHydrated) {
     return (
       <div className='flex h-full items-center justify-center'>
         <LoadingSpinner />
@@ -209,7 +153,7 @@ export function DojoSession({ discipline }: DojoSessionProps) {
       {/* Sidebar with stats and history */}
       <DojoSidebar
         solves={solves}
-        onDeleteSolve={handleDeleteSolve}
+        onDeleteSolve={deleteSolve}
         onClearSession={handleClearSession}
         className='flex sm:hidden'
       />
