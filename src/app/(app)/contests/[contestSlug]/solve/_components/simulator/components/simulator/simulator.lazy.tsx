@@ -16,6 +16,7 @@ import {
   useSimulatorSettings,
   useMutateSimulatorSettings,
 } from '@/frontend/shared/simulator/use-simulator-settings'
+import { formatSolveTime } from '@/lib/utils/format-solve-time'
 
 export const MOVECOUNT_LIMIT = 2000
 export type InitSolveData = { scramble: string; discipline: Discipline }
@@ -30,11 +31,14 @@ type SimulatorProps = {
   initSolveData: InitSolveData
   onInspectionStart: () => void
   onSolveFinish: SimulatorSolveFinishCallback
+  /** When provided, displays this result instead of timer when in idle/ready state */
+  completedResult?: ResultDnfable | null
 }
 export default function Simulator({
   initSolveData,
   onInspectionStart,
   onSolveFinish,
+  completedResult,
 }: SimulatorProps) {
   const { data: settingsWithoutDefaults, isLoading: settingsLoading } =
     useSimulatorSettings()
@@ -310,10 +314,14 @@ export default function Simulator({
             'absolute right-4 top-1/2 -translate-y-1/2 text-7xl [font-family:"M_PLUS_1_Code",monospace] md:bottom-4 md:left-1/2 md:right-auto md:top-auto md:-translate-x-1/2 md:translate-y-0',
           )}
         >
-          {getDisplay(
-            solveStartTimestamp,
-            inspectionStartTimestamp,
-            currentTimestamp,
+          {status === 'ready' && completedResult ? (
+            <CompletedResultDisplay result={completedResult} />
+          ) : (
+            getDisplay(
+              solveStartTimestamp,
+              inspectionStartTimestamp,
+              currentTimestamp,
+            )
           )}
         </span>
         {status === 'ready' && (
@@ -337,6 +345,23 @@ export default function Simulator({
         ></div>
       </div>
     </>
+  )
+}
+
+function CompletedResultDisplay({ result }: { result: ResultDnfable }) {
+  if (result.isDnf) {
+    return (
+      <span className='text-red-500'>
+        {result.timeMs ? `DNF (${formatSolveTime(result.timeMs, true)})` : 'DNF'}
+      </span>
+    )
+  }
+
+  return (
+    <span className='text-primary-60'>
+      {formatSolveTime(result.timeMs, true)}
+      {result.plusTwoIncluded && <span className='text-yellow-500'>+</span>}
+    </span>
   )
 }
 

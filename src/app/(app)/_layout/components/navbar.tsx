@@ -17,7 +17,7 @@ import {
   CodeXmlIcon,
 } from '@/frontend/ui'
 import { DEFAULT_DISCIPLINE } from '@/types'
-import { FlaskConicalIcon, HandshakeIcon, RadioTowerIcon } from 'lucide-react'
+import { FlaskConicalIcon, HandshakeIcon, RadioTowerIcon, SwordsIcon } from 'lucide-react'
 import { LIVE_STREAMS_ENABLED } from '@/lib/pusher/streams'
 import { HoverPopover } from '@/frontend/ui/popovers'
 
@@ -199,6 +199,7 @@ type NavbarRoute =
   | '/dev'
   | '/live-streams'
   | '/cube-together'
+  | '/dojo'
 
 function isStaticNavbarRoute(pathname: string): pathname is NavbarRoute {
   return (
@@ -208,6 +209,7 @@ function isStaticNavbarRoute(pathname: string): pathname is NavbarRoute {
       '/dev',
       '/live-streams',
       '/cube-together',
+      '/dojo',
     ] satisfies NavbarRoute[] as string[]
   ).includes(pathname)
 }
@@ -270,6 +272,11 @@ function getExperimentalLinks(): NavbarLink[] {
       icon: <HandshakeIcon className='h-5 w-5' />,
       name: 'Cube together',
       route: '/cube-together',
+    },
+    {
+      icon: <SwordsIcon className='h-5 w-5' />,
+      name: 'Dojo',
+      route: '/dojo',
     },
   ]
 
