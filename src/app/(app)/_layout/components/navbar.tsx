@@ -17,7 +17,12 @@ import {
   CodeXmlIcon,
 } from '@/frontend/ui'
 import { DEFAULT_DISCIPLINE } from '@/types'
-import { FlaskConicalIcon, HandshakeIcon, RadioTowerIcon, SwordsIcon } from 'lucide-react'
+import {
+  FlaskConicalIcon,
+  HandshakeIcon,
+  RadioTowerIcon,
+  SwordsIcon,
+} from 'lucide-react'
 import { LIVE_STREAMS_ENABLED } from '@/lib/pusher/streams'
 import { HoverPopover } from '@/frontend/ui/popovers'
 

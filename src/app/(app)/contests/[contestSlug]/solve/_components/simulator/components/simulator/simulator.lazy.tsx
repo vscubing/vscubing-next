@@ -352,7 +352,9 @@ function CompletedResultDisplay({ result }: { result: ResultDnfable }) {
   if (result.isDnf) {
     return (
       <span className='text-red-500'>
-        {result.timeMs ? `DNF (${formatSolveTime(result.timeMs, true)})` : 'DNF'}
+        {result.timeMs
+          ? `DNF (${formatSolveTime(result.timeMs, true)})`
+          : 'DNF'}
       </span>
     )
   }

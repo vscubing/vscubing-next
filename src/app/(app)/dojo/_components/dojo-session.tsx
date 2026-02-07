@@ -23,9 +23,7 @@ import { Dialog, DialogOverlay, DialogPortal } from '@/frontend/ui'
 
 const Simulator = lazy(
   () =>
-    import(
-      '@/app/(app)/contests/[contestSlug]/solve/_components/simulator/components/simulator/simulator.lazy'
-    ),
+    import('@/app/(app)/contests/[contestSlug]/solve/_components/simulator/components/simulator/simulator.lazy'),
 )
 
 const STORAGE_KEY = 'dojo-session'

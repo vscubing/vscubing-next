@@ -82,7 +82,7 @@ export function DojoSidebar({
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <button
-                    className='rounded p-1 text-grey-40 transition-colors hover:bg-black-100 hover:text-red-500'
+                    className='hover:text-red-500 rounded p-1 text-grey-40 transition-colors hover:bg-black-100'
                     title='Clear all solves'
                   >
                     <Trash2Icon className='h-4 w-4' />
@@ -184,7 +184,7 @@ function SolveRow({
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <button
-              className='rounded p-0.5 text-grey-60 opacity-0 transition-all hover:text-red-500 group-hover:opacity-100'
+              className='hover:text-red-500 rounded p-0.5 text-grey-60 opacity-0 transition-all group-hover:opacity-100'
               title='Delete solve'
             >
               <Trash2Icon className='h-3.5 w-3.5' />
