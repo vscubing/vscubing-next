@@ -16,7 +16,6 @@ import {
   useSimulatorSettings,
   useMutateSimulatorSettings,
 } from '@/frontend/shared/simulator/use-simulator-settings'
-import { formatSolveTime } from '@/lib/utils/format-solve-time'
 import Link from 'next/link'
 
 export type InitSolveData = {
@@ -94,7 +93,11 @@ export default function Simulator({
     if (status === 'inspecting' || status === 'solving') {
       applyKeyboardMove(e)
     }
-    if (status === 'inspecting' && e.code === 'Escape' && dnfOnEscape) {
+    if (
+      (status === 'inspecting' || status === 'solving') &&
+      e.code === 'Escape' &&
+      dnfOnEscape
+    ) {
       onSolveFinish({ solution: '', result: { isDnf: true, timeMs: null } })
       setStatus('dnf')
     }
@@ -298,19 +301,31 @@ export default function Simulator({
         className='relative flex h-full items-center justify-center'
         onTouchStart={touchStartHandler}
       >
-        <span
+        <div
           className={cn(
-            'absolute right-4 top-1/2 -translate-y-1/2 text-7xl [font-family:"M_PLUS_1_Code",monospace] md:bottom-4 md:left-1/2 md:right-auto md:top-auto md:-translate-x-1/2 md:translate-y-0',
+            'absolute right-4 top-1/2 flex -translate-y-1/2 flex-col items-end text-7xl md:bottom-4 md:left-1/2 md:right-auto md:top-auto md:-translate-x-1/2 md:translate-y-0',
           )}
         >
-          {status === 'dnf'
-            ? 'DNF'
-            : getDisplay(
-                solveStartTimestamp,
-                inspectionStartTimestamp,
-                currentTimestamp,
-              )}
-        </span>
+          <span className='[font-family:"M_PLUS_1_Code",monospace]'>
+            {status === 'dnf'
+              ? 'DNF'
+              : getDisplay(
+                  solveStartTimestamp,
+                  inspectionStartTimestamp,
+                  currentTimestamp,
+                )}
+          </span>
+          {(status === 'solved' || status === 'dnf') && (
+            <SolveMetadata
+              solution={solution}
+              solveTime={
+                currentTimestamp && solveStartTimestamp
+                  ? currentTimestamp - solveStartTimestamp
+                  : null
+              }
+            />
+          )}
+        </div>
         {status === 'ready' && (
           <span className='absolute bottom-20 mx-2 flex min-h-20 items-center rounded-[.75rem] bg-black-100 px-10 py-2 text-center font-kanit text-[1.25rem] text-secondary-20 sm:px-4'>
             <span className='hidden touch:inline'>
@@ -335,25 +350,32 @@ export default function Simulator({
   )
 }
 
-function CompletedResultDisplay({ result }: { result: ResultDnfable }) {
-  if (result.isDnf) {
-    return (
-      <span className='text-red-500'>
-        {result.timeMs
-          ? `DNF (${formatSolveTime(result.timeMs, true)})`
-          : 'DNF'}
-      </span>
-    )
-  }
-
+function SolveMetadata({
+  solution,
+  solveTime,
+}: {
+  solution: { move: QuantumMove; timestamp: number }[]
+  solveTime: number | null
+}) {
+  const firstNonRotationIndex = solution.findIndex(
+    ({ move }) => !isRotation(move),
+  )
+  const turnCount =
+    firstNonRotationIndex === -1 ? 0 : solution.length - firstNonRotationIndex
   return (
-    <span className='text-primary-60'>
-      {formatSolveTime(result.timeMs, true)}
-      {result.plusTwoIncluded && <span className='text-yellow-500'>+</span>}
-    </span>
+    <div className='mt-3 flex flex-col items-end text-[.4em] text-grey-40'>
+      <span>{turnCount} turns</span>
+      <span>
+        {solveTime ? (turnCount / (solveTime / 1000)).toFixed(2) : 0} TPS
+      </span>
+    </div>
   )
 }
 
 function getCurrentTimestamp() {
   return Math.floor(performance.now())
+}
+
+function isRotation(move: QuantumMove): boolean {
+  return ['x', 'y', 'z'].includes(move.toString()[0]!)
 }
