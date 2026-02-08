@@ -93,27 +93,6 @@ export function DojoSession({ discipline }: DojoSessionProps) {
   return (
     <div className='flex min-h-0 flex-1 gap-3'>
       <div className='flex min-h-0 flex-1 flex-col gap-3'>
-        {/* Scramble display */}
-        <div className='shrink-0 rounded-2xl bg-black-80 p-4'>
-          <div className='flex items-center justify-between'>
-            <h3 className='text-sm font-medium text-grey-40'>Scramble</h3>
-            {env.NEXT_PUBLIC_APP_ENV !== 'production' && (
-              <label className='flex items-center gap-2 text-sm text-grey-40'>
-                <input
-                  type='checkbox'
-                  checked={easyMode}
-                  onChange={(e) => setEasyMode(e.target.checked)}
-                  className='h-4 w-4'
-                />
-                Easy mode (just for testing)
-              </label>
-            )}
-          </div>
-          <p className='mt-2 break-all font-mono text-lg text-grey-20'>
-            {status === 'result' ? nextScramble : scramble}
-          </p>
-        </div>
-
         {/* Simulator area */}
         <div className='relative min-h-0 flex-1 rounded-2xl bg-black-80'>
           <Suspense
@@ -150,6 +129,27 @@ export function DojoSession({ discipline }: DojoSessionProps) {
               </SecondaryButton>
             )}
           </div>
+        </div>
+
+        {/* Scramble display */}
+        <div className='shrink-0 rounded-2xl bg-black-80 p-4'>
+          <div className='flex items-center justify-between'>
+            <h3 className='text-sm font-medium text-grey-40'>Scramble</h3>
+            {env.NEXT_PUBLIC_APP_ENV !== 'production' && (
+              <label className='flex items-center gap-2 text-sm text-grey-40'>
+                <input
+                  type='checkbox'
+                  checked={easyMode}
+                  onChange={(e) => setEasyMode(e.target.checked)}
+                  className='h-4 w-4'
+                />
+                Easy mode (just for testing)
+              </label>
+            )}
+          </div>
+          <p className='mt-2 break-all font-mono text-lg text-grey-20'>
+            {status === 'result' ? nextScramble : scramble}
+          </p>
         </div>
       </div>
 
