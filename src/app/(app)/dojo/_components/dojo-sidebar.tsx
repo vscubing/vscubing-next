@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { cn } from '@/frontend/utils/cn'
 import { formatSolveTime } from '@/lib/utils/format-solve-time'
 import type { ResultDnfable } from '@/types'
@@ -35,6 +36,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/frontend/ui'
+import { useEventListener } from 'usehooks-ts'
 
 function buildReplayUrl(solve: DojoSolve, username?: string): string {
   const params = new URLSearchParams({
@@ -68,6 +70,21 @@ export function DojoSidebar({
   onClearSession,
   className,
 }: DojoSidebarProps) {
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [clearDialogOpen, setClearDialogOpen] = useState(false)
+
+  // Keyboard shortcuts for delete last solve (Ctrl+Z or Alt+Z) and clear session (Alt+D)
+  useEventListener('keydown', (e) => {
+    if (e.code === 'KeyZ' && (e.ctrlKey || e.altKey) && solves.length > 0) {
+      e.preventDefault()
+      setDeleteDialogOpen(true)
+    }
+    if (e.code === 'KeyD' && e.altKey && solves.length > 0) {
+      e.preventDefault()
+      setClearDialogOpen(true)
+    }
+  })
+
   const currentMo3 = calculateMo3(solves)
   const currentAo5 = calculateAo5(solves)
   const currentAo12 = calculateAo12(solves)
@@ -109,32 +126,36 @@ export function DojoSidebar({
           <div className='flex items-center gap-2'>
             <span className='text-sm text-grey-40'>{solves.length} total</span>
             {solves.length > 0 && (
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
+              <Dialog open={clearDialogOpen} onOpenChange={setClearDialogOpen}>
+                <DialogTrigger asChild>
                   <button
                     className='hover:text-red-500 rounded p-1 text-grey-40 transition-colors hover:bg-black-100'
-                    title='Clear all solves'
+                    title='Clear all solves (Alt+D)'
                   >
                     <Trash2Icon className='h-4 w-4' />
                   </button>
-                </AlertDialogTrigger>
-                <AlertDialogPortal>
-                  <AlertDialogOverlay />
-                  <AlertDialogContent>
-                    <AlertDialogTitle>Clear all solves?</AlertDialogTitle>
-                    <p className='text-sm text-grey-40'>
+                </DialogTrigger>
+                <DialogPortal>
+                  <DialogOverlay />
+                  <DialogContent className='gap-4'>
+                    <DialogTitle>Clear all solves?</DialogTitle>
+                    <p className='text-center text-grey-20'>
                       This will delete all {solves.length} solves. This action
                       cannot be undone.
                     </p>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={onClearSession} autoFocus>
+                    <DialogFooter>
+                      <DialogClose version='secondary'>Cancel</DialogClose>
+                      <DialogClose
+                        version='primary'
+                        onClick={onClearSession}
+                        autoFocus
+                      >
                         Clear all
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialogPortal>
-              </AlertDialog>
+                      </DialogClose>
+                    </DialogFooter>
+                  </DialogContent>
+                </DialogPortal>
+              </Dialog>
             )}
           </div>
         </div>
@@ -154,6 +175,37 @@ export function DojoSidebar({
           </div>
         )}
       </div>
+
+      {/* Delete last solve dialog (triggered by Ctrl+Z or Alt+Z) */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogPortal>
+          <DialogOverlay />
+          <DialogContent className='gap-4'>
+            <DialogTitle>Delete last solve?</DialogTitle>
+            <p className='text-center text-grey-20'>
+              Delete solve #{solves.length} with time{' '}
+              {solves[0]
+                ? solves[0].result.isDnf
+                  ? solves[0].result.timeMs
+                    ? `DNF (${formatSolveTime(solves[0].result.timeMs, true)})`
+                    : 'DNF'
+                  : formatSolveTime(solves[0].result.timeMs, true)
+                : ''}
+              ? This action cannot be undone.
+            </p>
+            <DialogFooter>
+              <DialogClose version='secondary'>Cancel</DialogClose>
+              <DialogClose
+                version='primary'
+                onClick={() => onDeleteSolve(solves[0]!.id)}
+                autoFocus
+              >
+                Delete
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </DialogPortal>
+      </Dialog>
     </aside>
   )
 }
