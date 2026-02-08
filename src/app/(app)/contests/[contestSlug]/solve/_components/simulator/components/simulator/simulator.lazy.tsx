@@ -337,9 +337,9 @@ export default function Simulator({
           </span>
         )}
         <div
-          className='aspect-square h-[60%] outline-none sm:!h-auto sm:w-full sm:max-w-[34rem] [&>div]:flex'
+          className='aspect-square h-[57vh] outline-none sm:!h-auto sm:w-full sm:max-w-[34rem] [&>div]:flex'
           style={{
-            height: `calc(60% * ${settings.puzzleScale})`,
+            height: `calc(57vh * ${settings.puzzleScale})`,
             opacity: settingsLoading ? 0 : 1,
           }}
           tabIndex={-1}
