@@ -22,6 +22,9 @@ import { Dialog, DialogOverlay, DialogPortal } from '@/frontend/ui'
 import { useUser } from '@/frontend/shared/use-user'
 import { env } from '@/env'
 import Link from 'next/link'
+import type { SimulatorStatus } from '@/app/(app)/contests/[contestSlug]/solve/_components/simulator/components/simulator/simulator.lazy'
+import { useDojoFocusMode, useSetDojoFocusMode } from './dojo-focus-mode-atom'
+import { cn } from '@/frontend/utils/cn'
 
 const Simulator = lazy(
   () =>
@@ -46,6 +49,23 @@ export function DojoSession({ discipline }: DojoSessionProps) {
     usePersistedSession()
 
   const [status, setStatus] = useState<'idle' | 'solving' | 'result'>('idle')
+
+  const setFocusMode = useSetDojoFocusMode()
+  const focusMode = useDojoFocusMode()
+
+  const handleSimulatorStatusChange = useCallback(
+    (simulatorStatus: SimulatorStatus) => {
+      setFocusMode(
+        simulatorStatus === 'inspecting' || simulatorStatus === 'solving',
+      )
+    },
+    [setFocusMode],
+  )
+
+  // Reset focus mode on unmount
+  useEffect(() => {
+    return () => setFocusMode(false)
+  }, [setFocusMode])
 
   const handleInspectionStart = useCallback(() => {
     setStatus('solving')
@@ -106,6 +126,7 @@ export function DojoSession({ discipline }: DojoSessionProps) {
               initSolveData={initSolveData}
               onSolveFinish={handleSolveFinish}
               onInspectionStart={handleInspectionStart}
+              onStatusChange={handleSimulatorStatusChange}
               jumpStraightToPreinspection={jumpStraightToPreinspection}
               dnfOnEscape
               moveCountLimit={Infinity}
@@ -132,7 +153,12 @@ export function DojoSession({ discipline }: DojoSessionProps) {
         </div>
 
         {/* Scramble display */}
-        <div className='shrink-0 rounded-2xl bg-black-80 p-4'>
+        <div
+          className={cn(
+            'shrink-0 rounded-2xl bg-black-80 p-4 transition-opacity duration-300',
+            focusMode && 'opacity-0',
+          )}
+        >
           <div className='flex items-center justify-between'>
             <h3 className='text-sm font-medium text-grey-40'>Scramble</h3>
             {env.NEXT_PUBLIC_APP_ENV !== 'production' && (
@@ -159,7 +185,10 @@ export function DojoSession({ discipline }: DojoSessionProps) {
         username={user?.name}
         onDeleteSolve={deleteSolve}
         onClearSession={() => clearSession()}
-        className='flex sm:hidden'
+        className={cn(
+          'flex transition-opacity duration-300 sm:hidden',
+          focusMode && 'opacity-0',
+        )}
       />
     </div>
   )

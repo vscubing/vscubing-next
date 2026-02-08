@@ -29,10 +29,19 @@ export type SimulatorSolve = {
 }
 export type SimulatorSolveFinishCallback = (solve: SimulatorSolve) => void
 
+export type SimulatorStatus =
+  | 'idle'
+  | 'ready'
+  | 'inspecting'
+  | 'solving'
+  | 'solved'
+  | 'dnf'
+
 type SimulatorProps = {
   initSolveData: InitSolveData
   onInspectionStart: () => void
   onSolveFinish: SimulatorSolveFinishCallback
+  onStatusChange?: (status: SimulatorStatus) => void
   jumpStraightToPreinspection: boolean
   dnfOnEscape: boolean
   moveCountLimit: number
@@ -41,6 +50,7 @@ export default function Simulator({
   initSolveData,
   onInspectionStart,
   onSolveFinish,
+  onStatusChange,
   dnfOnEscape,
   moveCountLimit,
   jumpStraightToPreinspection,
@@ -60,9 +70,7 @@ export default function Simulator({
 
   const containerRef = useRef<HTMLDivElement>(null)
   const isTouchDevice = useIsTouchDevice()
-  const [status, setStatus] = useState<
-    'idle' | 'ready' | 'inspecting' | 'solving' | 'solved' | 'dnf'
-  >('idle')
+  const [status, setStatus] = useState<SimulatorStatus>('idle')
   const [inspectionStartTimestamp, setInspectionStartTimestamp] =
     useState<number>()
   const [solveStartTimestamp, setSolveStartTimestamp] = useState<number>()
@@ -73,6 +81,10 @@ export default function Simulator({
 
   const [heard8sAlert, setHeard8sAlert] = useState(false)
   const [heard12sAlert, setHeard12sAlert] = useState(false)
+
+  useEffect(() => {
+    onStatusChange?.(status)
+  }, [status, onStatusChange])
 
   useEffect(() => {
     containerRef.current?.focus()

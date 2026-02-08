@@ -1,3 +1,5 @@
+'use client'
+
 import { Navbar } from './_layout/components/navbar'
 import { PickUsernameDialog } from './_layout/components/pick-username-dialog'
 import { PopupSidebar } from './_layout/components/popup-sidebar'
@@ -8,6 +10,7 @@ import ClientOnlyPortal from '@/frontend/utils/client-only-portal'
 import { type ReactNode } from 'react'
 import { Toaster } from '@/frontend/ui'
 import { CookieBannerHandler } from '@/frontend/cookie-banner-handler'
+import { useDojoFocusMode } from '@/app/(app)/dojo/_components/dojo-focus-mode-atom'
 
 export default function AppLayout({
   children,
@@ -16,6 +19,7 @@ export default function AppLayout({
   children: React.ReactNode
   withoutHeader?: boolean
 }) {
+  const focusMode = useDojoFocusMode()
   const SIDEBAR_WIDTH_CLASS =
     'w-[clamp(15rem,17vw,21rem)] xl-short:min-w-[19rem] lg:w-[4.375rem] sm:sr-only'
 
@@ -29,12 +33,24 @@ export default function AppLayout({
         vaul-drawer-wrapper='vaul-drawer-wrapper'
         className='flex h-full gap-3 bg-black-100 p-[1.625rem] lg:p-3 sm:flex-col sm:gap-0 sm:py-0'
       >
-        <Sidebar className={SIDEBAR_WIDTH_CLASS} />
+        <Sidebar
+          className={cn(
+            SIDEBAR_WIDTH_CLASS,
+            'transition-opacity duration-300',
+            { 'opacity-0': focusMode },
+          )}
+        />
         <main
           id={SCROLL_CONTAINER_ID}
           className='relative flex h-[calc(100svh-3.25rem)] flex-1 flex-col overflow-y-auto rounded-2xl lg:h-[calc(100svh-1.5rem)]'
         >
-          {withoutHeader ? null : <LayoutHeader className='mb-3 sm:mb-2' />}
+          {withoutHeader ? null : (
+            <LayoutHeader
+              className={cn('mb-3 transition-opacity duration-300 sm:mb-2', {
+                'opacity-0': focusMode,
+              })}
+            />
+          )}
           {children}
         </main>
         <BottomNavbar className='hidden sm:block' />
