@@ -141,7 +141,7 @@ export function DojoSidebar({
         {solves.length === 0 ? (
           <p className='text-center text-sm text-grey-40'>No solves yet</p>
         ) : (
-          <div className='flex min-h-0 flex-1 flex-col gap-1 overflow-y-scroll'>
+          <div className='flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto'>
             {solves.map((solve, index) => (
               <SolveRow
                 key={solve.id}
