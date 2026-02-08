@@ -81,6 +81,11 @@
   .vertical-alignment-fix {
     @apply pt-[.2em];
   }
+  .scrollbar {
+    /* Standard scrollbar properties for Firefox and Edge */
+    scrollbar-width: thin;
+    scrollbar-color: #f9f9f9 #6b7980;
+  }
   .scrollbar::-webkit-scrollbar {
     @apply w-1;
   }
