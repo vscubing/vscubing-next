@@ -8,7 +8,7 @@ import { NavigateBackButton } from '@/frontend/shared/navigate-back-button'
 import { LayoutHeaderTitlePortal } from '@/app/(app)/_layout/layout-header'
 import { LayoutSectionHeader } from '@/app/(app)/_layout'
 import { SolveTimeLabel } from '@/frontend/shared/solve-time-link-or-dnf'
-import { ShareSolveButton } from '@/app/(app)/contests/[contestSlug]/watch/[solveId]/_components/share-button'
+import { ShareSolveButton, type ShareSolveReplayData } from '@/app/(app)/contests/[contestSlug]/watch/[solveId]/_components/share-button'
 import tailwindConfig from 'tailwind.config'
 import { Alg } from '@vscubing/cubing/alg'
 import { isRotation } from '@/lib/utils/is-rotation'
@@ -34,6 +34,19 @@ export type ReplayData = {
   isPersonalRecord?: boolean
 }
 
+function getShareReplayData(data: ReplayData): ShareSolveReplayData | undefined {
+  // Only create shortened links for non-contest replays (i.e., /replay page)
+  if (data.contestSlug || data.timeMs === null) return undefined
+  return {
+    discipline: data.discipline,
+    scramble: data.scramble,
+    solution: data.solution,
+    timeMs: data.timeMs,
+    username: data.username,
+    date: data.date,
+  }
+}
+
 export function ReplayViewer({ data }: { data: ReplayData }) {
   return (
     <section className='flex flex-1 flex-col gap-3'>
@@ -41,7 +54,7 @@ export function ReplayViewer({ data }: { data: ReplayData }) {
       <LayoutHeaderTitlePortal>Watch the solve replay</LayoutHeaderTitlePortal>
       <div className='grid flex-1 grid-cols-[1.22fr_1fr] grid-rows-[min-content,1fr] gap-3 lg:grid-cols-2 sm:grid-cols-1 sm:grid-rows-[min-content,min-content,1fr]'>
         <ReplayHeader data={data} />
-        <ReplayUserCard data={data} />
+        <ReplayUserCard data={data} replayData={getShareReplayData(data)} />
         <TwistySection
           solution={data.solution}
           scramble={data.scramble}
@@ -137,7 +150,13 @@ function ReplayHeader({ data }: { data: ReplayData }) {
   )
 }
 
-function ReplayUserCard({ data }: { data: ReplayData }) {
+function ReplayUserCard({
+  data,
+  replayData,
+}: {
+  data: ReplayData
+  replayData?: ShareSolveReplayData
+}) {
   const { username, timeMs, isOwn, isPersonalRecord, solution, isDnf } = data
 
   return (
@@ -169,7 +188,7 @@ function ReplayUserCard({ data }: { data: ReplayData }) {
             </span>
           </p>
         </div>
-        <ShareSolveButton />
+        <ShareSolveButton replayData={replayData} />
       </div>
     </SpinningBorder>
   )

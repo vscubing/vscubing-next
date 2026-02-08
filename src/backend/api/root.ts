@@ -8,6 +8,7 @@ import { adminRouter } from './routers/admin'
 import { specialContestRouter } from './routers/special-contest'
 import { solveStreamRouter } from './routers/solve-stream'
 import { userMetadataRouter } from './routers/user-metadata'
+import { replayLinkRouter } from './routers/replay-link'
 
 /**
  * This is the primary router for your server.
@@ -24,6 +25,7 @@ export const appRouter = createTRPCRouter({
   settings: settingsRouter,
   solveStream: solveStreamRouter,
   userMetadata: userMetadataRouter,
+  replayLink: replayLinkRouter,
 })
 
 // export type definition of API

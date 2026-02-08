@@ -134,6 +134,13 @@
       "when": 1768744494472,
       "tag": "0018_low_vampiro",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1770577047490,
+      "tag": "0019_right_sharon_carter",
+      "breakpoints": true
     }
   ]
 }

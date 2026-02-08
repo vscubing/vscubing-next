@@ -105,7 +105,7 @@ export function DojoSession({ discipline }: DojoSessionProps) {
                   onChange={(e) => setEasyMode(e.target.checked)}
                   className='h-4 w-4'
                 />
-                Easy mode
+                Easy mode (just for testing)
               </label>
             )}
           </div>
@@ -142,11 +142,13 @@ export function DojoSession({ discipline }: DojoSessionProps) {
                 <KeyMapDialogContent />
               </DialogPortal>
             </Dialog>
-            <SecondaryButton asChild className='h-11 w-11 p-0 sm:h-11'>
-              <Link href='/settings'>
-                <SettingIcon />
-              </Link>
-            </SecondaryButton>
+            {user && (
+              <SecondaryButton asChild className='h-11 w-11 p-0 sm:h-11'>
+                <Link href='/settings'>
+                  <SettingIcon />
+                </Link>
+              </SecondaryButton>
+            )}
           </div>
         </div>
       </div>
