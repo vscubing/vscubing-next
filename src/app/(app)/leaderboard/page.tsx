@@ -47,7 +47,7 @@ export default async function LeaderboardPage({
     )
 
   return (
-    <>
+    <section className='flex flex-1 flex-col gap-3 sm:gap-2'>
       <Suspense fallback={<PageTitleFallback />}>
         <PageTitle type={type} />
       </Suspense>
@@ -113,7 +113,7 @@ export default async function LeaderboardPage({
           <PageContentAverage discipline={discipline} />
         </Suspense>
       )}
-    </>
+    </section>
   )
 }
 

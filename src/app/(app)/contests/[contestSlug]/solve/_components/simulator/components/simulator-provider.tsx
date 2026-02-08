@@ -30,6 +30,8 @@ import {
 import { useEventListener } from 'usehooks-ts'
 const Simulator = lazy(() => import('./simulator/simulator.lazy'))
 
+const CONTEST_MOVE_COUNT_LIMIT = 2000
+
 export function SimulatorProvider({ children }: { children: React.ReactNode }) {
   const [solveState, setSolveState] = useState<{
     initSolveData: InitSolveData
@@ -139,8 +141,11 @@ export function SimulatorProvider({ children }: { children: React.ReactNode }) {
                 {solveState && (
                   <Simulator
                     initSolveData={solveState.initSolveData}
+                    jumpStraightToPreinspection={false}
                     onSolveFinish={handleSolveFinish}
                     onInspectionStart={handleInspectionStart}
+                    dnfOnEscape={false}
+                    moveCountLimit={CONTEST_MOVE_COUNT_LIMIT}
                   />
                 )}
               </Suspense>

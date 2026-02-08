@@ -4,6 +4,7 @@ export type DojoSolve = {
   id: number
   result: ResultDnfable
   scramble: string
+  reconstruction: string
   timestamp: number
 }
 

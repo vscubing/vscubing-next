@@ -17,9 +17,12 @@ import {
   useMutateSimulatorSettings,
 } from '@/frontend/shared/simulator/use-simulator-settings'
 import { formatSolveTime } from '@/lib/utils/format-solve-time'
+import Link from 'next/link'
 
-export const MOVECOUNT_LIMIT = 2000
-export type InitSolveData = { scramble: string; discipline: Discipline }
+export type InitSolveData = {
+  scramble: string
+  discipline: Discipline
+}
 
 export type SimulatorSolve = {
   result: ResultDnfable
@@ -31,14 +34,17 @@ type SimulatorProps = {
   initSolveData: InitSolveData
   onInspectionStart: () => void
   onSolveFinish: SimulatorSolveFinishCallback
-  /** When provided, displays this result instead of timer when in idle/ready state */
-  completedResult?: ResultDnfable | null
+  jumpStraightToPreinspection: boolean
+  dnfOnEscape: boolean
+  moveCountLimit: number
 }
 export default function Simulator({
   initSolveData,
   onInspectionStart,
   onSolveFinish,
-  completedResult,
+  dnfOnEscape,
+  moveCountLimit,
+  jumpStraightToPreinspection,
 }: SimulatorProps) {
   const { data: settingsWithoutDefaults, isLoading: settingsLoading } =
     useSimulatorSettings()
@@ -56,7 +62,7 @@ export default function Simulator({
   const containerRef = useRef<HTMLDivElement>(null)
   const isTouchDevice = useIsTouchDevice()
   const [status, setStatus] = useState<
-    'idle' | 'ready' | 'inspecting' | 'solving' | 'solved'
+    'idle' | 'ready' | 'inspecting' | 'solving' | 'solved' | 'dnf'
   >('idle')
   const [inspectionStartTimestamp, setInspectionStartTimestamp] =
     useState<number>()
@@ -70,11 +76,8 @@ export default function Simulator({
   const [heard12sAlert, setHeard12sAlert] = useState(false)
 
   useEffect(() => {
-    setStatus(initSolveData ? 'ready' : 'idle')
-  }, [initSolveData])
-
-  useEffect(() => {
-    if (status !== 'idle' && status !== 'ready') return
+    containerRef.current?.focus()
+    setStatus(jumpStraightToPreinspection ? 'inspecting' : 'ready')
 
     setSolveStartTimestamp(undefined)
     setInspectionStartTimestamp(undefined)
@@ -82,22 +85,46 @@ export default function Simulator({
     setSolution([])
     setHeard8sAlert(false)
     setHeard12sAlert(false)
-  }, [status])
+  }, [initSolveData, jumpStraightToPreinspection])
 
-  useEffect(() => {
-    if (status !== 'ready') return
-    containerRef.current?.focus()
+  useEventListener('keydown', (e) => {
+    if (status === 'ready') {
+      if (e.key === ' ') setStatus('inspecting')
+    }
+    if (status === 'inspecting' || status === 'solving') {
+      applyKeyboardMove(e)
+    }
+    if (status === 'inspecting' && e.code === 'Escape' && dnfOnEscape) {
+      onSolveFinish({ solution: '', result: { isDnf: true, timeMs: null } })
+      setStatus('dnf')
+    }
+  })
 
-    const abortSignal = new AbortController()
-    window.addEventListener(
-      'keydown',
-      (e) => {
-        if (e.key === ' ') setStatus('inspecting')
-      },
-      abortSignal,
-    )
-    return () => abortSignal.abort()
-  }, [status])
+  useEventListener('keydown', (e) => {
+    const prevScale = settingsWithoutDefaults?.puzzleScale
+    if (!prevScale) return
+
+    if (e.key === '+') {
+      const newScale = Math.min(
+        PUZZLE_SCALE.MAX,
+        Number((prevScale + PUZZLE_SCALE.STEP).toFixed(2)),
+      )
+      updateSettings({
+        puzzleScale: newScale,
+      })
+    }
+    if (e.key === '-') {
+      const newScale = Math.max(
+        PUZZLE_SCALE.MIN,
+        Number((prevScale - PUZZLE_SCALE.STEP).toFixed(2)),
+      )
+      updateSettings({ puzzleScale: newScale })
+    }
+    if (e.key === '=') {
+      updateSettings({ puzzleScale: PUZZLE_SCALE.DEFAULT })
+    }
+  })
+
   function touchStartHandler(): void {
     if (status === 'ready' && isTouchDevice) setStatus('inspecting')
   }
@@ -161,64 +188,32 @@ export default function Simulator({
     settings.inspectionVoiceAlert,
   ])
 
-  // IDK what this comment meant
-  // WARN: keep an eye on it, I removed useCallback here and added useEventCallback in useTwistySimulator instead, it might not work correctly
-  function unstableMoveHandler({ move, isRotation, isSolved }: SimulatorEvent) {
-    if (!solution) throw new Error('[SIMULATOR] moves undefined')
-    // NOTE: very important that this uses prevSolution from the argument and not from the state to avoid race conditions on double moves
-    setSolution((prevSolution) => [
-      ...prevSolution,
-      { move, timestamp: getCurrentTimestamp() },
-    ])
+  const moveHandler = useEventCallback(
+    ({ move, isRotation, isSolved }: SimulatorEvent) => {
+      if (!solution) throw new Error('[SIMULATOR] moves undefined')
+      // NOTE: very important that this uses prevSolution from the argument and not from the state to avoid race conditions on double moves
 
-    const solveJustStarted = status === 'inspecting' && !isRotation
+      const timestamp = getCurrentTimestamp()
+      setSolution((prevSolution) => [...prevSolution, { move, timestamp }])
 
-    if (solveJustStarted) setStatus('solving')
-    else if (status === 'solving' && isSolved) setStatus('solved')
+      if (status === 'inspecting') {
+        if (isRotation) return
+        else {
+          setStatus('solving')
+          return
+        }
+      }
 
-    // if (solveJustStarted) onMove(move, 'solve-start')
-    // else if (isSolved) onMove(move, 'solve-end')
-    // else onMove(move)
-  }
+      if (status === 'solving' && isSolved) {
+        setStatus('solved')
+        setCurrentTimestamp(timestamp)
+        handleLastMove(move, timestamp)
+      }
+    },
+  )
 
-  const moveHandler = useEventCallback(unstableMoveHandler)
-
-  if (solution.length > MOVECOUNT_LIMIT) {
-    toast({
-      title: 'Move count limit exceeded',
-      duration: 'infinite',
-      description: (
-        <p>
-          For reasons of storage space, solves are limited to {MOVECOUNT_LIMIT}{' '}
-          moves. Please practice at{' '}
-          <a
-            className='text-primary-60 hover:underline'
-            href='https://cstimer.net/'
-          >
-            csTimer.net
-          </a>{' '}
-          first if necessary.
-        </p>
-      ),
-    })
-    setStatus('idle')
-    setSolution([])
-    onSolveFinish({
-      result: { isDnf: true, timeMs: null, plusTwoIncluded: false },
-      solution: '',
-    })
-  }
-
-  useEffect(() => {
-    if (status !== 'solved') return
-
-    const lastMoveTimestamp = solution.at(-1)?.timestamp
-    if (
-      !lastMoveTimestamp ||
-      !currentTimestamp ||
-      !solveStartTimestamp ||
-      !inspectionStartTimestamp
-    )
+  function handleLastMove(lastMove: QuantumMove, lastMoveTimestamp: number) {
+    if (!currentTimestamp || !solveStartTimestamp || !inspectionStartTimestamp)
       throw new Error(
         `[SIMULATOR] invalid solved state. solution: ${JSON.stringify(solution)}, currentTimestamp: ${currentTimestamp}, solveStartTimestamp: ${solveStartTimestamp}, inspectionStartTimestamp: ${inspectionStartTimestamp}`,
       )
@@ -227,7 +222,10 @@ export default function Simulator({
     const rawSolveTimeMs = lastMoveTimestamp - solveStartTimestamp
     const plusTwoPenalty = totalInspectionMs > INSPECTION_PLUS_TWO_THRESHHOLD_MS
 
-    const solutionStr = solution
+    const solutionStr = [
+      ...solution,
+      { move: lastMove, timestamp: lastMoveTimestamp },
+    ]
       .map(
         ({ move, timestamp }) =>
           `${move.toString()} /*${Math.max(timestamp - solveStartTimestamp, 0)}*/`,
@@ -241,22 +239,38 @@ export default function Simulator({
       },
       solution: solutionStr,
     })
-    setStatus('idle')
-  }, [
-    status,
-    solution,
-    inspectionStartTimestamp,
-    solveStartTimestamp,
-    currentTimestamp,
-    onSolveFinish,
-  ])
+  }
 
-  const hasRevealedScramble = status !== 'idle' && status !== 'ready'
+  if (solution.length > moveCountLimit) {
+    toast({
+      title: 'Move count limit exceeded',
+      duration: 'infinite',
+      description: (
+        <p>
+          For reasons of storage space, solves in contests are limited to{' '}
+          {moveCountLimit} moves. Please practice in the{' '}
+          <Link href='/dojo' className='text-primary-60 hover:underline'>
+            Dojo
+          </Link>{' '}
+          first if necessary.
+        </p>
+      ),
+    })
+    setStatus('dnf')
+    setSolution([])
+    onSolveFinish({
+      result: { isDnf: true, timeMs: null, plusTwoIncluded: false },
+      solution: '',
+    })
+  }
 
-  useTwistySimulator({
+  const { applyKeyboardMove } = useTwistySimulator({
     containerRef,
     onMove: moveHandler,
-    scramble: hasRevealedScramble ? initSolveData.scramble : undefined,
+    scramble:
+      status === 'inspecting' || status === 'solving' || status === 'solved'
+        ? initSolveData.scramble
+        : undefined,
     touchCubeEnabled: isTouchDevice ?? false,
     discipline: initSolveData.discipline,
     settings,
@@ -271,31 +285,6 @@ export default function Simulator({
         })
       }
     },
-  })
-
-  useEventListener('keydown', (e) => {
-    const prevScale = settingsWithoutDefaults?.puzzleScale
-    if (!prevScale) return
-
-    if (e.key === '+') {
-      const newScale = Math.min(
-        PUZZLE_SCALE.MAX,
-        Number((prevScale + PUZZLE_SCALE.STEP).toFixed(2)),
-      )
-      updateSettings({
-        puzzleScale: newScale,
-      })
-    }
-    if (e.key === '-') {
-      const newScale = Math.max(
-        PUZZLE_SCALE.MIN,
-        Number((prevScale - PUZZLE_SCALE.STEP).toFixed(2)),
-      )
-      updateSettings({ puzzleScale: newScale })
-    }
-    if (e.key === '=') {
-      updateSettings({ puzzleScale: PUZZLE_SCALE.DEFAULT })
-    }
   })
 
   return (
@@ -314,15 +303,13 @@ export default function Simulator({
             'absolute right-4 top-1/2 -translate-y-1/2 text-7xl [font-family:"M_PLUS_1_Code",monospace] md:bottom-4 md:left-1/2 md:right-auto md:top-auto md:-translate-x-1/2 md:translate-y-0',
           )}
         >
-          {status === 'ready' && completedResult ? (
-            <CompletedResultDisplay result={completedResult} />
-          ) : (
-            getDisplay(
-              solveStartTimestamp,
-              inspectionStartTimestamp,
-              currentTimestamp,
-            )
-          )}
+          {status === 'dnf'
+            ? 'DNF'
+            : getDisplay(
+                solveStartTimestamp,
+                inspectionStartTimestamp,
+                currentTimestamp,
+              )}
         </span>
         {status === 'ready' && (
           <span className='absolute bottom-20 mx-2 flex min-h-20 items-center rounded-[.75rem] bg-black-100 px-10 py-2 text-center font-kanit text-[1.25rem] text-secondary-20 sm:px-4'>

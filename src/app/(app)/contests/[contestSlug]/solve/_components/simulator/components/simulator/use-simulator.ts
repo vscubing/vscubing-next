@@ -91,6 +91,9 @@ export function useTwistySimulator({
       setTimeout(() => pzl.resize())
       _puzzle = pzl
       setPuzzle(pzl)
+      if (scramble) {
+        pzl.applyMoves(pzl.parseScramble(scramble), undefined, true)
+      }
     })
   }, [
     settings.animationDuration,
@@ -99,26 +102,12 @@ export function useTwistySimulator({
     discipline,
     stableOnMove,
     touchCubeEnabled,
+    scramble,
   ])
 
-  useEffect(() => {
-    const abortSignal = new AbortController()
-
-    if (!puzzle) return
-
-    if (scramble) {
-      puzzle.applyMoves(puzzle.parseScramble(scramble), undefined, true)
-    }
-    window.addEventListener(
-      'keydown',
-      (e) => {
-        if (scramble) puzzle.keydown(e)
-      },
-      abortSignal,
-    )
-
-    return () => abortSignal.abort()
-  }, [scramble, puzzle])
+  const applyKeyboardMove = useEventCallback((e: KeyboardEvent) =>
+    puzzle?.keydown(e),
+  )
 
   useEffect(() => {
     if (puzzle)
@@ -138,6 +127,8 @@ export function useTwistySimulator({
   useEffect(() => {
     puzzle?.resize()
   }, [settings.puzzleScale, puzzle])
+
+  return { applyKeyboardMove }
 }
 
 const DISCIPLINE_DIMENSION_MAP = {

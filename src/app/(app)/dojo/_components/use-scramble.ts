@@ -1,34 +1,34 @@
-import { useState, useCallback, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import type { Discipline } from '@/types'
 
-export function useScramble(discipline: Discipline) {
+export function useScramble(discipline: Discipline, easyMode: boolean) {
   const [scramble, setScramble] = useState<string | null>(null)
-  const nextScrambleRef = useRef<Promise<string> | null>(null)
+  const [nextScramble, setNextScramble] = useState<string | null>(null)
 
-  const preGenerateNext = useCallback(() => {
-    nextScrambleRef.current = generateScramble(discipline)
-  }, [discipline])
-
-  const generateNewScramble = useCallback(async () => {
-    if (nextScrambleRef.current) {
-      const nextScramble = await nextScrambleRef.current
-      setScramble(nextScramble)
-      preGenerateNext()
-    } else {
-      const scrambleStr = await generateScramble(discipline)
-      setScramble(scrambleStr)
-      preGenerateNext()
-    }
-  }, [discipline, preGenerateNext])
+  async function moveToNextScramble() {
+    setScramble(nextScramble)
+    setNextScramble(await generateScramble(discipline, easyMode))
+  }
 
   useEffect(() => {
-    void generateNewScramble()
-  }, [generateNewScramble])
+    void fn()
+    async function fn() {
+      setScramble(await generateScramble(discipline, easyMode))
+      setNextScramble(await generateScramble(discipline, easyMode))
+    }
+  }, [discipline, easyMode])
 
-  return { scramble, generateNewScramble }
+  return { scramble, nextScramble, moveToNextScramble }
 }
 
-async function generateScramble(discipline: Discipline): Promise<string> {
+async function generateScramble(
+  discipline: Discipline,
+  easyMode: boolean,
+): Promise<string> {
+  if (easyMode) {
+    return generateEasyScramble()
+  }
+
   switch (discipline) {
     case '3by3': {
       const { scramble_333 } = await import('vendor/cstimer/scramble/3x3x3')
@@ -43,4 +43,23 @@ async function generateScramble(discipline: Discipline): Promise<string> {
       return scramble_444.getRandomScramble()
     }
   }
+}
+
+function generateEasyScramble(): string {
+  const moves = ['R', 'U', 'F', 'B', 'L', 'D']
+  const modifiers = ['', "'", '2']
+  const scrambleMoves: string[] = []
+  let lastMove = ''
+
+  for (let i = 0; i < 2; i++) {
+    let move: string
+    do {
+      move = moves[Math.floor(Math.random() * moves.length)]!
+    } while (move === lastMove)
+    lastMove = move
+    const modifier = modifiers[Math.floor(Math.random() * modifiers.length)]
+    scrambleMoves.push(move + modifier)
+  }
+
+  return scrambleMoves.join(' ')
 }

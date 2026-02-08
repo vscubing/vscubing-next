@@ -10,7 +10,7 @@ import { LoadingDots } from '@/frontend/ui/loading-dots'
 
 export default async function DashboardPage() {
   return (
-    <>
+    <div className='flex flex-1 flex-col gap-3 sm:gap-2'>
       <h1 className='flex min-h-28 flex-shrink-0 items-center px-4 font-kanit text-secondary-20 xl-short:min-h-0 xl-short:py-2 lg:min-h-12 sm:min-h-10 sm:p-0'>
         <span className='text-[clamp(1.75rem,2.5vw,2.25rem)] lg:hidden'>
           Are you ready to take your love for cubing{' '}
@@ -20,7 +20,7 @@ export default async function DashboardPage() {
       </h1>
       <OngoingContestBanner />
       <DashboardLists />
-    </>
+    </div>
   )
 }
 

@@ -8,12 +8,8 @@ export default function DojoPage() {
   return (
     <>
       <LayoutHeaderTitlePortal>Dojo</LayoutHeaderTitlePortal>
-      <div className='flex h-0 flex-1 flex-col gap-3'>
-        <ExperimentalBadge className='shrink-0' />
-        <div className='min-h-0 flex-1'>
-          <DojoSession discipline='3by3' />
-        </div>
-      </div>
+      <ExperimentalBadge className='mb-3 shrink-0 sm:mb-2' />
+      <DojoSession discipline='3by3' />
     </>
   )
 }

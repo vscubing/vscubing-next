@@ -24,9 +24,38 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/frontend/ui/popovers/alert-dialog'
+import Link from 'next/link'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogOverlay,
+  DialogPortal,
+  DialogTitle,
+  DialogTrigger,
+} from '@/frontend/ui'
+
+function buildReplayUrl(solve: DojoSolve, username?: string): string {
+  const params = new URLSearchParams({
+    discipline: '3by3',
+    scramble: solve.scramble,
+    solution: solve.reconstruction,
+    isDnf: String(solve.result.isDnf),
+    date: String(solve.timestamp),
+  })
+  if (solve.result.timeMs !== null) {
+    params.set('timeMs', String(solve.result.timeMs))
+  }
+  if (username) {
+    params.set('username', username)
+  }
+  return `/replay?${params.toString()}`
+}
 
 type DojoSidebarProps = {
   solves: DojoSolve[]
+  username?: string
   onDeleteSolve: (id: number) => void
   onClearSession: () => void
   className?: string
@@ -34,6 +63,7 @@ type DojoSidebarProps = {
 
 export function DojoSidebar({
   solves,
+  username,
   onDeleteSolve,
   onClearSession,
   className,
@@ -48,7 +78,7 @@ export function DojoSidebar({
   return (
     <aside
       className={cn(
-        'flex w-72 flex-col gap-3 overflow-hidden rounded-2xl bg-black-80 p-4',
+        'flex w-72 flex-col gap-3 rounded-2xl bg-black-80 px-4 pt-4',
         className,
       )}
     >
@@ -108,20 +138,21 @@ export function DojoSidebar({
             )}
           </div>
         </div>
-        <div className='flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto'>
-          {solves.length === 0 ? (
-            <p className='text-center text-sm text-grey-40'>No solves yet</p>
-          ) : (
-            solves.map((solve, index) => (
+        {solves.length === 0 ? (
+          <p className='text-center text-sm text-grey-40'>No solves yet</p>
+        ) : (
+          <div className='flex min-h-0 flex-1 flex-col gap-1 overflow-y-scroll'>
+            {solves.map((solve, index) => (
               <SolveRow
                 key={solve.id}
                 solve={solve}
                 index={solves.length - index}
+                username={username}
                 onDelete={() => onDeleteSolve(solve.id)}
               />
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </aside>
   )
@@ -157,10 +188,12 @@ function StatCell({
 function SolveRow({
   solve,
   index,
+  username,
   onDelete,
 }: {
   solve: DojoSolve
   index: number
+  username?: string
   onDelete: () => void
 }) {
   const timeDisplay = solve.result.isDnf
@@ -169,44 +202,56 @@ function SolveRow({
       : 'DNF'
     : formatSolveTime(solve.result.timeMs, true)
 
+  const replayUrl = solve.result.isDnf ? null : buildReplayUrl(solve, username)
+
   return (
     <div className='group flex items-center justify-between rounded-lg bg-black-100 px-3 py-2'>
       <span className='text-sm text-grey-40'>#{index}</span>
       <div className='flex items-center gap-2'>
-        <span
-          className={cn('text-sm font-medium', {
-            'text-grey-60': solve.result.isDnf,
-            'text-grey-20': !solve.result.isDnf,
-          })}
-        >
-          {timeDisplay}
-        </span>
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
+        {replayUrl ? (
+          <Link
+            href={replayUrl}
+            className='text-sm font-medium text-grey-20 hover:underline'
+          >
+            {timeDisplay}
+          </Link>
+        ) : (
+          <span className='text-sm font-medium text-grey-60'>
+            {timeDisplay}
+          </span>
+        )}
+        <Dialog>
+          <DialogTrigger asChild>
             <button
               className='hover:text-red-500 rounded p-0.5 text-grey-60 opacity-0 transition-all group-hover:opacity-100'
               title='Delete solve'
+              onClick={(e) => {
+                if (e.ctrlKey || e.metaKey) {
+                  onDelete()
+                  e.preventDefault()
+                }
+              }}
             >
               <Trash2Icon className='h-3.5 w-3.5' />
             </button>
-          </AlertDialogTrigger>
-          <AlertDialogPortal>
-            <AlertDialogOverlay />
-            <AlertDialogContent>
-              <AlertDialogTitle>Delete solve #{index}?</AlertDialogTitle>
+          </DialogTrigger>
+          <DialogPortal>
+            <DialogOverlay />
+            <DialogContent>
+              <DialogTitle>Delete solve #{index}?</DialogTitle>
               <p className='text-sm text-grey-40'>
                 Delete solve with time {timeDisplay}? This action cannot be
                 undone.
               </p>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={onDelete} autoFocus>
+              <DialogFooter>
+                <DialogClose version='secondary'>Cancel</DialogClose>
+                <DialogClose version='primary' onClick={onDelete} autoFocus>
                   Delete
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialogPortal>
-        </AlertDialog>
+                </DialogClose>
+              </DialogFooter>
+            </DialogContent>
+          </DialogPortal>
+        </Dialog>
       </div>
     </div>
   )

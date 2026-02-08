@@ -17,8 +17,8 @@
     "check": "bun format:check; bun lint:check; bun type:check; bun run test",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
     "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
-    "lint:check": "next lint",
-    "lint:write": "next lint --fix",
+    "lint:check": "eslint",
+    "lint:write": "eslint --fix",
     "type:check": "tsc --noEmit",
     "test": "bun test"
   },

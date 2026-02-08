@@ -6,20 +6,22 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from 'react'
-import { LoadingSpinner } from '@/frontend/ui'
+import { LoadingSpinner, SecondaryButton, SettingIcon } from '@/frontend/ui'
 import { useScramble } from './use-scramble'
 import { usePersistedSession } from './use-persisted-session'
 import { DojoSidebar } from './dojo-sidebar'
 import type { Discipline, ResultDnfable } from '@/types'
-import { useEventListener } from 'usehooks-ts'
+import { useEventCallback, useEventListener } from 'usehooks-ts'
 import {
   KeyMapDialogTrigger,
   KeyMapDialogContent,
 } from '@/frontend/shared/key-map-dialog'
 import { Dialog, DialogOverlay, DialogPortal } from '@/frontend/ui'
+import { useUser } from '@/frontend/shared/use-user'
+import { env } from '@/env'
+import Link from 'next/link'
 
 const Simulator = lazy(
   () =>
@@ -31,66 +33,49 @@ type DojoSessionProps = {
 }
 
 export function DojoSession({ discipline }: DojoSessionProps) {
-  const { scramble, generateNewScramble } = useScramble(discipline)
+  const [easyMode, setEasyMode] = useState(false)
+  const { scramble, nextScramble, moveToNextScramble } = useScramble(
+    discipline,
+    easyMode,
+  )
+  const [jumpStraightToPreinspection, setJumpStraightToPreinspection] =
+    useState(false)
+  const { user } = useUser()
 
   const { solves, isHydrated, addSolve, deleteSolve, clearSession } =
     usePersistedSession()
 
   const [status, setStatus] = useState<'idle' | 'solving' | 'result'>('idle')
-  const [lastResult, setLastResult] = useState<ResultDnfable | null>(null)
-  const currentScrambleRef = useRef<string | null>(null)
-
-  // Track if inspection has started (for DNF on escape)
-  const [inspectionStarted, setInspectionStarted] = useState(false)
-
-  const handleClearSession = useCallback(() => {
-    clearSession()
-    setLastResult(null)
-  }, [clearSession])
-
-  useEffect(() => {
-    if (scramble) {
-      currentScrambleRef.current = scramble
-    }
-  }, [scramble])
 
   const handleInspectionStart = useCallback(() => {
-    setInspectionStarted(true)
     setStatus('solving')
-    setLastResult(null)
   }, [])
 
-  const handleSolveFinish = useCallback(
+  const handleSolveFinish = useEventCallback(
     (solve: { result: ResultDnfable; solution: string }) => {
       addSolve({
         result: solve.result,
-        scramble: currentScrambleRef.current ?? '',
+        scramble: scramble ?? '',
+        reconstruction: solve.solution,
         timestamp: Date.now(),
       })
 
-      setLastResult(solve.result)
       setStatus('result')
-      setInspectionStarted(false)
-
-      void generateNewScramble()
     },
-    [addSolve, generateNewScramble],
   )
 
-  const handleDnf = useCallback(() => {
-    if (!inspectionStarted) return
-
-    handleSolveFinish({
-      result: { isDnf: true, timeMs: null, plusTwoIncluded: false },
-      solution: '',
-    })
-  }, [inspectionStarted, handleSolveFinish])
-
   useEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && status === 'solving') {
-      handleDnf()
+    if (e.code === 'Space' && status === 'result') {
+      void moveToNextScramble()
+      setJumpStraightToPreinspection(true)
+      setStatus('solving')
     }
   })
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setJumpStraightToPreinspection(false)
+  }, [discipline, easyMode])
 
   const initSolveData = useMemo(
     () => (scramble ? { scramble, discipline } : null),
@@ -106,13 +91,26 @@ export function DojoSession({ discipline }: DojoSessionProps) {
   }
 
   return (
-    <div className='flex h-full gap-3 overflow-hidden'>
+    <div className='flex min-h-0 flex-1 gap-3'>
       <div className='flex min-h-0 flex-1 flex-col gap-3'>
         {/* Scramble display */}
         <div className='shrink-0 rounded-2xl bg-black-80 p-4'>
-          <h3 className='text-sm font-medium text-grey-40'>Scramble</h3>
+          <div className='flex items-center justify-between'>
+            <h3 className='text-sm font-medium text-grey-40'>Scramble</h3>
+            {env.NEXT_PUBLIC_APP_ENV !== 'production' && (
+              <label className='flex items-center gap-2 text-sm text-grey-40'>
+                <input
+                  type='checkbox'
+                  checked={easyMode}
+                  onChange={(e) => setEasyMode(e.target.checked)}
+                  className='h-4 w-4'
+                />
+                Easy mode
+              </label>
+            )}
+          </div>
           <p className='mt-2 break-all font-mono text-lg text-grey-20'>
-            {scramble}
+            {status === 'result' ? nextScramble : scramble}
           </p>
         </div>
 
@@ -129,23 +127,26 @@ export function DojoSession({ discipline }: DojoSessionProps) {
               initSolveData={initSolveData}
               onSolveFinish={handleSolveFinish}
               onInspectionStart={handleInspectionStart}
-              completedResult={lastResult}
+              jumpStraightToPreinspection={jumpStraightToPreinspection}
+              dnfOnEscape
+              moveCountLimit={Infinity}
             />
           </Suspense>
 
           {/* Key map dialog trigger */}
-          <div className='absolute left-4 top-4'>
+          <div className='absolute right-4 top-4 flex items-center gap-4 sm:right-2 sm:top-2 sm:flex-col-reverse sm:items-end sm:gap-0'>
             <Dialog>
-              <KeyMapDialogTrigger autoFocus={false} className='touch:hidden' />
+              <KeyMapDialogTrigger className='touch:hidden' />
               <DialogPortal>
-                <DialogOverlay className='bg-black-1000/25' withCubes={false} />
-                <KeyMapDialogContent
-                  onCloseAutoFocus={(e) => {
-                    e.preventDefault()
-                  }}
-                />
+                <DialogOverlay className='bg-black-1000/40' withCubes={false} />
+                <KeyMapDialogContent />
               </DialogPortal>
             </Dialog>
+            <SecondaryButton asChild className='h-11 w-11 p-0 sm:h-11'>
+              <Link href='/settings'>
+                <SettingIcon />
+              </Link>
+            </SecondaryButton>
           </div>
         </div>
       </div>
@@ -153,8 +154,9 @@ export function DojoSession({ discipline }: DojoSessionProps) {
       {/* Sidebar with stats and history */}
       <DojoSidebar
         solves={solves}
+        username={user?.name}
         onDeleteSolve={deleteSolve}
-        onClearSession={handleClearSession}
+        onClearSession={() => clearSession()}
         className='flex sm:hidden'
       />
     </div>
