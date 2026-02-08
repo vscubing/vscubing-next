@@ -315,7 +315,7 @@ export default function Simulator({
       >
         <div
           className={cn(
-            'absolute right-4 top-1/2 flex -translate-y-1/2 flex-col items-end text-7xl md:bottom-4 md:left-1/2 md:right-auto md:top-auto md:-translate-x-1/2 md:translate-y-0',
+            'absolute right-4 top-1/2 flex -translate-y-1/2 flex-col items-end gap-3 text-7xl md:bottom-4 md:left-1/2 md:right-auto md:top-auto md:-translate-x-1/2 md:translate-y-0 md:flex-row',
           )}
         >
           <span className='[font-family:"M_PLUS_1_Code",monospace]'>
@@ -375,7 +375,7 @@ function SolveMetadata({
   const turnCount =
     firstNonRotationIndex === -1 ? 0 : solution.length - firstNonRotationIndex
   return (
-    <div className='mt-3 flex flex-col items-end text-[.4em] text-grey-40'>
+    <div className='flex flex-col items-end text-[.4em] text-grey-40'>
       <span>{turnCount} turns</span>
       <span>
         {solveTime ? (turnCount / (solveTime / 1000)).toFixed(2) : 0} TPS
