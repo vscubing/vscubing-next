@@ -8,7 +8,11 @@ export function useSimulatorSettings(
 ) {
   const trpc = useTRPC()
   const settingsQuery = trpc.settings.simulatorSettings.queryOptions()
-  return useQuery({ ...settingsQuery, initialData })
+  return useQuery({
+    ...settingsQuery,
+    initialData,
+    retry: (_, error) => error.data?.code !== 'UNAUTHORIZED',
+  })
 }
 
 // NOTE: settings are updated locally immediately, but the mutation request to server is debounced
@@ -24,6 +28,8 @@ export function useMutateSimulatorSettings() {
   function handleMutation(newSettings: Partial<SimulatorSettings>) {
     void queryClient.cancelQueries(settingsQuery)
     const oldSettings = queryClient.getQueryData(settingsQuery.queryKey)
+    if (!oldSettings) return // not authorized
+
     queryClient.setQueryData(
       settingsQuery.queryKey,
       (old) => old && { ...old, ...newSettings },
