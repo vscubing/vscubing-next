@@ -42,7 +42,7 @@ export default function AppLayout({
         />
         <main
           id={SCROLL_CONTAINER_ID}
-          className='relative flex h-[calc(100svh-3.25rem)] flex-1 flex-col overflow-y-auto rounded-2xl lg:h-[calc(100svh-1.5rem)]'
+          className='scrollbar relative flex h-[calc(100svh-3.25rem)] flex-1 flex-col overflow-y-auto rounded-2xl lg:h-[calc(100svh-1.5rem)]'
         >
           {withoutHeader ? null : (
             <LayoutHeader
