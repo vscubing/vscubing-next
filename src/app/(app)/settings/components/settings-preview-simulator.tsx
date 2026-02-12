@@ -20,9 +20,19 @@ export function SettingsPreviewSimulator({
     scramble,
   })
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setScramble(''), [settings?.colorscheme])
 
   const [isDirty, setIsDirty] = useState(false)
+
+  function scrambleOrUnscramble() {
+    if (isDirty) {
+      setScramble(scramble === '' ? ' ' : '') // HACK: a little hack to trigger a scramble update (changing it form '' to '' wouldn't do anything)
+    } else {
+      setScramble(badRandomScramble())
+    }
+    setIsDirty(!isDirty)
+  }
 
   useEventListener(
     'dblclick',
@@ -38,15 +48,6 @@ export function SettingsPreviewSimulator({
     if (!isDirty && !isRotation(event)) setIsDirty(true)
     applyKeyboardMove(event)
   })
-
-  function scrambleOrUnscramble() {
-    if (isDirty) {
-      setScramble(scramble === '' ? ' ' : '') // HACK: a little hack to trigger a scramble update (changing it form '' to '' wouldn't do anything)
-    } else {
-      setScramble(badRandomScramble())
-    }
-    setIsDirty(!isDirty)
-  }
 
   if (!settings) {
     return (
