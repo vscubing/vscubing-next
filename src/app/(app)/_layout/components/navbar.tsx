@@ -17,7 +17,12 @@ import {
   CodeXmlIcon,
 } from '@/frontend/ui'
 import { DEFAULT_DISCIPLINE } from '@/types'
-import { FlaskConicalIcon, HandshakeIcon, RadioTowerIcon } from 'lucide-react'
+import {
+  FlaskConicalIcon,
+  GraduationCapIcon,
+  HandshakeIcon,
+  RadioTowerIcon,
+} from 'lucide-react'
 import { LIVE_STREAMS_ENABLED } from '@/lib/pusher/streams'
 import { HoverPopover } from '@/frontend/ui/popovers'
 
@@ -177,6 +182,7 @@ function parsePathname(
   if (pathname.startsWith('/leaderboard')) return '/leaderboard'
   if (pathname.startsWith('/cube-together')) return '/cube-together'
   if (pathname.startsWith('/live-streams')) return '/live-streams'
+  if (pathname.startsWith('/virtual-tutorial')) return '/virtual-tutorial'
 
   if (!ongoingContestSlug) return undefined
   if (pathname.startsWith('/contests')) {
@@ -199,6 +205,7 @@ type NavbarRoute =
   | '/dev'
   | '/live-streams'
   | '/cube-together'
+  | '/virtual-tutorial'
 
 function isStaticNavbarRoute(pathname: string): pathname is NavbarRoute {
   return (
@@ -208,6 +215,7 @@ function isStaticNavbarRoute(pathname: string): pathname is NavbarRoute {
       '/dev',
       '/live-streams',
       '/cube-together',
+      '/virtual-tutorial',
     ] satisfies NavbarRoute[] as string[]
   ).includes(pathname)
 }
@@ -270,6 +278,11 @@ function getExperimentalLinks(): NavbarLink[] {
       icon: <HandshakeIcon className='h-5 w-5' />,
       name: 'Cube together',
       route: '/cube-together',
+    },
+    {
+      icon: <GraduationCapIcon className='h-5 w-5' />,
+      name: 'Virtual tutorial',
+      route: '/virtual-tutorial',
     },
   ]
 
