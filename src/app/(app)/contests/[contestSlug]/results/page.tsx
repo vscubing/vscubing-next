@@ -54,7 +54,7 @@ export default function ContestResultsPage() {
   }
 
   return (
-    <>
+    <section className='flex flex-1 flex-col gap-3 sm:gap-2'>
       <LayoutPageTitleMobile>{title}</LayoutPageTitleMobile>
       <LayoutHeaderTitlePortal>{title}</LayoutHeaderTitlePortal>
       <NavigateBackButton />
@@ -125,7 +125,7 @@ export default function ContestResultsPage() {
           isOngoing={contest.isOngoing}
         />
       </Suspense>
-    </>
+    </section>
   )
 }
 

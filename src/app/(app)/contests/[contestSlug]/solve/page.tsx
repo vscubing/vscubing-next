@@ -52,7 +52,7 @@ export default async function SolveContestPage({
   const metadata = await api.contest.getContestMetaData({ contestSlug })
 
   return (
-    <>
+    <section className='flex flex-1 flex-col gap-3 sm:gap-2'>
       <PageTitle />
       <NavigateBackButton className='self-start' />
       <LayoutSectionHeader>
@@ -90,7 +90,7 @@ export default async function SolveContestPage({
       >
         <PageContent contestSlug={contestSlug} discipline={discipline} />
       </Suspense>
-    </>
+    </section>
   )
 }
 
