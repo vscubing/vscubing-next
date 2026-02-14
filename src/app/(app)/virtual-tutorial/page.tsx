@@ -185,64 +185,48 @@ export default function VirtualTutorialPage() {
   return (
     <>
       <LayoutHeaderTitlePortal>Virtual tutorial</LayoutHeaderTitlePortal>
-      <div className='flex flex-1 flex-col gap-3'>
-        <ExperimentalBadge />
-        <div className='flex flex-1 gap-3'>
-          <div className='relative flex flex-1 flex-col gap-4 rounded-2xl bg-black-80 p-4'>
-            <div className='absolute inset-4 flex items-center justify-center'>
-              <div
-                ref={simulatorRef}
-                className='aspect-square h-[60%] outline-none sm:h-auto sm:w-full sm:max-w-[34rem]'
-              />
-            </div>
+      <ExperimentalBadge className='mb-3 sm:mb-2' />
+      <div className='flex min-h-0 flex-1 gap-3'>
+        <div className='relative flex flex-1 flex-col gap-4 rounded-2xl bg-black-80 p-4'>
+          <div className='absolute inset-4 flex items-center justify-center'>
+            <div
+              ref={simulatorRef}
+              className='aspect-square h-[60%] outline-none sm:h-auto sm:w-full sm:max-w-[34rem]'
+            />
+          </div>
 
-            {isLevelComplete && (
-              <div className='absolute inset-4 flex items-center justify-center rounded-xl bg-black-100/80'>
-                <div className='flex flex-col items-center gap-2 text-center'>
-                  <p className='text-2xl font-semibold text-primary-80'>
-                    Level complete!
+          {isLevelComplete && (
+            <div className='absolute inset-4 flex items-center justify-center rounded-xl bg-black-100/80'>
+              <div className='flex flex-col items-center gap-2 text-center'>
+                <p className='text-2xl font-semibold text-primary-80'>
+                  Level complete!
+                </p>
+                {!isLastLevel(selectedLevel.id) ? (
+                  <p className='text-sm text-grey-40'>
+                    Press Enter to continue • Space to restart
                   </p>
-                  {!isLastLevel(selectedLevel.id) ? (
-                    <p className='text-sm text-grey-40'>
-                      Press Enter to continue • Space to restart
-                    </p>
-                  ) : (
-                    <p className='text-sm text-grey-40'>
-                      Press Space to restart
-                    </p>
-                  )}
-                </div>
+                ) : (
+                  <p className='text-sm text-grey-40'>Press Space to restart</p>
+                )}
               </div>
-            )}
+            </div>
+          )}
 
-            <div className='relative z-10 flex h-full flex-col'>
-              <div className='rounded-xl bg-black-100 p-4'>
-                <div className='relative flex w-full flex-wrap justify-center gap-1'>
-                  {expectedMoves.map((move, index) => {
-                    const isDone = index < progress.currentIndex
-                    const isErrorFlash = errorFlash?.index === index
-                    return (
-                      <div
-                        key={`${move}-${index}`}
-                        className='flex min-w-[2.25rem] flex-col items-center gap-0.5 font-mono'
-                      >
-                        {!hideKeyHints && (
-                          <span
-                            className={cn(
-                              'text-[0.65rem] transition-colors duration-300',
-                              {
-                                'text-white-100': isDone,
-                                'text-grey-60': !isDone,
-                                'text-red-100': isErrorFlash,
-                              },
-                            )}
-                          >
-                            {formatKeyLabelsForMove(move).join(' / ')}
-                          </span>
-                        )}
+          <div className='relative z-10 flex h-full flex-col'>
+            <div className='rounded-xl bg-black-100 p-4'>
+              <div className='relative flex w-full flex-wrap justify-center gap-1'>
+                {expectedMoves.map((move, index) => {
+                  const isDone = index < progress.currentIndex
+                  const isErrorFlash = errorFlash?.index === index
+                  return (
+                    <div
+                      key={`${move}-${index}`}
+                      className='flex min-w-[2.25rem] flex-col items-center gap-0.5 font-mono'
+                    >
+                      {!hideKeyHints && (
                         <span
                           className={cn(
-                            'text-base transition-colors duration-300',
+                            'text-[0.65rem] transition-colors duration-300',
                             {
                               'text-white-100': isDone,
                               'text-grey-60': !isDone,
@@ -250,121 +234,116 @@ export default function VirtualTutorialPage() {
                             },
                           )}
                         >
-                          {move}
+                          {formatKeyLabelsForMove(move).join(' / ')}
                         </span>
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-              <div className='flex-1' />
-              <p className='text-center text-sm text-grey-40'>
-                Escape to restart
-              </p>
-            </div>
-          </div>
-
-          <aside className='flex w-64 flex-col gap-3 rounded-2xl bg-black-80 p-3'>
-            <div className='bg-black-90/60 rounded-xl p-2.5'>
-              <div className='flex items-center justify-between gap-3'>
-                <p className='text-sm font-semibold text-white-100'>
-                  {selectedLevel.name}
-                </p>
-                <div className='flex items-center gap-2'>
-                  <SecondaryButton
-                    size='iconSm'
-                    className='h-10 w-10 sm:h-9 sm:w-9'
-                    onClick={() =>
-                      setHideKeyHintsValue(hideKeyHints ? 'false' : 'true')
-                    }
-                  >
-                    {hideKeyHints ? (
-                      <EyeIcon className='h-4 w-4' />
-                    ) : (
-                      <EyeOffIcon className='h-4 w-4' />
-                    )}
-                  </SecondaryButton>
-                  <SecondaryButton
-                    size='iconSm'
-                    className='h-10 w-10 sm:h-9 sm:w-9'
-                    onClick={handleRestart}
-                  >
-                    <RotateCwIcon className='h-4 w-4' />
-                  </SecondaryButton>
-                </div>
-              </div>
-              <div className='mt-2 flex flex-wrap gap-1.5 pb-2.5'>
-                {selectedLevel.moves.map((move) => (
-                  <span
-                    key={`header-${move}`}
-                    className={cn(
-                      'rounded-md px-2 py-1 font-mono text-[0.7rem]',
-                      selectedNewMoves.has(move)
-                        ? 'bg-primary-80/15 text-primary-80'
-                        : 'border-white-10 bg-white-10 border text-grey-40',
-                    )}
-                  >
-                    {move}
-                  </span>
-                ))}
-              </div>
-              <div className='h-px bg-grey-60/30' />
-            </div>
-            <div>
-              <p className='text-grey-50 text-xs font-semibold uppercase tracking-wide'>
-                Levels
-              </p>
-              <div className='mt-2 flex flex-col gap-2'>
-                {LEVELS_WITH_MOVES.map((level) => {
-                  const isSelected = level.id === selectedLevelId
-                  const isCompleted = completedSet.has(level.id)
-                  const newMoves = new Set(level.newMoves)
-                  return (
-                    <button
-                      key={level.id}
-                      onClick={() => handleSelectLevel(level)}
-                      className={cn(
-                        'rounded-xl border border-transparent p-2 text-left transition',
-                        {
-                          'bg-black-90/60 border-primary-80': isSelected,
-                          'hover:border-white-10 hover:bg-black-90/40':
-                            !isSelected,
-                        },
                       )}
-                    >
-                      <div className='flex items-center justify-between'>
-                        <span className='text-sm font-medium'>
-                          {level.name}
-                        </span>
-                        {isCompleted && (
-                          <span className='inline-flex items-center gap-1 text-xs text-primary-60'>
-                            <CheckIcon className='h-3 w-3' />
-                            Done
-                          </span>
+                      <span
+                        className={cn(
+                          'text-base transition-colors duration-300',
+                          {
+                            'text-white-100': isDone,
+                            'text-grey-60': !isDone,
+                            'text-red-100': isErrorFlash,
+                          },
                         )}
-                      </div>
-                      <div className='mt-1.5 flex flex-wrap gap-1.5 text-xs text-grey-40'>
-                        {level.moves.map((move) => (
-                          <span
-                            key={`${level.id}-${move}`}
-                            className={cn(
-                              'rounded border px-1.5 py-0.5 font-mono text-[0.7rem]',
-                              newMoves.has(move)
-                                ? 'border-primary-80/40 bg-primary-80/15 text-primary-80'
-                                : 'border-white-10 text-grey-40',
-                            )}
-                          >
-                            {move}
-                          </span>
-                        ))}
-                      </div>
-                    </button>
+                      >
+                        {move}
+                      </span>
+                    </div>
                   )
                 })}
               </div>
             </div>
-          </aside>
+            <div className='flex-1' />
+            <p className='text-center text-sm text-grey-40'>
+              Escape to restart
+            </p>
+          </div>
         </div>
+
+        <aside className='flex min-h-0 w-64 flex-col gap-3 rounded-2xl bg-black-80 p-3'>
+          <div className='bg-black-90/60 rounded-xl p-2.5'>
+            <div className='flex items-center justify-between gap-3'>
+              <p className='text-sm font-semibold text-white-100'>
+                {selectedLevel.name}
+              </p>
+              <div className='flex items-center gap-2'>
+                <SecondaryButton
+                  size='iconSm'
+                  className='h-10 w-10 sm:h-9 sm:w-9'
+                  onClick={() =>
+                    setHideKeyHintsValue(hideKeyHints ? 'false' : 'true')
+                  }
+                >
+                  {hideKeyHints ? (
+                    <EyeIcon className='h-4 w-4' />
+                  ) : (
+                    <EyeOffIcon className='h-4 w-4' />
+                  )}
+                </SecondaryButton>
+                <SecondaryButton
+                  size='iconSm'
+                  className='h-10 w-10 sm:h-9 sm:w-9'
+                  onClick={handleRestart}
+                >
+                  <RotateCwIcon className='h-4 w-4' />
+                </SecondaryButton>
+              </div>
+            </div>
+            <div className='mt-2 h-px bg-grey-60/30' />
+          </div>
+          <div className='flex min-h-0 flex-1 flex-col'>
+            <p className='text-grey-50 px-2 text-xs font-semibold uppercase tracking-wide'>
+              Levels
+            </p>
+            <div className='mt-2 flex flex-col gap-2 overflow-y-auto pr-1'>
+              {LEVELS_WITH_MOVES.map((level) => {
+                const isSelected = level.id === selectedLevelId
+                const isCompleted = completedSet.has(level.id)
+                const newMoves = new Set(level.newMoves)
+                return (
+                  <button
+                    key={level.id}
+                    onClick={() => handleSelectLevel(level)}
+                    className={cn(
+                      'rounded-xl border border-transparent p-2 text-left transition',
+                      {
+                        'bg-black-90/60 border-primary-80': isSelected,
+                        'hover:border-white-10 hover:bg-black-90/40':
+                          !isSelected,
+                      },
+                    )}
+                  >
+                    <div className='flex items-center justify-between'>
+                      <span className='text-sm font-medium'>{level.name}</span>
+                      {isCompleted && (
+                        <span className='inline-flex items-center gap-1 text-xs text-primary-60'>
+                          <CheckIcon className='h-3 w-3' />
+                          Done
+                        </span>
+                      )}
+                    </div>
+                    <div className='mt-1.5 flex flex-wrap gap-1.5 text-xs text-grey-40'>
+                      {level.moves.map((move) => (
+                        <span
+                          key={`${level.id}-${move}`}
+                          className={cn(
+                            'rounded border px-1.5 py-0.5 font-mono text-[0.7rem]',
+                            newMoves.has(move)
+                              ? 'border-primary-80/40 bg-primary-80/15 text-primary-80'
+                              : 'border-white-10 text-grey-40',
+                          )}
+                        >
+                          {move}
+                        </span>
+                      ))}
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        </aside>
       </div>
     </>
   )
