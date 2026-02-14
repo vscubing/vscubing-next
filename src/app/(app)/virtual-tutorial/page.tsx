@@ -127,6 +127,12 @@ export default function VirtualTutorialPage() {
       return
     }
 
+    if (event.key === ' ' && isLevelComplete) {
+      event.preventDefault()
+      handleRestart()
+      return
+    }
+
     if (event.key === 'Escape') {
       event.preventDefault()
       handleRestart()
@@ -182,33 +188,58 @@ export default function VirtualTutorialPage() {
       <div className='flex flex-1 flex-col gap-3'>
         <ExperimentalBadge />
         <div className='flex flex-1 gap-3'>
-          <div className='flex flex-1 flex-col gap-4 rounded-2xl bg-black-80 p-4'>
-            <div className='flex flex-col gap-4'>
-              <div className='flex flex-col gap-2'>
-                <div className='bg-black-90/60 relative mx-auto flex w-full max-w-[48rem] flex-wrap justify-center gap-1 rounded-2xl p-2'>
-                  <div className='pointer-events-none absolute inset-0 rounded-2xl bg-black-1000/40' />
+          <div className='relative flex flex-1 flex-col gap-4 rounded-2xl bg-black-80 p-4'>
+            <div className='absolute inset-4 flex items-center justify-center'>
+              <div
+                ref={simulatorRef}
+                className='aspect-square h-[60%] outline-none sm:h-auto sm:w-full sm:max-w-[34rem]'
+              />
+            </div>
+
+            {isLevelComplete && (
+              <div className='absolute inset-4 flex items-center justify-center rounded-xl bg-black-100/80'>
+                <div className='flex flex-col items-center gap-2 text-center'>
+                  <p className='text-2xl font-semibold text-primary-80'>
+                    Level complete!
+                  </p>
+                  {!isLastLevel(selectedLevel.id) ? (
+                    <p className='text-sm text-grey-40'>
+                      Press Enter to continue • Space to restart
+                    </p>
+                  ) : (
+                    <p className='text-sm text-grey-40'>
+                      Press Space to restart
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+
+            <div className='relative z-10 flex h-full flex-col'>
+              <div className='rounded-xl bg-black-100 p-4'>
+                <div className='relative flex w-full flex-wrap justify-center gap-1'>
                   {expectedMoves.map((move, index) => {
                     const isDone = index < progress.currentIndex
                     const isErrorFlash = errorFlash?.index === index
                     return (
                       <div
                         key={`${move}-${index}`}
-                        className='relative z-10 flex min-w-[2.25rem] flex-col items-center gap-0.5 font-mono'
+                        className='flex min-w-[2.25rem] flex-col items-center gap-0.5 font-mono'
                       >
-                        <span
-                          className={cn(
-                            'text-[0.65rem] transition-colors duration-300',
-                            {
-                              'text-white-100': isDone,
-                              'text-grey-60': !isDone,
-                              'text-red-100': isErrorFlash,
-                              'opacity-0': hideKeyHints,
-                            },
-                          )}
-                          aria-hidden={hideKeyHints}
-                        >
-                          {formatKeyLabelsForMove(move).join(' / ')}
-                        </span>
+                        {!hideKeyHints && (
+                          <span
+                            className={cn(
+                              'text-[0.65rem] transition-colors duration-300',
+                              {
+                                'text-white-100': isDone,
+                                'text-grey-60': !isDone,
+                                'text-red-100': isErrorFlash,
+                              },
+                            )}
+                          >
+                            {formatKeyLabelsForMove(move).join(' / ')}
+                          </span>
+                        )}
                         <span
                           className={cn(
                             'text-base transition-colors duration-300',
@@ -226,31 +257,10 @@ export default function VirtualTutorialPage() {
                   })}
                 </div>
               </div>
-
-              <div className='bg-black-90/40 relative mx-auto flex min-h-[30rem] w-full max-w-[56rem] flex-1 flex-col items-center justify-center rounded-2xl p-4'>
-                <div
-                  ref={simulatorRef}
-                  className='mx-auto aspect-square h-[30rem] w-full max-w-[48rem] outline-none sm:h-[34rem]'
-                />
-                {isLevelComplete && (
-                  <div className='absolute inset-0 flex items-center justify-center rounded-2xl bg-black-1000/60'>
-                    <div className='bg-black-90/80 flex flex-col items-center gap-3 rounded-2xl px-6 py-5 text-center'>
-                      <p className='text-lg font-semibold text-white-100'>
-                        Level complete
-                      </p>
-                      {!isLastLevel(selectedLevel.id) ? (
-                        <PrimaryButton onClick={handleContinue}>
-                          Next level
-                        </PrimaryButton>
-                      ) : (
-                        <p className='text-sm text-grey-40'>
-                          You finished all levels.
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
+              <div className='flex-1' />
+              <p className='text-center text-sm text-grey-40'>
+                Escape to restart
+              </p>
             </div>
           </div>
 
@@ -283,7 +293,7 @@ export default function VirtualTutorialPage() {
                   </SecondaryButton>
                 </div>
               </div>
-              <div className='mt-3 flex flex-wrap gap-1.5 pb-3'>
+              <div className='mt-2 flex flex-wrap gap-1.5 pb-2.5'>
                 {selectedLevel.moves.map((move) => (
                   <span
                     key={`header-${move}`}
@@ -298,7 +308,7 @@ export default function VirtualTutorialPage() {
                   </span>
                 ))}
               </div>
-              <div className='border-t border-grey-80' />
+              <div className='h-px bg-grey-60/30' />
             </div>
             <div>
               <p className='text-grey-50 text-xs font-semibold uppercase tracking-wide'>
