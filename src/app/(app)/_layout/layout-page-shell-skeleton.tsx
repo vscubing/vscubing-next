@@ -9,7 +9,7 @@ export function LayoutPageShellSkeleton({
   spinner?: boolean
 }) {
   return (
-    <>
+    <section className='flex flex-1 flex-col gap-3 sm:gap-2'>
       <LayoutPageTitleMobileFallback />
       <NavigateBackButton className='self-start' />
       <LayoutSectionHeader> </LayoutSectionHeader>
@@ -17,6 +17,6 @@ export function LayoutPageShellSkeleton({
       <div className='flex flex-1 items-center justify-center rounded-2xl bg-black-80'>
         {spinner && <LoadingSpinner size='lg' />}
       </div>
-    </>
+    </section>
   )
 }

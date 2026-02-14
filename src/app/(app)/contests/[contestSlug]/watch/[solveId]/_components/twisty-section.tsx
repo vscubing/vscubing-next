@@ -9,7 +9,10 @@ import {
   useTwistyPlayer,
 } from '@/frontend/shared/twisty'
 import { type ReactNode, useLayoutEffect, useRef } from 'react'
-import { type TwistyPlayer as Player } from '@vscubing/cubing/twisty'
+import {
+  type ExperimentalLeafIndex,
+  type TwistyPlayer as Player,
+} from '@vscubing/cubing/twisty'
 import { MinusIcon, PlusIcon } from '@/frontend/ui'
 import * as Accordion from '@radix-ui/react-accordion'
 import { cn } from '@/frontend/utils/cn'
@@ -47,7 +50,7 @@ function TwistySectionContent({
   scramble,
 }: {
   player: Player
-  startIndex: number
+  startIndex: ExperimentalLeafIndex
   scramble: string
 }) {
   const movesWrapperRef = useRef<HTMLDivElement | null>(null)

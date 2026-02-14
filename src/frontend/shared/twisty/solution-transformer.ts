@@ -2,6 +2,8 @@ import { type AlgNode, Move, Newline } from '@vscubing/cubing/alg'
 import { puzzles } from '@vscubing/cubing/puzzles'
 import {
   type AnimationTimelineLeaf,
+  type ExperimentalLeafIndex,
+  type ExperimentalMillisecondTimestamp,
   getSolveAnalyzer,
 } from '@vscubing/cubing/twisty'
 import { Alg, LineComment } from '@vscubing/cubing/alg'
@@ -18,7 +20,7 @@ export async function doEverything(
 ): Promise<{
   solution: Alg
   animLeaves?: AnimationTimelineLeaf[]
-  startIndex: number
+  startIndex: ExperimentalLeafIndex
 }> {
   const timestamps = parseTimestamps(solutionWithTimings)
 
@@ -29,7 +31,7 @@ export async function doEverything(
       (node) => !isRotation(node),
     ) - 1,
     0,
-  )
+  ) as ExperimentalLeafIndex
 
   const rawSignatures = await ANALYZER_MAP[discipline](scramble, solution)
   const signaturesWithDurations = embedDurations(rawSignatures, timestamps)
@@ -52,7 +54,10 @@ export async function doEverything(
   const animLeaves: AnimationTimelineLeaf[] = animatableNodes.map(
     (node, idx) => ({
       start: timestamps[idx]!,
-      end: Math.min(timestamps[idx]! + 120, timestamps[idx + 1] ?? Infinity),
+      end: Math.min(
+        timestamps[idx]! + 120,
+        timestamps[idx + 1] ?? Infinity,
+      ) as ExperimentalMillisecondTimestamp,
       animLeaf: node,
     }),
   )
@@ -101,7 +106,9 @@ function annotateMoves(
   return new Alg(res)
 }
 
-function parseTimestamps(solutionWithTimestamps: string): number[] | undefined {
+function parseTimestamps(
+  solutionWithTimestamps: string,
+): ExperimentalMillisecondTimestamp[] | undefined {
   const timestamps = solutionWithTimestamps
     .split('*')
     .filter((_, idx) => idx % 2 === 1)
@@ -109,12 +116,12 @@ function parseTimestamps(solutionWithTimestamps: string): number[] | undefined {
   if (timestamps.length === 0) return undefined
 
   const hasInspection = timestamps[0] === 0 && timestamps[1] === 0
-  if (!hasInspection) return timestamps
+  if (!hasInspection) return timestamps as ExperimentalMillisecondTimestamp[]
 
   let shift = 0
   return timestamps.map((timestamp, idx) => {
     if (timestamp === 0 && idx > 0) shift += 300
-    return timestamp + shift
+    return (timestamp + shift) as ExperimentalMillisecondTimestamp
   })
 }
 

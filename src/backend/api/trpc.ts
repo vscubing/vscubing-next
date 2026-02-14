@@ -145,7 +145,7 @@ export const protectedProcedure = t.procedure
   })
 
 export function isAdmin(user?: SessionUser) {
-  return user?.role === 'admin' || env.NEXT_PUBLIC_APP_ENV !== 'production'
+  return user?.role === 'admin' || env.NEXT_PUBLIC_APP_ENV === 'development'
 }
 export const adminProcedure = publicProcedure.use(async ({ next, ctx }) => {
   if (!isAdmin(ctx?.session?.user)) throw new TRPCError({ code: 'FORBIDDEN' })

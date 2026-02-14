@@ -28,14 +28,12 @@ import {
   KeyMapDialogContent,
 } from '@/frontend/shared/key-map-dialog'
 import { useEventListener } from 'usehooks-ts'
-import type { Move } from '@/types'
 const Simulator = lazy(() => import('./simulator/simulator.lazy'))
 
 export function SimulatorProvider({ children }: { children: React.ReactNode }) {
   const [solveState, setSolveState] = useState<{
     initSolveData: InitSolveData
     inspectionStartCallback?: () => void
-    moveCallback?: (move: Move, event?: 'solve-start' | 'solve-end') => void
     solveCallback: SimulatorSolveFinishCallback
     wasInspectionStarted: boolean
   } | null>(null)
@@ -45,7 +43,6 @@ export function SimulatorProvider({ children }: { children: React.ReactNode }) {
     (params: {
       initSolveData: InitSolveData
       inspectionStartCallback?: () => void
-      moveCallback?: (move: Move, event?: 'solve-start' | 'solve-end') => void
       solveCallback: SimulatorSolveFinishCallback
     }) => {
       setIsAbortPromptVisible(false)
@@ -191,7 +188,6 @@ type SimulatorContextValue = {
   initSolve: (params: {
     initSolveData: InitSolveData
     inspectionStartCallback?: () => void
-    moveCallback?: (move: Move, event?: 'solve-start' | 'solve-end') => void
     solveCallback: SimulatorSolveFinishCallback
   }) => void
 }

@@ -1,17 +1,18 @@
 import {
   TwistyAlgViewer as AlgViewer,
+  type ExperimentalLeafIndex,
   type TwistyPlayer as Player,
 } from '@vscubing/cubing/twisty'
 import { useRef, useEffect } from 'react'
 
 interface TwistyAlgViewerProps {
   twistyPlayer: Player
-  startIndex?: number
+  startIndex?: ExperimentalLeafIndex
   className?: string
 }
 export const TwistyAlgViewer = ({
   className,
-  startIndex = 0,
+  startIndex = 0 as ExperimentalLeafIndex,
   twistyPlayer,
 }: TwistyAlgViewerProps) => {
   const spanRef = useRef<HTMLSpanElement | null>(null)
