@@ -2,12 +2,13 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useEventListener } from 'usehooks-ts'
+import Link from 'next/link'
 import { LayoutHeaderTitlePortal } from '../_layout'
 import { ExperimentalBadge } from '@/frontend/shared/experimental-badge'
 import { useControllableSimulator } from '@/frontend/shared/simulator/use-controllable-simulator'
 import { cn } from '@/frontend/utils/cn'
 import { useLocalStorage } from '@/frontend/utils/use-local-storage'
-import { PrimaryButton, SecondaryButton } from '@/frontend/ui/buttons'
+import { SecondaryButton } from '@/frontend/ui/buttons'
 import { CheckIcon, EyeIcon, EyeOffIcon, RotateCwIcon } from 'lucide-react'
 import { keyToMove, type AlgLeaf, Move } from '@vscubing/cubing/alg'
 import { isMove } from '@/types'
@@ -76,6 +77,7 @@ export default function VirtualTutorialPage() {
   const expectedMoves = useMemo(() => invertScramble(scramble), [scramble])
   const isLevelComplete =
     expectedMoves.length > 0 && progress.currentIndex >= expectedMoves.length
+  const showIntroOverlay = progress.currentIndex === 0 && !isLevelComplete
 
   const { simulatorRef, applyMove } = useControllableSimulator({
     discipline: '3by3',
@@ -102,12 +104,6 @@ export default function VirtualTutorialPage() {
     completedLevels,
     setCompletedLevelsValue,
   ])
-
-  useEffect(() => {
-    if (!errorFlash) return
-    const timer = window.setTimeout(() => setErrorFlash(null), 300)
-    return () => window.clearTimeout(timer)
-  }, [errorFlash?.token])
 
   useEventListener('keydown', (event) => {
     if (event.repeat) return
@@ -149,14 +145,25 @@ export default function VirtualTutorialPage() {
     if (expectedMove === move) {
       applyMove(move)
       setProgress({ currentIndex: progress.currentIndex + 1 })
+      if (errorFlash?.index === progress.currentIndex) {
+        setErrorFlash(null)
+      }
       return
     }
 
-    setErrorFlash({ index: progress.currentIndex, token: Date.now() })
+    setErrorFlash({
+      index: progress.currentIndex,
+      token: Date.now(),
+      move,
+    })
   })
 
   function startLevel(level: LevelWithMoves) {
-    const nextScramble = generateScramble(level.moves, SCRAMBLE_LENGTH)
+    const nextScramble = generateScramble(
+      level.moves,
+      level.newMoves,
+      SCRAMBLE_LENGTH,
+    )
     setScramble(nextScramble)
     setProgress({ currentIndex: 0 })
     setErrorFlash(null)
@@ -196,54 +203,125 @@ export default function VirtualTutorialPage() {
           </div>
 
           {isLevelComplete && (
-            <div className='absolute inset-4 flex items-center justify-center rounded-xl bg-black-100/80'>
+            <div className='absolute inset-4 z-10 flex items-center justify-center rounded-xl bg-black-100/80'>
               <div className='flex flex-col items-center gap-2 text-center'>
-                <p className='text-2xl font-semibold text-primary-80'>
-                  Level complete!
-                </p>
-                {!isLastLevel(selectedLevel.id) ? (
-                  <p className='text-sm text-grey-40'>
-                    Press Enter to continue • Space to restart
-                  </p>
+                {isLastLevel(selectedLevel.id) ? (
+                  <>
+                    <p className='text-2xl font-semibold text-primary-80'>
+                      Congratulations!
+                    </p>
+                    <p className='text-sm text-grey-20'>
+                      You've mastered all the moves.
+                    </p>
+                    <Link
+                      href='/contests/ongoing'
+                      className='mt-2 rounded-lg bg-primary-80 px-4 py-2 text-sm font-medium text-black-100 transition hover:bg-primary-60'
+                    >
+                      Go to the ongoing contest
+                    </Link>
+                    <p className='text-xs text-grey-20'>
+                      or press Space to restart
+                    </p>
+                  </>
                 ) : (
-                  <p className='text-sm text-grey-40'>Press Space to restart</p>
+                  <>
+                    <p className='text-2xl font-semibold text-primary-80'>
+                      Level complete!
+                    </p>
+                    <p className='text-sm text-grey-20'>
+                      Press Enter to continue • Space to restart
+                    </p>
+                  </>
                 )}
               </div>
             </div>
           )}
 
-          <div className='relative z-10 flex h-full flex-col'>
+          {showIntroOverlay && (
+            <div className='absolute inset-4 z-10 flex items-center justify-center rounded-xl bg-black-100/80'>
+              <div className='flex max-w-[32rem] flex-col items-center gap-4 text-center'>
+                {selectedLevel.id === 'level-1' ? (
+                  <>
+                    <p className='text-2xl font-semibold text-primary-80'>
+                      Move trainer
+                    </p>
+                    <p className='text-sm text-grey-20'>
+                      Each key corresponds to a move on the cube. Try the moves
+                      below to start.
+                    </p>
+                  </>
+                ) : (
+                  <p className='text-lg font-semibold text-white-100'>
+                    New moves in this level
+                  </p>
+                )}
+                <div className='flex flex-wrap justify-center gap-x-6 gap-y-3'>
+                  {selectedLevel.newMoves.flatMap((move) => {
+                    const inverse = invertMove(move)
+                    return [move, inverse].map((m) => {
+                      const keys = getMoveKeyHints(m)
+                      return (
+                        <div
+                          key={`intro-${m}`}
+                          className='flex items-center gap-2'
+                        >
+                          <div className='flex gap-1'>
+                            {keys.map((key, i) => (
+                              <span
+                                key={i}
+                                className='flex h-8 w-8 items-center justify-center rounded-md border border-grey-60 bg-black-100 text-sm font-medium text-white-100 shadow-[0_2px_0_0_rgba(255,255,255,0.1)]'
+                              >
+                                {key}
+                              </span>
+                            ))}
+                          </div>
+                          <span className='text-grey-40'>→</span>
+                          <span className='font-mono text-lg font-semibold text-primary-80'>
+                            {m}
+                          </span>
+                        </div>
+                      )
+                    })
+                  })}
+                </div>
+                <p className='text-sm text-grey-20'>Perform a move to start</p>
+              </div>
+            </div>
+          )}
+
+          <div className='pointer-events-none relative z-10 flex h-full flex-col justify-between'>
             <div className='rounded-xl bg-black-100 p-4'>
               <div className='relative flex w-full flex-wrap justify-center gap-1'>
                 {expectedMoves.map((move, index) => {
                   const isDone = index < progress.currentIndex
-                  const isErrorFlash = errorFlash?.index === index
+                  const isErrorAtIndex = errorFlash?.index === index
+                  const showHint = !hideKeyHints || isErrorAtIndex
+                  const hintMoves = getMoveKeyHints(move)
                   return (
                     <div
                       key={`${move}-${index}`}
                       className='flex min-w-[2.25rem] flex-col items-center gap-0.5 font-mono'
                     >
-                      {!hideKeyHints && (
-                        <span
-                          className={cn(
-                            'text-[0.65rem] transition-colors duration-300',
-                            {
-                              'text-white-100': isDone,
-                              'text-grey-60': !isDone,
-                              'text-red-100': isErrorFlash,
-                            },
-                          )}
-                        >
-                          {formatKeyLabelsForMove(move).join(' / ')}
-                        </span>
-                      )}
+                      <span
+                        className={cn(
+                          'text-[0.65rem] transition-colors duration-300',
+                          showHint ? 'visible' : 'invisible',
+                          {
+                            'text-white-100': isDone,
+                            'text-grey-60': !isDone && !isErrorAtIndex,
+                            'text-red-100': isErrorAtIndex,
+                          },
+                        )}
+                      >
+                        {hintMoves.join(' / ')}
+                      </span>
                       <span
                         className={cn(
                           'text-base transition-colors duration-300',
                           {
                             'text-white-100': isDone,
                             'text-grey-60': !isDone,
-                            'text-red-100': isErrorFlash,
+                            'text-red-100': isErrorAtIndex,
                           },
                         )}
                       >
@@ -254,7 +332,6 @@ export default function VirtualTutorialPage() {
                 })}
               </div>
             </div>
-            <div className='flex-1' />
             <p className='text-center text-sm text-grey-40'>
               Escape to restart
             </p>
@@ -364,6 +441,7 @@ type ProgressState = {
 type ErrorFlash = {
   index: number
   token: number
+  move?: string
 }
 
 function parseStoredLevels(value: string | undefined) {
@@ -381,13 +459,36 @@ function parseStoredBool(value: string | undefined) {
   return value === 'true'
 }
 
-function generateScramble(moves: string[], length: number) {
+function generateScramble(moves: string[], newMoves: string[], length: number) {
   const suffixes = ['', "'"]
   const scramble: string[] = []
   let lastBase = ''
+  const normalizedNewMoves = newMoves.filter((move) => moves.includes(move))
+  const minNewCount = Math.min(
+    length,
+    Math.max(normalizedNewMoves.length, Math.floor(length * 0.35)),
+  )
+  const weightedPool = normalizedNewMoves.length
+    ? [...moves, ...normalizedNewMoves, ...normalizedNewMoves]
+    : moves
+
+  const prefill: string[] = []
+  while (prefill.length < minNewCount && normalizedNewMoves.length > 0) {
+    prefill.push(normalizedNewMoves[prefill.length % normalizedNewMoves.length])
+  }
+  shuffle(prefill)
 
   while (scramble.length < length) {
-    const baseMove = moves[Math.floor(Math.random() * moves.length)]
+    let baseMove: string
+    if (scramble.length < prefill.length) {
+      baseMove = prefill[scramble.length]!
+      // If prefill has a duplicate adjacent to lastBase, pick randomly instead
+      if (baseMove === lastBase && moves.length > 1) {
+        baseMove = weightedPool[Math.floor(Math.random() * weightedPool.length)]
+      }
+    } else {
+      baseMove = weightedPool[Math.floor(Math.random() * weightedPool.length)]
+    }
     if (baseMove === lastBase && moves.length > 1) continue
     const suffix = suffixes[Math.floor(Math.random() * suffixes.length)]
     scramble.push(`${baseMove}${suffix}`)
@@ -395,6 +496,13 @@ function generateScramble(moves: string[], length: number) {
   }
 
   return scramble.join(' ')
+}
+
+function shuffle(list: string[]) {
+  for (let i = list.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[list[i], list[j]] = [list[j], list[i]]
+  }
 }
 
 function invertScramble(scramble: string) {
@@ -423,6 +531,10 @@ function formatKeyLabelsForMove(move: string) {
   return keyLabels
 }
 
+function getMoveKeyHints(move: string) {
+  return formatKeyLabelsForMove(move)
+}
+
 const KEY_LABELS: Record<string, string> = {
   Digit1: '1',
   Digit2: '2',
@@ -433,7 +545,7 @@ const KEY_LABELS: Record<string, string> = {
   KeyI: 'I',
   KeyK: 'K',
   KeyW: 'W',
-  KeyO: 'O',
+  KeyO: 'o',
   KeyS: 'S',
   KeyL: 'L',
   KeyD: 'D',
