@@ -246,8 +246,7 @@ export default function VirtualTutorialPage() {
                       Move trainer
                     </p>
                     <p className='text-sm text-grey-20'>
-                      Each key corresponds to a move on the cube. Try the moves
-                      below to start.
+                      Each key corresponds to a move on the cube.
                     </p>
                   </>
                 ) : (
