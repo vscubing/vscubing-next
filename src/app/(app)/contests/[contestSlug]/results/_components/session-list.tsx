@@ -11,6 +11,8 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import { useCallback, useEffect } from 'react'
 import { OwnRoundSessionInProgressRow } from './own-round-session-in-progress-row'
 import { SignInBanner } from './sign-in-banner'
+import { PrimaryButton } from '@/frontend/ui'
+import { JoinRoundButton } from './join-round-button'
 
 export function SessionList({
   contestSlug,
@@ -101,6 +103,18 @@ export function SessionList({
         )}
       </ul>
       <SignInBanner isOngoing={isOngoing} />
+      <JoinRoundButton contestSlug={contestSlug} discipline={discipline}>
+        {(onClick) => (
+          <PrimaryButton
+            onClick={onClick}
+            size='sm'
+            className='sticky bottom-0 mt-1 h-15'
+            autoFocus
+          >
+            Join this round
+          </PrimaryButton>
+        )}
+      </JoinRoundButton>
     </div>
   )
 }
