@@ -108,7 +108,7 @@ export function SessionList({
           <PrimaryButton
             onClick={onClick}
             size='sm'
-            className='sticky bottom-0 mt-1 h-15'
+            className='sticky bottom-0 mt-1 hidden h-15 sm:block'
             autoFocus
           >
             Join this round
