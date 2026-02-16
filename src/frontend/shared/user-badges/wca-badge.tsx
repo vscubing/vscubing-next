@@ -14,6 +14,7 @@ export function WcaBadgeLink({ wcaId }: { wcaId: string }) {
         <WcaLogoIcon className='hidden text-xs touch:block' />
         <Link
           href={`https://worldcubeassociation.org/persons/${wcaId}`}
+          target='_blank'
           className='touch:hidden'
         >
           <WcaLogoIcon className='w-5' />
@@ -72,6 +73,7 @@ function WcaPopoverContent({ wcaId }: { wcaId: string }) {
           <Link
             href={`https://worldcubeassociation.org/persons/${wcaId}`}
             className='btn-sm text-secondary-20'
+            target='_blank'
           >
             <span>{wcaId}</span>
           </Link>
