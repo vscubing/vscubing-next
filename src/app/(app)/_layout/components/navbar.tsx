@@ -15,9 +15,11 @@ import {
   AllContestsIcon,
   OngoingContestIcon,
   CodeXmlIcon,
+  ExperimentsIcon,
+  CubeTogetherIcon,
+  LiveStreamsIcon,
 } from '@/frontend/ui'
 import { DEFAULT_DISCIPLINE } from '@/types'
-import { FlaskConicalIcon, HandshakeIcon, RadioTowerIcon } from 'lucide-react'
 import { LIVE_STREAMS_ENABLED } from '@/lib/pusher/streams'
 import { HoverPopover } from '@/frontend/ui/popovers'
 
@@ -124,7 +126,7 @@ export function Navbar({ variant }: NavbarProps) {
                 },
               )}
             >
-              <FlaskConicalIcon />
+              <ExperimentsIcon />
               <span className='lg:sr-only'>Experiments</span>
             </button>
           </HoverPopover>
@@ -267,7 +269,7 @@ function getNavbarLinks(
 function getExperimentalLinks(): NavbarLink[] {
   const links: NavbarLink[] = [
     {
-      icon: <HandshakeIcon className='h-5 w-5' />,
+      icon: <CubeTogetherIcon className='h-5 w-5' />,
       name: 'Cube together',
       route: '/cube-together',
     },
@@ -275,7 +277,7 @@ function getExperimentalLinks(): NavbarLink[] {
 
   if (LIVE_STREAMS_ENABLED) {
     links.push({
-      icon: <RadioTowerIcon className='h-5 w-5' />,
+      icon: <LiveStreamsIcon className='h-5 w-5' />,
       name: 'Live streams',
       route: '/live-streams',
     })
