@@ -161,7 +161,7 @@ const twistyjs = (function () {
       }
       touchCube.append(trs)
 
-      if (twistyType.allowDragging) {
+      if (twistyType.touchEnabled) {
         const css = document.createElement('style')
         css.innerHTML = touchGridStyles
         twistyContainer.append(css)

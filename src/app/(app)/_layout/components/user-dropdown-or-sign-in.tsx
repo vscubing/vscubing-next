@@ -220,6 +220,7 @@ function WcaSignIn({
         <Link
           href={`https://worldcubeassociation.org/persons/${wcaId}`}
           className='flex gap-2 text-secondary-20 underline'
+          target='_blank'
         >
           <WcaLogoIcon />
           <span className='btn-lg'>{wcaId}</span>

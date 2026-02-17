@@ -57,10 +57,7 @@ export default async function SolveContestPage({
       <NavigateBackButton className='self-start' />
       <LayoutSectionHeader>
         <div className='flex gap-3'>
-          <DisciplineSwitcher
-            disciplines={metadata.disciplines}
-            initialDiscipline={discipline}
-          />
+          <DisciplineSwitcher disciplines={metadata.disciplines} />
         </div>
         <div className='ml-10 mr-4 flex flex-1 items-center gap-4 sm:sr-only'>
           <ExclamationCircleIcon className='shrink-0' />

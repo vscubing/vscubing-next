@@ -43,6 +43,10 @@ import VscubingIcon from '@/../public/icons/vscubing.icon.svg'
 import WcaLogoIcon from '@/../public/icons/wca-logo.icon.svg'
 import TrophyIcon from '@/../public/icons/trophy.icon.svg'
 import CrownIcon from '@/../public/icons/crown.icon.svg'
+import ExperimentsIcon from '@/../public/icons/experiments.icon.svg'
+import CubeTogetherIcon from '@/../public/icons/cube-together.icon.svg'
+import VirtualTutorialIcon from '@/../public/icons/virtual-tutorial.icon.svg'
+import LiveStreamsIcon from '@/../public/icons/live-streams.icon.svg'
 
 export {
   AllContestsIcon,
@@ -83,6 +87,10 @@ export {
   WcaLogoIcon,
   TrophyIcon,
   CrownIcon,
+  ExperimentsIcon,
+  CubeTogetherIcon,
+  VirtualTutorialIcon,
+  LiveStreamsIcon,
 }
 export { CodeXmlIcon, SquareArrowOutUpRight } from 'lucide-react'
 

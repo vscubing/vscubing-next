@@ -22,7 +22,7 @@ type Colorscheme = Record<PuzzleFace, number>
 type Options = {
   dimension: 2 | 3 | 4
   animationDuration: number
-  allowDragging: boolean
+  touchEnabled: boolean
   colorscheme?: Colorscheme
 }
 export type CameraPosition = { theta: number; phi: number }

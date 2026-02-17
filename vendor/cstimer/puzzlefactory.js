@@ -114,6 +114,7 @@ export async function init(options, moveListener, parentNativeElem) {
     dimension: options.dimension,
     stickerWidth: 1.7,
     scale: 0.9,
+    touchEnabled: options.touchEnabled,
   }
 
   // } else if (puzzle == 'skb') {

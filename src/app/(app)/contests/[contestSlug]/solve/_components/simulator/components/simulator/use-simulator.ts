@@ -23,7 +23,6 @@ export function useTwistySimulator({
   scramble,
   discipline,
   settings,
-  touchCubeEnabled,
   setCameraPosition,
 }: {
   containerRef: RefObject<HTMLElement | null>
@@ -31,7 +30,6 @@ export function useTwistySimulator({
   scramble: string | undefined
   discipline: Discipline
   settings: SimulatorSettings
-  touchCubeEnabled: boolean
   setCameraPosition: (pos: SimulatorCameraPosition) => void
 }) {
   const stableOnMove = useEventCallback(onMove)
@@ -83,7 +81,7 @@ export function useTwistySimulator({
         dimension: DISCIPLINE_DIMENSION_MAP[discipline],
         animationDuration: settings.animationDuration,
         colorscheme: settings.colorscheme,
-        allowDragging: touchCubeEnabled,
+        touchEnabled: true,
       },
       moveListener,
       containerRef.current!,
@@ -98,7 +96,6 @@ export function useTwistySimulator({
     containerRef,
     discipline,
     stableOnMove,
-    touchCubeEnabled,
   ])
 
   useEffect(() => {

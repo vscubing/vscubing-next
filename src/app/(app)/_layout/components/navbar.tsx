@@ -15,14 +15,12 @@ import {
   AllContestsIcon,
   OngoingContestIcon,
   CodeXmlIcon,
+  ExperimentsIcon,
+  CubeTogetherIcon,
+  LiveStreamsIcon,
+  VirtualTutorialIcon,
 } from '@/frontend/ui'
 import { DEFAULT_DISCIPLINE } from '@/types'
-import {
-  FlaskConicalIcon,
-  GraduationCapIcon,
-  HandshakeIcon,
-  RadioTowerIcon,
-} from 'lucide-react'
 import { LIVE_STREAMS_ENABLED } from '@/lib/pusher/streams'
 import { HoverPopover } from '@/frontend/ui/popovers'
 
@@ -96,20 +94,20 @@ export function Navbar({ variant }: NavbarProps) {
         {hasExperiments && (
           <HoverPopover
             asChild
-            side='right'
+            side='bottom'
             hideArrow
+            contentClassName='border-black-80 bg-black-100 w-[15rem] shadow-[0px_4px_21.6px_0px_rgba(0,0,0,0.25)]'
             content={
-              <div className='flex flex-col gap-1 p-2'>
+              <div className='flex flex-col gap-2 p-4'>
                 {experimentalLinks.map(({ icon, name, route }) => (
                   <Link
                     key={route}
                     href={route as Route}
                     onClick={() => handleRouteChange(route)}
                     className={cn(
-                      'flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-grey-20 hover:bg-black-80 hover:text-primary-60',
+                      'title-h3 btn-sm flex items-center gap-2 rounded-lg px-3 py-2 text-grey-20 hover:bg-grey-100',
                       {
-                        'bg-black-80 text-primary-80 hover:text-primary-80':
-                          activeRoute === route,
+                        'bg-grey-100': activeRoute === route,
                       },
                     )}
                   >
@@ -129,7 +127,7 @@ export function Navbar({ variant }: NavbarProps) {
                 },
               )}
             >
-              <FlaskConicalIcon />
+              <ExperimentsIcon />
               <span className='lg:sr-only'>Experiments</span>
             </button>
           </HoverPopover>
@@ -140,7 +138,7 @@ export function Navbar({ variant }: NavbarProps) {
 
   if (variant === 'horizontal') {
     return (
-      <nav className='flex justify-between gap-2 overflow-y-auto px-1 py-2'>
+      <nav className='scrollbar flex justify-between gap-2 overflow-y-auto px-1 py-2'>
         {getNavbarLinks(ongoingContest, devToolsEnabled).map(
           ({ icon, name, route, href, disabled }) => (
             <Link
@@ -275,12 +273,12 @@ function getNavbarLinks(
 function getExperimentalLinks(): NavbarLink[] {
   const links: NavbarLink[] = [
     {
-      icon: <HandshakeIcon className='h-5 w-5' />,
+      icon: <CubeTogetherIcon />,
       name: 'Cube together',
       route: '/cube-together',
     },
     {
-      icon: <GraduationCapIcon className='h-5 w-5' />,
+      icon: <VirtualTutorialIcon />,
       name: 'Virtual tutorial',
       route: '/virtual-tutorial',
     },
@@ -288,7 +286,7 @@ function getExperimentalLinks(): NavbarLink[] {
 
   if (LIVE_STREAMS_ENABLED) {
     links.push({
-      icon: <RadioTowerIcon className='h-5 w-5' />,
+      icon: <LiveStreamsIcon />,
       name: 'Live streams',
       route: '/live-streams',
     })
