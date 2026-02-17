@@ -59,10 +59,7 @@ export default function ContestResultsPage() {
       <LayoutHeaderTitlePortal>{title}</LayoutHeaderTitlePortal>
       <NavigateBackButton />
       <LayoutSectionHeader className='sticky top-0 z-10 gap-4 sm:gap-2'>
-        <DisciplineSwitcher
-          disciplines={contest.disciplines}
-          initialDiscipline={discipline}
-        />
+        <DisciplineSwitcher disciplines={contest.disciplines} />
         <div>
           <div className='mb-3 flex items-center sm:mb-1'>
             <h2 className='title-h2 leading-none'>

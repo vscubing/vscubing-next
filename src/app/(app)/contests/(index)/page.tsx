@@ -39,10 +39,7 @@ export default async function ContestsIndexPage(props: {
       <LayoutPageTitleMobile>{title}</LayoutPageTitleMobile>
       <NavigateBackButton className='self-start' />
       <LayoutSectionHeader className='sticky top-0 z-10'>
-        <DisciplineSwitcher
-          disciplines={DISCIPLINES}
-          initialDiscipline={discipline}
-        />
+        <DisciplineSwitcher disciplines={DISCIPLINES} />
         <SpecialContestsManagementOverlay />
       </LayoutSectionHeader>
       <Suspense

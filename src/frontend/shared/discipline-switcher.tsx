@@ -1,25 +1,24 @@
 'use client'
 
-import { type Discipline } from '@/types'
+import { type Discipline, DISCIPLINES } from '@/types'
 import Link from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 import { DisciplineBadge } from '../ui'
 import { cn } from '../utils/cn'
 
 export function DisciplineSwitcher({
-  initialDiscipline,
   disciplines,
 }: {
-  initialDiscipline?: Discipline
   disciplines: Readonly<Discipline[]>
 }) {
-  const [currentDiscipline, setCurrentDiscipline] = useState<
-    Discipline | undefined
-  >(initialDiscipline)
-
   const pathname = usePathname()
   const searchParams = useSearchParams()
+
+  const rawDiscipline = searchParams.get('discipline')
+  const currentDiscipline = DISCIPLINES.includes(rawDiscipline as Discipline)
+    ? (rawDiscipline as Discipline)
+    : undefined
 
   const upsertSearchParam = useCallback(
     (name: string, value: string) => {
@@ -39,7 +38,6 @@ export function DisciplineSwitcher({
             pathname,
             query: upsertSearchParam('discipline', discipline),
           }}
-          onClick={() => setCurrentDiscipline(discipline)}
           key={discipline}
         >
           <DisciplineSwitcherItem
