@@ -135,7 +135,7 @@ export function Navbar({ variant }: NavbarProps) {
 
   if (variant === 'horizontal') {
     return (
-      <nav className='flex justify-between gap-2 overflow-y-auto px-1 py-2'>
+      <nav className='scrollbar flex justify-between gap-2 overflow-y-auto px-1 py-2'>
         {getNavbarLinks(ongoingContest, devToolsEnabled).map(
           ({ icon, name, route, href, disabled }) => (
             <Link
