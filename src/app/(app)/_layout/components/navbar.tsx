@@ -93,20 +93,20 @@ export function Navbar({ variant }: NavbarProps) {
         {hasExperiments && (
           <HoverPopover
             asChild
-            side='right'
+            side='bottom'
             hideArrow
+            contentClassName='border-black-80 bg-black-100 w-[15rem] shadow-[0px_4px_21.6px_0px_rgba(0,0,0,0.25)]'
             content={
-              <div className='flex flex-col gap-1 p-2'>
+              <div className='flex flex-col gap-2 p-4'>
                 {experimentalLinks.map(({ icon, name, route }) => (
                   <Link
                     key={route}
                     href={route as Route}
                     onClick={() => handleRouteChange(route)}
                     className={cn(
-                      'flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-grey-20 hover:bg-black-80 hover:text-primary-60',
+                      'title-h3 btn-sm flex items-center gap-2 rounded-lg px-3 py-2 text-grey-20 hover:bg-grey-100',
                       {
-                        'bg-black-80 text-primary-80 hover:text-primary-80':
-                          activeRoute === route,
+                        'bg-grey-100': activeRoute === route,
                       },
                     )}
                   >
@@ -269,7 +269,7 @@ function getNavbarLinks(
 function getExperimentalLinks(): NavbarLink[] {
   const links: NavbarLink[] = [
     {
-      icon: <CubeTogetherIcon className='h-5 w-5' />,
+      icon: <CubeTogetherIcon />,
       name: 'Cube together',
       route: '/cube-together',
     },
@@ -277,7 +277,7 @@ function getExperimentalLinks(): NavbarLink[] {
 
   if (LIVE_STREAMS_ENABLED) {
     links.push({
-      icon: <LiveStreamsIcon className='h-5 w-5' />,
+      icon: <LiveStreamsIcon />,
       name: 'Live streams',
       route: '/live-streams',
     })

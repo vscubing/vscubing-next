@@ -26,10 +26,16 @@ function PopoverContent({
       collisionPadding={12}
       className={cn(
         'relative z-20 max-w-[calc(100vw-12px*2)] whitespace-normal rounded-xl border border-grey-60 bg-black-100 animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
-        'data-[side=top]:after:absolute data-[side=top]:after:left-0 data-[side=top]:after:top-full data-[side=top]:after:h-5 data-[side=top]:after:w-full',
-        'data-[side=bottom]:after:absolute data-[side=bottom]:after:bottom-full data-[side=bottom]:after:left-0 data-[side=bottom]:after:h-5 data-[side=bottom]:after:w-full',
-        'data-[side=left]:after:absolute data-[side=left]:after:left-full data-[side=left]:after:top-0 data-[side=left]:after:h-full data-[side=left]:after:w-5',
-        'data-[side=right]:after:absolute data-[side=right]:after:right-full data-[side=right]:after:top-0 data-[side=right]:after:h-full data-[side=right]:after:w-5',
+        {
+          'data-[side=top]:after:absolute data-[side=top]:after:left-0 data-[side=top]:after:top-full data-[side=top]:after:h-5 data-[side=top]:after:w-full':
+            !hideArrow,
+          'data-[side=bottom]:after:absolute data-[side=bottom]:after:bottom-full data-[side=bottom]:after:left-0 data-[side=bottom]:after:h-5 data-[side=bottom]:after:w-full':
+            !hideArrow,
+          'data-[side=left]:after:absolute data-[side=left]:after:left-full data-[side=left]:after:top-0 data-[side=left]:after:h-full data-[side=left]:after:w-5':
+            !hideArrow,
+          'data-[side=right]:after:absolute data-[side=right]:after:right-full data-[side=right]:after:top-0 data-[side=right]:after:h-full data-[side=right]:after:w-5':
+            !hideArrow,
+        },
         className,
       )}
       ref={ref}
