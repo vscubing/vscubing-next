@@ -20,7 +20,6 @@ import ChevronLeftIcon from '@/../public/icons/chevron-left.icon.svg'
 import ChevronRightIcon from '@/../public/icons/chevron-right.icon.svg'
 import ChevronUpIcon from '@/../public/icons/chevron-up.icon.svg'
 import ChevronDownIcon from '@/../public/icons/chevron-down.icon.svg'
-import LinkedinIcon from '@/../public/icons/linkedin.icon.svg'
 import LogoutIcon from '@/../public/icons/logout.icon.svg'
 import MenuIcon from '@/../public/icons/menu.icon.svg'
 import OngoingContestIcon from '@/../public/icons/ongoing-contest.icon.svg'
@@ -64,7 +63,6 @@ export {
   ChevronLeftIcon,
   ChevronUpIcon,
   ChevronDownIcon,
-  LinkedinIcon,
   LogoutIcon,
   MenuIcon,
   OngoingContestIcon,

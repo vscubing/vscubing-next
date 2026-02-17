@@ -2,7 +2,6 @@ import {
   ChevronLeftIcon,
   DiscordIcon,
   GithubIcon,
-  LinkedinIcon,
   Logo,
   SecondaryButton,
 } from '@/frontend/ui'
@@ -54,10 +53,6 @@ export function Footer({ className }: { className: string }) {
                   {
                     href: 'https://github.com/vscubing',
                     children: <GithubIcon />,
-                  },
-                  {
-                    href: 'https://www.linkedin.com/company/vscubing',
-                    children: <LinkedinIcon />,
                   },
                   {
                     href: 'https://discord.gg/PxFrW9vTAy',
