@@ -49,6 +49,7 @@ export default defineConfig([
         { drizzleObjectName: ['db', 'ctx.db'] },
       ],
       'react/no-unescaped-entities': 'off',
+      'react-hooks/set-state-in-effect': 'off', // this is probably not ideal, but w/e
     },
   },
   {

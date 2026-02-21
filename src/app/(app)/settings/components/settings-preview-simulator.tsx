@@ -20,7 +20,6 @@ export function SettingsPreviewSimulator({
     scramble,
   })
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setScramble(''), [settings?.colorscheme])
 
   const [isDirty, setIsDirty] = useState(false)

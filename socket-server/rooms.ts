@@ -237,7 +237,7 @@ export class RoomManager {
       name: room.name,
       ownerId: room.ownerId,
       users: Array.from(room.users.values()).map(
-        ({ socketIds, ...rest }) => rest,
+        ({ socketIds: _socketIds, ...rest }) => rest,
       ),
       hasPassword: room.password !== null,
     }

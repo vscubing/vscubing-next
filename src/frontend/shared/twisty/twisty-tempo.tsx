@@ -17,6 +17,7 @@ export function TwistyTempo({
     const input = inputRef.current
     if (input) {
       handleSliderStylesOnChange(input, tempo.toString())
+      // eslint-disable-next-line react-hooks/immutability
       twistyPlayer.tempoScale = tempo
       // @ts-expect-error I know what I'm doing
       if (twistyPlayer.experimentalModel.__vscubingAnimationTimelineLeavesSet) {
