@@ -32,12 +32,10 @@ export default function AppLayout({
         <Sidebar className={SIDEBAR_WIDTH_CLASS} />
         <main
           id={SCROLL_CONTAINER_ID}
-          className='relative flex h-[calc(100svh-3.25rem)] flex-1 flex-col overflow-y-auto rounded-2xl lg:h-[calc(100svh-1.5rem)]'
+          className='scrollbar relative flex h-[calc(100svh-3.25rem)] flex-1 flex-col overflow-y-auto rounded-2xl lg:h-[calc(100svh-1.5rem)]'
         >
           {withoutHeader ? null : <LayoutHeader className='mb-3 sm:mb-2' />}
-          <section className='flex flex-grow flex-col gap-3 sm:gap-2'>
-            {children}
-          </section>
+          {children}
         </main>
         <BottomNavbar className='hidden sm:block' />
         <div className='pointer-events-none fixed inset-0 flex p-[1.625rem] lg:p-3 sm:px-0 sm:pb-16'>

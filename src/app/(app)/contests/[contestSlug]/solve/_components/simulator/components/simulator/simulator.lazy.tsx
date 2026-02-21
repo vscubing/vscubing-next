@@ -253,7 +253,6 @@ export default function Simulator({
     containerRef,
     onMove: moveHandler,
     scramble: hasRevealedScramble ? initSolveData.scramble : undefined,
-    touchCubeEnabled: isTouchDevice ?? false,
     discipline: initSolveData.discipline,
     settings,
     setCameraPosition: ({ phi, theta }) => {

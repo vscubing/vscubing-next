@@ -75,6 +75,7 @@ export function AnimationsController({ children }: { children: ReactNode }) {
 
   return (
     <AnimationContext.Provider
+      // eslint-disable-next-line react-hooks/refs
       value={{ canRun, onAnimationEnd, blocksRef: blocksRef.current }}
     >
       {children}

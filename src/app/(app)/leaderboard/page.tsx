@@ -47,16 +47,13 @@ export default async function LeaderboardPage({
     )
 
   return (
-    <>
+    <section className='flex flex-1 flex-col gap-3 sm:gap-2'>
       <Suspense fallback={<PageTitleFallback />}>
         <PageTitle type={type} />
       </Suspense>
       <NavigateBackButton />
       <LayoutSectionHeader className='sticky top-0 z-10 flex gap-10 md:gap-4'>
-        <DisciplineSwitcher
-          disciplines={DISCIPLINES}
-          initialDiscipline={discipline}
-        />
+        <DisciplineSwitcher disciplines={DISCIPLINES} />
 
         <div className='flex flex-1 items-center gap-4 md:hidden'>
           <ExclamationCircleIcon className='shrink-0' />
@@ -113,7 +110,7 @@ export default async function LeaderboardPage({
           <PageContentAverage discipline={discipline} />
         </Suspense>
       )}
-    </>
+    </section>
   )
 }
 

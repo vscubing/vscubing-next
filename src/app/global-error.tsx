@@ -17,18 +17,15 @@ export default function Error({
 }) {
   const isSmScreen = useMatchesScreen('sm')
 
-  if (env.NEXT_PUBLIC_APP_ENV === 'development') {
-    if (
-      error.message ===
-      'An error occurred in the Server Components render but no message was provided'
-    )
-      error.message =
-        'You probably forgot to start the database. To start a local database, run `bun run db:local` or `./start-database`'
-
-    if (error.message.includes('relation'))
-      error.message +=
-        '. You probably have unapplied migrations. To apply them, run `bun run db:migrate`'
-  }
+  const customMessage =
+    env.NEXT_PUBLIC_APP_ENV === 'development'
+      ? error.message ===
+        'An error occurred in the Server Components render but no message was provided'
+        ? '. You probably forgot to start the database. To start a local database, run `bun run db:local` or `./start-database`'
+        : error.message.includes('relation')
+          ? '. You probably have unapplied migrations. To apply them, run `bun run db:migrate`'
+          : null
+      : null
 
   return (
     <html>
@@ -43,7 +40,9 @@ export default function Error({
                   <br />
                   Technical glitch detected
                 </p>
-                <p className='mb-8 text-base'>{error.message}</p>
+                <p className='mb-8 text-base'>
+                  {error.message} {customMessage}
+                </p>
 
                 <div className='flex gap-2 sm:flex-col'>
                   <PrimaryButton

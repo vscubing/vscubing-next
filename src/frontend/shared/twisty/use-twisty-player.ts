@@ -1,5 +1,9 @@
 import { type Discipline } from '@/types'
-import { TwistyPlayer, type PuzzleID } from '@vscubing/cubing/twisty'
+import {
+  TwistyPlayer,
+  type ExperimentalLeafIndex,
+  type PuzzleID,
+} from '@vscubing/cubing/twisty'
 import { useState, useEffect } from 'react'
 import { doEverything } from './solution-transformer'
 
@@ -13,7 +17,9 @@ export function useTwistyPlayer({
   discipline: Discipline
 }) {
   const [player, setPlayer] = useState<TwistyPlayer | null>(null)
-  const [startIndex, setStartIndex] = useState(0)
+  const [startIndex, setStartIndex] = useState<ExperimentalLeafIndex>(
+    0 as ExperimentalLeafIndex,
+  )
 
   useEffect(() => {
     void (async () => {
@@ -44,7 +50,7 @@ export function useTwistyPlayer({
       setStartIndex(_startIndex)
       return () => {
         setPlayer(null)
-        setStartIndex(0)
+        setStartIndex(0 as ExperimentalLeafIndex)
       }
     })()
   }, [scramble, rawSolution, discipline])

@@ -25,11 +25,17 @@ function PopoverContent({
       onOpenAutoFocus={(event) => event.preventDefault()}
       collisionPadding={12}
       className={cn(
-        'relative z-20 max-w-[calc(100vw-12px*2)] whitespace-normal rounded-xl border border-grey-60 bg-black-100 animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
-        'data-[side=top]:after:absolute data-[side=top]:after:left-0 data-[side=top]:after:top-full data-[side=top]:after:h-5 data-[side=top]:after:w-full',
-        'data-[side=bottom]:after:absolute data-[side=bottom]:after:bottom-full data-[side=bottom]:after:left-0 data-[side=bottom]:after:h-5 data-[side=bottom]:after:w-full',
-        'data-[side=left]:after:absolute data-[side=left]:after:left-full data-[side=left]:after:top-0 data-[side=left]:after:h-full data-[side=left]:after:w-5',
-        'data-[side=right]:after:absolute data-[side=right]:after:right-full data-[side=right]:after:top-0 data-[side=right]:after:h-full data-[side=right]:after:w-5',
+        'relative z-20 max-w-[calc(100vw-12px*2)] whitespace-normal rounded-xl border border-black-80 bg-black-100 shadow-[0px_4px_21.6px_0px_rgba(0,0,0,0.25)] animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
+        {
+          'data-[side=top]:after:absolute data-[side=top]:after:left-0 data-[side=top]:after:top-full data-[side=top]:after:h-5 data-[side=top]:after:w-full':
+            !hideArrow,
+          'data-[side=bottom]:after:absolute data-[side=bottom]:after:bottom-full data-[side=bottom]:after:left-0 data-[side=bottom]:after:h-5 data-[side=bottom]:after:w-full':
+            !hideArrow,
+          'data-[side=left]:after:absolute data-[side=left]:after:left-full data-[side=left]:after:top-0 data-[side=left]:after:h-full data-[side=left]:after:w-5':
+            !hideArrow,
+          'data-[side=right]:after:absolute data-[side=right]:after:right-full data-[side=right]:after:top-0 data-[side=right]:after:h-full data-[side=right]:after:w-5':
+            !hideArrow,
+        },
         className,
       )}
       ref={ref}
@@ -61,7 +67,7 @@ function PopoverContent({
               <path
                 d='M11.8291 14.3809C11.2678 15.4537 9.73221 15.4537 9.1709 14.3809L-0.0830078 -3.30469C-0.605363 -4.30331 0.119106 -5.49985 1.24609 -5.5L19.7539 -5.5C20.8809 -5.49985 21.6054 -4.30331 21.083 -3.30469L11.8291 14.3809Z'
                 fill='#1B1E25'
-                stroke='#6B7980'
+                stroke='#282D30'
               />
             </g>
           </svg>

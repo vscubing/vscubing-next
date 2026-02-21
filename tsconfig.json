@@ -9,25 +9,28 @@
     "moduleDetection": "force",
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
-
     /* Strictness */
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "checkJs": true,
-
     /* Bundled projects */
     "lib": ["dom", "dom.iterable", "ES2022"],
     "noEmit": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "jsx": "preserve",
-    "plugins": [{ "name": "next" }],
+    "jsx": "react-jsx",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
     "incremental": true,
-
     /* Path Aliases */
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "vendor/*": ["./vendor/*"],
+      "tailwind.config": ["./tailwind.config"],
+      "socket-server/*": ["./socket-server/*"]
     }
   },
   "include": [
@@ -39,7 +42,8 @@
     "**/*.cjs",
     "**/*.js",
     ".next/types/**/*.ts",
-    "vendor/**/*.ts"
+    "vendor/**/*.ts",
+    ".next/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules", "vendor", ".next"]
+  "exclude": ["node_modules", "vendor/**/*.js", ".next"]
 }

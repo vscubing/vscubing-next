@@ -20,7 +20,6 @@ import ChevronLeftIcon from '@/../public/icons/chevron-left.icon.svg'
 import ChevronRightIcon from '@/../public/icons/chevron-right.icon.svg'
 import ChevronUpIcon from '@/../public/icons/chevron-up.icon.svg'
 import ChevronDownIcon from '@/../public/icons/chevron-down.icon.svg'
-import LinkedinIcon from '@/../public/icons/linkedin.icon.svg'
 import LogoutIcon from '@/../public/icons/logout.icon.svg'
 import MenuIcon from '@/../public/icons/menu.icon.svg'
 import OngoingContestIcon from '@/../public/icons/ongoing-contest.icon.svg'
@@ -43,6 +42,10 @@ import VscubingIcon from '@/../public/icons/vscubing.icon.svg'
 import WcaLogoIcon from '@/../public/icons/wca-logo.icon.svg'
 import TrophyIcon from '@/../public/icons/trophy.icon.svg'
 import CrownIcon from '@/../public/icons/crown.icon.svg'
+import ExperimentsIcon from '@/../public/icons/experiments.icon.svg'
+import CubeTogetherIcon from '@/../public/icons/cube-together.icon.svg'
+import VirtualTutorialIcon from '@/../public/icons/virtual-tutorial.icon.svg'
+import LiveStreamsIcon from '@/../public/icons/live-streams.icon.svg'
 
 export {
   AllContestsIcon,
@@ -60,7 +63,6 @@ export {
   ChevronLeftIcon,
   ChevronUpIcon,
   ChevronDownIcon,
-  LinkedinIcon,
   LogoutIcon,
   MenuIcon,
   OngoingContestIcon,
@@ -83,6 +85,10 @@ export {
   WcaLogoIcon,
   TrophyIcon,
   CrownIcon,
+  ExperimentsIcon,
+  CubeTogetherIcon,
+  VirtualTutorialIcon,
+  LiveStreamsIcon,
 }
 export { CodeXmlIcon, SquareArrowOutUpRight } from 'lucide-react'
 

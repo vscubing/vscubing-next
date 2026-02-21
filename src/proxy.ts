@@ -11,7 +11,7 @@ function isAuthCookieExempt(pathname: string): boolean {
   return false
 }
 
-export async function middleware(request: NextRequest): Promise<NextResponse> {
+export async function proxy(request: NextRequest): Promise<NextResponse> {
   if (isAuthCookieExempt(request.nextUrl.pathname)) return NextResponse.next()
 
   if (request.method === 'GET') {

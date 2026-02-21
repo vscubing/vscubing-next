@@ -8,7 +8,6 @@ import standWithUkraineImgSm from '@/../public/images/stand-with-ukraine-sm.svg'
 import {
   CloseIcon,
   GithubIcon,
-  LinkedinIcon,
   DiscordIcon,
   VscubingIcon,
   Logo,
@@ -79,11 +78,6 @@ function SocialLinks({ className }: { className?: string }) {
           href: 'https://github.com/vscubing',
           ariaLabel: 'Github',
           children: <GithubIcon />,
-        },
-        {
-          href: 'https://www.linkedin.com/company/vscubing',
-          ariaLabel: 'LinkedIn',
-          children: <LinkedinIcon />,
         },
         {
           href: 'https://discord.gg/PxFrW9vTAy',

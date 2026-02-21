@@ -1,17 +1,18 @@
-import { FlatCompat } from '@eslint/eslintrc'
+import { defineConfig, globalIgnores } from 'eslint/config'
 import tseslint from 'typescript-eslint'
 // @ts-ignore -- no types for this plugin
 import drizzle from 'eslint-plugin-drizzle'
+import nextVitals from 'eslint-config-next/core-web-vitals'
 
-const compat = new FlatCompat({
-  baseDirectory: import.meta.dirname,
-})
-
-export default tseslint.config(
-  {
-    ignores: ['.next'],
-  },
-  ...compat.extends('next/core-web-vitals'),
+export default defineConfig([
+  globalIgnores([
+    // Default ignores of eslint-config-next:
+    '.next/**',
+    'out/**',
+    'build/**',
+    'next-env.d.ts',
+  ]),
+  ...nextVitals,
   {
     files: ['**/*.ts', '**/*.tsx'],
     plugins: {
@@ -48,6 +49,7 @@ export default tseslint.config(
         { drizzleObjectName: ['db', 'ctx.db'] },
       ],
       'react/no-unescaped-entities': 'off',
+      'react-hooks/set-state-in-effect': 'off', // this is probably not ideal, but w/e
     },
   },
   {
@@ -60,4 +62,4 @@ export default tseslint.config(
       },
     },
   },
-)
+])

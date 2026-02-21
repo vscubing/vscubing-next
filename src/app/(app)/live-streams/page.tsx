@@ -133,6 +133,7 @@ function useSolveStream({
   onMove: (move: SolveStreamMove) => void
 }) {
   const stableMoveHandler = useEventCallback((move: SolveStreamMove) =>
+    // eslint-disable-next-line react-hooks/immutability
     moveHandler(move),
   )
   const bindings = useMemo(

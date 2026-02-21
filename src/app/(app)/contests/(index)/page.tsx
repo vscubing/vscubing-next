@@ -34,15 +34,12 @@ export default async function ContestsIndexPage(props: {
 
   const title = 'Explore contests'
   return (
-    <>
+    <section className='flex flex-1 flex-col gap-3 sm:gap-2'>
       <LayoutHeaderTitlePortal>{title}</LayoutHeaderTitlePortal>
       <LayoutPageTitleMobile>{title}</LayoutPageTitleMobile>
       <NavigateBackButton className='self-start' />
       <LayoutSectionHeader className='sticky top-0 z-10'>
-        <DisciplineSwitcher
-          disciplines={DISCIPLINES}
-          initialDiscipline={discipline}
-        />
+        <DisciplineSwitcher disciplines={DISCIPLINES} />
         <SpecialContestsManagementOverlay />
       </LayoutSectionHeader>
       <Suspense
@@ -60,7 +57,7 @@ export default async function ContestsIndexPage(props: {
       >
         <PageContent discipline={discipline} />
       </Suspense>
-    </>
+    </section>
   )
 }
 

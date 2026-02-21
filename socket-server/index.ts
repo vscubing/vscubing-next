@@ -24,6 +24,9 @@ import { trackEvent } from './posthog'
 // NOTE: bun --watch socket-server/index.ts
 // TODO: use env.js for env vars in socket-server
 
+/* eslint-disable @typescript-eslint/no-floating-promises */
+// because this was a PoC and I don't want to figure this out
+
 type SocketData = {
   user: AuthUser | null
   odol: string // unique ID for this connection
@@ -52,13 +55,6 @@ const io = new Server<
 })
 
 await roomManager.init()
-
-io.engine.on('connection_error', (err) => {
-  console.log(err.req) // the request object
-  console.log(err.code) // the error code, for example 1
-  console.log(err.message) // the error message, for example "Session ID unknown"
-  console.log(err.context) // some additional error context
-})
 
 io.on('connection', async (socket: TypedSocket) => {
   // Authenticate user

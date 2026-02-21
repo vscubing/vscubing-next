@@ -24,6 +24,15 @@ export function SettingsPreviewSimulator({
 
   const [isDirty, setIsDirty] = useState(false)
 
+  function scrambleOrUnscramble() {
+    if (isDirty) {
+      setScramble(scramble === '' ? ' ' : '') // HACK: a little hack to trigger a scramble update (changing it form '' to '' wouldn't do anything)
+    } else {
+      setScramble(badRandomScramble())
+    }
+    setIsDirty(!isDirty)
+  }
+
   useEventListener(
     'dblclick',
     scrambleOrUnscramble,
@@ -38,15 +47,6 @@ export function SettingsPreviewSimulator({
     if (!isDirty && !isRotation(event)) setIsDirty(true)
     applyKeyboardMove(event)
   })
-
-  function scrambleOrUnscramble() {
-    if (isDirty) {
-      setScramble(scramble === '' ? ' ' : '') // HACK: a little hack to trigger a scramble update (changing it form '' to '' wouldn't do anything)
-    } else {
-      setScramble(badRandomScramble())
-    }
-    setIsDirty(!isDirty)
-  }
 
   if (!settings) {
     return (

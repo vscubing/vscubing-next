@@ -54,15 +54,12 @@ export default function ContestResultsPage() {
   }
 
   return (
-    <>
+    <section className='flex flex-1 flex-col gap-3 sm:gap-2'>
       <LayoutPageTitleMobile>{title}</LayoutPageTitleMobile>
       <LayoutHeaderTitlePortal>{title}</LayoutHeaderTitlePortal>
       <NavigateBackButton />
       <LayoutSectionHeader className='sticky top-0 z-10 gap-4 sm:gap-2'>
-        <DisciplineSwitcher
-          disciplines={contest.disciplines}
-          initialDiscipline={discipline}
-        />
+        <DisciplineSwitcher disciplines={contest.disciplines} />
         <div>
           <div className='mb-3 flex items-center sm:mb-1'>
             <h2 className='title-h2 leading-none'>
@@ -125,7 +122,7 @@ export default function ContestResultsPage() {
           isOngoing={contest.isOngoing}
         />
       </Suspense>
-    </>
+    </section>
   )
 }
 
