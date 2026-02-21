@@ -79,7 +79,7 @@ export function useControllableSimulator({
       {
         dimension: DISCIPLINE_DIMENSION_MAP[discipline],
         animationDuration: memoizedSettings.animationDuration ?? 100,
-        allowDragging: isTouchDevice ?? false,
+        touchEnabled: isTouchDevice ?? false,
         colorscheme: memoizedSettings.colorscheme,
       },
       // eslint-disable-next-line @typescript-eslint/no-empty-function

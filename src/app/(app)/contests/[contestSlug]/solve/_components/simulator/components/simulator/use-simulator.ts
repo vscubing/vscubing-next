@@ -8,6 +8,7 @@ import { initTwistySimulator } from 'vendor/cstimer'
 import { type RefObject, useEffect, useState } from 'react'
 import { useEventCallback, useEventListener } from 'usehooks-ts'
 import { QuantumMove } from '@vscubing/cubing/alg'
+import { useIsTouchDevice } from '@/frontend/utils/use-media-query'
 
 export type SimulatorEvent = {
   move: QuantumMove
@@ -34,6 +35,7 @@ export function useTwistySimulator({
 }) {
   const stableOnMove = useEventCallback(onMove)
   const [puzzle, setPuzzle] = useState<TwistySimulatorPuzzle | undefined>()
+  const isTouchDevice = useIsTouchDevice()
 
   useEventListener('keydown', (e) => {
     switch (e.code) {
@@ -81,7 +83,7 @@ export function useTwistySimulator({
         dimension: DISCIPLINE_DIMENSION_MAP[discipline],
         animationDuration: settings.animationDuration,
         colorscheme: settings.colorscheme,
-        touchEnabled: true,
+        touchEnabled: isTouchDevice ?? false,
       },
       moveListener,
       containerRef.current!,
@@ -96,6 +98,7 @@ export function useTwistySimulator({
     containerRef,
     discipline,
     stableOnMove,
+    isTouchDevice,
   ])
 
   useEffect(() => {
