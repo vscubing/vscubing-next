@@ -81,13 +81,12 @@
     "tailwindcss-animate": "^1.0.7",
     "usehooks-ts": "^3.0.1",
     "uuid": "^11.1.0",
-    "vaul": "^0.9.9",
+    "vaul": "^1.1.2",
     "ws": "^8.18.1",
     "zod": "^3.24.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
-    "@tailwindcss/postcss": "^4.0.15",
     "@tanstack/react-query-devtools": "^5.91.3",
     "@types/bun": "^1.2.10",
     "@types/cheerio": "^0.22.35",
@@ -104,7 +103,7 @@
     "postcss": "^8.5.3",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
-    "tailwindcss": "3",
+    "tailwindcss": "^3.4.18",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.27.0"
   },
