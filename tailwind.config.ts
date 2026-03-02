@@ -4,13 +4,14 @@ import animationPlugin from 'tailwindcss-animate'
 
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  corePlugins: {
+    container: false,
+  },
   theme: {
     screens: {
-      'xl-short': { raw: '(min-width: 1365px) and (max-height: 850px)' },
       lg: { max: '1365px' },
       md: { max: '1023px' },
       sm: { max: '767px' },
-      touch: { raw: '(pointer:coarse)' },
     },
     colors: {
       current: 'currentColor',
@@ -212,5 +213,12 @@ export default {
       },
     },
   },
-  plugins: [containerQueriesPlugin, animationPlugin],
+  plugins: [
+    containerQueriesPlugin,
+    animationPlugin,
+    ({ addVariant }) => {
+      addVariant('xl-short', '@media (min-width: 1365px) and (max-height: 850px)')
+      addVariant('touch', '@media (pointer:coarse)')
+    },
+  ],
 } satisfies Config

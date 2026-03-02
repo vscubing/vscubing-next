@@ -1,11 +1,10 @@
 'use client'
 
-import resolveConfig from 'tailwindcss/resolveConfig'
 import rawConfig from '../../../tailwind.config'
 import useMediaQuery from './use-media-query'
 
 const rawTailwindConfig = rawConfig
-export const tailwindConfig = resolveConfig(rawConfig)
+export const tailwindConfig = rawConfig
 
 export function tw(className: string) {
   // NOTE: a wrapper used to trigger Tailwind LSP completion

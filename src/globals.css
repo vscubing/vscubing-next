@@ -1,6 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@config '../tailwind.config.ts';
 
 @layer base {
   html {
@@ -12,7 +12,7 @@
 
     --header-height: 4.375rem;
     --layout-section-header-height: 5.75rem;
-    @screen sm {
+    @media (max-width: 767px) {
       --header-height: 3.5rem;
       --layout-section-header-height: 4.25rem;
     }
