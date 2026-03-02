@@ -17,7 +17,7 @@ import type { RouterOutputs } from '@/lib/trpc/react'
 import * as Accordion from '@radix-ui/react-accordion'
 import Link from 'next/link'
 import { type ReactNode } from 'react'
-import tailwindConfig from 'tailwind.config'
+import { themeColors } from '@/frontend/utils/theme'
 import { UserBadges } from '@/frontend/shared/user-badges'
 
 // HACK: we can't just use useMatchesScreen for switching between Desktop and Tablet because then it won't be SSRed properly
@@ -72,7 +72,7 @@ function SingleResultDesktop({
   return (
     <div className={className}>
       <SpinningBorder
-        color={tailwindConfig.theme.colors.secondary[60]}
+        color={themeColors.secondary[60]}
         enabled={isOwn}
         className='rounded-xl'
       >
@@ -136,7 +136,7 @@ function SingleResultTablet({
         <div className={className}>
           <SpinningBorder
             enabled={isOwn}
-            color={tailwindConfig.theme.colors.secondary[60]}
+            color={themeColors.secondary[60]}
             className='rounded-xl'
           >
             <div

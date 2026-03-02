@@ -12,7 +12,7 @@ import { NavigateBackButton } from '@/frontend/shared/navigate-back-button'
 import Link from 'next/link'
 import { ShareSolveButton } from './_components/share-button'
 import { SpinningBorder } from '@/frontend/ui/spinning-border'
-import tailwindConfig from 'tailwind.config'
+import { themeColors } from '@/frontend/utils/theme'
 import { cn } from '@/frontend/utils/cn'
 import { Alg } from '@vscubing/cubing/alg'
 import { isRotation } from '@/lib/utils/is-rotation'
@@ -126,7 +126,7 @@ function PageShell({
           </div>
         </LayoutSectionHeader>
         <SpinningBorder
-          color={tailwindConfig.theme.colors.secondary[60]}
+          color={themeColors.secondary[60]}
           enabled={isOwn ?? false}
           className='rounded-2xl'
         >

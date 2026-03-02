@@ -1,61 +1,8 @@
 import { type Config } from 'tailwindcss'
-import containerQueriesPlugin from '@tailwindcss/container-queries'
-import animationPlugin from 'tailwindcss-animate'
 
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
-    screens: {
-      'xl-short': { raw: '(min-width: 1365px) and (max-height: 850px)' },
-      lg: { max: '1365px' },
-      md: { max: '1023px' },
-      sm: { max: '767px' },
-      touch: { raw: '(pointer:coarse)' },
-    },
-    colors: {
-      current: 'currentColor',
-      transparent: 'transparent',
-      primary: {
-        60: '#81FC05',
-        80: '#70DF00',
-        100: '#60BD02',
-      },
-      secondary: {
-        20: '#8F8FFE',
-        40: '#7272CB',
-        60: '#565698',
-        80: '#393966',
-      },
-      black: {
-        80: '#282D30',
-        100: '#1B1E25',
-        120: '#060709',
-        1000: '#000000',
-      },
-      grey: {
-        20: '#DBE0E2',
-        40: '#9EACB3',
-        60: '#6B7980',
-        80: '#505B60',
-        100: '#363C40',
-      },
-      yellow: {
-        80: '#BDC03D',
-        100: '#DBDF00',
-      },
-      red: {
-        80: '#D65961',
-        100: '#BB434A',
-      },
-      white: {
-        100: '#F9F9F9',
-      },
-      podium: {
-        gold: '#F7D570',
-        silver: '#DBDFE6',
-        bronze: '#F49E71',
-      },
-    },
     extend: {
       keyframes: {
         'accordion-down': {
@@ -192,25 +139,7 @@ export default {
           'landing-features-sharing-img linear 1s forwards 3.3s',
         'landing-footer-cubes': 'landing-footer-cubes linear 10s infinite',
       },
-      spacing: {
-        15: '3.75rem',
-      },
-      fontFamily: { kanit: 'Kanit, sans-serif', hind: 'Hind, sans-serif' },
-      transitionDelay: {
-        default: '300ms',
-      },
-      backgroundImage: {
-        'dashboard-banner-cubes': "url('/images/dashboard-banner-cubes.svg')",
-        'dashboard-banner-cubes-wide':
-          "url('/images/dashboard-banner-cubes-wide.svg')",
-        cubes: "url('/images/bg-cubes.svg')",
-        'solve-contest-progress-divider':
-          "url('/images/solve-contest-progress-divider.svg')",
-      },
-      containers: {
-        '8xl': '88rem',
-      },
     },
   },
-  plugins: [containerQueriesPlugin, animationPlugin],
+  plugins: [],
 } satisfies Config

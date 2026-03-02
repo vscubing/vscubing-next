@@ -3,7 +3,7 @@ import { DisciplineIcon, SecondaryButton } from '@/frontend/ui'
 import { formatContestDuration } from '@/lib/utils/format-date'
 import Link from 'next/link'
 import { cn } from '@/frontend/utils/cn'
-import tailwindConfig from 'tailwind.config'
+import { themeColors } from '@/frontend/utils/theme'
 import { SpinningBorder } from '@/frontend/ui/spinning-border'
 
 export {
@@ -25,7 +25,7 @@ export function ContestRowDesktop({
 }: ContestProps) {
   return (
     <SpinningBorder
-      color={tailwindConfig.theme.colors.secondary[60]}
+      color={themeColors.secondary[60]}
       enabled={contest.isOngoing}
       className='rounded-xl'
     >

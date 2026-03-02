@@ -1,4 +1,4 @@
-import { tailwindConfig } from '@/frontend/utils/tailwind'
+import { themeColors } from '@/frontend/utils/theme'
 
 export function handleSliderStylesOnChange(
   elem: HTMLInputElement,
@@ -10,7 +10,7 @@ export function handleSliderStylesOnChange(
   elem.classList.add('slider-styled', 'slider-progress')
 }
 
-const colors = tailwindConfig.theme.colors
+const colors = themeColors
 export const sliderStyles = `
 /*generated with Input range slider CSS style generator (version 20211225)
 https://toughengineer.github.io/demo/slider-styler*/

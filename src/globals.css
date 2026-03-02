@@ -1,6 +1,80 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@config '../tailwind.config.ts';
+
+@custom-variant xl-short (@media (min-width: 1365px) and (max-height: 850px));
+@custom-variant lg (@media (max-width: 1365px));
+@custom-variant md (@media (max-width: 1023px));
+@custom-variant sm (@media (max-width: 767px));
+@custom-variant touch (@media (pointer: coarse));
+
+@theme {
+  --color-*: initial;
+  --breakpoint-*: initial;
+
+  --color-current: currentColor;
+  --color-transparent: transparent;
+
+  --color-primary-60: #81FC05;
+  --color-primary-80: #70DF00;
+  --color-primary-100: #60BD02;
+
+  --color-secondary-20: #8F8FFE;
+  --color-secondary-40: #7272CB;
+  --color-secondary-60: #565698;
+  --color-secondary-80: #393966;
+
+  --color-black-80: #282D30;
+  --color-black-100: #1B1E25;
+  --color-black-120: #060709;
+  --color-black-1000: #000000;
+
+  --color-grey-20: #DBE0E2;
+  --color-grey-40: #9EACB3;
+  --color-grey-60: #6B7980;
+  --color-grey-80: #505B60;
+  --color-grey-100: #363C40;
+
+  --color-yellow-80: #BDC03D;
+  --color-yellow-100: #DBDF00;
+
+  --color-red-80: #D65961;
+  --color-red-100: #BB434A;
+
+  --color-white-100: #F9F9F9;
+
+  --color-podium-gold: #F7D570;
+  --color-podium-silver: #DBDFE6;
+  --color-podium-bronze: #F49E71;
+
+  --font-kanit: Kanit, sans-serif;
+  --font-hind: Hind, sans-serif;
+
+  --spacing-15: 3.75rem;
+
+  --container-8xl: 88rem;
+}
+
+@utility bg-dashboard-banner-cubes {
+  background-image: url('/images/dashboard-banner-cubes.svg');
+}
+
+@utility bg-dashboard-banner-cubes-wide {
+  background-image: url('/images/dashboard-banner-cubes-wide.svg');
+}
+
+@utility bg-cubes {
+  background-image: url('/images/bg-cubes.svg');
+}
+
+@utility bg-solve-contest-progress-divider {
+  background-image: url('/images/solve-contest-progress-divider.svg');
+}
+
+@utility delay-default {
+  transition-delay: 300ms;
+}
 
 @layer base {
   html {
@@ -12,7 +86,7 @@
 
     --header-height: 4.375rem;
     --layout-section-header-height: 5.75rem;
-    @screen sm {
+    @media (max-width: 767px) {
       --header-height: 3.5rem;
       --layout-section-header-height: 4.25rem;
     }

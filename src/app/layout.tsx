@@ -10,7 +10,7 @@ import { PostHogProvider } from '../frontend/post-hog-provider'
 import { TRPCReactProvider } from '@/lib/trpc/react'
 import { TooltipProvider } from '@/frontend/ui/tooltip'
 import NextTopLoader from 'nextjs-toploader'
-import tailwindConfig from 'tailwind.config'
+import { themeColors } from '@/frontend/utils/theme'
 import { cloakSSROnlySecret } from 'ssr-only-secrets'
 
 export const metadata: Metadata = {
@@ -55,7 +55,7 @@ export default async function RootLayout({
           <TooltipProvider delayDuration={0}>
             <PostHogProvider>
               <NextTopLoader
-                color={tailwindConfig.theme.colors.secondary[40]}
+                color={themeColors.secondary[40]}
                 showSpinner={false}
               />
               {children}

@@ -3,7 +3,7 @@ import { type ContestMetadata, type Discipline } from '@/types'
 import Link from 'next/link'
 import { cn } from '@/frontend/utils/cn'
 import { formatContestDuration } from '@/lib/utils/format-date'
-import tailwindConfig from 'tailwind.config'
+import { themeColors } from '@/frontend/utils/theme'
 import { SpinningBorder } from '../ui/spinning-border'
 
 type ContestProps = {
@@ -14,7 +14,7 @@ type ContestProps = {
 export function Contest({ contest, discipline, className }: ContestProps) {
   return (
     <SpinningBorder
-      color={tailwindConfig.theme.colors.secondary[60]}
+      color={themeColors.secondary[60]}
       enabled={contest.isOngoing}
       className='rounded-xl'
     >
