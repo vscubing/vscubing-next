@@ -8,7 +8,9 @@ import nextVitals from 'eslint-config-next/core-web-vitals'
 const nextVitalsPatched = nextVitals.map((config) => {
   if (config.plugins?.['@typescript-eslint']) {
     const plugins = Object.fromEntries(
-      Object.entries(config.plugins).filter(([k]) => k !== '@typescript-eslint'),
+      Object.entries(config.plugins).filter(
+        ([k]) => k !== '@typescript-eslint',
+      ),
     )
     return { ...config, plugins }
   }

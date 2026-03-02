@@ -20,7 +20,7 @@ export function Contest({ contest, discipline, className }: ContestProps) {
     >
       <div
         className={cn(
-          'flex h-16 items-center justify-between gap-8 rounded-xl bg-grey-100 pl-4',
+          'bg-grey-100 flex h-16 items-center justify-between gap-8 rounded-xl pl-4',
           contest.isOngoing ? 'bg-secondary-80' : 'bg-grey-100',
           className,
         )}
@@ -56,7 +56,7 @@ export function ContestSkeleton({
 }) {
   return (
     <div
-      className={cn('h-16 animate-pulse rounded-xl bg-grey-100', className)}
+      className={cn('bg-grey-100 h-16 animate-pulse rounded-xl', className)}
       style={{ height }}
     ></div>
   )

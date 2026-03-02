@@ -37,7 +37,7 @@ export default async function WatchSolvePage(props: {
           username='...'
           scramblePosition='...'
         >
-          <div className='col-span-full flex items-center justify-center rounded-2xl bg-black-80'>
+          <div className='bg-black-80 col-span-full flex items-center justify-center rounded-2xl'>
             <LoadingSpinner />
           </div>
         </PageShell>
@@ -110,7 +110,7 @@ function PageShell({
     <section className='flex flex-1 flex-col gap-3'>
       <NavigateBackButton className='self-start' />
       <LayoutHeaderTitlePortal>Watch the solve replay</LayoutHeaderTitlePortal>
-      <div className='grid flex-1 grid-cols-[1.22fr_1fr] grid-rows-[min-content,1fr] gap-3 lg:grid-cols-2 sm:grid-cols-1 sm:grid-rows-[min-content,min-content,1fr]'>
+      <div className='grid flex-1 grid-cols-[1.22fr_1fr] grid-rows-[min-content,1fr] gap-3 sm:grid-cols-1 sm:grid-rows-[min-content,min-content,1fr] lg:grid-cols-2'>
         <LayoutSectionHeader className='gap-4'>
           <Link href={`/leaderboard?discipline=${discipline}?type=single`}>
             <DisciplineBadge discipline={discipline} />
@@ -118,7 +118,7 @@ function PageShell({
           <div>
             <Link
               href={`/contests/${contestSlug}/results?discipline=${discipline}&scrollToId=${roundSessionId}`}
-              className='title-h2 mb-1 text-secondary-20'
+              className='title-h2 text-secondary-20 mb-1'
             >
               Contest {contestSlug}
             </Link>
@@ -138,7 +138,7 @@ function PageShell({
           >
             <div className='sm:min-h-14'>
               <p className='title-h3 mb-1'>{username}</p>
-              <p className='text-base text-grey-20'>
+              <p className='text-grey-20 text-base'>
                 <SolveTimeLabel
                   timeMs={timeMs ?? 0}
                   className='mr-4 min-w-0 lg:min-w-0'

@@ -1,8 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
-@config '../tailwind.config.ts';
-
 @custom-variant xl-short (@media (min-width: 1365px) and (max-height: 850px));
 @custom-variant lg (@media (max-width: 1365px));
 @custom-variant md (@media (max-width: 1023px));
@@ -76,6 +74,239 @@
   transition-delay: 300ms;
 }
 
+/* Keyframes */
+
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+@keyframes spinner-rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spinning-border {
+  0% {
+    transform: translate(-50%, -50%) scale(1, var(--spinning-border-ratio))
+      rotate(56deg);
+  }
+  50%,
+  100% {
+    transform: translate(-50%, -50%) scale(1, var(--spinning-border-ratio))
+      rotate(-304deg);
+  }
+  60%,
+  95% {
+    opacity: 0;
+  }
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    box-shadow: 0 0 4px rgba(143, 143, 254, 0);
+  }
+  50% {
+    box-shadow:
+      0 0 4px rgba(143, 143, 254, 0.9),
+      0 0 8px rgba(143, 143, 254, 0.8),
+      0 0 12px rgba(143, 143, 254, 0.7);
+  }
+}
+
+@keyframes landing-alternating-text {
+  0%,
+  20% {
+    transform: translateY(85%);
+  }
+  33.3%,
+  53.3% {
+    transform: translateY(0);
+  }
+  66.6%,
+  100% {
+    transform: translateY(-85%);
+  }
+}
+
+@keyframes landing-blobs {
+  0%,
+  100% {
+    left: var(--from-left);
+    top: var(--from-top);
+  }
+  50% {
+    left: var(--to-left);
+    top: var(--to-top);
+  }
+}
+
+@keyframes landing-features-results {
+  0% {
+    left: var(--from-left);
+    top: var(--from-top);
+    transform: rotate(var(--from-rotation));
+  }
+  66.6% {
+    left: var(--transition-left);
+    top: var(--transition-top);
+    transform: rotate(var(--transition-rotation));
+  }
+  100% {
+    left: var(--to-left);
+    top: var(--to-top);
+    transform: rotate(var(--to-rotation));
+  }
+}
+
+@keyframes landing-features-scrambles {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+
+@keyframes landing-features-leaderboards {
+  from {
+    clip-path: inset(0 0 100%);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+
+@keyframes landing-features-sharing-cursor {
+  0% {
+    transform: translateY(300%);
+    opacity: 0;
+  }
+  31%,
+  75% {
+    transform: translateY(0);
+    opacity: 100%;
+  }
+  100% {
+    transform: translateY(200%);
+    opacity: 0;
+  }
+}
+
+@keyframes landing-features-sharing-button {
+  0%,
+  99% {
+    background-color: #565698;
+    border: 1px solid #565698;
+  }
+  100% {
+    background-color: #393966;
+    border: 1px solid #393966;
+  }
+}
+
+@keyframes landing-features-sharing-img {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+
+@keyframes landing-footer-cubes {
+  50% {
+    transform: translateY(var(--toTranslateY));
+  }
+}
+
+/* Animation utilities */
+
+@utility animate-accordion-down {
+  animation: accordion-down 0.2s ease-out;
+}
+
+@utility animate-accordion-up {
+  animation: accordion-up 0.2s ease-out;
+}
+
+@utility animate-spinning-border {
+  animation: spinning-border 6s linear(0, 0.32 40%, 0.48 50%, 0.83 90%, 1)
+    infinite;
+}
+
+@utility animate-glow {
+  animation: glow 2s ease-in-out;
+}
+
+@utility animate-landing-alternating-text {
+  animation: landing-alternating-text 6s linear infinite;
+}
+
+@utility animate-landing-blobs {
+  animation: landing-blobs 20s linear infinite;
+}
+
+@utility animate-landing-features-results {
+  animation: landing-features-results linear 3s forwards;
+}
+
+@utility animate-landing-features-scrambles {
+  animation: landing-features-scrambles linear 2.7s forwards;
+}
+
+@utility animate-landing-features-leaderboards {
+  animation: landing-features-leaderboards ease-in-out 1s forwards var(--delay);
+}
+
+@utility animate-landing-features-sharing-cursor {
+  animation: landing-features-sharing-cursor ease-out 3.2s forwards;
+}
+
+@utility animate-landing-features-sharing-button {
+  animation: landing-features-sharing-button ease-out 0.8s forwards 1s;
+}
+
+@utility animate-landing-features-sharing-img {
+  animation: landing-features-sharing-img linear 1s forwards 3.3s;
+}
+
+@utility animate-landing-footer-cubes {
+  animation: landing-footer-cubes linear 10s infinite;
+}
+
+/* Component-like utilities */
+
+@utility transition-base {
+  @apply transition duration-300 ease-in-out;
+}
+
+@utility outline-ring {
+  @apply ring-white-100 focus-visible:outline-none focus-visible:ring-2;
+}
+
+@utility vertical-alignment-fix {
+  @apply pt-[.2em];
+}
+
 @layer base {
   html {
     @apply overscroll-none scroll-smooth bg-black-100;
@@ -104,113 +335,104 @@
   }
 }
 
-@layer components {
-  .title-lg {
-    @apply font-kanit text-[3rem] leading-[1.2] tracking-[0.02em] sm:text-[1.625rem] sm:leading-[1.5] sm:tracking-normal;
-  }
-  .title-h1 {
-    @apply font-kanit text-[2rem] sm:text-[1.375rem];
-  }
-  .title-h2 {
-    @apply font-kanit text-[1.625rem] sm:text-[1.25rem];
-  }
-  .title-h3 {
-    @apply font-kanit text-[1.25rem] sm:text-[1.125rem];
-  }
-  .btn-lg {
-    @apply font-kanit text-[1.125rem] font-medium sm:text-[1rem];
-  }
-  .btn-sm {
-    @apply font-kanit text-[0.875rem] font-medium;
-  }
-  .caption {
-    @apply text-[0.75rem] tracking-[0.01em] sm:text-[0.75rem];
-  }
-  .caption-sm {
-    @apply text-[0.625rem] sm:tracking-[0.01em];
-  }
+/* Typography utilities */
 
-  .bg-card-gradient {
-    @apply relative [&>*]:relative [&>*]:z-10;
-  }
-  .bg-card-gradient::after {
-    @apply pointer-events-none absolute inset-0 z-0 rounded-[inherit];
-
-    content: '';
-    background: linear-gradient(
-      165deg,
-      rgba(255, 255, 255, 0.3) 13.84%,
-      rgba(255, 255, 255, 0.1) 74.14%
-    );
-    box-shadow: 0px 4px 20px 1px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(5px);
-  }
-
-  .transition-base {
-    @apply transition duration-300 ease-in-out;
-  }
-  .outline-ring {
-    @apply ring-white-100 focus-visible:outline-none focus-visible:ring-2;
-  }
-  .vertical-alignment-fix {
-    @apply pt-[.2em];
-  }
-  .scrollbar::-webkit-scrollbar {
-    @apply w-1;
-  }
-  .scrollbar::-webkit-scrollbar-button {
-    @apply h-0 w-0;
-  }
-  .scrollbar::-webkit-scrollbar-thumb {
-    @apply rounded-full bg-white-100;
-  }
-  .scrollbar::-webkit-scrollbar-thumb:hover {
-    @apply bg-primary-60;
-  }
-  .scrollbar::-webkit-scrollbar-thumb:active {
-    @apply bg-primary-80;
-  }
-  .scrollbar::-webkit-scrollbar-track {
-    @apply rounded-full bg-grey-60;
-    border: 0px none #ffffff;
-  }
-  .scrollbar::-webkit-scrollbar-corner {
-    background: transparent;
-  }
-
-  .after-border-bottom {
-    @apply relative after:absolute after:bottom-0 after:left-0;
-    @apply after:transition-transform;
-    @apply after:block after:h-[.5px] after:w-full after:scale-x-0 after:bg-current;
-  }
-
-  .landing-h1 {
-    @apply font-kanit text-[3.625rem] leading-[1.1] tracking-[0.01em] text-white-100 sm:text-[2.875rem];
-  }
-  .landing-h2 {
-    @apply font-kanit text-[2.75rem] leading-[1.1] tracking-[0.01em] text-white-100 sm:text-[2.375rem];
-  }
-  .landing-h3 {
-    @apply font-kanit text-[1.625rem] leading-[1.4] tracking-normal text-white-100;
-  }
-
-  .landing-offset-anchor::before {
-    /* offset the anchoring point to account for the fixed header */
-    content: '';
-    display: block;
-    height: 100px;
-    margin-top: -100px;
-    visibility: hidden;
-  }
+@utility title-lg {
+  @apply font-kanit text-[3rem] leading-[1.2] tracking-[0.02em] sm:text-[1.625rem] sm:leading-[1.5] sm:tracking-normal;
 }
 
-@layer components {
-  .spinning-border:before {
-    /* TODO: we probably can and should apply this directly in the template and remove this class with Tailwind v4 */
-    background: conic-gradient(
-      var(--spinning-border-color),
-      100deg,
-      transparent
-    );
-  }
+@utility title-h1 {
+  @apply font-kanit text-[2rem] sm:text-[1.375rem];
+}
+
+@utility title-h2 {
+  @apply font-kanit text-[1.625rem] sm:text-[1.25rem];
+}
+
+@utility title-h3 {
+  @apply font-kanit text-[1.25rem] sm:text-[1.125rem];
+}
+
+@utility btn-lg {
+  @apply font-kanit text-[1.125rem] font-medium sm:text-[1rem];
+}
+
+@utility btn-sm {
+  @apply font-kanit text-[0.875rem] font-medium;
+}
+
+@utility caption {
+  @apply text-[0.75rem] tracking-[0.01em] sm:text-[0.75rem];
+}
+
+@utility caption-sm {
+  @apply text-[0.625rem] sm:tracking-[0.01em];
+}
+
+@utility after-border-bottom {
+  @apply relative after:absolute after:bottom-0 after:left-0;
+  @apply after:transition-transform;
+  @apply after:block after:h-[.5px] after:w-full after:scale-x-0 after:bg-current;
+}
+
+@utility landing-h1 {
+  @apply font-kanit text-[3.625rem] leading-[1.1] tracking-[0.01em] text-white-100 sm:text-[2.875rem];
+}
+
+@utility landing-h2 {
+  @apply font-kanit text-[2.75rem] leading-[1.1] tracking-[0.01em] text-white-100 sm:text-[2.375rem];
+}
+
+@utility landing-h3 {
+  @apply font-kanit text-[1.625rem] leading-[1.4] tracking-normal text-white-100;
+}
+
+/* Component styles (need pseudo-elements or complex selectors, not suitable for @utility) */
+
+.bg-card-gradient {
+  @apply relative [&>*]:relative [&>*]:z-10;
+}
+.bg-card-gradient::after {
+  @apply pointer-events-none absolute inset-0 z-0 rounded-[inherit];
+
+  content: '';
+  background: linear-gradient(
+    165deg,
+    rgba(255, 255, 255, 0.3) 13.84%,
+    rgba(255, 255, 255, 0.1) 74.14%
+  );
+  box-shadow: 0px 4px 20px 1px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(5px);
+}
+
+.scrollbar::-webkit-scrollbar {
+  @apply w-1;
+}
+.scrollbar::-webkit-scrollbar-button {
+  @apply h-0 w-0;
+}
+.scrollbar::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-white-100;
+}
+.scrollbar::-webkit-scrollbar-thumb:hover {
+  @apply bg-primary-60;
+}
+.scrollbar::-webkit-scrollbar-thumb:active {
+  @apply bg-primary-80;
+}
+.scrollbar::-webkit-scrollbar-track {
+  @apply rounded-full bg-grey-60;
+  border: 0px none #ffffff;
+}
+.scrollbar::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.landing-offset-anchor::before {
+  /* offset the anchoring point to account for the fixed header */
+  content: '';
+  display: block;
+  height: 100px;
+  margin-top: -100px;
+  visibility: hidden;
 }

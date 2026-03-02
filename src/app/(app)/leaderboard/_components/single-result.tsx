@@ -40,7 +40,7 @@ export function SingleResult({
   return (
     <li
       className={cn(className, {
-        'sticky bottom-[-2px] top-[calc(var(--layout-section-header-height)-2px)] z-10':
+        'sticky top-[calc(var(--layout-section-header-height)-2px)] bottom-[-2px] z-10':
           sticky,
       })}
     >
@@ -102,7 +102,7 @@ function SingleResultDesktop({
             discipline={discipline}
           />
 
-          <span className='vertical-alignment-fix w-36 border-l border-grey-60 text-center'>
+          <span className='vertical-alignment-fix border-grey-60 w-36 border-l text-center'>
             {formatDate(createdAt)}
           </span>
           <SecondaryButton
@@ -163,7 +163,7 @@ function SingleResultTablet({
                   <UserBadges user={user} />
                 </span>
                 <span className='mr-10 sm:mr-0 sm:flex sm:items-center'>
-                  <span className='sm:vertical-alignment-fix mb-1 block text-center text-grey-40 sm:mb-0'>
+                  <span className='sm:vertical-alignment-fix text-grey-40 mb-1 block text-center sm:mb-0'>
                     Single time
                   </span>
                   <SolveTimeLinkOrDnf
@@ -179,10 +179,10 @@ function SingleResultTablet({
                   <MinusIcon className='hidden group-data-[state=open]:block' />
                 </Accordion.Trigger>
               </Accordion.Header>
-              <Accordion.Content className='w-full overflow-y-clip data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down sm:mt-3'>
-                <span className='flex items-center justify-between border-t border-grey-60 pt-4'>
-                  <span className='vertical-alignment-fix w-20 border-l border-none border-grey-60 pt-0 text-center sm:min-w-0'>
-                    <span className='mb-2 block text-center text-grey-40'>
+              <Accordion.Content className='data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down w-full overflow-y-clip sm:mt-3'>
+                <span className='border-grey-60 flex items-center justify-between border-t pt-4'>
+                  <span className='vertical-alignment-fix border-grey-60 w-20 border-l border-none pt-0 text-center sm:min-w-0'>
+                    <span className='text-grey-40 mb-2 block text-center'>
                       Solve date
                     </span>
                     {formatDate(createdAt)}
@@ -211,14 +211,14 @@ function SingleResultTablet({
 
 export function SingleResultSkeleton() {
   return (
-    <div className='h-16 animate-pulse rounded-xl bg-grey-100 md:h-[5.25rem] sm:h-[7.25rem]'></div>
+    <div className='bg-grey-100 h-16 animate-pulse rounded-xl sm:h-[7.25rem] md:h-[5.25rem]'></div>
   )
 }
 
 export function SingleResultListShell({ children }: { children: ReactNode }) {
   return (
-    <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 lg:p-4 sm:p-3'>
-      <div className='flex whitespace-nowrap pl-2 text-grey-40 md:hidden'>
+    <div className='bg-black-80 flex flex-1 flex-col gap-1 rounded-2xl p-6 sm:p-3 lg:p-4'>
+      <div className='text-grey-40 flex pl-2 whitespace-nowrap md:hidden'>
         <span className='mr-2 w-11 text-center'>Place</span>
         <span className='mr-2'>Type</span>
         <span className='flex-1'>Nickname</span>
