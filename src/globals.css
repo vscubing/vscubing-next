@@ -333,6 +333,18 @@
   [data-radix-popper-content-wrapper] {
     min-width: auto !important;
   }
+
+  /* Tailwind v4 removed automatic cursor:pointer on interactive elements */
+  button,
+  [role='button'],
+  a,
+  input[type='button'],
+  input[type='reset'],
+  input[type='submit'],
+  select,
+  summary {
+    cursor: pointer;
+  }
 }
 
 /* Typography utilities */
@@ -387,52 +399,55 @@
   @apply font-kanit text-[1.625rem] leading-[1.4] tracking-normal text-white-100;
 }
 
-/* Component styles (need pseudo-elements or complex selectors, not suitable for @utility) */
+/* Component styles — must be in @layer components so that utilities can override them.
+   In Tailwind v4, unlayered CSS beats all layered CSS in the cascade. */
 
-.bg-card-gradient {
-  @apply relative [&>*]:relative [&>*]:z-10;
-}
-.bg-card-gradient::after {
-  @apply pointer-events-none absolute inset-0 z-0 rounded-[inherit];
+@layer components {
+  .bg-card-gradient {
+    @apply relative [&>*]:relative [&>*]:z-10;
+  }
+  .bg-card-gradient::after {
+    @apply pointer-events-none absolute inset-0 z-0 rounded-[inherit];
 
-  content: '';
-  background: linear-gradient(
-    165deg,
-    rgba(255, 255, 255, 0.3) 13.84%,
-    rgba(255, 255, 255, 0.1) 74.14%
-  );
-  box-shadow: 0px 4px 20px 1px rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(5px);
-}
+    content: '';
+    background: linear-gradient(
+      165deg,
+      rgba(255, 255, 255, 0.3) 13.84%,
+      rgba(255, 255, 255, 0.1) 74.14%
+    );
+    box-shadow: 0px 4px 20px 1px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(5px);
+  }
 
-.scrollbar::-webkit-scrollbar {
-  @apply w-1;
-}
-.scrollbar::-webkit-scrollbar-button {
-  @apply h-0 w-0;
-}
-.scrollbar::-webkit-scrollbar-thumb {
-  @apply rounded-full bg-white-100;
-}
-.scrollbar::-webkit-scrollbar-thumb:hover {
-  @apply bg-primary-60;
-}
-.scrollbar::-webkit-scrollbar-thumb:active {
-  @apply bg-primary-80;
-}
-.scrollbar::-webkit-scrollbar-track {
-  @apply rounded-full bg-grey-60;
-  border: 0px none #ffffff;
-}
-.scrollbar::-webkit-scrollbar-corner {
-  background: transparent;
-}
+  .scrollbar::-webkit-scrollbar {
+    @apply w-1;
+  }
+  .scrollbar::-webkit-scrollbar-button {
+    @apply h-0 w-0;
+  }
+  .scrollbar::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-white-100;
+  }
+  .scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary-60;
+  }
+  .scrollbar::-webkit-scrollbar-thumb:active {
+    @apply bg-primary-80;
+  }
+  .scrollbar::-webkit-scrollbar-track {
+    @apply rounded-full bg-grey-60;
+    border: 0px none #ffffff;
+  }
+  .scrollbar::-webkit-scrollbar-corner {
+    background: transparent;
+  }
 
-.landing-offset-anchor::before {
-  /* offset the anchoring point to account for the fixed header */
-  content: '';
-  display: block;
-  height: 100px;
-  margin-top: -100px;
-  visibility: hidden;
+  .landing-offset-anchor::before {
+    /* offset the anchoring point to account for the fixed header */
+    content: '';
+    display: block;
+    height: 100px;
+    margin-top: -100px;
+    visibility: hidden;
+  }
 }

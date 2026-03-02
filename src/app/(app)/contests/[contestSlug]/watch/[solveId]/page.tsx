@@ -110,7 +110,7 @@ function PageShell({
     <section className='flex flex-1 flex-col gap-3'>
       <NavigateBackButton className='self-start' />
       <LayoutHeaderTitlePortal>Watch the solve replay</LayoutHeaderTitlePortal>
-      <div className='grid flex-1 grid-cols-[1.22fr_1fr] grid-rows-[min-content,1fr] gap-3 sm:grid-cols-1 sm:grid-rows-[min-content,min-content,1fr] lg:grid-cols-2'>
+      <div className='grid flex-1 grid-cols-[1.22fr_1fr] grid-rows-[min-content_1fr] gap-3 sm:grid-cols-1 sm:grid-rows-[min-content_min-content_1fr] lg:grid-cols-2'>
         <LayoutSectionHeader className='gap-4'>
           <Link href={`/leaderboard?discipline=${discipline}?type=single`}>
             <DisciplineBadge discipline={discipline} />
