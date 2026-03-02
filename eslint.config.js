@@ -1,28 +1,39 @@
-import { defineConfig, globalIgnores } from 'eslint/config'
 import tseslint from 'typescript-eslint'
-// @ts-ignore -- no types for this plugin
+// @ts-expect-error -- no types for this plugin
 import drizzle from 'eslint-plugin-drizzle'
 import nextVitals from 'eslint-config-next/core-web-vitals'
 
-export default defineConfig([
-  globalIgnores([
-    // Default ignores of eslint-config-next:
-    '.next/**',
-    'out/**',
-    'build/**',
-    'next-env.d.ts',
-  ]),
-  ...nextVitals,
+// eslint-config-next bundles its own typescript-eslint instance which conflicts
+// with our direct import. Remove the duplicate @typescript-eslint plugin entries.
+const nextVitalsPatched = nextVitals.map((config) => {
+  if (config.plugins?.['@typescript-eslint']) {
+    const plugins = Object.fromEntries(
+      Object.entries(config.plugins).filter(([k]) => k !== '@typescript-eslint'),
+    )
+    return { ...config, plugins }
+  }
+  return config
+})
+
+export default tseslint.config(
+  {
+    ignores: [
+      // Default ignores of eslint-config-next:
+      '.next/**',
+      'out/**',
+      'build/**',
+      'next-env.d.ts',
+      'vendor/**',
+    ],
+  },
+  ...tseslint.configs.recommendedTypeChecked,
+  ...tseslint.configs.stylisticTypeChecked,
+  ...nextVitalsPatched,
   {
     files: ['**/*.ts', '**/*.tsx'],
     plugins: {
       drizzle,
     },
-    extends: [
-      ...tseslint.configs.recommended,
-      ...tseslint.configs.recommendedTypeChecked,
-      ...tseslint.configs.stylisticTypeChecked,
-    ],
     rules: {
       '@typescript-eslint/prefer-optional-chain': 'off',
       '@typescript-eslint/array-type': 'off',
@@ -62,4 +73,8 @@ export default defineConfig([
       },
     },
   },
-])
+  {
+    files: ['**/*.js', '**/*.mjs', '**/*.cjs'],
+    ...tseslint.configs.disableTypeChecked,
+  },
+)
