@@ -306,7 +306,7 @@ export default function Simulator({
       >
         <span
           className={cn(
-            'absolute right-4 top-1/2 -translate-y-1/2 text-7xl [font-family:"M_PLUS_1_Code",monospace] md:bottom-4 md:left-1/2 md:right-auto md:top-auto md:-translate-x-1/2 md:translate-y-0',
+            'absolute top-1/2 right-4 -translate-y-1/2 [font-family:"M_PLUS_1_Code",monospace] text-7xl md:top-auto md:right-auto md:bottom-4 md:left-1/2 md:-translate-x-1/2 md:translate-y-0',
           )}
         >
           {getDisplay(
@@ -316,8 +316,8 @@ export default function Simulator({
           )}
         </span>
         {status === 'ready' && (
-          <span className='absolute bottom-20 mx-2 flex min-h-20 items-center rounded-[.75rem] bg-black-100 px-10 py-2 text-center font-kanit text-[1.25rem] text-secondary-20 sm:px-4'>
-            <span className='hidden touch:inline'>
+          <span className='bg-black-100 font-kanit text-secondary-20 absolute bottom-20 mx-2 flex min-h-20 items-center rounded-[.75rem] px-10 py-2 text-center text-[1.25rem] sm:px-4'>
+            <span className='touch:inline hidden'>
               Tap on the cube to scramble it and start the preinspection
             </span>
             <span className='touch:hidden'>

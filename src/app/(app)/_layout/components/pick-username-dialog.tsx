@@ -68,7 +68,7 @@ export function PickUsernameDialog() {
               <AlertDialogTitle className='mb-4'>
                 Greetings, Speedcuber
               </AlertDialogTitle>
-              <AlertDialogDescription className='text-center text-grey-20'>
+              <AlertDialogDescription className='text-grey-20 text-center'>
                 Just a quick nickname needed to personalize your experience.
               </AlertDialogDescription>
             </div>

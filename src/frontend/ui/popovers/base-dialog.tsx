@@ -55,7 +55,7 @@ export function BaseDialogButton({
       <SecondaryButton
         size={size}
         className={cn(
-          'sm:btn-sm h-15 min-w-28 whitespace-nowrap text-xl leading-[inherit] sm:h-11 sm:min-w-20',
+          'sm:btn-sm h-15 min-w-28 text-xl leading-[inherit] whitespace-nowrap sm:h-11 sm:min-w-20',
           className,
         )}
         ref={ref}

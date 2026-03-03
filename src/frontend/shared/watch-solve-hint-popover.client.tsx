@@ -37,7 +37,7 @@ export function WatchSolveHintPopover({
           <span className='touch:hidden'>
             Click on a time result to watch the solution
           </span>
-          <span className='hidden touch:inline'>
+          <span className='touch:inline hidden'>
             Tap on a time result to watch the solution
           </span>
         </p>

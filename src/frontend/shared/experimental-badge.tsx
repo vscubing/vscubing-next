@@ -5,7 +5,7 @@ export function ExperimentalBadge({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'flex items-center gap-2 rounded-lg bg-yellow-80/20 px-3 py-2 text-sm text-yellow-100',
+        'bg-yellow-80/20 flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-yellow-100',
         className,
       )}
     >

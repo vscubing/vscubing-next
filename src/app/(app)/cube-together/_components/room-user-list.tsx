@@ -13,7 +13,7 @@ type RoomUserListProps = {
 export function RoomUserList({ users, ownerId, myOdol }: RoomUserListProps) {
   return (
     <div className='flex flex-col gap-2'>
-      <h3 className='text-sm font-medium text-grey-40'>
+      <h3 className='text-grey-40 text-sm font-medium'>
         Users ({users.length})
       </h3>
       <ul className='flex flex-col gap-1'>
@@ -29,14 +29,14 @@ export function RoomUserList({ users, ownerId, myOdol }: RoomUserListProps) {
               <span className='text-sm'>
                 {user.displayName}
                 {user.odol === myOdol && (
-                  <span className='ml-1 text-grey-40'>(you)</span>
+                  <span className='text-grey-40 ml-1'>(you)</span>
                 )}
               </span>
               {user.odol === ownerId && (
-                <CrownIcon className='h-4 w-4 text-primary-80' />
+                <CrownIcon className='text-primary-80 h-4 w-4' />
               )}
               {!user.isAuthenticated && (
-                <span className='rounded bg-grey-60 px-1.5 py-0.5 text-xs text-grey-20'>
+                <span className='bg-grey-60 text-grey-20 rounded px-1.5 py-0.5 text-xs'>
                   Guest
                 </span>
               )}

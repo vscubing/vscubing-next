@@ -158,7 +158,7 @@ export default function CubeTogetherRoomPage() {
     return (
       <>
         <LayoutHeaderTitlePortal>Cube together</LayoutHeaderTitlePortal>
-        <div className='flex flex-1 items-center justify-center rounded-2xl bg-black-80'>
+        <div className='bg-black-80 flex flex-1 items-center justify-center rounded-2xl'>
           <JoinRoomDialog
             open={passwordDialogOpen}
             onOpenChange={handlePasswordDialogClose}
@@ -174,7 +174,7 @@ export default function CubeTogetherRoomPage() {
     return (
       <>
         <LayoutHeaderTitlePortal>Cube together</LayoutHeaderTitlePortal>
-        <div className='flex flex-1 items-center justify-center rounded-2xl bg-black-80'>
+        <div className='bg-black-80 flex flex-1 items-center justify-center rounded-2xl'>
           <LoadingSpinner size='lg' />
         </div>
       </>
@@ -188,7 +188,7 @@ export default function CubeTogetherRoomPage() {
         <ExperimentalBadge />
         <div className='flex flex-1 gap-3'>
           {/* Main cube area */}
-          <div className='relative flex flex-1 flex-col items-center justify-center rounded-2xl bg-black-80 p-4'>
+          <div className='bg-black-80 relative flex flex-1 flex-col items-center justify-center rounded-2xl p-4'>
             {pattern === undefined ? (
               <LoadingSpinner size='lg' />
             ) : (
@@ -198,14 +198,14 @@ export default function CubeTogetherRoomPage() {
                   className='aspect-square h-[70%] outline-none sm:h-auto sm:w-full sm:max-w-[34rem]'
                 />
                 {isOwner && (
-                  <p className='mt-2 text-center text-sm text-grey-40'>
+                  <p className='text-grey-40 mt-2 text-center text-sm'>
                     Space to scramble • Escape to solve
                   </p>
                 )}
               </>
             )}
             <Dialog>
-              <KeyMapDialogTrigger className='absolute right-4 top-4 touch:hidden' />
+              <KeyMapDialogTrigger className='touch:hidden absolute top-4 right-4' />
               <DialogPortal>
                 <DialogOverlay className='bg-black-1000/40' withCubes={false} />
                 <KeyMapDialogContent />
@@ -214,7 +214,7 @@ export default function CubeTogetherRoomPage() {
           </div>
 
           {/* Sidebar */}
-          <div className='flex w-64 flex-col gap-4 rounded-2xl bg-black-80 p-4'>
+          <div className='bg-black-80 flex w-64 flex-col gap-4 rounded-2xl p-4'>
             <div className='flex items-center gap-2'>
               <SecondaryButton asChild onClick={leaveRoom}>
                 <Link href='/cube-together'>

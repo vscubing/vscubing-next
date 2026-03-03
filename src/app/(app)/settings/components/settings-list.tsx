@@ -29,15 +29,15 @@ export function SettingsList() {
   if (!settings)
     return (
       <ul className='z-10 flex-1 space-y-2'>
-        <li className='h-20 animate-pulse rounded-xl bg-grey-100' />
-        <li className='h-20 animate-pulse rounded-xl bg-grey-100' />
-        <li className='h-20 animate-pulse rounded-xl bg-grey-100' />
+        <li className='bg-grey-100 h-20 animate-pulse rounded-xl' />
+        <li className='bg-grey-100 h-20 animate-pulse rounded-xl' />
+        <li className='bg-grey-100 h-20 animate-pulse rounded-xl' />
       </ul>
     )
 
   return (
     <ul className='z-10 flex-1 space-y-2'>
-      <li className='flex items-center justify-between gap-2 rounded-xl bg-grey-100 p-4'>
+      <li className='bg-grey-100 flex items-center justify-between gap-2 rounded-xl p-4'>
         <span>VRC base speed (tps):</span>
         <Select
           options={CS_ANIMATION_DURATION_OPTIONS}
@@ -49,7 +49,7 @@ export function SettingsList() {
           }
         />
       </li>
-      <li className='flex items-center justify-between gap-2 rounded-xl bg-grey-100 p-4'>
+      <li className='bg-grey-100 flex items-center justify-between gap-2 rounded-xl p-4'>
         <span>Preinspection voice alert at 8/12s:</span>
         <Select
           options={CS_INSPECTION_VOICE_ALERT_OPTIONS}
@@ -59,11 +59,11 @@ export function SettingsList() {
           }
         />
       </li>
-      <li className='flex items-center justify-between gap-2 rounded-xl bg-grey-100 p-4'>
+      <li className='bg-grey-100 flex items-center justify-between gap-2 rounded-xl p-4'>
         <span>Colorscheme:</span>
         <ColorschemeSetting />
       </li>
-      <li className='flex items-center justify-between gap-2 rounded-xl bg-grey-100 p-4'>
+      <li className='bg-grey-100 flex items-center justify-between gap-2 rounded-xl p-4'>
         <span className='flex items-center gap-2'>
           <span className='vertical-alignment-fix'>Puzzle Scale:</span>
           <Popover>
@@ -139,7 +139,7 @@ function Select<T extends string>({
     >
       <SelectPrimitive.Trigger
         className={cn(
-          'group flex h-12 min-w-[5.625rem] items-center justify-between gap-2 rounded-lg bg-black-100 px-4',
+          'group bg-black-100 flex h-12 min-w-[5.625rem] items-center justify-between gap-2 rounded-lg px-4',
           className,
         )}
       >
@@ -151,7 +151,7 @@ function Select<T extends string>({
         </SelectPrimitive.Icon>
       </SelectPrimitive.Trigger>
       <SelectPrimitive.Content
-        className='scrollbar mt-1 max-h-80 overflow-x-auto rounded-lg bg-black-100 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-top-2'
+        className='scrollbar bg-black-100 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-top-2 mt-1 max-h-80 overflow-x-auto rounded-lg'
         align='end'
         position='popper'
         style={{ minWidth: 'var(--radix-select-trigger-width)' }}
@@ -177,7 +177,7 @@ function SelectItem({
   return (
     <SelectPrimitive.Item
       className={cn(
-        'flex w-full min-w-[5.625rem] cursor-pointer items-center rounded-lg px-4 py-[0.625rem] text-base outline-none hover:bg-primary-100 active:bg-primary-100 data-[state=checked]:bg-primary-100',
+        'hover:bg-primary-100 active:bg-primary-100 data-[state=checked]:bg-primary-100 flex w-full min-w-[5.625rem] cursor-pointer items-center rounded-lg px-4 py-[0.625rem] text-base outline-none',
         className,
       )}
       {...props}

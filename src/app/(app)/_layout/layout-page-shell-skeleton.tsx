@@ -14,7 +14,7 @@ export function LayoutPageShellSkeleton({
       <NavigateBackButton className='self-start' />
       <LayoutSectionHeader> </LayoutSectionHeader>
 
-      <div className='flex flex-1 items-center justify-center rounded-2xl bg-black-80'>
+      <div className='bg-black-80 flex flex-1 items-center justify-center rounded-2xl'>
         {spinner && <LoadingSpinner size='lg' />}
       </div>
     </section>

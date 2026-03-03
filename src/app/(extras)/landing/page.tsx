@@ -25,7 +25,7 @@ const HEADER_LINKS = Object.values(NAVIGATION_ANCHORS).map(({ id, name }) => ({
 
 export default function LandingPage() {
   return (
-    <div className='bg-black-120 text-[1rem] leading-[1.4] text-grey-40'>
+    <div className='bg-black-120 text-grey-40 text-[1rem] leading-[1.4]'>
       <ExtrasHeader navigationLinks={HEADER_LINKS} />
       <main className='space-y-44 sm:space-y-24'>
         <HeroSection />
@@ -38,7 +38,7 @@ export default function LandingPage() {
             src={featuresBackground}
             alt=''
             loading='lazy'
-            className='absolute bottom-[calc(100%-20rem)] left-1/2 w-screen max-w-max -translate-x-1/2 md:w-[200%] sm:hidden'
+            className='absolute bottom-[calc(100%-20rem)] left-1/2 w-screen max-w-max -translate-x-1/2 sm:hidden md:w-[200%]'
           />
           <FeaturesSection
             className='relative'

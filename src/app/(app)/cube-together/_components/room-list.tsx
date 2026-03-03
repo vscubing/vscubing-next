@@ -14,14 +14,14 @@ type RoomListProps = {
 export function RoomList({ rooms, myOdol, onJoinRoom }: RoomListProps) {
   if (rooms.length === 0) {
     return (
-      <div className='flex flex-1 items-center justify-center text-grey-40'>
+      <div className='text-grey-40 flex flex-1 items-center justify-center'>
         <p>No rooms available. Create one to get started!</p>
       </div>
     )
   }
 
   return (
-    <div className='grid gap-3 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1'>
+    <div className='grid gap-3 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
       {rooms.map((room) => {
         const isMyRoom = room.ownerId === myOdol
         return (
@@ -45,17 +45,17 @@ export function RoomList({ rooms, myOdol, onJoinRoom }: RoomListProps) {
             <div className='flex items-center justify-between gap-2'>
               <div className='flex items-center gap-2'>
                 {isMyRoom && (
-                  <StarIcon className='h-4 w-4 flex-shrink-0 text-primary-60' />
+                  <StarIcon className='text-primary-60 h-4 w-4 flex-shrink-0' />
                 )}
-                <h3 className='truncate text-lg font-medium text-white-100'>
+                <h3 className='text-white-100 truncate text-lg font-medium'>
                   {room.name}
                 </h3>
               </div>
               {room.hasPassword && (
-                <LockIcon className='h-4 w-4 flex-shrink-0 text-grey-40' />
+                <LockIcon className='text-grey-40 h-4 w-4 flex-shrink-0' />
               )}
             </div>
-            <div className='flex items-center gap-1 text-sm text-grey-40'>
+            <div className='text-grey-40 flex items-center gap-1 text-sm'>
               <UsersIcon className='h-4 w-4' />
               <span>
                 {room.userCount} {room.userCount === 1 ? 'user' : 'users'}

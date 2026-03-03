@@ -24,8 +24,8 @@ export function LoadingSpinner({
         hidden: !isVisible,
       })}
     >
-      <span className='absolute h-full w-full animate-[spinner-rotation_2s_ease-in-out_infinite] rounded-lg border-[3px] border-solid border-primary-100'></span>
-      <span className='absolute h-full w-full animate-[spinner-rotation_2s_ease-in-out_infinite_1s] rounded-lg border border-solid border-secondary-20'></span>
+      <span className='border-primary-100 absolute h-full w-full animate-[spinner-rotation_2s_ease-in-out_infinite] rounded-lg border-[3px] border-solid'></span>
+      <span className='border-secondary-20 absolute h-full w-full animate-[spinner-rotation_2s_ease-in-out_infinite_1s] rounded-lg border border-solid'></span>
     </div>
   )
 }
@@ -48,7 +48,7 @@ export function OverlaySpinner({
   return (
     <div
       className={cn(
-        'transition-base pointer-events-none z-50 flex w-full items-center justify-center bg-black-100/75 p-4 transition-opacity',
+        'transition-base bg-black-100/75 pointer-events-none z-50 flex w-full items-center justify-center p-4 transition-opacity',
         { 'opacity-0': !isVisible },
         className,
       )}

@@ -10,7 +10,7 @@ export function ExtraLabel({
     return null
   }
   return (
-    <span className={cn('caption-sm text-nowrap text-red-80', className)}>
+    <span className={cn('caption-sm text-red-80 text-nowrap', className)}>
       Extra {extraNumber}
     </span>
   )

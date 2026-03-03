@@ -15,7 +15,7 @@ export function AboutSection({
         <h2 className='landing-h2 mb-14 text-center'>
           What is virtual speedcubing?
         </h2>
-        <div className='mx-auto mb-12 flex justify-center gap-40 px-4 lg:gap-3 md:max-w-[33.5rem] md:flex-col'>
+        <div className='mx-auto mb-12 flex justify-center gap-40 px-4 md:max-w-[33.5rem] md:flex-col lg:gap-3'>
           <div className='flex items-center gap-2 sm:flex-col sm:items-start'>
             <CubeIcon className='flex-shrink-0' />
             <p>

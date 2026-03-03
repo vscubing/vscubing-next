@@ -45,13 +45,13 @@ export function OwnRoundSessionInProgressRow({
   const extraNumber = getExtraNumber(state.currentScramble.position)
 
   return (
-    <li className='sticky bottom-4 top-[calc(var(--layout-section-header-height)-2px)] z-10 flex h-[5.5rem] flex-col gap-1 rounded-xl border border-dashed border-secondary-20 bg-black-80 p-2 sm:h-auto'>
+    <li className='border-secondary-20 bg-black-80 sticky top-[calc(var(--layout-section-header-height)-2px)] bottom-4 z-10 flex h-[5.5rem] flex-col gap-1 rounded-xl border border-dashed p-2 sm:h-auto'>
       <div className='flex items-center'>
-        <span className='w-24 text-center text-grey-40 sm:w-16'>Attempt</span>
-        <span className='w-32 text-center text-grey-40 sm:w-20'>
+        <span className='text-grey-40 w-24 text-center sm:w-16'>Attempt</span>
+        <span className='text-grey-40 w-32 text-center sm:w-20'>
           Single time
         </span>
-        <span className='flex-1 pl-4 text-left text-grey-40 sm:hidden'>
+        <span className='text-grey-40 flex-1 pl-4 text-left sm:hidden'>
           Scramble
         </span>
         <div className='ml-auto h-6'>
@@ -62,11 +62,11 @@ export function OwnRoundSessionInProgressRow({
           />
         </div>
       </div>
-      <div className='flex h-11 items-center rounded-xl bg-grey-100'>
+      <div className='bg-grey-100 flex h-11 items-center rounded-xl'>
         <span className='vertical-alignment-fix relative w-24 text-center text-[1rem] sm:w-16'>
           No {currentSolveNumber}
         </span>
-        <div className='h-6 w-px bg-grey-60' />
+        <div className='bg-grey-60 h-6 w-px' />
         <div className='flex w-32 justify-center sm:w-auto'>
           <SolveTimeLinkOrDnf
             result={state.currentSolve.result}
@@ -79,7 +79,7 @@ export function OwnRoundSessionInProgressRow({
             backgroundColorClass='bg-grey-100'
           />
         </div>
-        <div className='h-6 w-px bg-grey-60 sm:hidden' />
+        <div className='bg-grey-60 h-6 w-px sm:hidden' />
         <Ellipsis className='vertical-alignment-fix flex-1 px-4 sm:hidden'>
           {state.currentScramble.moves}
         </Ellipsis>

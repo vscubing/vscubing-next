@@ -62,7 +62,7 @@ function DisciplineSwitcherItem({
   return (
     <DisciplineBadge
       className={cn(
-        'transition-base outline-ring cursor-pointer border border-transparent bg-grey-100 text-grey-60 hover:border-secondary-20 active:bg-secondary-20 active:text-black-100',
+        'transition-base outline-ring bg-grey-100 text-grey-60 hover:border-secondary-20 active:bg-secondary-20 active:text-black-100 cursor-pointer border border-transparent',
         { 'bg-secondary-20 text-black-100': isActive },
         className,
       )}
