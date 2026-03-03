@@ -7,6 +7,8 @@
 @custom-variant sm (@media (max-width: 767px));
 @custom-variant touch (@media (pointer: coarse));
 
+/* Theme colors and screens are duplicated in src/frontend/utils/theme.ts for use in JS.
+   Keep both files in sync when making changes. */
 @theme {
   --color-*: initial;
   --breakpoint-*: initial;

@@ -1,3 +1,5 @@
+// Theme colors and screens are duplicated in src/globals.css for Tailwind.
+// Keep both files in sync when making changes.
 export const themeColors = {
   current: 'currentColor',
   transparent: 'transparent',
