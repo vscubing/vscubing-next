@@ -40,7 +40,7 @@ export function SingleResult({
   return (
     <li
       className={cn(className, {
-        'sticky top-[calc(var(--layout-section-header-height)-2px)] bottom-[-2px] z-10':
+        'sticky top-[calc(var(--layout-section-header-height)-2px)] bottom-[-2px] z-[15]':
           sticky,
       })}
     >

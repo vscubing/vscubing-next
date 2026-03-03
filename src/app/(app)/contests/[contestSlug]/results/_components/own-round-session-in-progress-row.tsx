@@ -45,7 +45,7 @@ export function OwnRoundSessionInProgressRow({
   const extraNumber = getExtraNumber(state.currentScramble.position)
 
   return (
-    <li className='border-secondary-20 bg-black-80 sticky top-[calc(var(--layout-section-header-height)-2px)] bottom-4 z-10 flex h-[5.5rem] flex-col gap-1 rounded-xl border border-dashed p-2 sm:h-auto'>
+    <li className='border-secondary-20 bg-black-80 sticky top-[calc(var(--layout-section-header-height)-2px)] bottom-4 z-[15] flex h-[5.5rem] flex-col gap-1 rounded-xl border border-dashed p-2 sm:h-auto'>
       <div className='flex items-center'>
         <span className='text-grey-40 w-24 text-center sm:w-16'>Attempt</span>
         <span className='text-grey-40 w-32 text-center sm:w-20'>

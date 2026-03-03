@@ -58,7 +58,7 @@ export default function ContestResultsPage() {
       <LayoutPageTitleMobile>{title}</LayoutPageTitleMobile>
       <LayoutHeaderTitlePortal>{title}</LayoutHeaderTitlePortal>
       <NavigateBackButton />
-      <LayoutSectionHeader className='sticky top-0 z-10 gap-4 sm:gap-2'>
+      <LayoutSectionHeader className='sticky top-0 z-20 gap-4 sm:gap-2'>
         <DisciplineSwitcher disciplines={contest.disciplines} />
         <div>
           <div className='mb-3 flex items-center sm:mb-1'>

@@ -61,7 +61,7 @@ export function RoundSessionRow({
       ref={ref}
       className={cn(
         {
-          'sticky top-[calc(var(--layout-section-header-height)-2px)] bottom-0 z-10':
+          'sticky top-[calc(var(--layout-section-header-height)-2px)] bottom-0 z-[15]':
             sticky,
         },
         className,
