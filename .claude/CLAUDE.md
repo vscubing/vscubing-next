@@ -1,0 +1,2 @@
+- Always use bun
+- Always make sure the formatting is correct with `bun run format:check` and fix with `bun run format:write` if necessary
