@@ -25,7 +25,7 @@ import Link from 'next/link'
 export function Footer({ className }: { className: string }) {
   return (
     <Container className={cn('pb-[1.625rem]', className)}>
-      <footer className='relative overflow-clip rounded-3xl px-[1.625rem] pb-[1.625rem] pt-10 [background:linear-gradient(180deg,#060709_0%,#494C74_100%)] sm:px-6'>
+      <footer className='relative overflow-clip rounded-3xl px-[1.625rem] pt-10 pb-[1.625rem] [background:linear-gradient(180deg,#060709_0%,#494C74_100%)] sm:px-6'>
         <AnimatedBackground />
 
         <div
@@ -62,7 +62,7 @@ export function Footer({ className }: { className: string }) {
                   <a
                     href={href}
                     key={href}
-                    className='transition-base outline-ring flex h-11 w-11 items-center justify-center text-[1.5rem] text-grey-20 hover:text-primary-80'
+                    className='transition-base outline-ring text-grey-20 hover:text-primary-80 flex h-11 w-11 items-center justify-center text-[1.5rem]'
                     target='_blank'
                   >
                     {children}
@@ -71,7 +71,7 @@ export function Footer({ className }: { className: string }) {
               </div>
             </div>
             <div className='w-[21.125rem] pt-3'>
-              <h2 className='mb-4 font-medium text-white-100'>Quick links</h2>
+              <h2 className='text-white-100 mb-4 font-medium'>Quick links</h2>
               <nav className='flex flex-col gap-[.8rem]'>
                 {[
                   { name: 'About', href: '/landing#about' },
@@ -81,7 +81,7 @@ export function Footer({ className }: { className: string }) {
                   <Link
                     key={href}
                     href={href}
-                    className='text-[1.125rem] font-medium hover:text-white-100'
+                    className='hover:text-white-100 text-[1.125rem] font-medium'
                   >
                     {name}
                   </Link>
@@ -89,7 +89,7 @@ export function Footer({ className }: { className: string }) {
               </nav>
             </div>
             <div className='flex-1 pt-3'>
-              <h2 className='mb-4 font-medium text-white-100'>Creators</h2>
+              <h2 className='text-white-100 mb-4 font-medium'>Creators</h2>
               <ul className='flex flex-col gap-[.8rem] text-[1.125rem] font-medium'>
                 <li>
                   <a
@@ -121,7 +121,7 @@ export function Footer({ className }: { className: string }) {
           <div className='mt-6 flex items-center justify-between pl-2 lg:mt-8 lg:pl-0'>
             <Link
               href='/privacy-policy'
-              className='text-[1.125rem] font-medium hover:text-white-100'
+              className='hover:text-white-100 text-[1.125rem] font-medium'
             >
               Privacy Policy
             </Link>
@@ -141,7 +141,7 @@ function AnimatedBackground() {
       <Image
         src={footerBgCubes}
         alt=''
-        className='pointer-events-none absolute bottom-0 right-[-3rem] max-w-max lg:right-[-4rem] md:bottom-[-1rem]'
+        className='pointer-events-none absolute right-[-3rem] bottom-0 max-w-max md:bottom-[-1rem] lg:right-[-4rem]'
       />
       <AnimatedCube
         src={animatedCube1}
@@ -155,7 +155,7 @@ function AnimatedBackground() {
       />
       <AnimatedCube
         src={animatedCube3}
-        className='bottom-[-10.5rem] left-[40%] lg:left-[30%] md:bottom-[-12rem] md:left-[-6rem]'
+        className='bottom-[-10.5rem] left-[40%] md:bottom-[-12rem] md:left-[-6rem] lg:left-[30%]'
         toTranslateY='-10%'
       />
       <AnimatedCube
@@ -165,27 +165,27 @@ function AnimatedBackground() {
       />
       <AnimatedCube
         src={animatedCube5}
-        className='bottom-[1rem] left-[65%] lg:left-[50%] md:left-[35%]'
+        className='bottom-[1rem] left-[65%] md:left-[35%] lg:left-[50%]'
         toTranslateY='35%'
       />
       <AnimatedCube
         src={animatedCube6}
-        className='bottom-[3.5rem] right-[12rem]'
+        className='right-[12rem] bottom-[3.5rem]'
         toTranslateY='35%'
       />
       <AnimatedCube
         src={animatedCube7}
-        className='bottom-[-1rem] right-[1rem] md:right-[-1rem]'
+        className='right-[1rem] bottom-[-1rem] md:right-[-1rem]'
         toTranslateY='-30%'
       />
       <AnimatedCube
         src={animatedCube8}
-        className='right-[10rem] top-[2.5rem] lg:bottom-[13rem] lg:right-[25rem] lg:top-auto md:right-[6rem]'
+        className='top-[2.5rem] right-[10rem] md:right-[6rem] lg:top-auto lg:right-[25rem] lg:bottom-[13rem]'
         toTranslateY='10%'
       />
       <AnimatedCube
         src={animatedCube9}
-        className='right-[.2rem] top-[0] lg:bottom-[14rem] lg:right-[15rem] lg:top-auto md:right-[-3rem]'
+        className='top-[0] right-[.2rem] md:right-[-3rem] lg:top-auto lg:right-[15rem] lg:bottom-[14rem]'
         toTranslateY='15%'
       />
     </div>
@@ -206,7 +206,7 @@ function AnimatedCube({
       src={src}
       alt=''
       className={cn(
-        'pointer-events-none absolute animate-landing-footer-cubes',
+        'animate-landing-footer-cubes pointer-events-none absolute',
         className,
       )}
       style={{ '--toTranslateY': toTranslateY } as CSSProperties}

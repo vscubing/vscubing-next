@@ -98,8 +98,8 @@ function StepsListItem({
   text: ReactNode
 }) {
   return (
-    <li className='flex gap-10 rounded-3xl py-10 pl-10 pr-[6.25rem] [background:linear-gradient(90deg,rgba(6,7,9,1)_15%,rgba(73,76,116,1)_100%)] sm:flex-col sm:items-start sm:pr-10'>
-      <span className='font-outline-2 shrink-0 basis-[4.625rem] text-center font-kanit text-[8.75rem] leading-[.75] text-transparent [-webkit-text-stroke:_1px_#8F8FFE]'>
+    <li className='flex gap-10 rounded-3xl py-10 pr-[6.25rem] pl-10 [background:linear-gradient(90deg,rgba(6,7,9,1)_15%,rgba(73,76,116,1)_100%)] sm:flex-col sm:items-start sm:pr-10'>
+      <span className='font-outline-2 font-kanit shrink-0 basis-[4.625rem] text-center text-[8.75rem] leading-[.75] text-transparent [-webkit-text-stroke:_1px_#8F8FFE]'>
         {number}
       </span>
       <div>

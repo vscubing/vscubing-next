@@ -77,10 +77,10 @@ function Feature({
   visualization: ReactNode
 }) {
   return (
-    <li className='flex h-[18.75rem] flex-col overflow-clip rounded-3xl bg-black-100 px-10 pb-10 sm:h-[26rem] sm:w-auto sm:p-6'>
+    <li className='bg-black-100 flex h-[18.75rem] flex-col overflow-clip rounded-3xl px-10 pb-10 sm:h-[26rem] sm:w-auto sm:p-6'>
       <div className='flex flex-1 gap-28 sm:flex-col-reverse sm:gap-8'>
         <div className='self-end pb-6 sm:self-start'>{icon}</div>
-        <div className='-mb-2 -ml-2 -mr-10 flex-1 sm:mb-0 sm:ml-0 sm:mr-0'>
+        <div className='-mr-10 -mb-2 -ml-2 flex-1 sm:mr-0 sm:mb-0 sm:ml-0'>
           {visualization}
         </div>
       </div>

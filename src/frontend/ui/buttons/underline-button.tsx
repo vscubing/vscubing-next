@@ -10,7 +10,7 @@ const underlineButtonVariants = cva(
     variants: {
       variant: {
         default:
-          'border-b border-current py-1 text-primary-80 hover:text-primary-60 active:text-primary-80 disabled:text-grey-60',
+          'text-primary-80 hover:text-primary-60 active:text-primary-80 disabled:text-grey-60 border-b border-current py-1',
       },
       size: {
         lg: 'btn-lg',

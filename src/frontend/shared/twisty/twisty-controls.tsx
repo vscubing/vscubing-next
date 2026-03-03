@@ -64,7 +64,7 @@ export function TwistyControls({
   return (
     <div
       className={cn(
-        'flex items-center justify-between text-white-100',
+        'text-white-100 flex items-center justify-between',
         className,
       )}
     >
@@ -76,7 +76,7 @@ export function TwistyControls({
       </ControlButton>
       <button
         className={cn(
-          'outline-ring transition-base flex items-center justify-center rounded-full bg-primary-60 text-black-100 hover:bg-primary-80 active:bg-primary-60',
+          'outline-ring transition-base bg-primary-60 text-black-100 hover:bg-primary-80 active:bg-primary-60 flex items-center justify-center rounded-full',
           {
             'h-14 w-14': size === 'lg',
             'h-12 w-12 [&>svg]:text-[.9rem]': size === 'sm',
@@ -107,7 +107,7 @@ function ControlButton({
     <button
       {...props}
       className={cn(
-        'transition-base outline-ring flex items-center justify-center hover:text-primary-60 active:text-primary-80 sm:h-11 sm:w-11',
+        'transition-base outline-ring hover:text-primary-60 active:text-primary-80 flex items-center justify-center sm:h-11 sm:w-11',
         {
           'h-14 w-14 text-[1.5rem]': size === 'lg',
           'h-10 w-10 text-[1rem]': size === 'sm',

@@ -53,7 +53,7 @@ export function UserDropdownOrSignIn() {
     <UserDropdown
       user={user}
       logoutTransition={logoutTransition}
-      className='md:-mr-2 sm:mr-0'
+      className='sm:mr-0 md:-mr-2'
     />
   )
 }
@@ -74,7 +74,7 @@ function UserDropdown({
     <DropdownMenu.Root open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenu.Trigger
         className={cn(
-          'group flex items-center gap-3 whitespace-nowrap rounded-xl px-2 py-3 data-[state=open]:bg-grey-100 md:gap-1',
+          'group data-[state=open]:bg-grey-100 flex items-center gap-3 rounded-xl px-2 py-3 whitespace-nowrap md:gap-1',
           className,
         )}
       >
@@ -88,12 +88,12 @@ function UserDropdown({
       <DropdownMenu.Portal>
         <DropdownMenu.Content
           align='end'
-          className='z-10 mt-1 min-w-[15.7rem] rounded-xl border border-black-80 bg-black-100 p-6 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-top-2'
+          className='border-black-80 bg-black-100 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-top-2 z-10 mt-1 min-w-[15.7rem] rounded-xl border p-6'
         >
-          <DropdownMenu.Label className='title-h3 text-white mb-1'>
+          <DropdownMenu.Label className='title-h3 mb-1 text-white'>
             {user.name}
           </DropdownMenu.Label>
-          <DropdownMenu.Label className='mb-6 border-b border-b-grey-100 pb-2 text-grey-20'>
+          <DropdownMenu.Label className='border-b-grey-100 text-grey-20 mb-6 border-b pb-2'>
             <div className='-ml-2'>
               <WcaSignIn wcaId={user.wcaId} />
             </div>
@@ -183,7 +183,7 @@ function DropdownButton({
   return (
     <Comp
       className={cn(
-        'transition-base outline-ring btn-sm inline-flex h-9 items-center gap-2 rounded-xl px-2 text-white-100 hover:bg-grey-100 active:bg-grey-80 disabled:text-grey-60',
+        'transition-base outline-ring btn-sm text-white-100 hover:bg-grey-100 active:bg-grey-80 disabled:text-grey-60 inline-flex h-9 items-center gap-2 rounded-xl px-2',
         className,
       )}
       ref={ref}
@@ -219,7 +219,7 @@ function WcaSignIn({
       <p className='vertical-alignment-fix'>
         <Link
           href={`https://worldcubeassociation.org/persons/${wcaId}`}
-          className='flex gap-2 text-secondary-20 underline'
+          className='text-secondary-20 flex gap-2 underline'
           target='_blank'
         >
           <WcaLogoIcon />

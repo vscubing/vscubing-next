@@ -6,8 +6,8 @@ import { type CSSProperties } from 'react'
 export function LeaderboardsAnimation() {
   return (
     <div className='flex justify-end'>
-      <div className='w-[24rem] pr-10 pt-8 sm:py-0 sm:pr-0'>
-        <div className='mb-1 flex gap-3 text-[.75rem] text-grey-40'>
+      <div className='w-[24rem] pt-8 pr-10 sm:py-0 sm:pr-0'>
+        <div className='text-grey-40 mb-1 flex gap-3 text-[.75rem]'>
           <span>Place</span>
           <span>Type</span>
           <span>Nickname</span>
@@ -44,10 +44,10 @@ function Row({
       <AnimationItem
         block='leaderboards'
         style={{ '--delay': `${(place - 1) * 1.1}s` } as CSSProperties}
-        className='flex h-[2.8rem] animate-landing-features-leaderboards items-center rounded-lg bg-grey-100 pl-1 text-white-100 [clip-path:inset(0_0_100%)]'
+        className='animate-landing-features-leaderboards bg-grey-100 text-white-100 flex h-[2.8rem] items-center rounded-lg pl-1 [clip-path:inset(0_0_100%)]'
         shouldRegisterAnimationEnd={shouldRegisterAnimationEnd}
       >
-        <div className='vertical-alignment-fix mr-2 flex h-8 w-8 items-center justify-center rounded-full border border-primary-80 text-[.75rem]'>
+        <div className='vertical-alignment-fix border-primary-80 mr-2 flex h-8 w-8 items-center justify-center rounded-full border text-[.75rem]'>
           {place}
         </div>
         <DisciplineIcon discipline='3by3' className='mr-2 h-5 w-5' />

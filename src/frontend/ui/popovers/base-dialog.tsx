@@ -13,7 +13,7 @@ export const baseDialogOverlayInner = tw(
 )
 
 export const baseDialogContent = tw(
-  'bg-card-gradient fixed left-[50%] top-[50%] z-50 flex max-w-[40rem] translate-x-[-50%] translate-y-[-50%] flex-col items-center rounded-2xl px-24 py-10 duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:w-[28rem] sm:min-w-0 sm:max-w-[calc(100%-2rem)] sm:px-4 sm:py-10',
+  'bg-card-gradient fixed left-[50%] top-[50%] z-50 flex max-w-[40rem] translate-x-[-50%] translate-y-[-50%] flex-col items-center rounded-2xl px-24 py-10 duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 sm:w-[28rem] sm:min-w-0 sm:max-w-[calc(100%-2rem)] sm:px-4 sm:py-10',
 )
 export const baseDialogTitle = tw('title-h2 text-center')
 
@@ -55,7 +55,7 @@ export function BaseDialogButton({
       <SecondaryButton
         size={size}
         className={cn(
-          'sm:btn-sm h-15 min-w-28 whitespace-nowrap text-xl leading-[inherit] sm:h-11 sm:min-w-20',
+          'sm:btn-sm h-15 min-w-28 text-xl leading-[inherit] whitespace-nowrap sm:h-11 sm:min-w-20',
           className,
         )}
         ref={ref}

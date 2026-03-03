@@ -53,9 +53,9 @@ function RecordHolderPopover({
         {records.averages.map(({ contestSlug, discipline, roundSession }) => (
           <li
             key={roundSession.id}
-            className='flex items-center rounded-lg bg-black-80 pl-2'
+            className='bg-black-80 flex items-center rounded-lg pl-2'
           >
-            <span className='relative mr-2 after:absolute after:-right-1 after:top-1/2 after:h-[1.7rem] after:w-px after:-translate-y-1/2 after:bg-grey-100'>
+            <span className='after:bg-grey-100 relative mr-2 after:absolute after:top-1/2 after:-right-1 after:h-[1.7rem] after:w-px after:-translate-y-1/2'>
               <DisciplineIcon discipline={discipline} className='sm:w-6' />
             </span>
             <span className='flex w-28 items-center gap-1 pl-1 sm:w-20'>
@@ -64,7 +64,7 @@ function RecordHolderPopover({
                 Average time
               </span>
             </span>
-            <span className='relative mr-5 after:absolute after:-right-1 after:top-1/2 after:h-[1.7rem] after:w-px after:-translate-y-1/2 after:bg-grey-100'>
+            <span className='after:bg-grey-100 relative mr-5 after:absolute after:top-1/2 after:-right-1 after:h-[1.7rem] after:w-px after:-translate-y-1/2'>
               <SolveTimeLabel
                 timeMs={roundSession.result.timeMs ?? undefined}
                 isAverage
@@ -73,7 +73,7 @@ function RecordHolderPopover({
             <SecondaryButton size='sm' asChild>
               <Link
                 href={`/contests/${contestSlug}/results?discipline=${discipline}&scrollToId=${roundSession.id}`}
-                className='transition-base flex gap-1 whitespace-nowrap text-primary-60 hover:text-primary-80 active:text-primary-100'
+                className='transition-base text-primary-60 hover:text-primary-80 active:text-primary-100 flex gap-1 whitespace-nowrap'
               >
                 Contest {contestSlug}
               </Link>
@@ -84,9 +84,9 @@ function RecordHolderPopover({
         {records.singles.map(({ contestSlug, discipline, solve }) => (
           <li
             key={solve.id}
-            className='flex items-center rounded-lg bg-black-80 pl-2'
+            className='bg-black-80 flex items-center rounded-lg pl-2'
           >
-            <span className='relative mr-2 after:absolute after:-right-1 after:top-1/2 after:h-[1.7rem] after:w-px after:-translate-y-1/2 after:bg-grey-100'>
+            <span className='after:bg-grey-100 relative mr-2 after:absolute after:top-1/2 after:-right-1 after:h-[1.7rem] after:w-px after:-translate-y-1/2'>
               <DisciplineIcon discipline={discipline} className='sm:w-6' />
             </span>
             <span className='flex w-28 items-center gap-1 pl-1 sm:w-20'>
@@ -95,7 +95,7 @@ function RecordHolderPopover({
                 Single time
               </span>
             </span>
-            <span className='relative mr-5 after:absolute after:-right-1 after:top-1/2 after:h-[1.7rem] after:w-px after:-translate-y-1/2 after:bg-grey-100'>
+            <span className='after:bg-grey-100 relative mr-5 after:absolute after:top-1/2 after:-right-1 after:h-[1.7rem] after:w-px after:-translate-y-1/2'>
               <SolveTimeLinkOrDnf
                 result={solve.result}
                 solveId={solve.id}
@@ -107,7 +107,7 @@ function RecordHolderPopover({
             <SecondaryButton size='sm' asChild>
               <Link
                 href={`/contests/${contestSlug}/results?discipline=${discipline}&scrollToId=${solve.roundSessionId}`}
-                className='transition-base flex gap-1 whitespace-nowrap text-primary-60 hover:text-primary-80 active:text-primary-100'
+                className='transition-base text-primary-60 hover:text-primary-80 active:text-primary-100 flex gap-1 whitespace-nowrap'
               >
                 Contest {contestSlug}
               </Link>

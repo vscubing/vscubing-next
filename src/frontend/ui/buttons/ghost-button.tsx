@@ -9,11 +9,11 @@ const ghostButtonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'rounded-xl text-white-100 disabled:text-grey-60',
+        default: 'text-white-100 disabled:text-grey-60 rounded-xl',
       },
       size: {
-        lg: 'btn-sm h-9 gap-2 border border-transparent px-2 hover:bg-grey-100 active:bg-grey-80 disabled:border-transparent disabled:bg-transparent sm:h-11',
-        sm: 'btn-sm h-8 gap-3 px-2 hover:text-primary-60 active:text-primary-80',
+        lg: 'btn-sm hover:bg-grey-100 active:bg-grey-80 h-9 gap-2 border border-transparent px-2 disabled:border-transparent disabled:bg-transparent sm:h-11',
+        sm: 'btn-sm hover:text-primary-60 active:text-primary-80 h-8 gap-3 px-2',
       },
     },
     defaultVariants: {

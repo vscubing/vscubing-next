@@ -39,7 +39,7 @@ export function OwnAttemptsPopover({
             className='flex h-6 w-6 items-center justify-center transition-opacity hover:opacity-80'
             aria-label='View submitted attempts'
           >
-            <ChevronUpIcon className='text-white h-6 w-6' />
+            <ChevronUpIcon className='h-6 w-6 text-white' />
           </button>
         </TooltipPrimitive.Trigger>
         <TooltipPrimitive.Portal>
@@ -48,7 +48,7 @@ export function OwnAttemptsPopover({
             align='end'
             sideOffset={8}
             className={cn(
-              'z-50 -mr-2 mb-2 rounded-xl bg-secondary-80 p-4 shadow-lg',
+              'bg-secondary-80 z-50 -mr-2 mb-2 rounded-xl p-4 shadow-lg',
               'data-[state=delayed-open]:animate-in data-[state=closed]:animate-out',
               'data-[state=closed]:fade-out-0 data-[state=delayed-open]:fade-in-0',
               'data-[state=closed]:zoom-out-95 data-[state=delayed-open]:zoom-in-95',
@@ -60,7 +60,7 @@ export function OwnAttemptsPopover({
                 const extraNumber = getExtraNumber(solve.scramble.position)
                 return (
                   <li key={index} className='flex items-center'>
-                    <span className='vertical-alignment-fix w-20 text-center text-[.875rem] text-grey-40'>
+                    <span className='vertical-alignment-fix text-grey-40 w-20 text-center text-[.875rem]'>
                       Attempt {index + 1}
                     </span>
                     <span className='relative flex-1 text-right'>

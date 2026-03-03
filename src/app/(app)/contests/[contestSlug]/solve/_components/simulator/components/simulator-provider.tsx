@@ -116,14 +116,14 @@ export function SimulatorProvider({ children }: { children: React.ReactNode }) {
       <DialogPrimitive.Root open={isModalOpen}>
         <DialogPrimitive.Portal>
           <div
-            className='fixed inset-0 z-50 bg-black-100 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0'
+            className='bg-black-100 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50'
             onClick={abortOrShowPrompt}
           ></div>
 
           <DialogPrimitive.Content
             aria-describedby={undefined}
             style={{ pointerEvents: undefined }}
-            className='fixed inset-[1.625rem] z-50 rounded-2xl bg-black-80 duration-500 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 sm:inset-3'
+            className='bg-black-80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-[1.625rem] z-50 rounded-2xl duration-500 sm:inset-3'
           >
             <DialogPrimitive.Title className='sr-only'>
               Virtual cube simulator
@@ -144,7 +144,7 @@ export function SimulatorProvider({ children }: { children: React.ReactNode }) {
                   />
                 )}
               </Suspense>
-              <div className='absolute left-6 right-6 top-6 flex items-start sm:right-4 sm:top-4'>
+              <div className='absolute top-6 right-6 left-6 flex items-start sm:top-4 sm:right-4'>
                 <Dialog>
                   <KeyMapDialogTrigger
                     autoFocus={false}

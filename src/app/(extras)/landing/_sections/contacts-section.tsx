@@ -13,10 +13,10 @@ export function ContactsSection({ id }: { id: string }) {
   return (
     <Container>
       <section id={id} className='landing-offset-anchor'>
-        <div className='grid grid-cols-2 grid-rows-[30rem] gap-3 md:grid-cols-1 md:grid-rows-[30rem,30rem] sm:grid-rows-none'>
-          <div className='relative sm:rounded-3xl sm:px-4 sm:pb-4 sm:pt-15 sm:[background:linear-gradient(119deg,_rgba(54,60,64,1)_16%,rgba(27,30,37,1)_80%)]'>
+        <div className='grid grid-cols-2 grid-rows-[30rem] gap-3 sm:grid-rows-none md:grid-cols-1 md:grid-rows-[30rem_30rem]'>
+          <div className='relative sm:rounded-3xl sm:px-4 sm:pt-15 sm:pb-4 sm:[background:linear-gradient(119deg,_rgba(54,60,64,1)_16%,rgba(27,30,37,1)_80%)]'>
             <div
-              className='flex h-full flex-col justify-center px-10 pb-28 pt-14 [background:linear-gradient(119deg,_rgba(54,60,64,1)_16%,rgba(27,30,37,1)_80%)] sm:h-auto sm:bg-none sm:p-0'
+              className='flex h-full flex-col justify-center px-10 pt-14 pb-28 [background:linear-gradient(119deg,_rgba(54,60,64,1)_16%,rgba(27,30,37,1)_80%)] sm:h-auto sm:bg-none sm:p-0'
               style={{
                 clipPath: isSmScreen ? 'none' : CLIP_PATH_POLYGON,
               }}
@@ -34,7 +34,7 @@ export function ContactsSection({ id }: { id: string }) {
             </div>
             <PrimaryButton
               asChild
-              className='sm:h-22 group absolute bottom-0 right-0 h-[5.95rem] w-[21.2rem] rounded-3xl sm:static sm:mt-14 sm:w-full sm:rounded-xl'
+              className='group absolute right-0 bottom-0 h-[5.95rem] w-[21.2rem] rounded-3xl sm:static sm:mt-14 sm:h-22 sm:w-full sm:rounded-xl'
             >
               <a href='https://discord.gg/PxFrW9vTAy' target='_blank'>
                 Join us on Discord{' '}
@@ -42,7 +42,7 @@ export function ContactsSection({ id }: { id: string }) {
               </a>
             </PrimaryButton>
           </div>
-          <div className='relative flex items-center justify-center overflow-clip rounded-3xl bg-secondary-80 md:row-start-1 sm:py-12'>
+          <div className='bg-secondary-80 relative flex items-center justify-center overflow-clip rounded-3xl sm:py-12 md:row-start-1'>
             <AnimatedBackground />
             <Image
               src={contactsPeopleImg}
@@ -65,49 +65,49 @@ function AnimatedBackground() {
         fromTop='-5%'
         toLeft='-18%'
         toTop='50%'
-        className='h-[58%] bg-secondary-40'
+        className='bg-secondary-40 h-[58%]'
       />
       <AnimatedBlob
         fromLeft='30%'
         fromTop='-30%'
         toLeft='80%'
         toTop='-20%'
-        className='h-[58%] bg-secondary-20'
+        className='bg-secondary-20 h-[58%]'
       />
       <AnimatedBlob
         fromLeft='80%'
         fromTop='65%'
         toLeft='40%'
         toTop='65%'
-        className='h-[58%] bg-primary-80'
+        className='bg-primary-80 h-[58%]'
       />
       <AnimatedBlob
         fromLeft='-12%'
         fromTop='62%'
         toLeft='-12%'
         toTop='-27%'
-        className='h-[58%] bg-primary-60'
+        className='bg-primary-60 h-[58%]'
       />
       <AnimatedBlob
         fromLeft='75%'
         fromTop='-8%'
         toLeft='85%'
         toTop='35%'
-        className='h-[58%] bg-primary-80'
+        className='bg-primary-80 h-[58%]'
       />
       <AnimatedBlob
         fromLeft='38%'
         fromTop='65%'
         toLeft='20%'
         toTop='20%'
-        className='h-[58%] bg-secondary-40'
+        className='bg-secondary-40 h-[58%]'
       />
       <AnimatedBlob
         fromLeft='28%'
         fromTop='8%'
         toLeft='40%'
         toTop='-45%'
-        className='h-[58%] bg-primary-100'
+        className='bg-primary-100 h-[58%]'
       />
     </>
   )

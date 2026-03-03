@@ -21,7 +21,7 @@ export function DashboardLists() {
 
   if (latestContests?.items.length === 0 || bestSolves?.length === 0) {
     return (
-      <div className='flex flex-1 flex-col gap-6 rounded-2xl bg-black-80 px-6 pb-4 pt-10'>
+      <div className='bg-black-80 flex flex-1 flex-col gap-6 rounded-2xl px-6 pt-10 pb-4'>
         <h2 className='title-h3 text-center'>
           Invite friends to participate in a contest, compare your results and
           share solves
@@ -30,7 +30,7 @@ export function DashboardLists() {
           <Image
             alt=''
             src={dashboardEmptyImg}
-            className='absolute left-0 top-0 h-full w-full object-contain'
+            className='absolute top-0 left-0 h-full w-full object-contain'
           />
         </div>
       </div>
@@ -38,7 +38,7 @@ export function DashboardLists() {
   }
 
   return (
-    <div className='flex flex-grow gap-3 md:flex-col sm:flex-grow-0 sm:gap-2'>
+    <div className='flex flex-grow gap-3 sm:flex-grow-0 sm:gap-2 md:flex-col'>
       <LatestContests
         className='h-full basis-[calc(40%-0.75rem/2)]'
         contests={latestContests?.items?.filter(({ isOngoing }) => !isOngoing)}

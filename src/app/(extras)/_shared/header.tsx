@@ -15,14 +15,14 @@ export function ExtrasHeader({
   const isWindowScrolled = useIsWindowScrolled()
 
   return (
-    <header className={cn('fixed left-0 top-0 z-20 w-full')}>
+    <header className={cn('fixed top-0 left-0 z-20 w-full')}>
       <Container>
         <div
           className={cn(
-            'flex rounded-3xl bg-black-120 pl-9 pr-2 transition-all duration-100 md:pr-4',
+            'bg-black-120 flex rounded-3xl pr-2 pl-9 transition-all duration-100 md:pr-4',
             isWindowScrolled
-              ? 'items-center bg-black-80/75 py-2 backdrop-blur-lg'
-              : 'items-end pb-2 pt-9 md:pt-[1.625rem]',
+              ? 'bg-black-80/75 items-center py-2 backdrop-blur-lg'
+              : 'items-end pt-9 pb-2 md:pt-[1.625rem]',
           )}
         >
           <div className='flex w-full items-center gap-[6.25rem] lg:gap-20'>
@@ -34,7 +34,7 @@ export function ExtrasHeader({
                 <a
                   key={href}
                   href={href}
-                  className='transition-base text-[1.125rem] font-medium text-grey-40 hover:text-white-100'
+                  className='transition-base text-grey-40 hover:text-white-100 text-[1.125rem] font-medium'
                 >
                   {name}
                 </a>
@@ -63,7 +63,7 @@ function MobileMenu({
     <DialogPrimitive.Dialog>
       <DialogPrimitive.Trigger
         className={cn(
-          'h-[44px] w-[44px] items-center justify-center text-white-100',
+          'text-white-100 h-[44px] w-[44px] items-center justify-center',
           className,
         )}
       >
@@ -72,18 +72,18 @@ function MobileMenu({
       <DialogPrimitive.Portal>
         <DialogPrimitive.Content
           aria-describedby={undefined}
-          className='fixed inset-0 z-20 flex flex-col gap-3 bg-black-120 p-4 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0'
+          className='bg-black-120 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-20 flex flex-col gap-3 p-4'
         >
           <DialogPrimitive.Title className='sr-only'>
             Navigation menu
           </DialogPrimitive.Title>
-          <div className='flex items-center justify-between rounded-3xl bg-black-100 px-4 py-2'>
+          <div className='bg-black-100 flex items-center justify-between rounded-3xl px-4 py-2'>
             <Logo variant='full' />
             <DialogPrimitive.Close className='h-[44px] w-[44px] items-center justify-center'>
               <CloseIcon />
             </DialogPrimitive.Close>
           </div>
-          <nav className='flex flex-1 flex-col items-center gap-11 rounded-b-3xl pt-6 text-[1rem] text-grey-40 [background:linear-gradient(180deg,rgba(6,7,9,1)_16%,rgba(73,76,116,1)_80%)]'>
+          <nav className='text-grey-40 flex flex-1 flex-col items-center gap-11 rounded-b-3xl pt-6 text-[1rem] [background:linear-gradient(180deg,rgba(6,7,9,1)_16%,rgba(73,76,116,1)_80%)]'>
             {navigationAnchors.map(({ href, name }) => (
               <DialogPrimitive.Close asChild key={href}>
                 <a href={href} className='py-1 font-medium'>

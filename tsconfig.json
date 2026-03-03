@@ -29,7 +29,6 @@
     "paths": {
       "@/*": ["./src/*"],
       "vendor/*": ["./vendor/*"],
-      "tailwind.config": ["./tailwind.config"],
       "socket-server/*": ["./socket-server/*"]
     }
   },

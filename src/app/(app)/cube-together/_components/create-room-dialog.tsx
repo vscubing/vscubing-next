@@ -51,7 +51,7 @@ export function CreateRoomDialog({
           </div>
           <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
             <div className='flex flex-col gap-2'>
-              <label htmlFor='password' className='text-sm text-grey-40'>
+              <label htmlFor='password' className='text-grey-40 text-sm'>
                 Password (optional)
               </label>
               <Input

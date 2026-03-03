@@ -41,7 +41,7 @@ export function KeyMapDialogContent({
       aria-describedby={undefined}
     >
       <div className='grid grid-cols-[repeat(10,auto)] gap-1'>
-        <div className='col-span-full flex items-center justify-between rounded-xl bg-black-80 p-4'>
+        <div className='bg-black-80 col-span-full flex items-center justify-between rounded-xl p-4'>
           <DialogPrimitive.Title className='title-h2 text-secondary-20'>
             Virtual Cube Key Map
           </DialogPrimitive.Title>
@@ -70,13 +70,13 @@ export function KeyMapTile({
   return (
     <li
       className={cn(
-        'title-h3 flex h-[4.625rem] w-[4.625rem] flex-col justify-between rounded-xl bg-black-80 px-3 py-1',
+        'title-h3 bg-black-80 flex h-[4.625rem] w-[4.625rem] flex-col justify-between rounded-xl px-3 py-1',
         className,
       )}
       aria-hidden={!cubeMovement}
     >
       <span className='text-grey-20'>{keyName}</span>
-      <span className='text-end text-white-100'>{cubeMovement}</span>
+      <span className='text-white-100 text-end'>{cubeMovement}</span>
     </li>
   )
 }

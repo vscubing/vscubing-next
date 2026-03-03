@@ -27,7 +27,7 @@ export default function AppLayout({
       <CookieBannerHandler />
       <div
         vaul-drawer-wrapper='vaul-drawer-wrapper'
-        className='flex h-full gap-3 bg-black-100 p-[1.625rem] lg:p-3 sm:flex-col sm:gap-0 sm:py-0'
+        className='bg-black-100 flex h-full gap-3 p-[1.625rem] sm:flex-col sm:gap-0 sm:py-0 lg:p-3'
       >
         <Sidebar className={SIDEBAR_WIDTH_CLASS} />
         <main
@@ -38,7 +38,7 @@ export default function AppLayout({
           {children}
         </main>
         <BottomNavbar className='hidden sm:block' />
-        <div className='pointer-events-none fixed inset-0 flex p-[1.625rem] lg:p-3 sm:px-0 sm:pb-16'>
+        <div className='pointer-events-none fixed inset-0 flex p-[1.625rem] sm:px-0 sm:pb-16 lg:p-3'>
           <div className={SIDEBAR_WIDTH_CLASS} />
           <div className='relative flex-1' id={MAIN_OVERLAY_ID}></div>
         </div>
@@ -49,8 +49,8 @@ export default function AppLayout({
 
 function BottomNavbar({ className }: { className: string }) {
   return (
-    <div className={cn('sticky bottom-0 bg-black-100 pb-1', className)}>
-      <div className='rounded-b-xl border-b border-grey-20'>
+    <div className={cn('bg-black-100 sticky bottom-0 pb-1', className)}>
+      <div className='border-grey-20 rounded-b-xl border-b'>
         <Navbar variant='horizontal' />
       </div>
     </div>

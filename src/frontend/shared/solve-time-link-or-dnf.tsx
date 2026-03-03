@@ -54,7 +54,7 @@ export function SolveTimeLinkOrDnf({
   if (result.isDnf) {
     return (
       <span className='relative z-10 inline-block'>
-        <span className='absolute left-[0.7rem] top-[-0.5rem] flex min-w-full items-center'>
+        <span className='absolute top-[-0.5rem] left-[0.7rem] flex min-w-full items-center'>
           {extraNumber !== undefined && (
             <ExtraLabel
               extraNumber={extraNumber}
@@ -76,7 +76,7 @@ export function SolveTimeLinkOrDnf({
           <Image
             src={confettiImg}
             alt=''
-            className='pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2'
+            className='pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
           />
         )}
         <span className='relative'>
@@ -162,7 +162,7 @@ export function SolveTimeLabel({
         <Image
           src={confettiImg}
           alt=''
-          className='pointer-events-none absolute left-1/2 top-1/2 max-w-none -translate-x-1/2 -translate-y-1/2'
+          className='pointer-events-none absolute top-1/2 left-1/2 max-w-none -translate-x-1/2 -translate-y-1/2'
         />
       )}
       {content}

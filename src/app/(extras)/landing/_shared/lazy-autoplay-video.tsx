@@ -42,7 +42,7 @@ export function LazyAutoplayVideo({
       {replayControlsVisible && (
         <button
           onClick={restart}
-          className='outline-ring transition-base absolute left-1/2 top-1/2 z-10 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-primary-60 text-black-100 hover:bg-primary-80 active:bg-primary-60'
+          className='outline-ring transition-base bg-primary-60 text-black-100 hover:bg-primary-80 active:bg-primary-60 absolute top-1/2 left-1/2 z-10 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full'
         >
           <PlayIcon />
         </button>

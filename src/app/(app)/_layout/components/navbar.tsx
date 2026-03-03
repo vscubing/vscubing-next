@@ -86,7 +86,7 @@ export function Navbar({ variant }: NavbarProps) {
               aria-disabled={disabled}
             >
               {icon}
-              <span className='lg:sr-only sm:not-sr-only'>{name}</span>
+              <span className='sm:not-sr-only lg:sr-only'>{name}</span>
             </Link>
           ),
         )}
@@ -103,7 +103,7 @@ export function Navbar({ variant }: NavbarProps) {
                     href={route as Route}
                     onClick={() => handleRouteChange(route)}
                     className={cn(
-                      'title-h3 btn-sm flex items-center gap-2 rounded-lg px-3 py-2 text-white-100 transition hover:bg-grey-80 active:bg-grey-100',
+                      'title-h3 btn-sm text-white-100 hover:bg-grey-80 active:bg-grey-100 flex items-center gap-2 rounded-lg px-3 py-2 transition',
                       {
                         'bg-grey-80': activeRoute === route,
                       },
@@ -118,9 +118,9 @@ export function Navbar({ variant }: NavbarProps) {
           >
             <button
               className={cn(
-                'title-h3 transition-base outline-ring after-border-bottom flex items-center gap-4 px-4 py-2 text-grey-20 after:origin-[0%_50%] hover:text-primary-60 active:text-primary-80 lg:justify-center sm:hidden sm:gap-3 sm:p-3',
+                'title-h3 transition-base outline-ring after-border-bottom text-grey-20 hover:text-primary-60 active:text-primary-80 flex items-center gap-4 px-4 py-2 after:origin-[0%_50%] sm:hidden sm:gap-3 sm:p-3 lg:justify-center',
                 {
-                  'text-primary-80 after:h-[1.5px] after:scale-x-100 hover:text-primary-80':
+                  'text-primary-80 hover:text-primary-80 after:h-[1.5px] after:scale-x-100':
                     isExperimentalRouteActive,
                 },
               )}
@@ -150,11 +150,11 @@ export function Navbar({ variant }: NavbarProps) {
                 }
               }}
               className={cn(
-                'caption-sm transition-base flex min-w-[4.625rem] flex-col items-center gap-1 whitespace-nowrap px-1 text-grey-20 active:text-primary-80',
+                'caption-sm transition-base text-grey-20 active:text-primary-80 flex min-w-[4.625rem] flex-col items-center gap-1 px-1 whitespace-nowrap',
                 {
                   'text-primary-80 hover:text-primary-80':
                     activeRoute === route,
-                  'cursor-not-allowed text-grey-80 hover:text-grey-80 active:text-grey-80':
+                  'text-grey-80 hover:text-grey-80 active:text-grey-80 cursor-not-allowed':
                     disabled,
                 },
               )}

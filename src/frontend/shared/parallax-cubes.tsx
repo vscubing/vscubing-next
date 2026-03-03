@@ -48,15 +48,15 @@ export function ParallaxCubes({
       <MouseParallaxChild
         factorX={1.3}
         factorY={1.3}
-        className='pointer-events-none absolute left-[10%] top-[max(40%,20rem)]'
+        className='pointer-events-none absolute top-[max(40%,20rem)] left-[10%]'
       >
         <Image src={separatePurpleCube} alt='' />
       </MouseParallaxChild>
-      <div className='pointer-events-none absolute left-1/2 top-[55%] aspect-square w-[min(80%,80vh)] -translate-x-1/2 -translate-y-1/2'>
+      <div className='pointer-events-none absolute top-[55%] left-1/2 aspect-square w-[min(80%,80vh)] -translate-x-1/2 -translate-y-1/2'>
         <MouseParallaxChild
           factorX={1.5}
           factorY={1.5}
-          className='absolute right-[2%] top-[55%] w-[18%]'
+          className='absolute top-[55%] right-[2%] w-[18%]'
         >
           <Image
             src={whiteSmCube}
@@ -85,7 +85,7 @@ export function ParallaxCubes({
         <MouseParallaxChild
           factorX={1.2}
           factorY={1.2}
-          className='absolute left-[25%] top-[40%] w-[40%]'
+          className='absolute top-[40%] left-[25%] w-[40%]'
         >
           <Image
             src={whiteCube}
@@ -96,7 +96,7 @@ export function ParallaxCubes({
         <MouseParallaxChild
           factorX={0.5}
           factorY={0.5}
-          className='absolute right-0 top-0 w-[67%]'
+          className='absolute top-0 right-0 w-[67%]'
         >
           <Image
             src={greenCube}
@@ -107,7 +107,7 @@ export function ParallaxCubes({
         <MouseParallaxChild
           factorX={2}
           factorY={4}
-          className='pointer-events-auto absolute left-1/2 top-[40%] w-[80%]'
+          className='pointer-events-auto absolute top-[40%] left-1/2 w-[80%]'
         >
           <Image
             src={mainImgSrc}

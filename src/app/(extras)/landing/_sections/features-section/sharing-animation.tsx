@@ -20,7 +20,7 @@ export function SharingAnimation() {
         <AnimationItem
           block='sharing'
           shouldRegisterAnimationEnd={false}
-          className='absolute left-[70%] top-[80%] animate-landing-features-sharing-cursor'
+          className='animate-landing-features-sharing-cursor absolute top-[80%] left-[70%]'
         >
           <Image src={cursorIcon} alt='' />
         </AnimationItem>

@@ -13,7 +13,7 @@ export default async function SettingsPage() {
     <section className='flex min-h-0 flex-1 flex-col gap-3 sm:gap-2'>
       <NavigateBackButton />
       <LayoutHeaderTitlePortal>Simulator settings</LayoutHeaderTitlePortal>
-      <div className='flex h-full flex-col gap-6 rounded-2xl bg-black-80 p-6 lg:p-4 sm:p-3'>
+      <div className='bg-black-80 flex h-full flex-col gap-6 rounded-2xl p-6 sm:p-3 lg:p-4'>
         <div className='flex md:flex-col'>
           <SettingsList />
           <div className='md:mt-4 md:self-start'>

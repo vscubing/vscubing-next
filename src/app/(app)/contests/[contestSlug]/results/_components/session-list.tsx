@@ -69,7 +69,7 @@ export function SessionList({
     ? (sessions[ownSessionIdx]?.solves.length ?? 0)
     : 5
   return (
-    <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 lg:p-4 sm:p-3'>
+    <div className='bg-black-80 flex flex-1 flex-col gap-1 rounded-2xl p-6 sm:p-3 lg:p-4'>
       <RoundSessionHeader />
       <ul ref={containerRef} className='space-y-2'>
         {sessions.map((session, idx) =>

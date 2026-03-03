@@ -28,10 +28,10 @@ export function SolveContestForm({
 
   if (userMetadata?.suspended) {
     return (
-      <p className='title-lg fixed inset-16 z-[10000] flex flex-1 flex-col items-center justify-center rounded-xl bg-black-100 text-center'>
+      <p className='title-lg bg-black-100 fixed inset-16 z-[10000] flex flex-1 flex-col items-center justify-center rounded-xl text-center'>
         Your account was suspended!
         <br /> Go do something productive. <br />
-        <span className='mt-2 text-lg text-grey-60'>
+        <span className='text-grey-60 mt-2 text-lg'>
           P.S. if this is a mistake please{' '}
           <a
             className='text-primary-100 underline'
@@ -47,22 +47,22 @@ export function SolveContestForm({
 
   const currentSolveNumber = (state?.submittedSolves?.length ?? 0) + 1
   return (
-    <div className='flex flex-1 justify-center pl-16 pr-12 md:px-8 sm:px-3'>
+    <div className='flex flex-1 justify-center pr-12 pl-16 sm:px-3 md:px-8'>
       <div className='grid max-w-[64rem] flex-1 grid-cols-[min-content_1fr] grid-rows-[min-content_min-content] flex-col gap-x-12 gap-y-1 sm:grid-cols-1'>
         <div className='sm:caption col-start-2 flex gap-8 pl-4 sm:col-span-full sm:gap-0 sm:pl-6'>
-          <span className='w-16 text-center text-grey-40 sm:hidden'>
+          <span className='text-grey-40 w-16 text-center sm:hidden'>
             Attempt
           </span>
-          <span className='w-24 text-center text-grey-40 lg:w-20'>
+          <span className='text-grey-40 w-24 text-center lg:w-20'>
             Single time
           </span>
           <span className='text-grey-40'>Scramble</span>
         </div>
         <Progress
-          className='gap-12 xl-short:gap-6 sm:hidden'
+          className='xl-short:gap-6 gap-12 sm:hidden'
           currentSolveNumber={currentSolveNumber}
         />
-        <div className='flex w-full flex-1 flex-col gap-12 xl-short:gap-6 sm:gap-4'>
+        <div className='xl-short:gap-6 flex w-full flex-1 flex-col gap-12 sm:gap-4'>
           {state?.submittedSolves?.map((solve, index) => (
             <SolvePanel
               contestSlug={contestSlug}

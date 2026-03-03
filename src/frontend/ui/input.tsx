@@ -16,8 +16,8 @@ function Input({
   return (
     <input
       className={cn(
-        'h-11 rounded-lg bg-black-100 px-4 text-base placeholder-grey-40 ring-grey-40 transition-shadow duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-1',
-        { 'ring-1 ring-red-80': error },
+        'bg-black-100 placeholder-grey-40 ring-grey-40 h-11 rounded-lg px-4 text-base transition-shadow duration-200 ease-in-out focus-visible:ring-1 focus-visible:outline-none',
+        { 'ring-red-80 ring-1': error },
         className,
       )}
       ref={ref}
@@ -41,8 +41,8 @@ function TextArea({
   return (
     <textarea
       className={cn(
-        'rounded-lg bg-black-100 px-4 py-[0.625rem] text-base placeholder-grey-40 ring-grey-40 transition-shadow duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-1',
-        { 'ring-1 ring-red-80': error },
+        'bg-black-100 placeholder-grey-40 ring-grey-40 rounded-lg px-4 py-[0.625rem] text-base transition-shadow duration-200 ease-in-out focus-visible:ring-1 focus-visible:outline-none',
+        { 'ring-red-80 ring-1': error },
         className,
       )}
       ref={ref}
