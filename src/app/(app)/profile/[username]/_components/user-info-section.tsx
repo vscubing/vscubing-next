@@ -48,7 +48,7 @@ function ProfileAvatar({
 }) {
   if (!wcaId) {
     return (
-      <div className='bg-grey-100 flex w-28 shrink-0 items-center justify-center self-stretch rounded-2xl sm:h-20 sm:w-20'>
+      <div className='bg-grey-100 flex h-28 w-28 shrink-0 items-center justify-center rounded-2xl sm:h-20 sm:w-20'>
         <AvatarIcon className='h-12 w-12 sm:h-8 sm:w-8' />
       </div>
     )
@@ -62,7 +62,7 @@ function WcaAvatar({ wcaId, name }: { wcaId: string; name: string }) {
 
   if (isLoading) {
     return (
-      <div className='bg-grey-100 flex w-28 shrink-0 items-center justify-center self-stretch rounded-2xl sm:h-20 sm:w-20'>
+      <div className='bg-grey-100 flex h-28 w-28 shrink-0 items-center justify-center rounded-2xl sm:h-20 sm:w-20'>
         <LoadingSpinner />
       </div>
     )
@@ -70,7 +70,7 @@ function WcaAvatar({ wcaId, name }: { wcaId: string; name: string }) {
 
   if (!avatarUrl) {
     return (
-      <div className='bg-grey-100 flex w-28 shrink-0 items-center justify-center self-stretch rounded-2xl sm:h-20 sm:w-20'>
+      <div className='bg-grey-100 flex h-28 w-28 shrink-0 items-center justify-center rounded-2xl sm:h-20 sm:w-20'>
         <AvatarIcon className='h-12 w-12 sm:h-8 sm:w-8' />
       </div>
     )
@@ -81,7 +81,7 @@ function WcaAvatar({ wcaId, name }: { wcaId: string; name: string }) {
     <img
       src={avatarUrl}
       alt={name}
-      className='w-28 shrink-0 self-stretch rounded-2xl object-cover sm:h-20 sm:w-20'
+      className='h-28 w-28 shrink-0 rounded-2xl object-cover sm:h-20 sm:w-20'
     />
   )
 }

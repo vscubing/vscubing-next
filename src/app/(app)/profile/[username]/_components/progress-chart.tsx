@@ -69,7 +69,7 @@ export function ProgressChart({
       <ResponsiveContainer width='100%' height='100%'>
         <LineChart
           data={chartData}
-          margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
+          margin={{ top: 5, right: 20, left: -15, bottom: 5 }}
           style={{ cursor: 'pointer' }}
         >
           <CartesianGrid horizontal={true} vertical={false} stroke='#3D3D45' />

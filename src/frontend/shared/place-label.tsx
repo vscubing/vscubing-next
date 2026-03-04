@@ -47,7 +47,9 @@ export function PlaceLabel({
         <CrownIcon
           className={cn(
             'text-secondary-20 absolute rotate-[30deg] transform',
-            size === 'sm' ? '-top-1.5 -right-0.5 h-3 w-3' : '-top-2 -right-1',
+            size === 'sm'
+              ? '-top-[5px] -right-[3px] h-[10px] w-[10px]'
+              : '-top-2 -right-1',
           )}
         />
       )}
