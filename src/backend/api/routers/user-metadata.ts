@@ -14,16 +14,20 @@ export const userMetadataRouter = createTRPCRouter({
         seenDiscordInvite: userMetadataTable.seenDiscordInvite,
         seenSportcubingAd: userMetadataTable.seenSportcubingAd,
         suspended: userMetadataTable.suspended,
+        bio: userMetadataTable.bio,
       })
       .from(userMetadataTable)
       .where(eq(userMetadataTable.userId, ctx.session.user.id))
 
-    const metadata = USER_METADATA_DEFAULTS
+    const metadata = { ...USER_METADATA_DEFAULTS }
     if (!row) return metadata
 
-    for (const [key, value] of Object.entries(row)) {
-      metadata[key as keyof UserMetadata] = value!
-    }
+    if (row.seenDiscordInvite !== null)
+      metadata.seenDiscordInvite = row.seenDiscordInvite
+    if (row.seenSportcubingAd !== null)
+      metadata.seenSportcubingAd = row.seenSportcubingAd
+    if (row.suspended !== null) metadata.suspended = row.suspended
+    if (row.bio !== null) metadata.bio = row.bio
     return metadata
   }),
   updateUserMetadata: protectedProcedure

@@ -134,6 +134,13 @@
       "when": 1768744494472,
       "tag": "0018_low_vampiro",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1772658797482,
+      "tag": "0019_spicy_husk",
+      "breakpoints": true
     }
   ]
 }

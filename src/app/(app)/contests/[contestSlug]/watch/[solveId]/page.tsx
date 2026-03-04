@@ -18,6 +18,7 @@ import { Alg } from '@vscubing/cubing/alg'
 import { isRotation } from '@/lib/utils/is-rotation'
 import { removeSolutionComments } from '@/lib/utils/remove-solution-comments'
 import { SolveTimeLabel } from '@/frontend/shared/solve-time-link-or-dnf'
+import { UsernameLink } from '@/frontend/shared/username-link'
 
 type PathParams = { contestSlug: string; solveId: string }
 export default async function WatchSolvePage(props: {
@@ -137,7 +138,9 @@ function PageShell({
             )}
           >
             <div className='sm:min-h-14'>
-              <p className='title-h3 mb-1'>{username}</p>
+              <p className='title-h3 mb-1'>
+                <UsernameLink username={username} />
+              </p>
               <p className='text-grey-20 text-base'>
                 <SolveTimeLabel
                   timeMs={timeMs ?? 0}

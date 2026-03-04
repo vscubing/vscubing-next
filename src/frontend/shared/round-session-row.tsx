@@ -22,6 +22,7 @@ import * as Accordion from '@radix-ui/react-accordion'
 import Link from 'next/link'
 import { type RefObject } from 'react'
 import { UserBadges } from './user-badges'
+import { UsernameLink } from './username-link'
 import { useSolveForm } from './use-solve-form'
 import { SimulatorProvider } from '@/app/(app)/contests/[contestSlug]/solve/_components'
 import { LoadingDots } from '../ui/loading-dots'
@@ -303,7 +304,7 @@ function RoundSessionRowDesktop({
           </PlaceLabel>
           <DisciplineIcon className='mr-3' discipline={discipline} />
           <span className='vertical-alignment-fix flex min-w-0 flex-1 items-center gap-2 overflow-x-clip text-nowrap text-ellipsis'>
-            <span>{user.name}</span>
+            <UsernameLink username={user.name} />
             <UserBadges user={user} />
           </span>
 

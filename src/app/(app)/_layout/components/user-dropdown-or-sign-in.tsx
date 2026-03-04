@@ -93,12 +93,23 @@ function UserDropdown({
           <DropdownMenu.Label className='title-h3 mb-1 text-white'>
             {user.name}
           </DropdownMenu.Label>
+          <DropdownMenu.Label className='text-grey-40 text-sm'>
+            {user.email}
+          </DropdownMenu.Label>
           <DropdownMenu.Label className='border-b-grey-100 text-grey-20 mb-6 border-b pb-2'>
             <div className='-ml-2'>
               <WcaSignIn wcaId={user.wcaId} />
             </div>
           </DropdownMenu.Label>
           <DropdownMenu.Group className='-ml-2 flex flex-col gap-2'>
+            <DropdownButton className='w-full cursor-pointer' asChild>
+              <DropdownMenu.Item asChild>
+                <Link href={`/profile/${user.name}`}>
+                  <AvatarIcon />
+                  Profile
+                </Link>
+              </DropdownMenu.Item>
+            </DropdownButton>
             <DropdownButton className='w-full cursor-pointer' asChild>
               <DropdownMenu.Item asChild>
                 {/* DropdownMenu.Item must be a direct parent of Link for it to work */}
