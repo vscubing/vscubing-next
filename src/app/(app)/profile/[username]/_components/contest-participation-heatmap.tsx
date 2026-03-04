@@ -71,13 +71,13 @@ export function ContestParticipationHeatmap({
                     }}
                     onClick={() =>
                       router.push(
-                        `/contests/${contest.contestSlug}/results?scrollToId=${contest.sessionId}`,
+                        `/contests/${contest.contestSlug}/results?discipline=${contest.disciplines[0]}&scrollToId=${contest.sessionId}`,
                       )
                     }
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' || e.key === ' ')
                         router.push(
-                          `/contests/${contest.contestSlug}/results?scrollToId=${contest.sessionId}`,
+                          `/contests/${contest.contestSlug}/results?discipline=${contest.disciplines[0]}&scrollToId=${contest.sessionId}`,
                         )
                     }}
                   />
@@ -96,17 +96,30 @@ function ContestPopoverContent({ contest }: { contest: ContestData }) {
     <div className='p-3'>
       <p className='title-h3 mb-1'>Contest {contest.contestSlug}</p>
       <p className='text-grey-40 mb-2 text-sm'>
-        ({formatDate(contest.contestStartDate, 'long')}
+        {formatDate(contest.contestStartDate, 'long')}
         {contest.contestEndDate &&
-          `-${formatDate(contest.contestEndDate, 'long')}`}
-        )
+          ` - ${formatDate(contest.contestEndDate, 'long')}`}
       </p>
-      <p className='text-grey-20 text-sm'>
-        <span className='font-medium'>Type:</span>{' '}
-        {contest.disciplines.map((d) => DISCIPLINE_LABELS[d] ?? d).join(', ')}
-      </p>
+      <div className='text-sm'>
+        <p className='text-grey-20 mb-1 font-medium'>Disciplines:</p>
+        {contest.availableDisciplines.map((d) => {
+          const completed = contest.disciplines.includes(d)
+          return (
+            <p key={d} className='flex items-center gap-1.5'>
+              {completed ? (
+                <span className='text-secondary-20 text-xs'>✓</span>
+              ) : (
+                <span className='text-grey-60 text-xs'>✗</span>
+              )}
+              <span className={completed ? 'text-white-100' : 'text-grey-60 line-through'}>
+                {DISCIPLINE_LABELS[d] ?? d}
+              </span>
+            </p>
+          )
+        })}
+      </div>
       <p
-        className='mt-1 text-sm font-medium'
+        className='mt-2 text-sm font-medium'
         style={{
           color: contest.isCompleted ? '#8F8FFE' : '#565698',
         }}

@@ -292,6 +292,30 @@ export const profileRouter = createTRPCRouter({
       }))
     }),
 
+  getParticipationYears: publicProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const yearCol = sql<number>`EXTRACT(YEAR FROM ${contestTable.startDate})::int`
+
+      const rows = await ctx.db
+        .selectDistinct({
+          year: yearCol,
+        })
+        .from(roundSessionTable)
+        .innerJoin(roundTable, eq(roundTable.id, roundSessionTable.roundId))
+        .innerJoin(contestTable, eq(contestTable.slug, roundTable.contestSlug))
+        .where(
+          and(
+            eq(roundSessionTable.contestantId, input.userId),
+            eq(roundSessionTable.isFinished, true),
+            eq(contestTable.isOngoing, false),
+          ),
+        )
+        .orderBy(desc(yearCol))
+
+      return rows.map((r) => r.year)
+    }),
+
   getContestParticipation: publicProcedure
     .input(
       z.object({
@@ -319,12 +343,39 @@ export const profileRouter = createTRPCRouter({
         .where(
           and(
             eq(roundSessionTable.contestantId, input.userId),
+            eq(roundSessionTable.isFinished, true),
             gte(contestTable.startDate, yearStart.toISOString()),
             lt(contestTable.startDate, yearEnd.toISOString()),
             eq(contestTable.isOngoing, false),
           ),
         )
         .orderBy(contestTable.startDate)
+
+      // Get all disciplines per contest to determine completion
+      const contestDisciplines = await ctx.db
+        .select({
+          contestSlug: roundTable.contestSlug,
+          discipline: roundTable.disciplineSlug,
+        })
+        .from(roundTable)
+        .innerJoin(contestTable, eq(contestTable.slug, roundTable.contestSlug))
+        .where(
+          and(
+            gte(contestTable.startDate, yearStart.toISOString()),
+            lt(contestTable.startDate, yearEnd.toISOString()),
+            eq(contestTable.isOngoing, false),
+          ),
+        )
+
+      const allDisciplinesPerContest = new Map<string, Set<string>>()
+      for (const row of contestDisciplines) {
+        const existing = allDisciplinesPerContest.get(row.contestSlug)
+        if (existing) {
+          existing.add(row.discipline)
+        } else {
+          allDisciplinesPerContest.set(row.contestSlug, new Set([row.discipline]))
+        }
+      }
 
       const contestMap = new Map<
         string,
@@ -334,6 +385,7 @@ export const profileRouter = createTRPCRouter({
           contestEndDate: string | null
           contestType: string
           disciplines: Discipline[]
+          availableDisciplines: Discipline[]
           isCompleted: boolean
           sessionId: number
         }
@@ -345,9 +397,6 @@ export const profileRouter = createTRPCRouter({
           if (!existing.disciplines.includes(row.discipline as Discipline)) {
             existing.disciplines.push(row.discipline as Discipline)
           }
-          if (!row.isFinished) {
-            existing.isCompleted = false
-          }
         } else {
           contestMap.set(row.contestSlug, {
             contestSlug: row.contestSlug,
@@ -355,10 +404,21 @@ export const profileRouter = createTRPCRouter({
             contestEndDate: row.contestEndDate,
             contestType: row.contestType,
             disciplines: [row.discipline as Discipline],
-            isCompleted: row.isFinished,
+            availableDisciplines: [],
+            isCompleted: false,
             sessionId: row.sessionId,
           })
         }
+      }
+
+      // A contest is "completed" if the user finished all disciplines available in that contest
+      for (const [slug, contest] of contestMap) {
+        const totalDisciplines = allDisciplinesPerContest.get(slug)
+        contest.availableDisciplines = totalDisciplines
+          ? (Array.from(totalDisciplines) as Discipline[])
+          : contest.disciplines
+        contest.isCompleted =
+          !!totalDisciplines && contest.disciplines.length >= totalDisciplines.size
       }
 
       return Array.from(contestMap.values())

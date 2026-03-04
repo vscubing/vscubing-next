@@ -88,7 +88,7 @@ function UserDropdown({
       <DropdownMenu.Portal>
         <DropdownMenu.Content
           align='end'
-          className='border-black-80 bg-black-100 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-top-2 z-10 mt-1 min-w-[15.7rem] rounded-xl border p-6'
+          className='border-black-80 bg-black-100 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-top-2 z-30 mt-1 min-w-[15.7rem] rounded-xl border p-6'
         >
           <DropdownMenu.Label className='title-h3 mb-1 text-white'>
             {user.name}
