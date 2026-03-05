@@ -49,8 +49,7 @@ function CompletedSolvesFallback() {
   )
 }
 
-const FALLBACK_COL_CLASSES =
-  'grid grid-cols-[1.2fr_0.8fr_1fr_1fr_0.8fr] items-center gap-x-2 px-4 py-2.5'
+const FALLBACK_COL_CLASSES = 'grid grid-cols-5 items-center gap-x-2 px-4 py-2.5'
 
 function PersonalRecordsFallback() {
   return (
@@ -60,10 +59,10 @@ function PersonalRecordsFallback() {
         <div className='border-grey-100 divide-grey-100 divide-y rounded-xl border'>
           <div className={`text-grey-40 ${FALLBACK_COL_CLASSES} text-sm`}>
             <span>Discipline</span>
-            <span className='text-center'>Rank Single</span>
-            <span className='text-center'>Single Time</span>
-            <span className='text-center'>Average Time</span>
-            <span className='text-center'>Rank Average</span>
+            <span>Rank Single</span>
+            <span>Single Time</span>
+            <span>Average Time</span>
+            <span>Rank Average</span>
           </div>
           {DISCIPLINES.map((d) => (
             <div key={d} className={FALLBACK_COL_CLASSES}>
@@ -71,14 +70,10 @@ function PersonalRecordsFallback() {
                 <DisciplineIcon discipline={d} />
                 <span className='text-base'>{DISCIPLINE_LABELS[d]}</span>
               </span>
-              <span className='flex justify-center'>
-                <span className='bg-grey-100 h-8 w-8 animate-pulse rounded-full' />
-              </span>
-              <span className='bg-grey-100 mx-auto h-6 w-16 animate-pulse rounded' />
-              <span className='bg-grey-100 mx-auto h-6 w-16 animate-pulse rounded' />
-              <span className='flex justify-center'>
-                <span className='bg-grey-100 h-8 w-8 animate-pulse rounded-full' />
-              </span>
+              <span className='bg-grey-100 inline-block h-8 w-8 animate-pulse rounded-full' />
+              <span className='bg-grey-100 inline-block h-6 w-16 animate-pulse rounded' />
+              <span className='bg-grey-100 inline-block h-6 w-16 animate-pulse rounded' />
+              <span className='bg-grey-100 inline-block h-8 w-8 animate-pulse rounded-full' />
             </div>
           ))}
         </div>

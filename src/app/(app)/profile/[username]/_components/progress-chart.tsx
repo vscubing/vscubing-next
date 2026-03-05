@@ -32,7 +32,10 @@ export function ProgressChart({
     .filter((d) => !d.isDnf && d.avgMs !== null)
     .map((d) => ({
       ...d,
-      date: formatDate(d.contestStartDate, 'short'),
+      date: new Date(d.contestStartDate).toLocaleDateString('en-US', {
+        month: 'short',
+        year: '2-digit',
+      }),
     }))
 
   if (chartData.length === 0) {
@@ -79,6 +82,7 @@ export function ProgressChart({
             tick={{ fill: '#6B6B76', fontSize: 12 }}
             tickLine={false}
             axisLine={false}
+            minTickGap={40}
           />
           <YAxis
             stroke='#2A2A2E'

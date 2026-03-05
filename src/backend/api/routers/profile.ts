@@ -415,6 +415,42 @@ export const profileRouter = createTRPCRouter({
           contest.disciplines.length >= totalDisciplines.size
       }
 
+      // Fetch all contests in the year to include non-participated ones
+      const allContests = await ctx.db
+        .select({
+          slug: contestTable.slug,
+          startDate: contestTable.startDate,
+          endDate: contestTable.endDate,
+          type: contestTable.type,
+        })
+        .from(contestTable)
+        .where(
+          and(
+            gte(contestTable.startDate, yearStart.toISOString()),
+            lt(contestTable.startDate, yearEnd.toISOString()),
+            eq(contestTable.isOngoing, false),
+          ),
+        )
+        .orderBy(contestTable.startDate)
+
+      for (const contest of allContests) {
+        if (!contestMap.has(contest.slug)) {
+          const totalDisciplines = allDisciplinesPerContest.get(contest.slug)
+          contestMap.set(contest.slug, {
+            contestSlug: contest.slug,
+            contestStartDate: contest.startDate,
+            contestEndDate: contest.endDate,
+            contestType: contest.type,
+            disciplines: [],
+            availableDisciplines: totalDisciplines
+              ? (Array.from(totalDisciplines) as Discipline[])
+              : [],
+            isCompleted: false,
+            sessionId: 0,
+          })
+        }
+      }
+
       return Array.from(contestMap.values())
     }),
 

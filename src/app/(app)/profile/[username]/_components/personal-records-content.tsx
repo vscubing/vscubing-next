@@ -28,8 +28,7 @@ export function PersonalRecordsContent({
   )
 }
 
-const COL_CLASSES =
-  'grid grid-cols-[1.2fr_0.8fr_1fr_1fr_0.8fr] items-center gap-x-2 px-4 py-2.5'
+const COL_CLASSES = 'grid grid-cols-5 items-center gap-x-2 px-4 py-2.5'
 
 function DesktopTable({ records }: { records: PersonalRecords }) {
   return (
@@ -37,10 +36,10 @@ function DesktopTable({ records }: { records: PersonalRecords }) {
       <div className='border-grey-100 divide-grey-100 divide-y rounded-xl border'>
         <div className={`text-grey-40 ${COL_CLASSES} text-sm`}>
           <span>Discipline</span>
-          <span className='text-center'>Rank Single</span>
-          <span className='text-center'>Single Time</span>
-          <span className='text-center'>Average Time</span>
-          <span className='text-center'>Rank Average</span>
+          <span>Rank Single</span>
+          <span>Single Time</span>
+          <span>Average Time</span>
+          <span>Rank Average</span>
         </div>
         {records.map((record) => (
           <div key={record.discipline} className={COL_CLASSES}>
@@ -50,7 +49,7 @@ function DesktopTable({ records }: { records: PersonalRecords }) {
                 {DISCIPLINE_LABELS[record.discipline]}
               </span>
             </span>
-            <span className='flex justify-center'>
+            <span>
               {record.single ? (
                 <PlaceLabel podiumColors size='sm'>
                   {record.single.rank}
@@ -59,7 +58,7 @@ function DesktopTable({ records }: { records: PersonalRecords }) {
                 <span className='text-grey-40'>--</span>
               )}
             </span>
-            <span className='text-center'>
+            <span>
               {record.single ? (
                 <Link
                   href={`/contests/${record.single.contestSlug}/watch/${record.single.solveId}?discipline=${record.discipline}`}
@@ -71,7 +70,7 @@ function DesktopTable({ records }: { records: PersonalRecords }) {
                 <span className='text-grey-40'>--</span>
               )}
             </span>
-            <span className='text-center'>
+            <span>
               {record.average ? (
                 <Link
                   href={`/contests/${record.average.contestSlug}/results?discipline=${record.discipline}&scrollToId=${record.average.sessionId}`}
@@ -83,7 +82,7 @@ function DesktopTable({ records }: { records: PersonalRecords }) {
                 <span className='text-grey-40'>--</span>
               )}
             </span>
-            <span className='flex justify-center'>
+            <span>
               {record.average ? (
                 <PlaceLabel podiumColors size='sm'>
                   {record.average.rank}

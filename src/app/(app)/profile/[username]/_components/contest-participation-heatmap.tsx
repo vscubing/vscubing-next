@@ -37,6 +37,18 @@ export function ContestParticipationHeatmap({
     contestsByWeek.set(week, contest)
   }
 
+  const now = new Date()
+  const currentYearStart = new Date(year, 0, 1)
+  const currentWeek =
+    now.getFullYear() === year
+      ? Math.floor(
+          (now.getTime() - currentYearStart.getTime()) /
+            (1000 * 60 * 60 * 24 * 7),
+        )
+      : now.getFullYear() > year
+        ? 52
+        : -1
+
   return (
     <div className='flex flex-col gap-1'>
       {QUARTER_LABELS.map((quarter, qi) => (
@@ -46,10 +58,38 @@ export function ContestParticipationHeatmap({
             {Array.from({ length: WEEKS_PER_QUARTER }, (_, wi) => {
               const weekIndex = qi * WEEKS_PER_QUARTER + wi
               const contest = contestsByWeek.get(weekIndex)
+              const isFuture = weekIndex > currentWeek
+
+              if (!contest && isFuture) {
+                return (
+                  <div
+                    key={wi}
+                    className='border-grey-100 h-6 flex-1 rounded border'
+                  />
+                )
+              }
 
               if (!contest) {
                 return (
-                  <div key={wi} className='bg-black-100 h-5 flex-1 rounded' />
+                  <div
+                    key={wi}
+                    className='bg-black-100 h-6 flex-1 rounded border border-transparent'
+                  />
+                )
+              }
+
+              const isParticipated = contest.disciplines.length > 0
+
+              if (!isParticipated) {
+                return (
+                  <HoverPopover
+                    key={wi}
+                    content={<ContestPopoverContent contest={contest} />}
+                    contentClassName='pointer-events-none'
+                    asChild
+                  >
+                    <div className='bg-black-100 h-6 flex-1 rounded border border-transparent' />
+                  </HoverPopover>
                 )
               }
 
@@ -63,7 +103,7 @@ export function ContestParticipationHeatmap({
                   <div
                     role='button'
                     tabIndex={0}
-                    className='h-5 flex-1 cursor-pointer rounded transition-opacity hover:opacity-80'
+                    className='h-6 flex-1 cursor-pointer rounded border border-transparent transition-opacity hover:opacity-80'
                     style={{
                       backgroundColor: contest.isCompleted
                         ? '#8F8FFE'
@@ -125,10 +165,19 @@ function ContestPopoverContent({ contest }: { contest: ContestData }) {
       <p
         className='mt-2 text-sm font-medium'
         style={{
-          color: contest.isCompleted ? '#8F8FFE' : '#565698',
+          color:
+            contest.disciplines.length === 0
+              ? '#6B6B76'
+              : contest.isCompleted
+                ? '#8F8FFE'
+                : '#565698',
         }}
       >
-        {contest.isCompleted ? 'Completed' : 'Participated'}
+        {contest.disciplines.length === 0
+          ? 'Not participated'
+          : contest.isCompleted
+            ? 'Completed'
+            : 'Participated'}
       </p>
     </div>
   )
