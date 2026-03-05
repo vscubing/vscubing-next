@@ -11,7 +11,7 @@ export function ContestParticipationSection({ userId }: { userId: string }) {
   const trpc = useTRPC()
 
   const { data: years, isLoading: yearsLoading } = useQuery(
-    trpc.profile.getParticipationYears.queryOptions({ userId }),
+    trpc.profile.getContestYears.queryOptions(),
   )
 
   const [year, setYear] = useState<string | null>(null)

@@ -292,29 +292,19 @@ export const profileRouter = createTRPCRouter({
       }))
     }),
 
-  getParticipationYears: publicProcedure
-    .input(z.object({ userId: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const yearCol = sql<number>`EXTRACT(YEAR FROM ${contestTable.startDate})::int`
+  getContestYears: publicProcedure.query(async ({ ctx }) => {
+    const yearCol = sql<number>`EXTRACT(YEAR FROM ${contestTable.startDate})::int`
 
-      const rows = await ctx.db
-        .selectDistinct({
-          year: yearCol,
-        })
-        .from(roundSessionTable)
-        .innerJoin(roundTable, eq(roundTable.id, roundSessionTable.roundId))
-        .innerJoin(contestTable, eq(contestTable.slug, roundTable.contestSlug))
-        .where(
-          and(
-            eq(roundSessionTable.contestantId, input.userId),
-            eq(roundSessionTable.isFinished, true),
-            eq(contestTable.isOngoing, false),
-          ),
-        )
-        .orderBy(desc(yearCol))
+    const rows = await ctx.db
+      .selectDistinct({
+        year: yearCol,
+      })
+      .from(contestTable)
+      .where(eq(contestTable.isOngoing, false))
+      .orderBy(desc(yearCol))
 
-      return rows.map((r) => r.year)
-    }),
+    return rows.map((r) => r.year)
+  }),
 
   getContestParticipation: publicProcedure
     .input(
