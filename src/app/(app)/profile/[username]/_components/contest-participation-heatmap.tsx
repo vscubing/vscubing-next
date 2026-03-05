@@ -111,7 +111,11 @@ function ContestPopoverContent({ contest }: { contest: ContestData }) {
               ) : (
                 <span className='text-grey-60 text-xs'>✗</span>
               )}
-              <span className={completed ? 'text-white-100' : 'text-grey-60 line-through'}>
+              <span
+                className={
+                  completed ? 'text-white-100' : 'text-grey-60 line-through'
+                }
+              >
                 {DISCIPLINE_LABELS[d] ?? d}
               </span>
             </p>

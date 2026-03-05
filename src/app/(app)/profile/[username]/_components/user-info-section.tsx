@@ -81,7 +81,7 @@ function WcaAvatar({ wcaId, name }: { wcaId: string; name: string }) {
     <img
       src={avatarUrl}
       alt={name}
-      className='h-60 w-60 rounded-2xl object-cover sm:h-20 sm:w-20 md:h-50 md:w-50'
+      className='h-60 w-60 shrink-0 rounded-2xl object-cover sm:h-20 sm:w-20 md:h-50 md:w-50'
     />
   )
 }

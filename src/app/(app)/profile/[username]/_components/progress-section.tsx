@@ -64,11 +64,11 @@ export function ProgressSection({ userId }: { userId: string }) {
       </div>
 
       {isLoading ? (
-        <div className='flex min-h-64 items-center justify-center'>
+        <div className='flex h-72 items-center justify-center'>
           <LoadingSpinner />
         </div>
       ) : !data || data.length === 0 ? (
-        <div className='flex min-h-64 items-center justify-center'>
+        <div className='flex h-72 items-center justify-center'>
           <p className='text-grey-40 text-base'>No progress data yet</p>
         </div>
       ) : (

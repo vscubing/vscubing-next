@@ -363,7 +363,10 @@ export const profileRouter = createTRPCRouter({
         if (existing) {
           existing.add(row.discipline)
         } else {
-          allDisciplinesPerContest.set(row.contestSlug, new Set([row.discipline]))
+          allDisciplinesPerContest.set(
+            row.contestSlug,
+            new Set([row.discipline]),
+          )
         }
       }
 
@@ -408,7 +411,8 @@ export const profileRouter = createTRPCRouter({
           ? (Array.from(totalDisciplines) as Discipline[])
           : contest.disciplines
         contest.isCompleted =
-          !!totalDisciplines && contest.disciplines.length >= totalDisciplines.size
+          !!totalDisciplines &&
+          contest.disciplines.length >= totalDisciplines.size
       }
 
       return Array.from(contestMap.values())

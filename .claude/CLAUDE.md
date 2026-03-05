@@ -1,2 +1,5 @@
 - Always use bun
 - Always make sure the formatting is correct with `bun run format:check` and fix with `bun run format:write` if necessary
+- don't hardcode the disciplines or discipline count, reference DISCIPLINES from `src/types.ts` if applicable
+- do good loading states (use our loading spinner where applicable)
+- actively prevent layout shifts after loading states

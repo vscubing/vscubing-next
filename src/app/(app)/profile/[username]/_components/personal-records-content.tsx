@@ -112,11 +112,6 @@ function MobileCards({ records }: { records: PersonalRecords }) {
             <span className='title-h3 flex-1'>
               {DISCIPLINE_LABELS[record.discipline]}
             </span>
-            {record.single && (
-              <PlaceLabel podiumColors size='sm'>
-                {record.single.rank}
-              </PlaceLabel>
-            )}
           </div>
           <MobileRecordRow
             label='Rank Single'
