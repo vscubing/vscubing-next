@@ -48,7 +48,7 @@ export function PlaceLabel({
           className={cn(
             'text-secondary-20 absolute rotate-[30deg] transform',
             size === 'sm'
-              ? '-top-[5px] -right-[3px] h-[10px] w-[10px]'
+              ? '-top-[12px] -right-[2px] w-[20px]'
               : '-top-2 -right-1',
           )}
         />
