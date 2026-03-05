@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { DisciplineIcon, Select } from '@/frontend/ui'
+import { DisciplineBadge, Select } from '@/frontend/ui'
 import { DISCIPLINES, type Discipline } from '@/types'
 import { useTRPC } from '@/lib/trpc/react'
 import { useQuery } from '@tanstack/react-query'
@@ -38,18 +38,18 @@ export function ProgressSection({ userId }: { userId: string }) {
           <h3 className='title-h3'>Progress</h3>
           <div className='flex gap-1'>
             {DISCIPLINES.map((d) => (
-              <button
+              <DisciplineBadge
                 key={d}
+                discipline={d}
+                size='sm'
                 className={cn(
-                  'flex h-10 w-10 items-center justify-center rounded-lg transition-colors',
+                  'transition-base outline-ring cursor-pointer border border-transparent',
                   discipline === d
                     ? 'bg-secondary-20 text-black-100'
-                    : 'bg-grey-100 text-grey-60 hover:text-white-100',
+                    : 'bg-grey-100 text-grey-60 hover:border-secondary-20 active:bg-secondary-20 active:text-black-100',
                 )}
                 onClick={() => setDiscipline(d)}
-              >
-                <DisciplineIcon discipline={d} />
-              </button>
+              />
             ))}
           </div>
         </div>
