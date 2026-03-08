@@ -36,10 +36,7 @@ export function ProgressChart({
     .filter((d) => !d.isDnf && d.avgMs !== null)
     .map((d) => ({
       ...d,
-      date: new Date(d.contestStartDate).toLocaleDateString('en-US', {
-        month: 'short',
-        year: '2-digit',
-      }),
+      dateTs: new Date(d.contestStartDate).getTime(),
     }))
 
   if (chartData.length === 0) {
@@ -89,12 +86,21 @@ export function ProgressChart({
             stroke={themeColors.grey[100]}
           />
           <XAxis
-            dataKey='date'
+            dataKey='dateTs'
+            type='number'
+            scale='time'
+            domain={['dataMin', 'dataMax']}
             stroke={themeColors.black[80]}
             tick={{ fill: themeColors.grey[60], fontSize: 12 }}
             tickLine={false}
             axisLine={false}
             minTickGap={40}
+            tickFormatter={(ts: number) =>
+              new Date(ts).toLocaleDateString('en-US', {
+                month: 'short',
+                year: '2-digit',
+              })
+            }
           />
           <YAxis
             stroke={themeColors.black[80]}
@@ -118,7 +124,7 @@ export function ProgressChart({
 
               if (!active || !payload?.[0]) return null
               const d = payload[0].payload as ProgressData[number] & {
-                date: string
+                dateTs: number
               }
               return (
                 <div
