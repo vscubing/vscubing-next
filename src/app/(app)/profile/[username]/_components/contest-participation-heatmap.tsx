@@ -81,6 +81,7 @@ export function ContestParticipationHeatmap({
               const isParticipated = contest.disciplines.length > 0
 
               if (!isParticipated) {
+                const contestUrl = `/contests/${contest.contestSlug}/results?discipline=${contest.availableDisciplines[0]}`
                 return (
                   <HoverPopover
                     key={wi}
@@ -88,7 +89,16 @@ export function ContestParticipationHeatmap({
                     contentClassName='pointer-events-none'
                     asChild
                   >
-                    <div className='bg-black-100 h-6 flex-1 rounded border border-transparent' />
+                    <div
+                      role='button'
+                      tabIndex={0}
+                      className='bg-black-100 h-6 flex-1 cursor-pointer rounded border border-transparent transition-opacity hover:opacity-80'
+                      onClick={() => router.push(contestUrl)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ')
+                          router.push(contestUrl)
+                      }}
+                    />
                   </HoverPopover>
                 )
               }

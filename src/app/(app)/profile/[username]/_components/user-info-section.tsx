@@ -1,6 +1,6 @@
 'use client'
 
-import { AvatarIcon, toast } from '@/frontend/ui'
+import { toast } from '@/frontend/ui'
 import { TextArea } from '@/frontend/ui/input'
 import { UserBadges } from '@/frontend/shared/user-badges'
 import { formatDate } from '@/lib/utils/format-date'
@@ -10,6 +10,7 @@ import { useState } from 'react'
 import { useWcaAvatarUrl } from './use-wca-avatar-url'
 import { LoadingSpinner } from '@/frontend/ui'
 import { cn } from '@/frontend/utils/cn'
+import DefaultAvatarIcon from '@/../public/images/default-avatar.icon.svg'
 
 type Profile = RouterOutputs['profile']['getProfile']
 
@@ -47,11 +48,7 @@ function ProfileAvatar({
   name: string
 }) {
   if (!wcaId) {
-    return (
-      <div className='bg-grey-100 flex h-60 w-60 shrink-0 items-center justify-center rounded-2xl sm:h-20 sm:w-20 md:h-50 md:w-50'>
-        <AvatarIcon className='h-12 w-12 sm:h-8 sm:w-8' />
-      </div>
-    )
+    return <DefaultAvatar />
   }
 
   return <WcaAvatar wcaId={wcaId} name={name} />
@@ -69,11 +66,7 @@ function WcaAvatar({ wcaId, name }: { wcaId: string; name: string }) {
   }
 
   if (!avatarUrl) {
-    return (
-      <div className='bg-grey-100 flex h-60 w-60 shrink-0 items-center justify-center rounded-2xl sm:h-20 sm:w-20 md:h-50 md:w-50'>
-        <AvatarIcon className='h-12 w-12 sm:h-8 sm:w-8' />
-      </div>
-    )
+    return <DefaultAvatar />
   }
 
   return (
@@ -83,6 +76,12 @@ function WcaAvatar({ wcaId, name }: { wcaId: string; name: string }) {
       alt={name}
       className='h-60 w-60 shrink-0 rounded-2xl object-cover sm:h-20 sm:w-20 md:h-50 md:w-50'
     />
+  )
+}
+
+function DefaultAvatar() {
+  return (
+    <DefaultAvatarIcon className='h-60 w-60 shrink-0 rounded-2xl sm:h-20 sm:w-20 md:h-50 md:w-50' />
   )
 }
 
