@@ -160,7 +160,7 @@ function SingleResultTablet({
                   discipline={discipline}
                 />
                 <span className='vertical-alignment-fix flex flex-1 items-center gap-2 sm:col-span-2 sm:w-auto'>
-                  <span>{user.name}</span>
+                  <UsernameLink username={user.name} />
                   <UserBadges user={user} />
                 </span>
                 <span className='mr-10 sm:mr-0 sm:flex sm:items-center'>
