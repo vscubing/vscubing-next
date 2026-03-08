@@ -130,8 +130,8 @@ export function ProgressChart({
                 <div
                   className={
                     isTouch
-                      ? 'bg-black-80 border-grey-100 rounded-lg border p-3 shadow-lg'
-                      : 'bg-black-80 border-grey-100 pointer-events-none rounded-lg border p-3 shadow-lg'
+                      ? 'bg-black-100 border-grey-100 rounded-lg border p-3 shadow-lg'
+                      : 'bg-black-100 border-grey-100 pointer-events-none rounded-lg border p-3 shadow-lg'
                   }
                 >
                   <p className='title-h3 mb-1'>Contest {d.contestSlug}</p>

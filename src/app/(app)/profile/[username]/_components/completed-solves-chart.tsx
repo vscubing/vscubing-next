@@ -52,7 +52,7 @@ export function CompletedSolvesChart({
                 if (!active || !payload?.[0]) return null
                 const d = payload[0].payload as CompletedSolvesData[number]
                 return (
-                  <div className='bg-black-80 border-grey-100 z-50 rounded-lg border p-3 shadow-lg'>
+                  <div className='bg-black-100 border-grey-100 z-50 rounded-lg border p-3 shadow-lg'>
                     <div className='mb-2 flex items-center gap-2'>
                       <span
                         className='h-2 w-2 rounded-[2px]'
