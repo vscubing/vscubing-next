@@ -33,9 +33,9 @@ export function ProgressSection({ userId }: { userId: string }) {
 
   return (
     <div className='bg-black-80 flex flex-col rounded-2xl p-6 sm:p-4'>
-      <div className='relative z-10 mb-4 flex items-center justify-between gap-4 sm:flex-col sm:items-start'>
-        <div className='flex flex-col gap-2'>
-          <h3 className='title-h3'>Progress</h3>
+      <div className='relative z-10 mb-4 flex flex-col gap-2'>
+        <h3 className='title-h3'>Progress</h3>
+        <div className='flex items-center justify-between'>
           <div className='flex gap-1'>
             {DISCIPLINES.map((d) => (
               <DisciplineBadge
@@ -52,14 +52,14 @@ export function ProgressSection({ userId }: { userId: string }) {
               />
             ))}
           </div>
-        </div>
-        <div className='flex items-center gap-3'>
-          <span className='text-grey-40 text-sm'>AVG</span>
-          <Select
-            options={[...TIME_FRAME_OPTIONS]}
-            value={timeFrame}
-            onValueChange={setTimeFrame}
-          />
+          <div className='flex items-center gap-3'>
+            <span className='text-grey-40 text-sm'>AVG</span>
+            <Select
+              options={[...TIME_FRAME_OPTIONS]}
+              value={timeFrame}
+              onValueChange={setTimeFrame}
+            />
+          </div>
         </div>
       </div>
 

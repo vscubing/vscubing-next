@@ -6,6 +6,7 @@ import { NavigateBackButton } from '@/frontend/shared/navigate-back-button'
 import { LayoutHeaderTitlePortal } from '@/app/(app)/_layout/layout-header'
 import { DisciplineIcon, LoadingSpinner } from '@/frontend/ui'
 import { DISCIPLINES, type Discipline } from '@/types'
+import { themeColors } from '@/frontend/utils/theme'
 
 const DISCIPLINE_LABELS: Record<Discipline, string> = {
   '2by2': '2x2',
@@ -19,9 +20,9 @@ import { ProgressSection } from './_components/progress-section'
 import { ContestParticipationSection } from './_components/contest-participation-section'
 
 const DISCIPLINE_COLORS: Record<Discipline, string> = {
-  '2by2': '#60BD02',
-  '3by3': '#DBDF00',
-  '4by4': '#8F8FFE',
+  '2by2': themeColors.primary[100],
+  '3by3': themeColors.yellow[100],
+  '4by4': themeColors.secondary[20],
 }
 
 function CompletedSolvesFallback() {
@@ -35,7 +36,7 @@ function CompletedSolvesFallback() {
           {DISCIPLINES.map((d) => (
             <div key={d} className='flex items-center gap-1.5'>
               <span
-                className='h-2.5 w-2.5 rounded-full'
+                className='h-2 w-2 rounded-[2px]'
                 style={{ backgroundColor: DISCIPLINE_COLORS[d] }}
               />
               <span className='text-grey-40 text-sm'>

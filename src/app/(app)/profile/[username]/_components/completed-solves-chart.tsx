@@ -3,11 +3,12 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import type { Discipline } from '@/types'
 import type { RouterOutputs } from '@/lib/trpc/react'
+import { themeColors } from '@/frontend/utils/theme'
 
 const DISCIPLINE_COLORS: Record<Discipline, string> = {
-  '2by2': '#60BD02',
-  '3by3': '#DBDF00',
-  '4by4': '#8F8FFE',
+  '2by2': themeColors.primary[100],
+  '3by3': themeColors.yellow[100],
+  '4by4': themeColors.secondary[20],
 }
 
 const DISCIPLINE_LABELS: Record<Discipline, string> = {
@@ -54,7 +55,7 @@ export function CompletedSolvesChart({
                   <div className='bg-black-80 border-grey-100 z-50 rounded-lg border p-3 shadow-lg'>
                     <div className='mb-2 flex items-center gap-2'>
                       <span
-                        className='h-2.5 w-2.5 rounded-sm'
+                        className='h-2 w-2 rounded-[2px]'
                         style={{
                           backgroundColor: DISCIPLINE_COLORS[d.discipline],
                         }}
@@ -86,7 +87,7 @@ export function CompletedSolvesChart({
         {data.map((entry) => (
           <div key={entry.discipline} className='flex items-center gap-1.5'>
             <span
-              className='h-2.5 w-2.5 rounded-full'
+              className='h-2 w-2 rounded-[2px]'
               style={{
                 backgroundColor: DISCIPLINE_COLORS[entry.discipline],
               }}

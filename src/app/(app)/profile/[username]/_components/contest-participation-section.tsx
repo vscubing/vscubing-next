@@ -48,24 +48,36 @@ export function ContestParticipationSection({ userId }: { userId: string }) {
 
   return (
     <div className='bg-black-80 flex flex-col rounded-2xl p-6 sm:p-4'>
-      <div className='mb-4 flex items-center justify-between'>
-        <h3 className='title-h3'>Contest participation</h3>
-        <div className='flex items-center gap-3'>
+      <div className='mb-4 flex flex-col gap-2'>
+        <div className='flex items-center justify-between'>
+          <h3 className='title-h3'>Contest participation</h3>
+          <div className='flex items-center gap-3'>
+            <div className='flex items-center gap-2 sm:hidden'>
+              <span className='bg-secondary-20 h-2 w-2 rounded-[2px]' />
+              <span className='text-grey-40 text-sm'>Completed</span>
+            </div>
+            <div className='flex items-center gap-2 sm:hidden'>
+              <span className='bg-secondary-60 h-2 w-2 rounded-[2px]' />
+              <span className='text-grey-40 text-sm'>Participated</span>
+            </div>
+            {selectedYear && (
+              <Select
+                options={yearOptions}
+                value={selectedYear}
+                onValueChange={setYear}
+              />
+            )}
+          </div>
+        </div>
+        <div className='hidden items-center justify-center gap-3 sm:flex'>
           <div className='flex items-center gap-2'>
-            <span className='h-3 w-3 rounded-sm bg-[#8F8FFE]' />
+            <span className='bg-secondary-20 h-2 w-2 rounded-[2px]' />
             <span className='text-grey-40 text-sm'>Completed</span>
           </div>
           <div className='flex items-center gap-2'>
-            <span className='h-3 w-3 rounded-sm bg-[#565698]' />
+            <span className='bg-secondary-60 h-2 w-2 rounded-[2px]' />
             <span className='text-grey-40 text-sm'>Participated</span>
           </div>
-          {selectedYear && (
-            <Select
-              options={yearOptions}
-              value={selectedYear}
-              onValueChange={setYear}
-            />
-          )}
         </div>
       </div>
 

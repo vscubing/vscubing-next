@@ -5,6 +5,7 @@ import { formatDate } from '@/lib/utils/format-date'
 import type { RouterOutputs } from '@/lib/trpc/react'
 import { useRouter } from 'next/navigation'
 import type { Discipline } from '@/types'
+import { themeColors } from '@/frontend/utils/theme'
 
 type ContestData = RouterOutputs['profile']['getContestParticipation'][number]
 
@@ -116,8 +117,8 @@ export function ContestParticipationHeatmap({
                     className='h-6 flex-1 cursor-pointer rounded border border-transparent transition-opacity hover:opacity-80'
                     style={{
                       backgroundColor: contest.isCompleted
-                        ? '#8F8FFE'
-                        : '#565698',
+                        ? themeColors.secondary[20]
+                        : themeColors.secondary[60],
                     }}
                     onClick={() =>
                       router.push(
@@ -177,10 +178,10 @@ function ContestPopoverContent({ contest }: { contest: ContestData }) {
         style={{
           color:
             contest.disciplines.length === 0
-              ? '#6B6B76'
+              ? themeColors.grey[60]
               : contest.isCompleted
-                ? '#8F8FFE'
-                : '#565698',
+                ? themeColors.secondary[20]
+                : themeColors.secondary[60],
         }}
       >
         {contest.disciplines.length === 0

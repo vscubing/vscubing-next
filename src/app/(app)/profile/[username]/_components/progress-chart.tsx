@@ -13,6 +13,7 @@ import { formatSolveTime } from '@/lib/utils/format-solve-time'
 import { formatDate } from '@/lib/utils/format-date'
 import type { Discipline } from '@/types'
 import type { RouterOutputs } from '@/lib/trpc/react'
+import { themeColors } from '@/frontend/utils/theme'
 import { useRouter } from 'next/navigation'
 import { useRef } from 'react'
 
@@ -75,18 +76,22 @@ export function ProgressChart({
           margin={{ top: 5, right: 20, left: -15, bottom: 5 }}
           style={{ cursor: 'pointer' }}
         >
-          <CartesianGrid horizontal={true} vertical={false} stroke='#3D3D45' />
+          <CartesianGrid
+            horizontal={true}
+            vertical={false}
+            stroke={themeColors.grey[100]}
+          />
           <XAxis
             dataKey='date'
-            stroke='#2A2A2E'
-            tick={{ fill: '#6B6B76', fontSize: 12 }}
+            stroke={themeColors.black[80]}
+            tick={{ fill: themeColors.grey[60], fontSize: 12 }}
             tickLine={false}
             axisLine={false}
             minTickGap={40}
           />
           <YAxis
-            stroke='#2A2A2E'
-            tick={{ fill: '#6B6B76', fontSize: 12 }}
+            stroke={themeColors.black[80]}
+            tick={{ fill: themeColors.grey[60], fontSize: 12 }}
             tickLine={false}
             axisLine={false}
             tickFormatter={(value: number) => {
@@ -132,10 +137,10 @@ export function ProgressChart({
           <Line
             type='monotone'
             dataKey='avgMs'
-            stroke='#8F8FFE'
+            stroke={themeColors.secondary[20]}
             strokeWidth={2}
-            dot={{ fill: '#8F8FFE', r: 4 }}
-            activeDot={{ fill: '#8F8FFE', r: 6 }}
+            dot={{ fill: themeColors.secondary[20], r: 4 }}
+            activeDot={{ fill: themeColors.secondary[20], r: 6 }}
           />
         </LineChart>
       </ResponsiveContainer>
