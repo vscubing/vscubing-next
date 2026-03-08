@@ -53,6 +53,10 @@ export function ContestParticipationSection({ userId }: { userId: string }) {
           <h3 className='title-h3'>Contest participation</h3>
           <div className='flex items-center gap-3'>
             <div className='flex items-center gap-2 sm:hidden'>
+              <span className='bg-primary-60 h-2 w-2 rounded-[2px]' />
+              <span className='text-grey-40 text-sm'>Ongoing</span>
+            </div>
+            <div className='flex items-center gap-2 sm:hidden'>
               <span className='bg-secondary-20 h-2 w-2 rounded-[2px]' />
               <span className='text-grey-40 text-sm'>Completed</span>
             </div>
@@ -70,6 +74,10 @@ export function ContestParticipationSection({ userId }: { userId: string }) {
           </div>
         </div>
         <div className='hidden items-center justify-center gap-3 sm:flex'>
+          <div className='flex items-center gap-2'>
+            <span className='bg-primary-60 h-2 w-2 rounded-[2px]' />
+            <span className='text-grey-40 text-sm'>Ongoing</span>
+          </div>
           <div className='flex items-center gap-2'>
             <span className='bg-secondary-20 h-2 w-2 rounded-[2px]' />
             <span className='text-grey-40 text-sm'>Completed</span>

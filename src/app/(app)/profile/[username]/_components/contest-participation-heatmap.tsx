@@ -62,7 +62,7 @@ export function ContestParticipationHeatmap({
             {Array.from({ length: WEEKS_PER_QUARTER }, (_, wi) => {
               const weekIndex = qi * WEEKS_PER_QUARTER + wi
               const contest = contestsByWeek.get(weekIndex)
-              const isFuture = weekIndex > currentWeek
+              const isFuture = weekIndex >= currentWeek
 
               if (!contest && isFuture) {
                 return (
@@ -84,48 +84,25 @@ export function ContestParticipationHeatmap({
 
               const isParticipated = contest.disciplines.length > 0
 
-              if (!isParticipated) {
-                const contestUrl = `/contests/${contest.contestSlug}/results?discipline=${contest.availableDisciplines[0]}`
-                return (
-                  <HoverPopover
-                    key={wi}
-                    content={
-                      <ContestPopoverContent
-                        contest={contest}
-                        contestUrl={isTouch ? contestUrl : undefined}
-                      />
-                    }
-                    contentClassName={isTouch ? '' : 'pointer-events-none'}
-                    asChild
-                  >
-                    <div
-                      role='button'
-                      tabIndex={0}
-                      className='bg-black-100 h-6 flex-1 cursor-pointer rounded border border-transparent transition-opacity hover:opacity-80'
-                      onClick={
-                        isTouch ? undefined : () => router.push(contestUrl)
-                      }
-                      onKeyDown={
-                        isTouch
-                          ? undefined
-                          : (e) => {
-                              if (e.key === 'Enter' || e.key === ' ')
-                                router.push(contestUrl)
-                            }
-                      }
-                    />
-                  </HoverPopover>
-                )
-              }
+              const contestUrl = isParticipated
+                ? `/contests/${contest.contestSlug}/results?discipline=${contest.disciplines[0]}&scrollToId=${contest.sessionId}`
+                : `/contests/${contest.contestSlug}/results?discipline=${contest.availableDisciplines[0]}`
 
-              const participatedUrl = `/contests/${contest.contestSlug}/results?discipline=${contest.disciplines[0]}&scrollToId=${contest.sessionId}`
+              const bgColor = contest.isOngoing
+                ? themeColors.primary[60]
+                : isParticipated
+                  ? contest.isCompleted
+                    ? themeColors.secondary[20]
+                    : themeColors.secondary[60]
+                  : undefined
+
               return (
                 <HoverPopover
                   key={wi}
                   content={
                     <ContestPopoverContent
                       contest={contest}
-                      contestUrl={isTouch ? participatedUrl : undefined}
+                      contestUrl={isTouch ? contestUrl : undefined}
                     />
                   }
                   contentClassName={isTouch ? '' : 'pointer-events-none'}
@@ -134,21 +111,17 @@ export function ContestParticipationHeatmap({
                   <div
                     role='button'
                     tabIndex={0}
-                    className='h-6 flex-1 cursor-pointer rounded border border-transparent transition-opacity hover:opacity-80'
-                    style={{
-                      backgroundColor: contest.isCompleted
-                        ? themeColors.secondary[20]
-                        : themeColors.secondary[60],
-                    }}
+                    className={`h-6 flex-1 cursor-pointer rounded border border-transparent transition-opacity hover:opacity-80 ${!bgColor ? 'bg-black-100' : ''}`}
+                    style={bgColor ? { backgroundColor: bgColor } : undefined}
                     onClick={
-                      isTouch ? undefined : () => router.push(participatedUrl)
+                      isTouch ? undefined : () => router.push(contestUrl)
                     }
                     onKeyDown={
                       isTouch
                         ? undefined
                         : (e) => {
                             if (e.key === 'Enter' || e.key === ' ')
-                              router.push(participatedUrl)
+                              router.push(contestUrl)
                           }
                     }
                   />
@@ -202,19 +175,22 @@ function ContestPopoverContent({
       <p
         className='mt-2 text-sm font-medium'
         style={{
-          color:
-            contest.disciplines.length === 0
+          color: contest.isOngoing
+            ? themeColors.primary[60]
+            : contest.disciplines.length === 0
               ? themeColors.grey[60]
               : contest.isCompleted
                 ? themeColors.secondary[20]
                 : themeColors.secondary[60],
         }}
       >
-        {contest.disciplines.length === 0
-          ? 'Not participated'
-          : contest.isCompleted
-            ? 'Completed'
-            : 'Participated'}
+        {contest.isOngoing
+          ? 'Ongoing'
+          : contest.disciplines.length === 0
+            ? 'Not participated'
+            : contest.isCompleted
+              ? 'Completed'
+              : 'Participated'}
       </p>
       {contestUrl && (
         <Link

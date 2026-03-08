@@ -300,7 +300,6 @@ export const profileRouter = createTRPCRouter({
         year: yearCol,
       })
       .from(contestTable)
-      .where(eq(contestTable.isOngoing, false))
       .orderBy(desc(yearCol))
 
     return rows.map((r) => r.year)
@@ -323,6 +322,7 @@ export const profileRouter = createTRPCRouter({
           contestStartDate: contestTable.startDate,
           contestEndDate: contestTable.endDate,
           contestType: contestTable.type,
+          isOngoing: contestTable.isOngoing,
           sessionId: roundSessionTable.id,
           isFinished: roundSessionTable.isFinished,
           discipline: roundTable.disciplineSlug,
@@ -336,7 +336,6 @@ export const profileRouter = createTRPCRouter({
             eq(roundSessionTable.isFinished, true),
             gte(contestTable.startDate, yearStart.toISOString()),
             lt(contestTable.startDate, yearEnd.toISOString()),
-            eq(contestTable.isOngoing, false),
           ),
         )
         .orderBy(contestTable.startDate)
@@ -353,7 +352,6 @@ export const profileRouter = createTRPCRouter({
           and(
             gte(contestTable.startDate, yearStart.toISOString()),
             lt(contestTable.startDate, yearEnd.toISOString()),
-            eq(contestTable.isOngoing, false),
           ),
         )
 
@@ -377,6 +375,7 @@ export const profileRouter = createTRPCRouter({
           contestStartDate: string
           contestEndDate: string | null
           contestType: string
+          isOngoing: boolean
           disciplines: Discipline[]
           availableDisciplines: Discipline[]
           isCompleted: boolean
@@ -396,6 +395,7 @@ export const profileRouter = createTRPCRouter({
             contestStartDate: row.contestStartDate,
             contestEndDate: row.contestEndDate,
             contestType: row.contestType,
+            isOngoing: row.isOngoing,
             disciplines: [row.discipline as Discipline],
             availableDisciplines: [],
             isCompleted: false,
@@ -422,13 +422,13 @@ export const profileRouter = createTRPCRouter({
           startDate: contestTable.startDate,
           endDate: contestTable.endDate,
           type: contestTable.type,
+          isOngoing: contestTable.isOngoing,
         })
         .from(contestTable)
         .where(
           and(
             gte(contestTable.startDate, yearStart.toISOString()),
             lt(contestTable.startDate, yearEnd.toISOString()),
-            eq(contestTable.isOngoing, false),
           ),
         )
         .orderBy(contestTable.startDate)
@@ -441,6 +441,7 @@ export const profileRouter = createTRPCRouter({
             contestStartDate: contest.startDate,
             contestEndDate: contest.endDate,
             contestType: contest.type,
+            isOngoing: contest.isOngoing,
             disciplines: [],
             availableDisciplines: totalDisciplines
               ? (Array.from(totalDisciplines) as Discipline[])
