@@ -4,8 +4,10 @@ import { HoverPopover } from '@/frontend/ui'
 import { formatDate } from '@/lib/utils/format-date'
 import type { RouterOutputs } from '@/lib/trpc/react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import type { Discipline } from '@/types'
 import { themeColors } from '@/frontend/utils/theme'
+import { useIsTouchDevice } from '@/frontend/utils/use-media-query'
 
 type ContestData = RouterOutputs['profile']['getContestParticipation'][number]
 
@@ -26,6 +28,7 @@ export function ContestParticipationHeatmap({
   year: number
 }) {
   const router = useRouter()
+  const isTouch = useIsTouchDevice()
 
   const contestsByWeek = new Map<number, ContestData>()
   for (const contest of data) {
@@ -86,29 +89,46 @@ export function ContestParticipationHeatmap({
                 return (
                   <HoverPopover
                     key={wi}
-                    content={<ContestPopoverContent contest={contest} />}
-                    contentClassName='pointer-events-none'
+                    content={
+                      <ContestPopoverContent
+                        contest={contest}
+                        contestUrl={isTouch ? contestUrl : undefined}
+                      />
+                    }
+                    contentClassName={isTouch ? '' : 'pointer-events-none'}
                     asChild
                   >
                     <div
                       role='button'
                       tabIndex={0}
                       className='bg-black-100 h-6 flex-1 cursor-pointer rounded border border-transparent transition-opacity hover:opacity-80'
-                      onClick={() => router.push(contestUrl)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ')
-                          router.push(contestUrl)
-                      }}
+                      onClick={
+                        isTouch ? undefined : () => router.push(contestUrl)
+                      }
+                      onKeyDown={
+                        isTouch
+                          ? undefined
+                          : (e) => {
+                              if (e.key === 'Enter' || e.key === ' ')
+                                router.push(contestUrl)
+                            }
+                      }
                     />
                   </HoverPopover>
                 )
               }
 
+              const participatedUrl = `/contests/${contest.contestSlug}/results?discipline=${contest.disciplines[0]}&scrollToId=${contest.sessionId}`
               return (
                 <HoverPopover
                   key={wi}
-                  content={<ContestPopoverContent contest={contest} />}
-                  contentClassName='pointer-events-none'
+                  content={
+                    <ContestPopoverContent
+                      contest={contest}
+                      contestUrl={isTouch ? participatedUrl : undefined}
+                    />
+                  }
+                  contentClassName={isTouch ? '' : 'pointer-events-none'}
                   asChild
                 >
                   <div
@@ -120,17 +140,17 @@ export function ContestParticipationHeatmap({
                         ? themeColors.secondary[20]
                         : themeColors.secondary[60],
                     }}
-                    onClick={() =>
-                      router.push(
-                        `/contests/${contest.contestSlug}/results?discipline=${contest.disciplines[0]}&scrollToId=${contest.sessionId}`,
-                      )
+                    onClick={
+                      isTouch ? undefined : () => router.push(participatedUrl)
                     }
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ')
-                        router.push(
-                          `/contests/${contest.contestSlug}/results?discipline=${contest.disciplines[0]}&scrollToId=${contest.sessionId}`,
-                        )
-                    }}
+                    onKeyDown={
+                      isTouch
+                        ? undefined
+                        : (e) => {
+                            if (e.key === 'Enter' || e.key === ' ')
+                              router.push(participatedUrl)
+                          }
+                    }
                   />
                 </HoverPopover>
               )
@@ -142,7 +162,13 @@ export function ContestParticipationHeatmap({
   )
 }
 
-function ContestPopoverContent({ contest }: { contest: ContestData }) {
+function ContestPopoverContent({
+  contest,
+  contestUrl,
+}: {
+  contest: ContestData
+  contestUrl?: string
+}) {
   return (
     <div className='p-3'>
       <p className='title-h3 mb-1'>Contest {contest.contestSlug}</p>
@@ -190,6 +216,14 @@ function ContestPopoverContent({ contest }: { contest: ContestData }) {
             ? 'Completed'
             : 'Participated'}
       </p>
+      {contestUrl && (
+        <Link
+          href={contestUrl}
+          className='text-primary-60 mt-2 block text-sm font-medium'
+        >
+          View contest →
+        </Link>
+      )}
     </div>
   )
 }

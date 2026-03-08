@@ -15,7 +15,9 @@ import type { Discipline } from '@/types'
 import type { RouterOutputs } from '@/lib/trpc/react'
 import { themeColors } from '@/frontend/utils/theme'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { useRef } from 'react'
+import { useIsTouchDevice } from '@/frontend/utils/use-media-query'
 
 type ProgressData = RouterOutputs['profile']['getProgress']
 
@@ -27,6 +29,7 @@ export function ProgressChart({
   discipline: Discipline
 }) {
   const router = useRouter()
+  const isTouch = useIsTouchDevice()
   const activePointRef = useRef<ProgressData[number] | null>(null)
 
   const chartData = data
@@ -62,19 +65,23 @@ export function ProgressChart({
 
   return (
     <div
-      className='h-72 cursor-pointer'
-      onClick={navigateToActivePoint}
-      role='button'
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') navigateToActivePoint()
-      }}
+      className={isTouch ? 'h-72' : 'h-72 cursor-pointer'}
+      onClick={isTouch ? undefined : navigateToActivePoint}
+      role={isTouch ? undefined : 'button'}
+      tabIndex={isTouch ? undefined : 0}
+      onKeyDown={
+        isTouch
+          ? undefined
+          : (e) => {
+              if (e.key === 'Enter' || e.key === ' ') navigateToActivePoint()
+            }
+      }
     >
       <ResponsiveContainer width='100%' height='100%'>
         <LineChart
           data={chartData}
           margin={{ top: 5, right: 20, left: -15, bottom: 5 }}
-          style={{ cursor: 'pointer' }}
+          style={isTouch ? undefined : { cursor: 'pointer' }}
         >
           <CartesianGrid
             horizontal={true}
@@ -114,7 +121,13 @@ export function ProgressChart({
                 date: string
               }
               return (
-                <div className='bg-black-80 border-grey-100 pointer-events-none rounded-lg border p-3 shadow-lg'>
+                <div
+                  className={
+                    isTouch
+                      ? 'bg-black-80 border-grey-100 rounded-lg border p-3 shadow-lg'
+                      : 'bg-black-80 border-grey-100 pointer-events-none rounded-lg border p-3 shadow-lg'
+                  }
+                >
                   <p className='title-h3 mb-1'>Contest {d.contestSlug}</p>
                   <p className='text-grey-40 text-sm'>
                     {formatDate(d.contestStartDate, 'long')} · {d.contestType}
@@ -129,10 +142,21 @@ export function ProgressChart({
                       Best single: {formatSolveTime(d.bestSingleMs, true)}
                     </p>
                   )}
+                  {isTouch && (
+                    <Link
+                      href={`/contests/${d.contestSlug}/results?discipline=${discipline}&scrollToId=${d.sessionId}`}
+                      className='text-primary-60 mt-2 block text-sm font-medium'
+                    >
+                      View contest →
+                    </Link>
+                  )}
                 </div>
               )
             }}
-            wrapperStyle={{ zIndex: 10, pointerEvents: 'none' }}
+            wrapperStyle={{
+              zIndex: 10,
+              pointerEvents: isTouch ? 'auto' : 'none',
+            }}
           />
           <Line
             type='monotone'
