@@ -321,6 +321,7 @@ export const profileRouter = createTRPCRouter({
           contestSlug: contestTable.slug,
           contestStartDate: contestTable.startDate,
           contestEndDate: contestTable.endDate,
+          contestExpectedEndDate: contestTable.expectedEndDate,
           contestType: contestTable.type,
           isOngoing: contestTable.isOngoing,
           sessionId: roundSessionTable.id,
@@ -374,6 +375,7 @@ export const profileRouter = createTRPCRouter({
           contestSlug: string
           contestStartDate: string
           contestEndDate: string | null
+          contestExpectedEndDate: string
           contestType: string
           isOngoing: boolean
           disciplines: Discipline[]
@@ -394,6 +396,7 @@ export const profileRouter = createTRPCRouter({
             contestSlug: row.contestSlug,
             contestStartDate: row.contestStartDate,
             contestEndDate: row.contestEndDate,
+            contestExpectedEndDate: row.contestExpectedEndDate,
             contestType: row.contestType,
             isOngoing: row.isOngoing,
             disciplines: [row.discipline as Discipline],
@@ -421,6 +424,7 @@ export const profileRouter = createTRPCRouter({
           slug: contestTable.slug,
           startDate: contestTable.startDate,
           endDate: contestTable.endDate,
+          expectedEndDate: contestTable.expectedEndDate,
           type: contestTable.type,
           isOngoing: contestTable.isOngoing,
         })
@@ -440,6 +444,7 @@ export const profileRouter = createTRPCRouter({
             contestSlug: contest.slug,
             contestStartDate: contest.startDate,
             contestEndDate: contest.endDate,
+            contestExpectedEndDate: contest.expectedEndDate,
             contestType: contest.type,
             isOngoing: contest.isOngoing,
             disciplines: [],

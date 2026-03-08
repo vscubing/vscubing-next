@@ -125,8 +125,7 @@ function ContestPopoverContent({
       <p className='title-h3 mb-1'>Contest {contest.contestSlug}</p>
       <p className='text-grey-40 mb-2 text-sm'>
         {formatDate(contest.contestStartDate, 'long')}
-        {contest.contestEndDate &&
-          ` - ${formatDate(contest.contestEndDate, 'long')}`}
+        {` - ${formatDate(contest.contestEndDate ?? contest.contestExpectedEndDate, 'long')}`}
       </p>
       <div className='text-sm'>
         <p className='text-grey-20 mb-1 font-medium'>Disciplines:</p>
