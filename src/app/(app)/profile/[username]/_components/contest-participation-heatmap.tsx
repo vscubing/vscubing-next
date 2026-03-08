@@ -41,18 +41,6 @@ export function ContestParticipationHeatmap({
     contestsByWeek.set(week, contest)
   }
 
-  const now = new Date()
-  const currentYearStart = new Date(year, 0, 1)
-  const currentWeek =
-    now.getFullYear() === year
-      ? Math.floor(
-          (now.getTime() - currentYearStart.getTime()) /
-            (1000 * 60 * 60 * 24 * 7),
-        )
-      : now.getFullYear() > year
-        ? 52
-        : -1
-
   return (
     <div className='flex flex-col gap-1'>
       {QUARTER_LABELS.map((quarter, qi) => (
@@ -62,22 +50,12 @@ export function ContestParticipationHeatmap({
             {Array.from({ length: WEEKS_PER_QUARTER }, (_, wi) => {
               const weekIndex = qi * WEEKS_PER_QUARTER + wi
               const contest = contestsByWeek.get(weekIndex)
-              const isFuture = weekIndex >= currentWeek
-
-              if (!contest && isFuture) {
-                return (
-                  <div
-                    key={wi}
-                    className='border-grey-100 h-6 flex-1 rounded border'
-                  />
-                )
-              }
 
               if (!contest) {
                 return (
                   <div
                     key={wi}
-                    className='bg-black-100 h-6 flex-1 rounded border border-transparent'
+                    className='border-grey-100 h-6 flex-1 rounded border'
                   />
                 )
               }
