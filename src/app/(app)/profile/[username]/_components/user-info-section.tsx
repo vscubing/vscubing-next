@@ -2,6 +2,7 @@
 
 import { toast } from '@/frontend/ui'
 import { TextArea } from '@/frontend/ui/input'
+import { UnderlineButton } from '@/frontend/ui/buttons'
 import { UserBadges } from '@/frontend/shared/user-badges'
 import { formatDate } from '@/lib/utils/format-date'
 import { useTRPC, type RouterOutputs } from '@/lib/trpc/react'
@@ -9,7 +10,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useWcaAvatarUrl } from './use-wca-avatar-url'
 import { LoadingSpinner } from '@/frontend/ui'
-import { cn } from '@/frontend/utils/cn'
 import DefaultAvatarIcon from '@/../public/images/default-avatar.icon.svg'
 
 type Profile = RouterOutputs['profile']['getProfile']
@@ -88,12 +88,14 @@ function DefaultAvatar() {
 function BioEditor({ profile }: { profile: Profile }) {
   const [isEditing, setIsEditing] = useState(false)
   const [bio, setBio] = useState(profile.bio)
+  const [draft, setDraft] = useState(profile.bio)
   const trpc = useTRPC()
   const queryClient = useQueryClient()
 
   const { mutate: updateBio } = useMutation(
     trpc.profile.updateBio.mutationOptions({
-      onMutate: async () => {
+      onMutate: async ({ bio: newBio }) => {
+        setBio(newBio)
         setIsEditing(false)
       },
       onError: () => {
@@ -114,50 +116,75 @@ function BioEditor({ profile }: { profile: Profile }) {
   if (!profile.isOwnProfile && !bio) return null
 
   if (!profile.isOwnProfile) {
-    return <p className='text-grey-20 text-base'>{bio}</p>
+    return (
+      <div className='flex flex-col gap-1'>
+        <span className='text-grey-40 text-sm'>BIO</span>
+        <p className='text-grey-20 text-base'>{bio}</p>
+      </div>
+    )
+  }
+
+  const startEditing = () => {
+    setDraft(bio)
+    setIsEditing(true)
+  }
+
+  const cancelEditing = () => {
+    setIsEditing(false)
   }
 
   if (isEditing) {
     return (
-      <div className='flex flex-col gap-2'>
-        <TextArea
-          value={bio}
-          onChange={(e) => setBio(e.target.value)}
-          placeholder='Write something about yourself...'
-          className='min-h-20 resize-none'
-          maxLength={500}
-          autoFocus
-        />
-        <div className='flex gap-2'>
-          <button
-            className='btn-sm text-secondary-20 hover:underline'
-            onClick={() => updateBio({ bio })}
-          >
-            Save
-          </button>
-          <button
-            className='btn-sm text-grey-40 hover:underline'
-            onClick={() => {
-              setBio(profile.bio)
-              setIsEditing(false)
+      <div className='flex flex-col gap-1'>
+        <span className='text-grey-40 text-sm'>BIO</span>
+        <div className='flex flex-col gap-2'>
+          <TextArea
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') cancelEditing()
+              if (e.key === 'Enter' && (e.ctrlKey || e.metaKey))
+                updateBio({ bio: draft })
             }}
-          >
-            Cancel
-          </button>
+            placeholder='Write something about yourself...'
+            className='min-h-20 resize-none'
+            maxLength={500}
+            autoFocus
+          />
+          <div className='flex gap-2'>
+            <UnderlineButton
+              size='sm'
+              onClick={() => updateBio({ bio: draft })}
+            >
+              Save
+            </UnderlineButton>
+            <button
+              className='btn-sm text-grey-40 hover:text-grey-20 transition-base'
+              onClick={cancelEditing}
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       </div>
     )
   }
 
   return (
-    <button
-      className={cn(
-        'text-left text-base hover:underline',
-        bio ? 'text-grey-20' : 'text-grey-40',
+    <div className='flex flex-col items-start gap-1'>
+      <span className='text-grey-40 text-sm'>BIO</span>
+      {bio ? (
+        <div className='flex flex-col items-start gap-2'>
+          <p className='text-grey-20 text-base'>{bio}</p>
+          <UnderlineButton size='sm' onClick={startEditing}>
+            Edit Bio
+          </UnderlineButton>
+        </div>
+      ) : (
+        <UnderlineButton size='sm' onClick={startEditing}>
+          Add Bio
+        </UnderlineButton>
       )}
-      onClick={() => setIsEditing(true)}
-    >
-      {bio || 'Add a bio...'}
-    </button>
+    </div>
   )
 }
