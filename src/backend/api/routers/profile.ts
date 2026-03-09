@@ -78,7 +78,7 @@ export const profileRouter = createTRPCRouter({
         .groupBy(roundTable.disciplineSlug)
 
       return rows.map((row) => ({
-        discipline: row.discipline as Discipline,
+        discipline: row.discipline,
         solveCount: Number(row.solveCount),
         contestCount: Number(row.contestCount),
       }))
@@ -461,7 +461,7 @@ export const profileRouter = createTRPCRouter({
     }),
 
   updateBio: protectedProcedure
-    .input(z.object({ bio: z.string().max(500) }))
+    .input(z.object({ bio: z.string().max(100) }))
     .mutation(async ({ ctx, input }) => {
       await ctx.db
         .insert(userMetadataTable)

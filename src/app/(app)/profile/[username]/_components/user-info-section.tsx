@@ -16,9 +16,9 @@ type Profile = RouterOutputs['profile']['getProfile']
 
 export function UserInfoSection({ profile }: { profile: Profile }) {
   return (
-    <div className='bg-black-80 flex gap-6 rounded-2xl p-6 sm:flex-col sm:items-center sm:p-4'>
+    <div className='bg-black-80 flex gap-6 overflow-hidden rounded-2xl p-6 sm:flex-col sm:items-center sm:p-4'>
       <ProfileAvatar wcaId={profile.wcaId} name={profile.name} />
-      <div className='flex flex-1 flex-col sm:items-center'>
+      <div className='flex min-w-0 flex-1 flex-col sm:items-center'>
         <div className='mb-1 flex items-center gap-2'>
           <h2 className='title-h2'>{profile.name}</h2>
           <UserBadges
@@ -119,7 +119,9 @@ function BioEditor({ profile }: { profile: Profile }) {
     return (
       <div className='flex flex-col gap-1'>
         <span className='text-grey-40 text-sm'>BIO</span>
-        <p className='text-grey-20 text-base'>{bio}</p>
+        <p className='text-grey-20 max-w-full overflow-x-auto break-words text-base'>
+          {bio}
+        </p>
       </div>
     )
   }
@@ -148,7 +150,7 @@ function BioEditor({ profile }: { profile: Profile }) {
             }}
             placeholder='Write something about yourself...'
             className='min-h-20 resize-none'
-            maxLength={500}
+            maxLength={100}
             autoFocus
           />
           <div className='flex gap-2'>
@@ -175,7 +177,9 @@ function BioEditor({ profile }: { profile: Profile }) {
       <span className='text-grey-40 text-sm'>BIO</span>
       {bio ? (
         <div className='flex flex-col items-start gap-2'>
-          <p className='text-grey-20 text-base'>{bio}</p>
+          <p className='text-grey-20 max-w-full overflow-x-auto break-words text-base'>
+            {bio}
+          </p>
           <UnderlineButton size='sm' onClick={startEditing}>
             Edit Bio
           </UnderlineButton>
