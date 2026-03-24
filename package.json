@@ -56,7 +56,7 @@
     "jquery": "^3.7.1",
     "jws": "^4.0.1",
     "lucide-react": "^0.501.0",
-    "next": "16.1.6",
+    "next": "16.1.7",
     "nextjs-toploader": "^3.9.17",
     "node-telegram-bot-api": "^0.66.0",
     "oslo": "^1.2.1",
