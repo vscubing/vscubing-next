@@ -14,6 +14,10 @@ const DISCIPLINE_LABELS: Record<Discipline, string> = {
   '4by4': '4x4',
 }
 import { UserInfoSection } from './_components/user-info-section'
+import {
+  ProfileStatsSection,
+  ProfileStatsFallback,
+} from './_components/profile-stats-section'
 import { CompletedSolvesSection } from './_components/completed-solves-section'
 import { PersonalRecordsSection } from './_components/personal-records-section'
 import { ProgressSection } from './_components/progress-section'
@@ -135,7 +139,17 @@ export default async function ProfilePage({
       <LayoutHeaderTitlePortal>Profile</LayoutHeaderTitlePortal>
 
       <div className='grid grid-cols-[1fr_auto] gap-3 sm:grid-cols-1'>
-        <UserInfoSection profile={profile} />
+        <UserInfoSection
+          profile={profile}
+          statsSlot={
+            <Suspense fallback={<ProfileStatsFallback />}>
+              <ProfileStatsSection
+                userId={profile.id}
+                createdAt={profile.createdAt}
+              />
+            </Suspense>
+          }
+        />
         <Suspense fallback={<CompletedSolvesFallback />}>
           <CompletedSolvesSection userId={profile.id} />
         </Suspense>

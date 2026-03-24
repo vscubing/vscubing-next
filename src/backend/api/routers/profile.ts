@@ -42,6 +42,21 @@ export const profileRouter = createTRPCRouter({
 
       const globalRecordsByUser = await getGlobalRecordsByUser()
 
+      return {
+        id: row.id,
+        name: row.name,
+        role: row.role,
+        createdAt: row.createdAt,
+        wcaId: row.wcaId ?? null,
+        bio: row.bio ?? '',
+        globalRecords: globalRecordsByUser.get(row.id) ?? null,
+        isOwnProfile: ctx.session?.user.id === row.id,
+      }
+    }),
+
+  getProfileStats: publicProcedure
+    .input(z.object({ userId: z.string(), createdAt: z.string() }))
+    .query(async ({ ctx, input }) => {
       // Count contests where user completed at least 1 discipline
       const [participationResult] = await ctx.db
         .select({ count: countDistinct(roundTable.contestSlug) })
@@ -50,7 +65,7 @@ export const profileRouter = createTRPCRouter({
         .innerJoin(contestTable, eq(contestTable.slug, roundTable.contestSlug))
         .where(
           and(
-            eq(roundSessionTable.contestantId, row.id),
+            eq(roundSessionTable.contestantId, input.userId),
             eq(roundSessionTable.isFinished, true),
             eq(contestTable.isOngoing, false),
           ),
@@ -76,7 +91,7 @@ export const profileRouter = createTRPCRouter({
             )
             .where(
               and(
-                eq(roundSessionTable.contestantId, row.id),
+                eq(roundSessionTable.contestantId, input.userId),
                 eq(roundSessionTable.isFinished, true),
                 eq(contestTable.isOngoing, false),
               ),
@@ -94,14 +109,7 @@ export const profileRouter = createTRPCRouter({
       }
 
       return {
-        id: row.id,
-        name: row.name,
-        role: row.role,
-        createdAt: row.createdAt,
-        wcaId: row.wcaId ?? null,
-        bio: row.bio ?? '',
-        globalRecords: globalRecordsByUser.get(row.id) ?? null,
-        isOwnProfile: ctx.session?.user.id === row.id,
+        createdAt: input.createdAt,
         contestsParticipated,
         currentContestStreak,
       }

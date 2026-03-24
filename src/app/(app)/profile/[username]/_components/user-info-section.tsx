@@ -4,8 +4,6 @@ import { toast } from '@/frontend/ui'
 import { TextArea } from '@/frontend/ui/input'
 import { UnderlineButton } from '@/frontend/ui/buttons'
 import { UserBadges } from '@/frontend/shared/user-badges'
-import { CalendarIcon, FlameIcon, FlagIcon } from '@/frontend/ui/icons'
-import { formatDate } from '@/lib/utils/format-date'
 import { useTRPC, type RouterOutputs } from '@/lib/trpc/react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
@@ -15,7 +13,13 @@ import DefaultAvatarIcon from '@/../public/images/default-avatar.icon.svg'
 
 type Profile = RouterOutputs['profile']['getProfile']
 
-export function UserInfoSection({ profile }: { profile: Profile }) {
+export function UserInfoSection({
+  profile,
+  statsSlot,
+}: {
+  profile: Profile
+  statsSlot: React.ReactNode
+}) {
   return (
     <div className='bg-black-80 flex gap-6 overflow-hidden rounded-2xl p-6 sm:flex-col sm:items-center sm:p-4'>
       <ProfileAvatar wcaId={profile.wcaId} name={profile.name} />
@@ -32,42 +36,7 @@ export function UserInfoSection({ profile }: { profile: Profile }) {
             }}
           />
         </div>
-        <div className='mb-4 flex gap-6 sm:gap-4'>
-          <div className='flex items-center gap-3'>
-            <div className='bg-grey-100 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg'>
-              <CalendarIcon className='text-grey-40' />
-            </div>
-            <div>
-              <p className='text-white-100 mb-0.5 leading-tight'>
-                {formatDate(profile.createdAt, 'long')}
-              </p>
-              <p className='text-grey-40 caption'>Member since</p>
-            </div>
-          </div>
-          <div className='flex items-center gap-3'>
-            <div className='bg-grey-100 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg'>
-              <FlameIcon className='text-podium-bronze' />
-            </div>
-            <div>
-              <p className='text-white-100 mb-0.5 leading-tight'>
-                {profile.currentContestStreak}{' '}
-                {profile.currentContestStreak === 1 ? 'contest' : 'contests'}
-              </p>
-              <p className='text-grey-40 caption'>Current Streak</p>
-            </div>
-          </div>
-          <div className='flex items-center gap-3'>
-            <div className='bg-grey-100 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg'>
-              <FlagIcon className='text-grey-40' />
-            </div>
-            <div>
-              <p className='text-white-100 mb-0.5 leading-tight'>
-                {profile.contestsParticipated}
-              </p>
-              <p className='text-grey-40 caption'>Contests</p>
-            </div>
-          </div>
-        </div>
+        <div className='mb-4'>{statsSlot}</div>
         <BioEditor profile={profile} />
       </div>
     </div>
