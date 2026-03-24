@@ -4,6 +4,7 @@ import { toast } from '@/frontend/ui'
 import { TextArea } from '@/frontend/ui/input'
 import { UnderlineButton } from '@/frontend/ui/buttons'
 import { UserBadges } from '@/frontend/shared/user-badges'
+import { CalendarIcon, FlameIcon, FlagIcon } from '@/frontend/ui/icons'
 import { formatDate } from '@/lib/utils/format-date'
 import { useTRPC, type RouterOutputs } from '@/lib/trpc/react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
@@ -19,7 +20,7 @@ export function UserInfoSection({ profile }: { profile: Profile }) {
     <div className='bg-black-80 flex gap-6 overflow-hidden rounded-2xl p-6 sm:flex-col sm:items-center sm:p-4'>
       <ProfileAvatar wcaId={profile.wcaId} name={profile.name} />
       <div className='flex min-w-0 flex-1 flex-col sm:items-center'>
-        <div className='mb-1 flex items-center gap-2'>
+        <div className='mb-4 flex items-center gap-2'>
           <h2 className='title-h2'>{profile.name}</h2>
           <UserBadges
             user={{
@@ -31,9 +32,42 @@ export function UserInfoSection({ profile }: { profile: Profile }) {
             }}
           />
         </div>
-        <p className='text-grey-40 mb-4 text-base'>
-          Member since {formatDate(profile.createdAt, 'long')}
-        </p>
+        <div className='mb-4 flex gap-6 sm:gap-4'>
+          <div className='flex items-center gap-3'>
+            <div className='bg-grey-100 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg'>
+              <CalendarIcon className='text-grey-40' />
+            </div>
+            <div>
+              <p className='text-white-100 mb-0.5 leading-tight'>
+                {formatDate(profile.createdAt, 'long')}
+              </p>
+              <p className='text-grey-40 caption'>Member since</p>
+            </div>
+          </div>
+          <div className='flex items-center gap-3'>
+            <div className='bg-grey-100 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg'>
+              <FlameIcon className='text-podium-bronze' />
+            </div>
+            <div>
+              <p className='text-white-100 mb-0.5 leading-tight'>
+                {profile.currentContestStreak}{' '}
+                {profile.currentContestStreak === 1 ? 'contest' : 'contests'}
+              </p>
+              <p className='text-grey-40 caption'>Current Streak</p>
+            </div>
+          </div>
+          <div className='flex items-center gap-3'>
+            <div className='bg-grey-100 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg'>
+              <FlagIcon className='text-grey-40' />
+            </div>
+            <div>
+              <p className='text-white-100 mb-0.5 leading-tight'>
+                {profile.contestsParticipated}
+              </p>
+              <p className='text-grey-40 caption'>Contests</p>
+            </div>
+          </div>
+        </div>
         <BioEditor profile={profile} />
       </div>
     </div>
@@ -119,7 +153,7 @@ function BioEditor({ profile }: { profile: Profile }) {
     return (
       <div className='flex flex-col gap-1'>
         <span className='text-grey-40 text-sm'>BIO</span>
-        <p className='text-grey-20 max-w-full overflow-x-auto break-words text-base'>
+        <p className='text-grey-20 max-w-full overflow-x-auto text-base break-words'>
           {bio}
         </p>
       </div>
@@ -177,7 +211,7 @@ function BioEditor({ profile }: { profile: Profile }) {
       <span className='text-grey-40 text-sm'>BIO</span>
       {bio ? (
         <div className='flex flex-col items-start gap-2'>
-          <p className='text-grey-20 max-w-full overflow-x-auto break-words text-base'>
+          <p className='text-grey-20 max-w-full overflow-x-auto text-base break-words'>
             {bio}
           </p>
           <UnderlineButton size='sm' onClick={startEditing}>

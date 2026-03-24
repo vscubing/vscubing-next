@@ -42,6 +42,57 @@ export const profileRouter = createTRPCRouter({
 
       const globalRecordsByUser = await getGlobalRecordsByUser()
 
+      // Count contests where user completed at least 1 discipline
+      const [participationResult] = await ctx.db
+        .select({ count: countDistinct(roundTable.contestSlug) })
+        .from(roundSessionTable)
+        .innerJoin(roundTable, eq(roundTable.id, roundSessionTable.roundId))
+        .innerJoin(contestTable, eq(contestTable.slug, roundTable.contestSlug))
+        .where(
+          and(
+            eq(roundSessionTable.contestantId, row.id),
+            eq(roundSessionTable.isFinished, true),
+            eq(contestTable.isOngoing, false),
+          ),
+        )
+      const contestsParticipated = Number(participationResult?.count ?? 0)
+
+      // Calculate current contest streak
+      const allContestsDesc = await ctx.db
+        .select({ slug: contestTable.slug })
+        .from(contestTable)
+        .where(eq(contestTable.isOngoing, false))
+        .orderBy(desc(contestTable.startDate))
+
+      const participatedContestSlugs = new Set(
+        (
+          await ctx.db
+            .selectDistinct({ contestSlug: roundTable.contestSlug })
+            .from(roundSessionTable)
+            .innerJoin(roundTable, eq(roundTable.id, roundSessionTable.roundId))
+            .innerJoin(
+              contestTable,
+              eq(contestTable.slug, roundTable.contestSlug),
+            )
+            .where(
+              and(
+                eq(roundSessionTable.contestantId, row.id),
+                eq(roundSessionTable.isFinished, true),
+                eq(contestTable.isOngoing, false),
+              ),
+            )
+        ).map((r) => r.contestSlug),
+      )
+
+      let currentContestStreak = 0
+      for (const contest of allContestsDesc) {
+        if (participatedContestSlugs.has(contest.slug)) {
+          currentContestStreak++
+        } else {
+          break
+        }
+      }
+
       return {
         id: row.id,
         name: row.name,
@@ -51,6 +102,8 @@ export const profileRouter = createTRPCRouter({
         bio: row.bio ?? '',
         globalRecords: globalRecordsByUser.get(row.id) ?? null,
         isOwnProfile: ctx.session?.user.id === row.id,
+        contestsParticipated,
+        currentContestStreak,
       }
     }),
 
