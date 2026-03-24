@@ -21,10 +21,10 @@ export function UserInfoSection({
   statsSlot: React.ReactNode
 }) {
   return (
-    <div className='bg-black-80 flex gap-6 overflow-hidden rounded-2xl p-6 sm:flex-col sm:items-center sm:p-4'>
+    <div className='bg-black-80 flex gap-6 overflow-hidden rounded-2xl p-6 sm:flex-col sm:p-4'>
       <ProfileAvatar wcaId={profile.wcaId} name={profile.name} />
-      <div className='flex min-w-0 flex-1 flex-col sm:items-center'>
-        <div className='mb-4 flex items-center gap-2'>
+      <div className='flex min-w-0 flex-1 flex-col'>
+        <div className='mb-4 flex items-center gap-2 sm:flex-col-reverse sm:items-start'>
           <h2 className='title-h2'>{profile.name}</h2>
           <UserBadges
             user={{

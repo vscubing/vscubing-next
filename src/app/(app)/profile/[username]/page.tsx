@@ -138,7 +138,7 @@ export default async function ProfilePage({
       <NavigateBackButton className='self-start' />
       <LayoutHeaderTitlePortal>Profile</LayoutHeaderTitlePortal>
 
-      <div className='grid grid-cols-[1fr_auto] gap-3 sm:grid-cols-1'>
+      <div className='grid grid-cols-[1fr_auto] gap-3 md:grid-cols-1'>
         <UserInfoSection
           profile={profile}
           statsSlot={
