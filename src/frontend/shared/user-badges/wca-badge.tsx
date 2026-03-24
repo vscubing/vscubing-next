@@ -130,9 +130,7 @@ function useWcaUnofficialApi({ wcaId }: { wcaId: string }) {
 function useWcaAvatarUrl({ wcaId }: { wcaId: string }) {
   return useQuery({
     queryFn: async () => {
-      const res = await fetch(
-        `https://www.worldcubeassociation.org/api/v0/persons/${wcaId}`,
-      )
+      const res = await fetch(`/api/wca-proxy/persons/${wcaId}`)
       const json = (await res.json()) as unknown
       const parsed = z
         .object({

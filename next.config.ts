@@ -38,6 +38,11 @@ const config: NextConfig = {
         source: '/ingest/decide',
         destination: 'https://eu.i.posthog.com/decide',
       },
+      // WCA API proxy (avoids CORS issues)
+      {
+        source: '/api/wca-proxy/:path*',
+        destination: 'https://www.worldcubeassociation.org/api/v0/:path*',
+      },
     ]
   },
 
