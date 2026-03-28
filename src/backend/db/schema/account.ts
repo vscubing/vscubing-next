@@ -1,22 +1,26 @@
-import { relations, type InferSelectModel } from 'drizzle-orm'
-import { index, pgTable, primaryKey } from 'drizzle-orm/pg-core'
+import { relations, sql, type InferSelectModel } from 'drizzle-orm'
+import { index, pgTable, primaryKey, uniqueIndex } from 'drizzle-orm/pg-core'
 import { createdUpdatedAtColumns } from './core'
 
-export const userTable = pgTable('user', (d) => ({
-  ...createdUpdatedAtColumns,
-  id: d
-    .varchar('id', { length: 255 })
-    .notNull()
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()), // NOTE: legacy userId's are just integers
-  name: d.varchar('name', { length: 255 }).notNull().default(''),
-  email: d.varchar('email', { length: 255 }).notNull(),
-  finishedRegistration: d
-    .boolean('finished_registration')
-    .default(false)
-    .notNull(),
-  role: d.text().$type<'admin'>(),
-}))
+export const userTable = pgTable(
+  'user',
+  (d) => ({
+    ...createdUpdatedAtColumns,
+    id: d
+      .varchar('id', { length: 255 })
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()), // NOTE: legacy userId's are just integers
+    name: d.varchar('name', { length: 255 }),
+    email: d.varchar('email', { length: 255 }).notNull(),
+    finishedRegistration: d
+      .boolean('finished_registration')
+      .default(false)
+      .notNull(),
+    role: d.text().$type<'admin'>(),
+  }),
+  (t) => [uniqueIndex('user_name_unique_ci').on(sql`lower(${t.name})`)],
+)
 
 export const userRelations = relations(userTable, ({ many }) => ({
   accounts: many(accountTable),

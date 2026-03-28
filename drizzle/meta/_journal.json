@@ -141,6 +141,13 @@
       "when": 1772658797482,
       "tag": "0019_spicy_husk",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1774677490427,
+      "tag": "0020_tricky_thunderbird",
+      "breakpoints": true
     }
   ]
 }

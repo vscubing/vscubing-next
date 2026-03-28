@@ -6,7 +6,7 @@ import {
   publicProcedure,
 } from '@/backend/api/trpc'
 import { accountTable, userTable } from '@/backend/db/schema'
-import { and, eq, getTableColumns } from 'drizzle-orm'
+import { and, eq, getTableColumns, sql } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
 import {
   deleteSessionTokenCookie,
@@ -54,7 +54,7 @@ export const userRouter = createTRPCRouter({
       const conflict = await ctx.db
         .select()
         .from(userTable)
-        .where(eq(userTable.name, input.username))
+        .where(eq(sql`lower(${userTable.name})`, input.username.toLowerCase()))
         .then((res) => res.length > 0)
 
       if (conflict)
