@@ -32,7 +32,7 @@ export function LatestContests({
   return (
     <section
       className={cn(
-        'flex flex-col gap-6 rounded-2xl bg-black-80 px-6 py-4 sm:gap-4 sm:p-3',
+        'bg-black-80 flex flex-col gap-6 rounded-2xl px-6 py-4 sm:gap-4 sm:p-3',
         className,
       )}
     >

@@ -21,7 +21,7 @@ function DeveloperBadge() {
       content={<div className='p-3'>vscubing developer</div>}
       asChild
     >
-      <span className='inline-flex h-5 w-5 items-center justify-center gap-0.5 rounded-md text-xs font-semibold text-primary-60 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2'>
+      <span className='text-primary-60 inline-flex h-5 w-5 items-center justify-center gap-0.5 rounded-md text-xs font-semibold transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none'>
         <CodeXmlIcon />
       </span>
     </HoverPopover>

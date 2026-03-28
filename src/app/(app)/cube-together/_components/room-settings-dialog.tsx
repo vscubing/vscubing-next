@@ -64,7 +64,7 @@ export function RoomSettingsDialog({
           </div>
           <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
             <div className='flex flex-col gap-2'>
-              <label htmlFor='new-password' className='text-sm text-grey-40'>
+              <label htmlFor='new-password' className='text-grey-40 text-sm'>
                 {currentSettings.hasPassword
                   ? 'Change Password'
                   : 'Set Password'}

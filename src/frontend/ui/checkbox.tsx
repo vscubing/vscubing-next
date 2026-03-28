@@ -14,7 +14,7 @@ export function Checkbox({
     <CheckboxPrimitive.Root
       ref={ref}
       className={cn(
-        'border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground peer h-4 w-4 shrink-0 rounded-sm border shadow focus-visible:outline-none focus-visible:ring disabled:cursor-not-allowed disabled:opacity-50',
+        'border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground peer h-4 w-4 shrink-0 rounded-sm border shadow focus-visible:ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50',
         className,
       )}
       {...props}

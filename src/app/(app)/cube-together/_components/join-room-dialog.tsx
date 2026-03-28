@@ -60,11 +60,11 @@ export function JoinRoomDialog({
             <DialogCloseCross />
           </div>
           <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
-            <p className='text-sm text-grey-40'>
+            <p className='text-grey-40 text-sm'>
               This room requires a password to join.
             </p>
             <div className='flex flex-col gap-2'>
-              <label htmlFor='join-password' className='text-sm text-grey-40'>
+              <label htmlFor='join-password' className='text-grey-40 text-sm'>
                 Password
               </label>
               <Input
@@ -75,7 +75,7 @@ export function JoinRoomDialog({
                 placeholder='Enter room password'
                 error={!!error}
               />
-              {error && <p className='text-sm text-red-80'>{error}</p>}
+              {error && <p className='text-red-80 text-sm'>{error}</p>}
             </div>
             <DialogFooter className='mt-2'>
               <DialogClose version='secondary'>Cancel</DialogClose>

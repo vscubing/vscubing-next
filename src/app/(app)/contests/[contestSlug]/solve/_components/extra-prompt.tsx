@@ -60,12 +60,12 @@ export function ExtraPrompt({
         <DialogOverlay withCubes={false} className='bg-black-1000/25' />
         <DialogContent className='max-w-[35rem] gap-8 p-0 sm:gap-6 sm:py-4'>
           <form
-            className='relative h-full w-full px-24 py-16 md:px-12 md:py-12 sm:px-2 sm:py-4'
+            className='relative h-full w-full px-24 py-16 sm:px-2 sm:py-4 md:px-12 md:py-12'
             onSubmit={handleSubmit}
           >
-            <DialogCloseCross className='absolute right-4 top-4 md:right-2 md:top-2 md:h-11 md:w-11 sm:-right-1 sm:-top-1' />
+            <DialogCloseCross className='absolute top-4 right-4 sm:-top-1 sm:-right-1 md:top-2 md:right-2 md:h-11 md:w-11' />
             <DialogTitle className='mb-4'>Need an Extra attempt?</DialogTitle>
-            <DialogDescription className='mb-8 text-center text-[0.875rem] leading-[1.5] text-grey-20 sm:mb-4'>
+            <DialogDescription className='text-grey-20 mb-8 text-center text-[0.875rem] leading-[1.5] sm:mb-4'>
               To request an extra attempt, please tell us what went wrong. This
               helps ensure extras are used thoughtfully.
             </DialogDescription>

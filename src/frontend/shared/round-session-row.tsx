@@ -22,6 +22,7 @@ import * as Accordion from '@radix-ui/react-accordion'
 import Link from 'next/link'
 import { type RefObject } from 'react'
 import { UserBadges } from './user-badges'
+import { UsernameLink } from './username-link'
 import { useSolveForm } from './use-solve-form'
 import { SimulatorProvider } from '@/app/(app)/contests/[contestSlug]/solve/_components'
 import { LoadingDots } from '../ui/loading-dots'
@@ -61,7 +62,7 @@ export function RoundSessionRow({
       ref={ref}
       className={cn(
         {
-          'sticky bottom-0 top-[calc(var(--layout-section-header-height)-2px)] z-10':
+          'sticky top-[calc(var(--layout-section-header-height)-2px)] bottom-0 z-[15]':
             sticky,
         },
         className,
@@ -97,7 +98,7 @@ export function RoundSessionRow({
 
 export function RoundSessionRowSkeleton() {
   return (
-    <div className='h-16 animate-pulse rounded-xl bg-grey-100 md:h-[5.25rem] sm:h-[7.25rem]'></div>
+    <div className='bg-grey-100 h-16 animate-pulse rounded-xl sm:h-[7.25rem] md:h-[5.25rem]'></div>
   )
 }
 
@@ -107,7 +108,7 @@ export function RoundSessionHeader({
   withContestLink?: boolean
 }) {
   return (
-    <div className='flex whitespace-nowrap pl-2 text-grey-40 md:hidden'>
+    <div className='text-grey-40 flex pl-2 whitespace-nowrap md:hidden'>
       <span className='mr-2 w-11 text-center'>Place</span>
       <span className='mr-2'>Type</span>
       <span className='flex-1'>Nickname</span>
@@ -155,7 +156,7 @@ function RoundSessionRowTablet({
             enabled={session.isOwn && session.isFinished}
             color={tailwindConfig.theme.colors.secondary[60]}
             className={cn('rounded-xl', {
-              'border border-dashed border-grey-20': !session.isFinished,
+              'border-grey-20 border border-dashed': !session.isFinished,
             })}
           >
             <div
@@ -180,7 +181,7 @@ function RoundSessionRowTablet({
                   discipline={discipline}
                 />
                 <span className='vertical-alignment-fix flex flex-1 items-center gap-2 sm:col-span-2 sm:w-auto'>
-                  <span>{user.name}</span>
+                  <UsernameLink username={user.name} />
                   <UserBadges user={user} />
                   {session.isOwn && (
                     <ClassicSolveViewLink
@@ -200,7 +201,7 @@ function RoundSessionRowTablet({
                   )}
                 </span>
                 <span className='mr-10 sm:mr-0 sm:flex sm:items-center'>
-                  <span className='sm:vertical-alignment-fix block text-center text-grey-40'>
+                  <span className='sm:vertical-alignment-fix text-grey-40 block text-center'>
                     Average time
                   </span>
                   <SolveTimeLabel
@@ -216,11 +217,11 @@ function RoundSessionRowTablet({
                   <MinusIcon className='hidden group-data-[state=open]:block' />
                 </Accordion.Trigger>
               </Accordion.Header>
-              <Accordion.Content className='w-full overflow-y-clip data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down'>
-                <ul className='grid grid-flow-col grid-cols-[repeat(5,min-content)] grid-rows-[min-content_min-content] justify-end gap-x-2 gap-y-1 border-t border-grey-60 pt-4 sm:grid-flow-row sm:grid-cols-2 sm:grid-rows-none sm:items-center sm:gap-y-0 sm:pl-2 sm:pt-3'>
+              <Accordion.Content className='data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down w-full overflow-y-clip'>
+                <ul className='border-grey-60 grid grid-flow-col grid-cols-[repeat(5,min-content)] grid-rows-[min-content_min-content] justify-end gap-x-2 gap-y-1 border-t pt-4 sm:grid-flow-row sm:grid-cols-2 sm:grid-rows-none sm:items-center sm:gap-y-0 sm:pt-3 sm:pl-2'>
                   {Array.from({ length: 5 }).map((_, idx) => (
                     <li key={solves[idx]?.id ?? idx} className='contents'>
-                      <span className='text-center text-grey-40 sm:text-left'>
+                      <span className='text-grey-40 text-center sm:text-left'>
                         Attempt {idx + 1}
                       </span>
                       <span className='relative flex items-center sm:ml-auto sm:text-right'>
@@ -284,7 +285,7 @@ function RoundSessionRowDesktop({
         color={tailwindConfig.theme.colors.secondary[60]}
         enabled={session.isOwn && session.isFinished}
         className={cn('rounded-xl', {
-          'border border-dashed border-grey-40': !session.isFinished,
+          'border-grey-40 border border-dashed': !session.isFinished,
         })}
       >
         <div
@@ -302,8 +303,8 @@ function RoundSessionRowDesktop({
             {place}
           </PlaceLabel>
           <DisciplineIcon className='mr-3' discipline={discipline} />
-          <span className='vertical-alignment-fix flex min-w-0 flex-1 items-center gap-2 overflow-x-clip text-ellipsis text-nowrap'>
-            <span>{user.name}</span>
+          <span className='vertical-alignment-fix flex min-w-0 flex-1 items-center gap-2 overflow-x-clip text-nowrap text-ellipsis'>
+            <UsernameLink username={user.name} />
             <UserBadges user={user} />
           </span>
 
@@ -313,7 +314,7 @@ function RoundSessionRowDesktop({
             isAverage={session.isFinished && revealedAverage}
             isPlaceholder={!session.isFinished || !revealedAverage}
             className={cn(
-              'relative mr-4 after:absolute after:-right-2 after:top-1/2 after:h-6 after:w-px after:-translate-y-1/2 after:bg-grey-60',
+              'after:bg-grey-60 relative mr-4 after:absolute after:top-1/2 after:-right-2 after:h-6 after:w-px after:-translate-y-1/2',
               { 'text-grey-60': !session.isFinished || !revealedAverage },
             )}
           />
@@ -451,13 +452,13 @@ function OwnSolveInProgress({
 
   if (!state || !isClient)
     return (
-      <div className='flex w-24 items-center justify-center lg:w-20 md:h-14'>
+      <div className='flex w-24 items-center justify-center md:h-14 lg:w-20'>
         <LoadingDots />
       </div>
     )
 
   return (
-    <span className='inline-flex h-full w-24 items-center justify-center lg:w-20 md:h-14'>
+    <span className='inline-flex h-full w-24 items-center justify-center md:h-14 lg:w-20'>
       <PrimaryButton
         size='sm'
         autoFocus

@@ -61,15 +61,15 @@ export function SettingsPreviewSimulator({
       <div
         ref={simulatorRef}
         className={cn(
-          'flex h-[300px] w-[300px] items-center justify-center rounded-2xl bg-black-80',
+          'bg-black-80 flex h-[300px] w-[300px] items-center justify-center rounded-2xl',
           className,
         )}
       />
-      <p className='caption -mt-4 text-center text-grey-40'>
+      <p className='caption text-grey-40 -mt-4 text-center'>
         <span className='touch:hidden'>
           Pro tip: press space to scramle/unscramble
         </span>
-        <span className='hidden touch:block'>
+        <span className='touch:block hidden'>
           Pro tip: double tap to scramle/unscramble
         </span>
       </p>

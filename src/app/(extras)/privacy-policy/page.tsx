@@ -7,7 +7,7 @@ export const dynamic = 'force-static'
 
 export default function PrivacyPolicyPage() {
   return (
-    <div className='bg-black-120 text-[1rem] leading-[1.4] text-grey-40'>
+    <div className='bg-black-120 text-grey-40 text-[1rem] leading-[1.4]'>
       <ExtrasHeader
         navigationLinks={[
           { name: 'Landing', href: '/landing' },
@@ -30,7 +30,7 @@ export default function PrivacyPolicyPage() {
             </div>
           </section>
           <div>
-            <div className='space-y-2 text-sm text-grey-40 [&>*:nth-child(even)]:[background:linear-gradient(116deg,rgba(54,60,64,1)_16%,rgba(27,30,37,1)_80%)] [&>*:nth-child(odd)]:bg-black-100'>
+            <div className='text-grey-40 [&>*:nth-child(odd)]:bg-black-100 space-y-2 text-sm [&>*:nth-child(even)]:[background:linear-gradient(116deg,rgba(54,60,64,1)_16%,rgba(27,30,37,1)_80%)]'>
               <Section>
                 <h2 className='landing-h2 mb-6'>1. Who we are</h2>
                 <p className='mb-2'>

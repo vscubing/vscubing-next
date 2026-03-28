@@ -58,7 +58,7 @@ export default function ContestResultsPage() {
       <LayoutPageTitleMobile>{title}</LayoutPageTitleMobile>
       <LayoutHeaderTitlePortal>{title}</LayoutHeaderTitlePortal>
       <NavigateBackButton />
-      <LayoutSectionHeader className='sticky top-0 z-10 gap-4 sm:gap-2'>
+      <LayoutSectionHeader className='sticky top-0 z-20 gap-4 sm:gap-2'>
         <DisciplineSwitcher disciplines={contest.disciplines} />
         <div>
           <div className='mb-3 flex items-center sm:mb-1'>
@@ -69,7 +69,7 @@ export default function ContestResultsPage() {
               <ResultsRevealHintPopover className='ml-4 sm:ml-2' />
             )}
           </div>
-          <p className='min-w-1 text-grey-40'>
+          <p className='text-grey-40 min-w-1'>
             {formatContestDuration(contest)}
           </p>
         </div>
@@ -104,7 +104,7 @@ export default function ContestResultsPage() {
       <Suspense
         key={discipline}
         fallback={
-          <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 lg:p-4 sm:p-3'>
+          <div className='bg-black-80 flex flex-1 flex-col gap-1 rounded-2xl p-6 sm:p-3 lg:p-4'>
             <RoundSessionHeader />
             <div className='space-y-2'>
               {Array.from({ length: 20 }).map((_, idx) => (

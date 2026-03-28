@@ -8,7 +8,7 @@ export const NotFoundWrapper = ParallaxCubesWrapper // NOTE: this is needed to m
 export function NotFoundContent() {
   return (
     <div className='flex flex-1 flex-col gap-3 sm:gap-0'>
-      <div className='relative flex-1 rounded-xl bg-black-80 p-16 sm:p-8'>
+      <div className='bg-black-80 relative flex-1 rounded-xl p-16 sm:p-8'>
         <ParallaxCubes mainImgSrc={img404} mainImgAlt='404' />
         <div className='relative max-w-[35rem] sm:max-w-none'>
           <p className='title-lg mb-4'>Lost in cuberspace?</p>

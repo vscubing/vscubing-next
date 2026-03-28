@@ -36,7 +36,7 @@ export function SignInButton({ variant, className }: SignInButtonProps) {
     return (
       <PrimaryButton
         className={cn(
-          'h-12 gap-3 whitespace-nowrap px-4 text-[1.125rem] sm:h-12',
+          'h-12 gap-3 px-4 text-[1.125rem] whitespace-nowrap sm:h-12',
           className,
         )}
         asChild
@@ -52,7 +52,7 @@ export function SignInButton({ variant, className }: SignInButtonProps) {
   return (
     <GhostButton
       className={cn(
-        'h-12 gap-3 whitespace-nowrap px-4 text-[1.125rem] hover:border hover:border-white-100 hover:bg-transparent active:bg-white-100 active:text-black-100 sm:h-10 sm:border sm:border-white-100 sm:px-3',
+        'hover:border-white-100 active:bg-white-100 active:text-black-100 sm:border-white-100 h-12 gap-3 px-4 text-[1.125rem] whitespace-nowrap hover:border hover:bg-transparent sm:h-10 sm:border sm:px-3',
         className,
       )}
       asChild

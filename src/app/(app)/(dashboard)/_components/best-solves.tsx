@@ -12,6 +12,7 @@ import { cn } from '@/frontend/utils/cn'
 import { tailwindConfig } from '@/frontend/utils/tailwind'
 import Link from 'next/link'
 import { UserBadges } from '@/frontend/shared/user-badges'
+import { UsernameLink } from '@/frontend/shared/username-link'
 import {
   type ResultDnfable,
   type Discipline,
@@ -40,7 +41,7 @@ export function BestSolves({
   return (
     <section
       className={cn(
-        'flex flex-col gap-6 rounded-2xl bg-black-80 px-6 py-4 sm:gap-4 sm:p-3',
+        'bg-black-80 flex flex-col gap-6 rounded-2xl px-6 py-4 sm:gap-4 sm:p-3',
         className,
       )}
     >
@@ -55,11 +56,11 @@ export function BestSolves({
         </UnderlineButton>
       </div>
       <div className='flex flex-1 flex-col gap-1'>
-        <div className='flex pl-1 text-grey-40'>
+        <div className='text-grey-40 flex pl-1'>
           <span className='mr-3 sm:hidden'>Type</span>
           <span className='flex-1 sm:hidden'>Nickname</span>
           <span className='hidden flex-1 sm:block'>Type/Nickname</span>
-          <span className='mr-4 w-24 text-center lg:w-20 sm:mr-0'>
+          <span className='mr-4 w-24 text-center sm:mr-0 lg:w-20'>
             Single time
           </span>
           <div aria-hidden className='invisible h-0'>
@@ -110,10 +111,10 @@ function SolveRow({ solve, isFirstOnPage }: SolveProps) {
               'bg-secondary-80': solve.isOwn,
             })}
           >
-            <span className='relative mr-3 flex flex-1 items-center pr-2 after:absolute after:right-0 after:top-1/2 after:block after:h-6 after:w-px after:-translate-y-1/2 after:bg-grey-60 sm:mr-0 sm:flex-col sm:items-start'>
+            <span className='after:bg-grey-60 relative mr-3 flex flex-1 items-center pr-2 after:absolute after:top-1/2 after:right-0 after:block after:h-6 after:w-px after:-translate-y-1/2 sm:mr-0 sm:flex-col sm:items-start'>
               <DisciplineIcon className='mr-3' discipline={solve.discipline} />
               <span className='flex items-center gap-2'>
-                <span>{solve.user.name}</span>
+                <UsernameLink username={solve.user.name} />
                 <UserBadges user={solve.user} />
               </span>
             </span>
@@ -164,6 +165,6 @@ function OpenLeaderboardButton({ discipline }: { discipline: Discipline }) {
 
 function SolveRowSkeleton() {
   return (
-    <div className='h-16 animate-pulse overflow-clip rounded-xl bg-grey-100'></div>
+    <div className='bg-grey-100 h-16 animate-pulse overflow-clip rounded-xl'></div>
   )
 }

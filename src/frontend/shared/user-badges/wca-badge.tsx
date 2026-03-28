@@ -11,7 +11,7 @@ export function WcaBadgeLink({ wcaId }: { wcaId: string }) {
   return (
     <HoverPopover content={<WcaPopoverContent wcaId={wcaId} />} asChild>
       <div>
-        <WcaLogoIcon className='hidden text-xs touch:block' />
+        <WcaLogoIcon className='touch:block hidden text-xs' />
         <Link
           href={`https://worldcubeassociation.org/persons/${wcaId}`}
           target='_blank'
@@ -65,7 +65,7 @@ function WcaPopoverContent({ wcaId }: { wcaId: string }) {
       )}
 
       <div className='flex flex-col text-left sm:items-center sm:text-center'>
-        <div className='border-b border-grey-100 pb-1'>
+        <div className='border-grey-100 border-b pb-1'>
           <h1 className='title-h3 mb-1 flex items-center gap-2'>
             <CountryFlag iso={officialData.country} />
             <span>{officialData.name}</span>
@@ -79,7 +79,7 @@ function WcaPopoverContent({ wcaId }: { wcaId: string }) {
           </Link>
         </div>
 
-        <div className='flex flex-1 flex-col justify-end gap-1 pt-4 text-grey-40 sm:pt-2'>
+        <div className='text-grey-40 flex flex-1 flex-col justify-end gap-1 pt-4 sm:pt-2'>
           <p>
             Competitions:{' '}
             <span className='text-white-100'>

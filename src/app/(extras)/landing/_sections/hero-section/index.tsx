@@ -17,8 +17,8 @@ export function HeroSection() {
 
   return (
     <Container>
-      <section className='flex flex-col justify-center pt-28 md:min-h-0 md:pt-24 sm:pb-0'>
-        <div className='grid min-h-[40rem] flex-1 grid-cols-[1fr,auto] grid-rows-[auto,1fr] gap-3 lg:max-h-none lg:grid-cols-[1fr,30rem] lg:grid-rows-[40rem,auto] md:grid-cols-[1fr,22.4rem] md:grid-rows-[34rem,auto] sm:block sm:space-y-3'>
+      <section className='flex flex-col justify-center pt-28 sm:pb-0 md:min-h-0 md:pt-24'>
+        <div className='grid min-h-[40rem] flex-1 grid-cols-[1fr_auto] grid-rows-[auto_1fr] gap-3 sm:block sm:space-y-3 md:grid-cols-[1fr_22.4rem] md:grid-rows-[34rem_auto] lg:max-h-none lg:grid-cols-[1fr_30rem] lg:grid-rows-[40rem_auto]'>
           <div
             style={{
               clipPath: isSmScreen
@@ -29,9 +29,9 @@ export function HeroSection() {
                     ? CLIP_PATH_POLYGON.LG
                     : CLIP_PATH_POLYGON.XL,
             }}
-            className='row-span-2 flex h-full flex-col items-start justify-center rounded-3xl p-10 [background:linear-gradient(159deg,rgba(73,76,116,1)_0%,rgba(27,30,37,1)_71%)] lg:col-span-2 lg:row-span-1 md:px-6 md:pt-32 sm:px-4 sm:pb-4 sm:pt-20'
+            className='row-span-2 flex h-full flex-col items-start justify-center rounded-3xl p-10 [background:linear-gradient(159deg,rgba(73,76,116,1)_0%,rgba(27,30,37,1)_71%)] sm:px-4 sm:pt-20 sm:pb-4 md:px-6 md:pt-32 lg:col-span-2 lg:row-span-1'
           >
-            <h1 className='landing-h1 mb-10 flex flex-wrap text-white-100 sm:block sm:leading-[1.3]'>
+            <h1 className='landing-h1 text-white-100 mb-10 flex flex-wrap sm:block sm:leading-[1.3]'>
               <span className='whitespace-nowrap sm:mr-2 sm:whitespace-normal'>
                 Join <span className='landing-h3 text-grey-40'>the</span>{' '}
                 exciting world
@@ -42,7 +42,7 @@ export function HeroSection() {
                 speedcubing
               </span>
             </h1>
-            <p className='mb-6 flex items-center gap-2 text-white-100'>
+            <p className='text-white-100 mb-6 flex items-center gap-2'>
               <AlternatingText
                 text1='Improve'
                 text2='Compete'
@@ -53,20 +53,20 @@ export function HeroSection() {
             <StaticLinkToApp className='h-[4.5rem] px-20 sm:h-[4.5rem] sm:w-full' />
           </div>
 
-          <div className='flex aspect-square w-[21rem] shrink-0 flex-col items-center justify-center rounded-3xl bg-black-100 pb-4 lg:mt-[-19rem] lg:aspect-square lg:w-auto md:mt-[-13rem] sm:mt-0'>
+          <div className='bg-black-100 flex aspect-square w-[21rem] shrink-0 flex-col items-center justify-center rounded-3xl pb-4 sm:mt-0 md:mt-[-13rem] lg:mt-[-19rem] lg:aspect-square lg:w-auto'>
             <Suspense fallback={<LoadingSpinner />}>
               <TwistySection />
             </Suspense>
           </div>
-          <div className='relative -ml-[22rem] flex items-center justify-center overflow-clip rounded-3xl bg-secondary-80 lg:col-start-1 lg:row-start-2 lg:ml-0 sm:hidden'>
+          <div className='bg-secondary-80 relative -ml-[22rem] flex items-center justify-center overflow-clip rounded-3xl sm:hidden lg:col-start-1 lg:row-start-2 lg:ml-0'>
             <AnimatedBackground />
-            <ul className='absolute grid -rotate-[18deg] grid-cols-[repeat(10,auto)] gap-1 lg:scale-75 md:scale-50'>
+            <ul className='absolute grid -rotate-[18deg] grid-cols-[repeat(10,auto)] gap-1 md:scale-50 lg:scale-75'>
               {KEY_MAP.map(({ keyName, cubeMovement }) => (
                 <KeyMapTile
                   key={keyName}
                   keyName={keyName}
                   cubeMovement={cubeMovement}
-                  className='h-12 w-12 rounded-lg py-1 pl-2 pr-2 text-sm'
+                  className='h-12 w-12 rounded-lg py-1 pr-2 pl-2 text-sm'
                 />
               ))}
             </ul>
@@ -87,14 +87,14 @@ function AlternatingText({
   text3: string
 }) {
   return (
-    <span className='relative inline-block h-9 w-[6.5rem] overflow-y-clip rounded-xl border border-secondary-20 text-center text-[1.125rem] font-medium'>
-      <span className='absolute left-0 h-9 w-full animate-landing-alternating-text pt-[.32em] [-webkit-font-smoothing:subpixel-antialiased]'>
+    <span className='border-secondary-20 relative inline-block h-9 w-[6.5rem] overflow-y-clip rounded-xl border text-center text-[1.125rem] font-medium'>
+      <span className='animate-landing-alternating-text absolute left-0 h-9 w-full pt-[.32em] [-webkit-font-smoothing:subpixel-antialiased]'>
         {text1}
       </span>
-      <span className='absolute left-0 h-9 w-full animate-landing-alternating-text pt-[.32em] [-webkit-font-smoothing:subpixel-antialiased] [animation-delay:-2s]'>
+      <span className='animate-landing-alternating-text absolute left-0 h-9 w-full pt-[.32em] [-webkit-font-smoothing:subpixel-antialiased] [animation-delay:-2s]'>
         {text2}
       </span>
-      <span className='absolute left-0 h-9 w-full animate-landing-alternating-text pt-[.32em] [-webkit-font-smoothing:subpixel-antialiased] [animation-delay:-4s]'>
+      <span className='animate-landing-alternating-text absolute left-0 h-9 w-full pt-[.32em] [-webkit-font-smoothing:subpixel-antialiased] [animation-delay:-4s]'>
         {text3}
       </span>
     </span>
@@ -109,42 +109,42 @@ function AnimatedBackground() {
         fromTop='-30%'
         toLeft='60%'
         toTop='-80%'
-        className='h-[110%] bg-secondary-40'
+        className='bg-secondary-40 h-[110%]'
       />
       <AnimatedBlob
         fromLeft='70%'
         fromTop='-38%'
         toLeft='15%'
         toTop='120%'
-        className='h-[110%] bg-primary-100'
+        className='bg-primary-100 h-[110%]'
       />
       <AnimatedBlob
         fromLeft='28%'
         fromTop='-34%'
         toLeft='-10%'
         toTop='25%'
-        className='h-[110%] bg-secondary-20'
+        className='bg-secondary-20 h-[110%]'
       />
       <AnimatedBlob
         fromLeft='68%'
         fromTop='30%'
         toLeft='30%'
         toTop='-3%'
-        className='h-[110%] bg-primary-80'
+        className='bg-primary-80 h-[110%]'
       />
       <AnimatedBlob
         fromLeft='-5%'
         fromTop='55%'
         toLeft='-8%'
         toTop='-95%'
-        className='h-[110%] bg-primary-60'
+        className='bg-primary-60 h-[110%]'
       />
       <AnimatedBlob
         fromLeft='28%'
         fromTop='20%'
         toLeft='80%'
         toTop='30%'
-        className='h-[110%] bg-secondary-40'
+        className='bg-secondary-40 h-[110%]'
       />
     </>
   )

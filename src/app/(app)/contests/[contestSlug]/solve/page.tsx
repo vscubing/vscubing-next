@@ -59,7 +59,7 @@ export default async function SolveContestPage({
         <div className='flex gap-3'>
           <DisciplineSwitcher disciplines={metadata.disciplines} />
         </div>
-        <div className='ml-10 mr-4 flex flex-1 items-center gap-4 sm:sr-only'>
+        <div className='mr-4 ml-10 flex flex-1 items-center gap-4 sm:sr-only'>
           <ExclamationCircleIcon className='shrink-0' />
           <p>
             You can see other contestant's results in the attempts you have
@@ -78,7 +78,7 @@ export default async function SolveContestPage({
       <Suspense
         key={discipline}
         fallback={
-          <div className='flex-1 rounded-2xl bg-black-80'>
+          <div className='bg-black-80 flex-1 rounded-2xl'>
             <div className='flex h-full items-center justify-center'>
               <LoadingSpinner size='lg' />
             </div>
@@ -132,9 +132,9 @@ async function PageContent({
     await api.roundSession.create({ contestSlug, discipline })
 
   return (
-    <div className='flex-1 rounded-2xl bg-black-80'>
-      <div className='relative flex h-full flex-col pb-8 pt-7 xl-short:pb-6 xl-short:pt-4 sm:py-3'>
-        <div className='absolute right-4 top-4 flex items-center gap-4 sm:right-2 sm:top-2 sm:flex-col-reverse sm:items-end sm:gap-0'>
+    <div className='bg-black-80 flex-1 rounded-2xl'>
+      <div className='xl-short:pb-6 xl-short:pt-4 relative flex h-full flex-col pt-7 pb-8 sm:py-3'>
+        <div className='absolute top-4 right-4 flex items-center gap-4 sm:top-2 sm:right-2 sm:flex-col-reverse sm:items-end sm:gap-0'>
           <Dialog>
             <KeyMapDialogTrigger className='touch:hidden' />
             <DialogPortal>
@@ -149,7 +149,7 @@ async function PageContent({
           </SecondaryButton>
         </div>
 
-        <p className='title-h2 mb-6 px-16 text-center text-secondary-20'>
+        <p className='title-h2 text-secondary-20 mb-6 px-16 text-center'>
           {getSplashText({ contestSlug, discipline })}
         </p>
 

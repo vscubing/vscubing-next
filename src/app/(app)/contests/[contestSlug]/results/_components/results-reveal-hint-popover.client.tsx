@@ -49,7 +49,7 @@ export function ResultsRevealHintPopover({
 
       <PopoverTrigger
         className={cn(
-          'text-white-100 transition-colors hover:text-grey-20',
+          'text-white-100 hover:text-grey-20 transition-colors',
           className,
         )}
         aria-label='Information about results reveal'

@@ -95,7 +95,7 @@ function ColorPicker({
         <button
           {...props}
           className={cn(
-            'm-[-2px] block h-11 w-11 rounded-lg border-2 border-transparent bg-clip-padding hover:border-black-100 sm:h-6 sm:w-6',
+            'hover:border-black-100 m-[-2px] block h-11 w-11 rounded-lg border-2 border-transparent bg-clip-padding sm:h-6 sm:w-6',
             className,
           )}
           onClick={() => setOpen(true)}

@@ -10,7 +10,7 @@ export function Progress({
   return (
     <div
       className={cn(
-        'relative flex flex-col after:absolute after:left-1/2 after:top-0 after:h-full after:w-1 after:-translate-x-1/2 after:bg-solve-contest-progress-divider after:bg-center after:bg-repeat-y',
+        'after:bg-solve-contest-progress-divider relative flex flex-col after:absolute after:top-0 after:left-1/2 after:h-full after:w-1 after:-translate-x-1/2 after:bg-center after:bg-repeat-y',
         className,
       )}
     >
@@ -18,7 +18,7 @@ export function Progress({
         <span
           key={number}
           className={cn(
-            'z-10 flex h-11 min-h-11 w-11 items-center justify-center rounded-full border border-grey-60 bg-black-80 text-grey-60 ring ring-black-80 duration-1000 ease-in-out',
+            'border-grey-60 bg-black-80 text-grey-60 ring-black-80 z-10 flex h-11 min-h-11 w-11 items-center justify-center rounded-full border ring duration-1000 ease-in-out',
             {
               'border-primary-80 bg-primary-80 text-black-100':
                 number < currentSolveNumber,

@@ -38,7 +38,7 @@ export default async function ContestsIndexPage(props: {
       <LayoutHeaderTitlePortal>{title}</LayoutHeaderTitlePortal>
       <LayoutPageTitleMobile>{title}</LayoutPageTitleMobile>
       <NavigateBackButton className='self-start' />
-      <LayoutSectionHeader className='sticky top-0 z-10'>
+      <LayoutSectionHeader className='sticky top-0 z-20'>
         <DisciplineSwitcher disciplines={DISCIPLINES} />
         <SpecialContestsManagementOverlay />
       </LayoutSectionHeader>
@@ -84,8 +84,8 @@ async function PageContent({ discipline }: { discipline: Discipline }) {
 
 function ContestListShell({ children }: { children: ReactNode }) {
   return (
-    <div className='flex flex-1 flex-col gap-1 rounded-2xl bg-black-80 p-6 lg:p-4 sm:p-3'>
-      <div className='flex justify-between bg-black-80 pl-3 text-grey-40 sm:hidden'>
+    <div className='bg-black-80 flex flex-1 flex-col gap-1 rounded-2xl p-6 sm:p-3 lg:p-4'>
+      <div className='bg-black-80 text-grey-40 flex justify-between pl-3 sm:hidden'>
         <span className='mr-3'>Type</span>
         <span className='mr-8 flex-1'>Contest name</span>
         <span className='mr-10 w-44'>Duration</span>

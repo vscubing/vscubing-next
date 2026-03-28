@@ -58,7 +58,7 @@ export default function CubeTogetherLobbyPage() {
       <LayoutHeaderTitlePortal>Cube together</LayoutHeaderTitlePortal>
       <div className='flex flex-1 flex-col gap-3'>
         <ExperimentalBadge />
-        <div className='flex flex-1 flex-col gap-4 rounded-2xl bg-black-80 p-4'>
+        <div className='bg-black-80 flex flex-1 flex-col gap-4 rounded-2xl p-4'>
           <div className='flex items-center justify-between'>
             <h2 className='text-xl font-medium'>Rooms</h2>
             {canCreateRoom ? (

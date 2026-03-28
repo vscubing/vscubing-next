@@ -52,7 +52,7 @@ export default async function LeaderboardPage({
         <PageTitle type={type} />
       </Suspense>
       <NavigateBackButton />
-      <LayoutSectionHeader className='sticky top-0 z-10 flex gap-10 md:gap-4'>
+      <LayoutSectionHeader className='sticky top-0 z-20 flex gap-10 md:gap-4'>
         <DisciplineSwitcher disciplines={DISCIPLINES} />
 
         <div className='flex flex-1 items-center gap-4 md:hidden'>

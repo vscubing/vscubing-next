@@ -39,14 +39,14 @@ function BannerContent({
       <div className='relative mr-32'>
         <div
           className={cn(
-            'flex h-full flex-col items-start justify-end gap-2 py-4 pl-4 xl-short:pt-0',
+            'xl-short:pt-0 flex h-full flex-col items-start justify-end gap-2 py-4 pl-4',
             className,
           )}
         >
           <p className='title-h3 text-center'>Events</p>
           <Disciplines ongoing={ongoing} />
         </div>
-        <Divider className='absolute -right-32 top-0 h-full w-36' />
+        <Divider className='absolute top-0 -right-32 h-full w-36' />
       </div>
 
       <div className='relative mr-32'>
@@ -66,7 +66,7 @@ function BannerContent({
             </PrimaryButton>
           </div>
         </div>
-        <Divider className='absolute -right-40 top-0 h-full w-36' />
+        <Divider className='absolute top-0 -right-40 h-full w-36' />
       </div>
       <ForegroundCubes />
     </div>
@@ -96,7 +96,7 @@ function BannerContentMobile({
       </div>
 
       <div className='relative flex-1 sm:hidden'>
-        <Divider className='absolute -right-6 bottom-0 top-0 w-[calc(100%+2.5rem)] min-w-32 max-w-64' />
+        <Divider className='absolute top-0 -right-6 bottom-0 w-[calc(100%+2.5rem)] max-w-64 min-w-32' />
       </div>
       <div className='flex flex-col items-end justify-center gap-6 pr-4 text-right sm:flex-row-reverse sm:items-center sm:justify-end sm:gap-2 sm:p-0 sm:text-left'>
         <div className='space-y-3 sm:space-y-1'>
@@ -117,7 +117,7 @@ function BannerOnMaintenance() {
           <Title className='mb-3 sm:mb-2' />
           <p className='title-h3'>Currently down for maintenance</p>
         </div>
-        <Divider className='absolute -right-28 top-0 h-full w-28 sm:hidden' />
+        <Divider className='absolute top-0 -right-28 h-full w-28 sm:hidden' />
       </div>
       <ForegroundCubes className='sm:hidden' />
     </div>
@@ -133,7 +133,7 @@ function Duration({
   return duration ? (
     <p className='text-base'>{duration}</p>
   ) : (
-    <p className='w-36 animate-pulse bg-grey-100 text-base text-grey-100'>
+    <p className='bg-grey-100 text-grey-100 w-36 animate-pulse text-base'>
       Loading...
     </p>
   )
@@ -171,7 +171,7 @@ function Divider({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'pointer-events-none bg-black-100 [clip-path:polygon(max(calc(100%_-_7px),0px)_0,100%_0%,7px_100%,0%_100%)]',
+        'bg-black-100 pointer-events-none [clip-path:polygon(max(calc(100%_-_7px),0px)_0,100%_0%,7px_100%,0%_100%)]',
         className,
       )}
     ></div>
@@ -188,8 +188,8 @@ function Title({ className }: { className?: string }) {
 
 function ForegroundCubes({ className }: { className?: string }) {
   return (
-    <div className={cn('relative flex-1 @container', className)}>
-      <div className='absolute -left-10 top-0 h-full w-[calc(100%+20*(.25rem))] bg-[length:auto_100%] @[4rem]:bg-dashboard-banner-cubes @[20rem]:bg-dashboard-banner-cubes-wide'></div>
+    <div className={cn('@container relative flex-1', className)}>
+      <div className='@[4rem]:bg-dashboard-banner-cubes @[20rem]:bg-dashboard-banner-cubes-wide absolute top-0 -left-10 h-full w-[calc(100%+20*(.25rem))] bg-[length:auto_100%]'></div>
     </div>
   )
 }

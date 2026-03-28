@@ -44,3 +44,8 @@ yarn-error.log*
 
 # idea files
 .idea
+.playwright-mcp
+playwright-report
+test-results
+screenshots
+.claude/worktrees

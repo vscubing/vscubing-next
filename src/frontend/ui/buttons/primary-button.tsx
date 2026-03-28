@@ -10,7 +10,7 @@ const primaryButtonVariants = cva(
     variants: {
       variant: {
         default:
-          'rounded-xl bg-primary-80 text-black-100 hover:bg-primary-60 active:bg-primary-80 disabled:bg-grey-40 disabled:text-grey-60',
+          'bg-primary-80 text-black-100 hover:bg-primary-60 active:bg-primary-80 disabled:bg-grey-40 disabled:text-grey-60 rounded-xl',
       },
       size: {
         lg: 'btn-lg h-15 px-6 sm:h-14',

@@ -17,39 +17,39 @@ import Link from 'next/link'
 export function Sidebar({ className }: { className?: string }) {
   return (
     <aside className={cn('flex flex-col gap-3', className)}>
-      <div className='flex h-[7rem] xl-short:h-[var(--header-height)] lg:h-[var(--header-height)] lg:gap-3'>
+      <div className='xl-short:h-[var(--header-height)] flex h-[7rem] lg:h-[var(--header-height)] lg:gap-3'>
         <ControlMobileMenuButton
           mode={false}
-          className='hidden h-[4.375rem] w-[4.375rem] flex-shrink-0 items-center justify-center rounded-2xl bg-black-80 sm:flex sm:h-14 sm:w-14'
+          className='bg-black-80 hidden h-[4.375rem] w-[4.375rem] flex-shrink-0 items-center justify-center rounded-2xl sm:flex sm:h-14 sm:w-14'
         >
           <CloseIcon />
         </ControlMobileMenuButton>
         <LogoHomeLink
-          className='flex w-full items-center rounded-2xl bg-black-80 px-4 lg:hidden sm:flex sm:px-4'
+          className='bg-black-80 flex w-full items-center rounded-2xl px-4 sm:flex sm:px-4 lg:hidden'
           variant='full'
         />
         <Link
           href='/'
-          className='hidden aspect-square h-full items-center justify-center rounded-2xl bg-black-80 lg:flex sm:hidden'
+          className='bg-black-80 hidden aspect-square h-full items-center justify-center rounded-2xl sm:hidden lg:flex'
         >
           <Logo className='inline-block h-12 w-12' variant='sm' />
         </Link>
       </div>
-      <div className='flex flex-1 flex-col rounded-2xl bg-black-80 py-6 sm:py-3'>
+      <div className='bg-black-80 flex flex-1 flex-col rounded-2xl py-6 sm:py-3'>
         <Navbar variant='vertical' />
-        <SocialLinks className='mb-4 mt-auto' />
-        <Link href='/privacy-policy' className='mb-4 text-center text-grey-40'>
+        <SocialLinks className='mt-auto mb-4' />
+        <Link href='/privacy-policy' className='text-grey-40 mb-4 text-center'>
           Privacy Policy
         </Link>
-        <div className='flex justify-center border-t border-grey-80 pt-2'>
+        <div className='border-grey-80 flex justify-center border-t pt-2'>
           <Link href='https://u24.gov.ua/about'>
             <Image
-              className='lg:hidden sm:block'
+              className='sm:block lg:hidden'
               alt='Stand with Ukraine'
               src={standWithUkraineImg}
             />
             <Image
-              className='hidden lg:inline-block sm:hidden'
+              className='hidden sm:hidden lg:inline-block'
               alt='Stand with Ukraine'
               src={standWithUkraineImgSm}
             />
@@ -64,7 +64,7 @@ function SocialLinks({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'flex justify-center gap-4 xl-short:gap-1 lg:flex-col lg:items-center sm:flex-row sm:items-stretch',
+        'xl-short:gap-1 flex justify-center gap-4 sm:flex-row sm:items-stretch lg:flex-col lg:items-center',
         className,
       )}
     >
@@ -89,7 +89,7 @@ function SocialLinks({ className }: { className?: string }) {
           aria-label={ariaLabel}
           href={href}
           key={href}
-          className='transition-base outline-ring flex h-11 w-11 items-center justify-center text-[1.5rem] text-grey-20 hover:text-primary-80'
+          className='transition-base outline-ring text-grey-20 hover:text-primary-80 flex h-11 w-11 items-center justify-center text-[1.5rem]'
           target='_blank'
         >
           {children}

@@ -63,10 +63,10 @@ function DangerousAdminActionsUnlocked() {
   return (
     <div className='space-y-8'>
       {env.NEXT_PUBLIC_APP_ENV === 'production' && <DangerWarning />}
-      <div className='border-y border-white-100 py-8'>
+      <div className='border-white-100 border-y py-8'>
         <DangerousContestActions />
       </div>
-      <div className='border-b border-white-100 py-8'>
+      <div className='border-white-100 border-b py-8'>
         <DangerousTransferUserResults />
       </div>
     </div>

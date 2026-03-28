@@ -54,7 +54,7 @@ export default function WatchLivePageContent() {
           {isSubscribed ? (
             <>
               <span className='ml-2 h-4 w-4 animate-pulse rounded-full bg-red-100' />
-              <span className='ml-4 flex gap-2 rounded-2xl bg-black-80'>
+              <span className='bg-black-80 ml-4 flex gap-2 rounded-2xl'>
                 <EyeIcon />
                 <span className='text-large'>{membersCount}</span>
               </span>
@@ -65,10 +65,10 @@ export default function WatchLivePageContent() {
         </span>
       </LayoutHeaderTitlePortal>
       {!isSubscribed && (
-        <p className='flex-1 rounded-2xl bg-black-80 p-4'>Loading...</p>
+        <p className='bg-black-80 flex-1 rounded-2xl p-4'>Loading...</p>
       )}
       {isSubscribed && streams.length === 0 && (
-        <p className='flex-1 rounded-2xl bg-black-80 p-4'>
+        <p className='bg-black-80 flex-1 rounded-2xl p-4'>
           There are no live streams at the moment.
         </p>
       )}
@@ -104,7 +104,7 @@ function SolveStreamView({
 
   if (!enabled)
     return (
-      <div className='flex aspect-square items-center justify-center rounded-2xl bg-black-80'>
+      <div className='bg-black-80 flex aspect-square items-center justify-center rounded-2xl'>
         <LoadingSpinner />
       </div>
     )
@@ -114,7 +114,7 @@ function SolveStreamView({
       <div
         ref={simulatorRef}
         className={cn(
-          'flex aspect-square items-center justify-center rounded-2xl bg-black-80',
+          'bg-black-80 flex aspect-square items-center justify-center rounded-2xl',
           { 'opacity-50': ended },
         )}
       ></div>

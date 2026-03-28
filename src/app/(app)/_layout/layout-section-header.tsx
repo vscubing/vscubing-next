@@ -9,7 +9,7 @@ export function LayoutSectionHeader({
   return (
     <div
       className={cn(
-        'flex h-[var(--layout-section-header-height)] shrink-0 items-center rounded-2xl bg-black-80 px-4 sm:p-3',
+        'bg-black-80 flex h-[var(--layout-section-header-height)] shrink-0 items-center rounded-2xl px-4 sm:p-3',
         className,
       )}
     >

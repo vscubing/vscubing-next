@@ -32,10 +32,10 @@ export function LeaderboardTypeSwitcher({
   )
 
   return (
-    <div className={cn('relative flex rounded-xl bg-grey-100', className)}>
+    <div className={cn('bg-grey-100 relative flex rounded-xl', className)}>
       <div
         className={cn(
-          'transition-base absolute left-0 top-0 h-full w-[8.5rem] rounded-xl bg-secondary-20 sm:w-11',
+          'transition-base bg-secondary-20 absolute top-0 left-0 h-full w-[8.5rem] rounded-xl sm:w-11',
           { 'translate-x-full': currentType === LEADERBOARD_TYPES[1] },
         )}
       />
@@ -71,7 +71,7 @@ function LeaderboardTypeSwitcherItem({
   return (
     <span
       className={cn(
-        'transition-base outline-ring btn-sm flex h-15 w-[8.5rem] cursor-pointer items-center justify-center gap-1 rounded-xl border border-transparent hover:border-secondary-20 sm:h-11 sm:w-11',
+        'transition-base outline-ring btn-sm hover:border-secondary-20 flex h-15 w-[8.5rem] cursor-pointer items-center justify-center gap-1 rounded-xl border border-transparent sm:h-11 sm:w-11',
         isActive ? 'text-black-100' : 'text-grey-60',
         className,
       )}

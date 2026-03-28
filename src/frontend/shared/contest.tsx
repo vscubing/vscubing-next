@@ -3,7 +3,7 @@ import { type ContestMetadata, type Discipline } from '@/types'
 import Link from 'next/link'
 import { cn } from '@/frontend/utils/cn'
 import { formatContestDuration } from '@/lib/utils/format-date'
-import tailwindConfig from 'tailwind.config'
+import { themeColors } from '@/frontend/utils/theme'
 import { SpinningBorder } from '../ui/spinning-border'
 
 type ContestProps = {
@@ -14,13 +14,13 @@ type ContestProps = {
 export function Contest({ contest, discipline, className }: ContestProps) {
   return (
     <SpinningBorder
-      color={tailwindConfig.theme.colors.secondary[60]}
+      color={themeColors.secondary[60]}
       enabled={contest.isOngoing}
       className='rounded-xl'
     >
       <div
         className={cn(
-          'flex h-16 items-center justify-between gap-8 rounded-xl bg-grey-100 pl-4',
+          'bg-grey-100 flex h-16 items-center justify-between gap-8 rounded-xl pl-4',
           contest.isOngoing ? 'bg-secondary-80' : 'bg-grey-100',
           className,
         )}
@@ -56,7 +56,7 @@ export function ContestSkeleton({
 }) {
   return (
     <div
-      className={cn('h-16 animate-pulse rounded-xl bg-grey-100', className)}
+      className={cn('bg-grey-100 h-16 animate-pulse rounded-xl', className)}
       style={{ height }}
     ></div>
   )
