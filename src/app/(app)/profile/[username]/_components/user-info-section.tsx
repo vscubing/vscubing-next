@@ -109,7 +109,7 @@ function BioEditor({ profile }: { profile: Profile }) {
         })
       },
       onSettled: () => {
-        queryClient.invalidateQueries({
+        void queryClient.invalidateQueries({
           queryKey: trpc.profile.getProfile.queryKey(),
         })
       },

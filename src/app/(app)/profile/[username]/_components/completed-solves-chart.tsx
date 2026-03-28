@@ -50,7 +50,9 @@ export function CompletedSolvesChart({
             <Tooltip
               content={({ active, payload }) => {
                 if (!active || !payload?.[0]) return null
-                const d = payload[0].payload as CompletedSolvesData[number]
+                const d = (
+                  payload[0] as { payload: CompletedSolvesData[number] }
+                ).payload
                 return (
                   <div className='bg-black-100 border-grey-100 z-50 rounded-lg border p-3 shadow-lg'>
                     <div className='mb-2 flex items-center gap-2'>

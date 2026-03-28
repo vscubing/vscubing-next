@@ -48,3 +48,4 @@ yarn-error.log*
 playwright-report
 test-results
 screenshots
+.claude/worktrees

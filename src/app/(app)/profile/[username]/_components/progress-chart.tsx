@@ -116,16 +116,19 @@ export function ProgressChart({
           <Tooltip
             content={({ active, payload }) => {
               if (active && payload?.[0]) {
-                activePointRef.current = payload[0]
-                  .payload as ProgressData[number]
+                activePointRef.current = (
+                  payload[0] as { payload: ProgressData[number] }
+                ).payload
               } else {
                 activePointRef.current = null
               }
 
               if (!active || !payload?.[0]) return null
-              const d = payload[0].payload as ProgressData[number] & {
-                dateTs: number
-              }
+              const d = (
+                payload[0] as {
+                  payload: ProgressData[number] & { dateTs: number }
+                }
+              ).payload
               return (
                 <div
                   className={

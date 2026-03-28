@@ -449,8 +449,8 @@ export const profileRouter = createTRPCRouter({
       for (const row of rows) {
         const existing = contestMap.get(row.contestSlug)
         if (existing) {
-          if (!existing.disciplines.includes(row.discipline as Discipline)) {
-            existing.disciplines.push(row.discipline as Discipline)
+          if (!existing.disciplines.includes(row.discipline)) {
+            existing.disciplines.push(row.discipline)
           }
         } else {
           contestMap.set(row.contestSlug, {
@@ -460,7 +460,7 @@ export const profileRouter = createTRPCRouter({
             contestExpectedEndDate: row.contestExpectedEndDate,
             contestType: row.contestType,
             isOngoing: row.isOngoing,
-            disciplines: [row.discipline as Discipline],
+            disciplines: [row.discipline],
             availableDisciplines: [],
             isCompleted: false,
             sessionId: row.sessionId,

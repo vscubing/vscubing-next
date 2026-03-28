@@ -1,8 +1,4 @@
-import {
-  USER_METADATA_DEFAULTS,
-  userMetadataTable,
-  type UserMetadata,
-} from '@/backend/db/schema'
+import { USER_METADATA_DEFAULTS, userMetadataTable } from '@/backend/db/schema'
 import { createTRPCRouter, protectedProcedure } from '../trpc'
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'

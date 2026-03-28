@@ -4,7 +4,7 @@ import { PersonalRecordsContent } from './personal-records-content'
 export async function PersonalRecordsSection({ userId }: { userId: string }) {
   const records = await api.profile.getPersonalRecords({ userId })
 
-  const hasAnyRecord = records.some((r) => r.single || r.average)
+  const hasAnyRecord = records.some((r) => r.single ?? r.average)
 
   if (!hasAnyRecord) {
     return (
