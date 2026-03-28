@@ -20,6 +20,7 @@ import {
 import {
   exists,
   eq,
+  sql,
   aliasedTable,
   and,
   not,
@@ -94,7 +95,9 @@ export const adminRouter = createTRPCRouter({
       const [sourceUser] = await ctx.db
         .select()
         .from(userTable)
-        .where(eq(userTable.name, input.sourceUserName))
+        .where(
+          eq(sql`lower(${userTable.name})`, input.sourceUserName.toLowerCase()),
+        )
       if (!sourceUser)
         throw new TRPCError({
           code: 'NOT_FOUND',
@@ -104,7 +107,9 @@ export const adminRouter = createTRPCRouter({
       const [targetUser] = await ctx.db
         .select()
         .from(userTable)
-        .where(eq(userTable.name, input.targetUserName))
+        .where(
+          eq(sql`lower(${userTable.name})`, input.targetUserName.toLowerCase()),
+        )
       if (!targetUser)
         throw new TRPCError({
           code: 'NOT_FOUND',

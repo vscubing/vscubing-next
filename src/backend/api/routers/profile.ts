@@ -36,7 +36,7 @@ export const profileRouter = createTRPCRouter({
         .from(userTable)
         .leftJoin(wcaIdSubquery, eq(wcaIdSubquery.userId, userTable.id))
         .leftJoin(userMetadataTable, eq(userMetadataTable.userId, userTable.id))
-        .where(eq(userTable.name, input.username))
+        .where(eq(sql`lower(${userTable.name})`, input.username.toLowerCase()))
 
       if (!row) throw new TRPCError({ code: 'NOT_FOUND' })
 

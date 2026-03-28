@@ -1,5 +1,6 @@
 - Always use bun
 - Always make sure the formatting is correct with `bun run format:check` and fix with `bun run format:write` if necessary
+- Always make sure the linting is correct with `bun run lint:check` and fix with `bun run lint:write` if necessary
 - don't hardcode the disciplines or discipline count, reference DISCIPLINES from `src/types.ts` if applicable
 - don't hardcode colors as hex values. Use Tailwind classes (e.g. `bg-secondary-20`) where possible, and `themeColors` from `src/frontend/utils/theme.ts` for JS contexts (e.g. Recharts props)
 - do good loading states (use our loading spinner where applicable)
