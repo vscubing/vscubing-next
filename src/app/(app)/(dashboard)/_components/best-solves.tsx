@@ -12,6 +12,7 @@ import { cn } from '@/frontend/utils/cn'
 import { tailwindConfig } from '@/frontend/utils/tailwind'
 import Link from 'next/link'
 import { UserBadges } from '@/frontend/shared/user-badges'
+import { UsernameLink } from '@/frontend/shared/username-link'
 import {
   type ResultDnfable,
   type Discipline,
@@ -113,7 +114,7 @@ function SolveRow({ solve, isFirstOnPage }: SolveProps) {
             <span className='after:bg-grey-60 relative mr-3 flex flex-1 items-center pr-2 after:absolute after:top-1/2 after:right-0 after:block after:h-6 after:w-px after:-translate-y-1/2 sm:mr-0 sm:flex-col sm:items-start'>
               <DisciplineIcon className='mr-3' discipline={solve.discipline} />
               <span className='flex items-center gap-2'>
-                <span>{solve.user.name}</span>
+                <UsernameLink username={solve.user.name} />
                 <UserBadges user={solve.user} />
               </span>
             </span>

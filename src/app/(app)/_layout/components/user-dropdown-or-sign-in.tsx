@@ -88,10 +88,13 @@ function UserDropdown({
       <DropdownMenu.Portal>
         <DropdownMenu.Content
           align='end'
-          className='border-black-80 bg-black-100 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-top-2 z-10 mt-1 min-w-[15.7rem] rounded-xl border p-6'
+          className='border-black-80 bg-black-100 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-top-2 z-30 mt-1 min-w-[15.7rem] rounded-xl border p-6'
         >
           <DropdownMenu.Label className='title-h3 mb-1 text-white'>
             {user.name}
+          </DropdownMenu.Label>
+          <DropdownMenu.Label className='text-grey-40 text-sm'>
+            {user.email}
           </DropdownMenu.Label>
           <DropdownMenu.Label className='border-b-grey-100 text-grey-20 mb-6 border-b pb-2'>
             <div className='-ml-2'>
@@ -99,6 +102,14 @@ function UserDropdown({
             </div>
           </DropdownMenu.Label>
           <DropdownMenu.Group className='-ml-2 flex flex-col gap-2'>
+            <DropdownButton className='w-full cursor-pointer' asChild>
+              <DropdownMenu.Item asChild>
+                <Link href={`/profile/${user.name}`}>
+                  <AvatarIcon />
+                  Profile
+                </Link>
+              </DropdownMenu.Item>
+            </DropdownButton>
             <DropdownButton className='w-full cursor-pointer' asChild>
               <DropdownMenu.Item asChild>
                 {/* DropdownMenu.Item must be a direct parent of Link for it to work */}

@@ -26,6 +26,7 @@ export default tseslint.config(
       'build/**',
       'next-env.d.ts',
       'vendor/**',
+      '.claude/**',
     ],
   },
   ...tseslint.configs.recommendedTypeChecked,

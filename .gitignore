@@ -47,3 +47,5 @@ yarn-error.log*
 .playwright-mcp
 playwright-report
 test-results
+screenshots
+.claude/worktrees

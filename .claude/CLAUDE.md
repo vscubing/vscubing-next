@@ -1,2 +1,8 @@
 - Always use bun
 - Always make sure the formatting is correct with `bun run format:check` and fix with `bun run format:write` if necessary
+- don't hardcode the disciplines or discipline count, reference DISCIPLINES from `src/types.ts` if applicable
+- don't hardcode colors as hex values. Use Tailwind classes (e.g. `bg-secondary-20`) where possible, and `themeColors` from `src/frontend/utils/theme.ts` for JS contexts (e.g. Recharts props)
+- do good loading states (use our loading spinner where applicable)
+- actively prevent layout shifts after loading states
+- Tailwind breakpoints (`sm:`, `md:`, etc.) are **max-width** (desktop-first), not the default min-width. `sm:` means "on small/mobile screens", default (unprefixed) styles apply to desktop.
+- Don't use lucide-react icons without asking the user first. Icons are typically provided from Figma as SVGs.

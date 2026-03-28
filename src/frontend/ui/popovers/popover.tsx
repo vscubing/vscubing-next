@@ -116,7 +116,7 @@ export function HoverPopover({
   }
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open}>
       <PopoverTrigger
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
@@ -129,6 +129,7 @@ export function HoverPopover({
         <PopoverContent
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
+          onEscapeKeyDown={() => setOpen(false)}
           className={contentClassName}
           side={side}
           hideArrow={hideArrow}

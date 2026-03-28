@@ -6,19 +6,24 @@ export function PlaceLabel({
   children: place,
   podiumColors = false,
   variant,
+  size = 'default',
   className,
   onClick,
   ...props
 }: ComponentPropsWithRef<'span'> & {
   podiumColors?: boolean
   variant?: 'default' | 'dashed'
+  size?: 'default' | 'sm'
   children: number
 }) {
   return (
     <span
       onClick={onClick}
       className={cn(
-        'vertical-alignment-fix border-primary-60 text-white-100 relative flex h-11 w-11 items-center justify-center rounded-full border text-base sm:h-9 sm:w-9 sm:py-0 sm:text-[0.875rem]',
+        'vertical-alignment-fix border-primary-60 text-white-100 relative flex items-center justify-center rounded-full border',
+        size === 'sm'
+          ? 'h-8 w-8 text-sm'
+          : 'h-11 w-11 text-base sm:h-9 sm:w-9 sm:py-0 sm:text-[0.875rem]',
         {
           'bg-podium-gold text-grey-100 border-none':
             podiumColors && place === 1 && variant !== 'dashed',
@@ -39,7 +44,14 @@ export function PlaceLabel({
       {...props}
     >
       {podiumColors && place === 1 && variant !== 'dashed' && (
-        <CrownIcon className='text-secondary-20 absolute -top-2 -right-1 rotate-[30deg] transform' />
+        <CrownIcon
+          className={cn(
+            'text-secondary-20 absolute rotate-[30deg] transform',
+            size === 'sm'
+              ? '-top-[12px] -right-[2px] w-[20px]'
+              : '-top-2 -right-1',
+          )}
+        />
       )}
       {place}
     </span>

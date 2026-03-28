@@ -8,6 +8,7 @@ import {
   SecondaryButton,
 } from '@/frontend/ui'
 import { SolveTimeLabel, SolveTimeLinkOrDnf } from '../solve-time-link-or-dnf'
+import { UsernameLink } from '../username-link'
 import Link from 'next/link'
 
 export function RecordHolderBadge({
@@ -43,7 +44,7 @@ function RecordHolderPopover({
       <p className='mb-4 flex items-center gap-1'>
         <TrophyIcon className='text-yellow-100' />
         <span className='title-h3'>
-          <span className='text-white-100'>{name}</span>{' '}
+          <UsernameLink username={name} className='text-white-100' />{' '}
           <span className='text-grey-40'>
             holds {recordCount} {recordCount > 1 ? 'records' : 'record'}
           </span>
