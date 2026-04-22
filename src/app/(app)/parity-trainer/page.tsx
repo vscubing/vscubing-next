@@ -36,7 +36,7 @@ const ROTATIONS = ['', 'x', "x'", 'x2', 'y', "y'", 'y2', 'z', "z'", 'z2']
 let setupCounter = 0
 function generateSetup(parityType: ParityType): string {
   const rotation = ROTATIONS[Math.floor(Math.random() * ROTATIONS.length)]
-  const setupAlg = PARITY_ALGS[parityType][0].setup
+  const setupAlg = PARITY_ALGS[parityType][0]!.setup
   // Append y y' (no-op) on alternating calls to ensure the string always changes,
   // so React triggers the scramble effect even if the random rotation is the same
   const noop = ++setupCounter % 2 === 0 ? " y y'" : ''

@@ -44,7 +44,7 @@ export const profileRouter = createTRPCRouter({
 
       return {
         id: row.id,
-        name: row.name,
+        name: row.name!,
         role: row.role,
         createdAt: row.createdAt,
         wcaId: row.wcaId ?? null,

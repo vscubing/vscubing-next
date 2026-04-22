@@ -262,6 +262,7 @@ export const contestRouter = createTRPCRouter({
           ),
           user: {
             ...user,
+            name: user.name!,
             globalRecords: globalRecordsByUser.get(user.id) ?? null,
           },
           contestSlug: input.contestSlug,
@@ -322,6 +323,7 @@ export const contestRouter = createTRPCRouter({
           solves: [],
           user: {
             ...user,
+            name: user.name!,
             globalRecords: globalRecordsByUser.get(user.id) ?? null,
           },
           contestSlug: input.contestSlug,
@@ -401,6 +403,7 @@ export const contestRouter = createTRPCRouter({
         userCapabilities,
         solve: {
           ...solve,
+          user: { ...solve.user, name: solve.user.name! },
           isPersonalRecord: solve.personalRecordId !== null,
           solution: solve.solution, // reassign to make typescript infer non-nullability
           timeMs: solve.timeMs,
