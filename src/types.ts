@@ -11,7 +11,8 @@ export type SessionUser = Pick<
   'name' | 'id' | 'email' | 'finishedRegistration' | 'role'
 > & { wcaId: string | null }
 
-export type User = Pick<UserSchema, 'name' | 'id' | 'role'> & {
+export type User = Pick<UserSchema, 'id' | 'role'> & {
+  name: string
   wcaId: string | null
   globalRecords: UserGlobalRecords | null
 }

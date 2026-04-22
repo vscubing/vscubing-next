@@ -67,6 +67,7 @@ export const leaderboardRouter = createTRPCRouter({
         return {
           user: {
             ...row.user,
+            name: row.user.name!,
             globalRecords: globalRecordsByUser.get(row.user.id) ?? null,
           },
           id: row.id,
@@ -157,6 +158,7 @@ export const leaderboardRouter = createTRPCRouter({
           contestSlug: session[0]!.contestSlug,
           user: {
             ...session[0]!.user,
+            name: session[0]!.user.name!,
             globalRecords: globalRecordsByUser.get(session[0]!.user.id) ?? null,
           },
         }

@@ -18,6 +18,7 @@ import {
   ExperimentsIcon,
   CubeTogetherIcon,
   LiveStreamsIcon,
+  ParityTrainerIcon,
 } from '@/frontend/ui'
 import { DEFAULT_DISCIPLINE } from '@/types'
 import { LIVE_STREAMS_ENABLED } from '@/lib/pusher/streams'
@@ -178,6 +179,7 @@ function parsePathname(
   if (pathname.startsWith('/leaderboard')) return '/leaderboard'
   if (pathname.startsWith('/cube-together')) return '/cube-together'
   if (pathname.startsWith('/live-streams')) return '/live-streams'
+  if (pathname.startsWith('/parity-trainer')) return '/parity-trainer'
 
   if (!ongoingContestSlug) return undefined
   if (pathname.startsWith('/contests')) {
@@ -200,6 +202,7 @@ type NavbarRoute =
   | '/dev'
   | '/live-streams'
   | '/cube-together'
+  | '/parity-trainer'
 
 function isStaticNavbarRoute(pathname: string): pathname is NavbarRoute {
   return (
@@ -209,6 +212,7 @@ function isStaticNavbarRoute(pathname: string): pathname is NavbarRoute {
       '/dev',
       '/live-streams',
       '/cube-together',
+      '/parity-trainer',
     ] satisfies NavbarRoute[] as string[]
   ).includes(pathname)
 }
@@ -273,6 +277,12 @@ function getExperimentalLinks(): NavbarLink[] {
       route: '/cube-together',
     },
   ]
+
+  links.push({
+    icon: <ParityTrainerIcon />,
+    name: 'Parity trainer',
+    route: '/parity-trainer',
+  })
 
   if (LIVE_STREAMS_ENABLED) {
     links.push({

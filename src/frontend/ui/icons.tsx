@@ -46,6 +46,7 @@ import ExperimentsIcon from '@/../public/icons/experiments.icon.svg'
 import CubeTogetherIcon from '@/../public/icons/cube-together.icon.svg'
 import VirtualTutorialIcon from '@/../public/icons/virtual-tutorial.icon.svg'
 import LiveStreamsIcon from '@/../public/icons/live-streams.icon.svg'
+import ParityTrainerIcon from '@/../public/icons/parity-trainer.icon.svg'
 import CalendarIcon from '@/../public/icons/calendar.icon.svg'
 import FlameIcon from '@/../public/icons/flame.icon.svg'
 import FlagIcon from '@/../public/icons/flag.icon.svg'
@@ -92,6 +93,7 @@ export {
   CubeTogetherIcon,
   VirtualTutorialIcon,
   LiveStreamsIcon,
+  ParityTrainerIcon,
   CalendarIcon,
   FlameIcon,
   FlagIcon,
