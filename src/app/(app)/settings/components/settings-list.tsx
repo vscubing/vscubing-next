@@ -43,7 +43,7 @@ export function SettingsList() {
         />
       </li>
       <li className='bg-grey-100 flex items-center justify-between gap-2 rounded-xl p-4'>
-        <span>Preinspection voice alert at 8/12s:</span>
+        <span>Inspection voice alert at 8/12s:</span>
         <Select
           options={CS_INSPECTION_VOICE_ALERT_OPTIONS}
           value={settings.inspectionVoiceAlert}
