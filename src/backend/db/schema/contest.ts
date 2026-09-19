@@ -112,6 +112,7 @@ export const solveTable = pgTable(
     isDnf: d.boolean('is_dnf').notNull(),
     plusTwoIncluded: d.boolean('plus_two_included').notNull(),
     solution: d.varchar('solution', { length: 500000 }),
+    extraReason: d.text('extra_reason'),
   }),
   (t) => [
     unique('round_session_scramble_unique').on(t.roundSessionId, t.scrambleId),

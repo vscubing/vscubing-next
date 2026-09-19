@@ -118,7 +118,7 @@ function useWcaUnofficialApi({ wcaId }: { wcaId: string }) {
   return useQuery({
     queryFn: async () => {
       const res = await fetch(
-        `https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/master/api/persons/${wcaId}.json`,
+        `https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/refs/heads/v1/persons/${wcaId}.json`,
       )
       const json = (await res.json()) as unknown
       return wcaUnofficialUserSchema.parse(json)

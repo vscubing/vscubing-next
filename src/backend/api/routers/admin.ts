@@ -6,7 +6,13 @@ import {
   isAdmin,
   publicProcedure,
 } from '@/backend/api/trpc'
-import { contestTable, roundSessionTable, userTable } from '@/backend/db/schema'
+import {
+  contestTable,
+  roundSessionTable,
+  roundTable,
+  solveTable,
+  userTable,
+} from '@/backend/db/schema'
 import { validateSolve } from '@/backend/shared/validate-solve'
 import { DISCIPLINES } from '@/types'
 import dayjs from 'dayjs'
@@ -25,6 +31,7 @@ import {
   and,
   not,
   getTableColumns,
+  desc,
 } from 'drizzle-orm'
 import { TRPCError } from '@trpc/server'
 
@@ -162,5 +169,46 @@ export const adminRouter = createTRPCRouter({
       console.log(conflictMsg)
 
       return { mergedMsg, conflictMsg }
+    }),
+  getExtraSolves: adminProcedure
+    .input(z.object({ cursor: z.number().optional() }).optional())
+    .query(async ({ ctx, input }) => {
+      const limit = 10
+      const cursor = input?.cursor
+
+      const rows = await ctx.db
+        .select({
+          solveId: solveTable.id,
+          timeMs: solveTable.timeMs,
+          isDnf: solveTable.isDnf,
+          extraReason: solveTable.extraReason,
+          createdAt: solveTable.createdAt,
+          contestSlug: roundTable.contestSlug,
+          discipline: roundTable.disciplineSlug,
+          username: userTable.name,
+        })
+        .from(solveTable)
+        .innerJoin(
+          roundSessionTable,
+          eq(solveTable.roundSessionId, roundSessionTable.id),
+        )
+        .innerJoin(roundTable, eq(roundSessionTable.roundId, roundTable.id))
+        .innerJoin(userTable, eq(roundSessionTable.contestantId, userTable.id))
+        .where(
+          cursor
+            ? and(
+                eq(solveTable.status, 'changed_to_extra'),
+                sql`${solveTable.id} < ${cursor}`,
+              )
+            : eq(solveTable.status, 'changed_to_extra'),
+        )
+        .orderBy(desc(solveTable.id))
+        .limit(limit + 1)
+
+      const hasMore = rows.length > limit
+      if (hasMore) rows.pop()
+      const nextCursor = hasMore ? rows[rows.length - 1]!.solveId : undefined
+
+      return { items: rows, nextCursor }
     }),
 })
