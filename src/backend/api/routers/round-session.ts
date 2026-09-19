@@ -360,6 +360,7 @@ export const roundSessionRouter = createTRPCRouter({
       z.object({
         solveId: z.number(),
         type: z.enum(['submitted', 'changed_to_extra']),
+        reason: z.string().trim().min(3).optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -367,7 +368,12 @@ export const roundSessionRouter = createTRPCRouter({
         async (t) => {
           await t
             .update(solveTable)
-            .set({ status: input.type })
+            .set({
+              status: input.type,
+              ...(input.type === 'changed_to_extra' && {
+                extraReason: input.reason,
+              }),
+            })
             .where(
               and(
                 eq(solveTable.id, input.solveId),

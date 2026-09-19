@@ -119,6 +119,7 @@ export function useSolveForm({
       discipline,
       type: payload.type,
       solveId: state.currentSolve!.id,
+      ...(payload.type === 'changed_to_extra' && { reason: payload.reason }),
     })
 
     if (state.submittedSolves.length === 4 && payload.type === 'submitted') {
