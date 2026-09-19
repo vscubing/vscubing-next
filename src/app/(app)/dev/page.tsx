@@ -5,6 +5,7 @@ import { db } from '@/backend/db'
 import { roundTable, scrambleTable } from '@/backend/db/schema'
 import { and, eq, or } from 'drizzle-orm'
 import { DangerousAdminActions } from './_components/client'
+import { ExtraSolves } from './_components/extra-solves'
 
 export default async function DevPage() {
   const authorized = await api.admin.authorized()
@@ -13,16 +14,19 @@ export default async function DevPage() {
   // TODO: show docker image tag timestamp via env variable v2 & on deploy
 
   return (
-    <div className='bg-black-80 flex flex-1 flex-wrap justify-between gap-8 rounded-2xl p-6 sm:p-3'>
-      <div className='max-w-[30rem] space-y-4'>
-        This is indeed the latest app version (12)
-        <h2 className='title-h2'>Ongoing contest</h2>
-        <OngoingContestInfo />
-        <SolveValidator />
+    <div className='bg-black-80 flex flex-1 flex-col gap-8 rounded-2xl p-6 sm:p-3'>
+      <div className='flex flex-wrap justify-between gap-8'>
+        <div className='max-w-[30rem] space-y-4'>
+          This is indeed the latest app version (12)
+          <h2 className='title-h2'>Ongoing contest</h2>
+          <OngoingContestInfo />
+          <SolveValidator />
+        </div>
+        <div>
+          <DangerousAdminActions />
+        </div>
       </div>
-      <div>
-        <DangerousAdminActions />
-      </div>
+      <ExtraSolves />
     </div>
   )
 }
