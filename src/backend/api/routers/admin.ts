@@ -15,7 +15,9 @@ import {
   userTable,
 } from '@/backend/db/schema'
 import { validateSolve } from '@/backend/shared/validate-solve'
-import { DISCIPLINES } from '@/types'
+import { calculateAvg } from '@/backend/shared/calculate-avg'
+import { DISCIPLINES, resultDnfable } from '@/types'
+import { ROUND_ATTEMPTS_QTY } from './round-session'
 import dayjs from 'dayjs'
 import {
   closeOngoingAndCreateNewContest,
@@ -208,6 +210,90 @@ export const adminRouter = createTRPCRouter({
         .set({ suspended: false })
         .where(eq(userMetadataTable.userId, input.userId))
     }),
+  getSolveById: adminProcedure
+    .input(z.object({ solveId: z.number() }))
+    .query(async ({ ctx, input }) => {
+      const [row] = await ctx.db
+        .select({
+          solveId: solveTable.id,
+          timeMs: solveTable.timeMs,
+          isDnf: solveTable.isDnf,
+          status: solveTable.status,
+          contestSlug: roundTable.contestSlug,
+          discipline: roundTable.disciplineSlug,
+          username: userTable.name,
+        })
+        .from(solveTable)
+        .innerJoin(
+          roundSessionTable,
+          eq(solveTable.roundSessionId, roundSessionTable.id),
+        )
+        .innerJoin(roundTable, eq(roundSessionTable.roundId, roundTable.id))
+        .innerJoin(userTable, eq(roundSessionTable.contestantId, userTable.id))
+        .where(eq(solveTable.id, input.solveId))
+
+      if (!row)
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: `no solve with id ${input.solveId}`,
+        })
+      return row
+    }),
+  setSolveDnf: adminProcedure
+    .input(z.object({ solveId: z.number(), isDnf: z.boolean() }))
+    .mutation(async ({ ctx, input }) =>
+      ctx.db.transaction(async (tx) => {
+        const [solve] = await tx
+          .select({
+            timeMs: solveTable.timeMs,
+            status: solveTable.status,
+            roundSessionId: solveTable.roundSessionId,
+          })
+          .from(solveTable)
+          .where(eq(solveTable.id, input.solveId))
+        if (!solve)
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: `no solve with id ${input.solveId}`,
+          })
+
+        if (!input.isDnf && solve.timeMs === null)
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: "Can't un-DNF a solve with no recorded time.",
+          })
+
+        await tx
+          .update(solveTable)
+          .set({ isDnf: input.isDnf })
+          .where(eq(solveTable.id, input.solveId))
+
+        // the round session's avg is a cached snapshot computed once all
+        // ROUND_ATTEMPTS_QTY solves are submitted, so it needs recomputing
+        // whenever a counted (submitted) solve's DNF status changes after the fact
+        if (solve.status === 'submitted') {
+          const submittedResults = (
+            await tx
+              .select({ isDnf: solveTable.isDnf, timeMs: solveTable.timeMs })
+              .from(solveTable)
+              .where(
+                and(
+                  eq(solveTable.roundSessionId, solve.roundSessionId),
+                  eq(solveTable.status, 'submitted'),
+                ),
+              )
+          ).map((res) => resultDnfable.parse(res))
+
+          if (submittedResults.length === ROUND_ATTEMPTS_QTY) {
+            const { timeMs: avgMs, isDnf } = calculateAvg(submittedResults)
+            await tx
+              .update(roundSessionTable)
+              .set({ avgMs, isDnf })
+              .where(eq(roundSessionTable.id, solve.roundSessionId))
+          }
+        }
+      }),
+    ),
   getExtraSolves: adminProcedure
     .input(z.object({ cursor: z.number().optional() }).optional())
     .query(async ({ ctx, input }) => {

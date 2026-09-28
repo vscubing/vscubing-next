@@ -22,7 +22,7 @@ import { db } from '@/backend/db'
 import { decodeSolve } from '@/lib/utils/solve-signature'
 
 const EXTRAS_PER_ROUND = 2
-const ROUND_ATTEMPTS_QTY = 5
+export const ROUND_ATTEMPTS_QTY = 5
 
 const submittedSolvesInvariant = z.array(
   z.object(

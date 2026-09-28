@@ -7,6 +7,7 @@ import { and, eq, or } from 'drizzle-orm'
 import { DangerousAdminActions } from './_components/client'
 import { ExtraSolves } from './_components/extra-solves'
 import { SuspendUsers } from './_components/suspend-users'
+import { SolveDnfToggle } from './_components/solve-dnf-toggle'
 
 export default async function DevPage() {
   const authorized = await api.admin.authorized()
@@ -28,6 +29,7 @@ export default async function DevPage() {
         </div>
       </div>
       <SuspendUsers />
+      <SolveDnfToggle />
       <ExtraSolves />
     </div>
   )
