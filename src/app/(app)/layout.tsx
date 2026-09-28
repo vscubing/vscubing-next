@@ -1,5 +1,6 @@
 import { Navbar } from './_layout/components/navbar'
 import { PickUsernameDialog } from './_layout/components/pick-username-dialog'
+import { SuspendedDialog } from './_layout/components/suspended-dialog'
 import { PopupSidebar } from './_layout/components/popup-sidebar'
 import { Sidebar } from './_layout/components/sidebar'
 import { LayoutHeader } from './_layout/layout-header'
@@ -23,6 +24,7 @@ export default function AppLayout({
     <>
       <Toaster />
       <PickUsernameDialog />
+      <SuspendedDialog />
       <PopupSidebar />
       <CookieBannerHandler />
       <div

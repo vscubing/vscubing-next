@@ -9,6 +9,7 @@ import {
   scrambleTable,
   solveTable,
   contestTable,
+  userMetadataTable,
 } from '@/backend/db/schema'
 import { resultDnfable, SCRAMBLE_POSITIONS, SOLVE_STATUSES } from '@/types'
 import { sortWithRespectToExtras } from '../../shared/sort-with-respect-to-extras'
@@ -50,6 +51,16 @@ export const roundSessionAuthProcedure = protectedProcedure
     }),
   )
   .use(async ({ next, input, ctx }) => {
+    const [metadata] = await ctx.db
+      .select({ suspended: userMetadataTable.suspended })
+      .from(userMetadataTable)
+      .where(eq(userMetadataTable.userId, ctx.session.user.id))
+    if (metadata?.suspended)
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: 'Your account has been suspended.',
+      })
+
     const userCapabilities = await getContestUserCapabilities({
       contestSlug: input.contestSlug,
       discipline: input.discipline,

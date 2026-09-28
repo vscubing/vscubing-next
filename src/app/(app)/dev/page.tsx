@@ -6,6 +6,7 @@ import { roundTable, scrambleTable } from '@/backend/db/schema'
 import { and, eq, or } from 'drizzle-orm'
 import { DangerousAdminActions } from './_components/client'
 import { ExtraSolves } from './_components/extra-solves'
+import { SuspendUsers } from './_components/suspend-users'
 
 export default async function DevPage() {
   const authorized = await api.admin.authorized()
@@ -26,6 +27,7 @@ export default async function DevPage() {
           <DangerousAdminActions />
         </div>
       </div>
+      <SuspendUsers />
       <ExtraSolves />
     </div>
   )

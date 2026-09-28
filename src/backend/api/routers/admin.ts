@@ -11,6 +11,7 @@ import {
   roundSessionTable,
   roundTable,
   solveTable,
+  userMetadataTable,
   userTable,
 } from '@/backend/db/schema'
 import { validateSolve } from '@/backend/shared/validate-solve'
@@ -169,6 +170,43 @@ export const adminRouter = createTRPCRouter({
       console.log(conflictMsg)
 
       return { mergedMsg, conflictMsg }
+    }),
+  getSuspendedUsers: adminProcedure.query(async ({ ctx }) => {
+    return ctx.db
+      .select({ userId: userTable.id, username: userTable.name })
+      .from(userMetadataTable)
+      .innerJoin(userTable, eq(userTable.id, userMetadataTable.userId))
+      .where(eq(userMetadataTable.suspended, true))
+      .orderBy(userTable.name)
+  }),
+  suspendUser: adminProcedure
+    .input(z.object({ username: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const [user] = await ctx.db
+        .select({ id: userTable.id })
+        .from(userTable)
+        .where(eq(sql`lower(${userTable.name})`, input.username.toLowerCase()))
+      if (!user)
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: `no user with name ${input.username}`,
+        })
+
+      await ctx.db
+        .insert(userMetadataTable)
+        .values({ userId: user.id, suspended: true })
+        .onConflictDoUpdate({
+          target: userMetadataTable.userId,
+          set: { suspended: true },
+        })
+    }),
+  unsuspendUser: adminProcedure
+    .input(z.object({ userId: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      await ctx.db
+        .update(userMetadataTable)
+        .set({ suspended: false })
+        .where(eq(userMetadataTable.userId, input.userId))
     }),
   getExtraSolves: adminProcedure
     .input(z.object({ cursor: z.number().optional() }).optional())
