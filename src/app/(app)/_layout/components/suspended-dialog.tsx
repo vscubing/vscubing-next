@@ -14,8 +14,7 @@ import { useTRPC } from '@/lib/trpc/react'
 import { useQuery } from '@tanstack/react-query'
 import { useLogout } from '@/frontend/shared/use-user'
 
-// TODO: fill in the actual Discord invite / contact email for suspended users
-const DISCORD_INVITE_LINK = 'https://discord.gg/PxFrW9vTAy'
+const DISCORD_INVITE_LINK = 'https://discord.com/users/964540226112462858'
 const CONTACT_EMAIL = 'contact.vscubing@gmail.com'
 
 export function SuspendedDialog() {
