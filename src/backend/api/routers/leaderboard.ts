@@ -59,7 +59,7 @@ export const leaderboardRouter = createTRPCRouter({
         .innerJoin(roundTable, eq(roundTable.id, roundSessionTable.roundId))
         .innerJoin(userTable, eq(userTable.id, roundSessionTable.contestantId))
         .leftJoin(wcaIdSubquery, eq(wcaIdSubquery.userId, userTable.id))
-        .orderBy(bestSolveSubquery.timeMs)
+        .orderBy(bestSolveSubquery.isDnf, bestSolveSubquery.timeMs)
 
       const globalRecordsByUser = await getGlobalRecordsByUser()
 

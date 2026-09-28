@@ -9,6 +9,7 @@ import {
   scrambleTable,
   solveTable,
   contestTable,
+  userMetadataTable,
 } from '@/backend/db/schema'
 import { resultDnfable, SCRAMBLE_POSITIONS, SOLVE_STATUSES } from '@/types'
 import { sortWithRespectToExtras } from '../../shared/sort-with-respect-to-extras'
@@ -21,7 +22,7 @@ import { db } from '@/backend/db'
 import { decodeSolve } from '@/lib/utils/solve-signature'
 
 const EXTRAS_PER_ROUND = 2
-const ROUND_ATTEMPTS_QTY = 5
+export const ROUND_ATTEMPTS_QTY = 5
 
 const submittedSolvesInvariant = z.array(
   z.object(
@@ -50,6 +51,16 @@ export const roundSessionAuthProcedure = protectedProcedure
     }),
   )
   .use(async ({ next, input, ctx }) => {
+    const [metadata] = await ctx.db
+      .select({ suspended: userMetadataTable.suspended })
+      .from(userMetadataTable)
+      .where(eq(userMetadataTable.userId, ctx.session.user.id))
+    if (metadata?.suspended)
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: 'Your account has been suspended.',
+      })
+
     const userCapabilities = await getContestUserCapabilities({
       contestSlug: input.contestSlug,
       discipline: input.discipline,
